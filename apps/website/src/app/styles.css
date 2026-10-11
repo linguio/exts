@@ -51,6 +51,22 @@
 }
 
 @layer components {
+  .site-main {
+    @apply flex-1 pt-8 sm:pt-12;
+  }
+
+  .site-document {
+    @apply mx-auto max-w-[720px] text-sm leading-6;
+  }
+
+  .site-document-title {
+    @apply mb-6 text-[28px] leading-[1.2] font-semibold tracking-[-0.035em] sm:mb-8 sm:text-[32px];
+  }
+
+  .site-section-title {
+    @apply mb-2 text-xl leading-8 font-semibold tracking-[-0.025em];
+  }
+
   .site-container {
     @apply mx-auto w-full max-w-6xl px-6 sm:px-10 lg:px-12;
   }
@@ -96,6 +112,10 @@
 }
 
 @layer base {
+  html {
+    scrollbar-gutter: stable;
+  }
+
   * {
     @apply border-border;
   }

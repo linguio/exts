@@ -19,6 +19,7 @@ export default defineConfig({
       input: {
         home: fileURLToPath(new URL('./index.html', import.meta.url)),
         changelog: fileURLToPath(new URL('./changelog/index.html', import.meta.url)),
+        features: fileURLToPath(new URL('./features/index.html', import.meta.url)),
       },
     },
   },

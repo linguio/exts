@@ -33,7 +33,7 @@ export function ChangelogTimeline() {
                   <span className={`relative mt-[7px] size-2.5 rounded-full border-2 sm:mt-[13px] ${entry.id === changelogEntries[0]?.id ? 'border-primary bg-primary' : 'border-border bg-background'}`} />
                 </div>
                 <article aria-labelledby={`changelog-${entry.id}`} className="col-start-2 row-start-2 pb-12 sm:col-start-3 sm:row-start-1 sm:pb-16">
-                  <h3 id={`changelog-${entry.id}`} className="site-anchor mb-2 text-xl leading-8 font-semibold tracking-[-0.025em]">
+                  <h3 id={`changelog-${entry.id}`} className="site-anchor site-section-title">
                     {entry.title}
                   </h3>
                   <div className="space-y-6">
