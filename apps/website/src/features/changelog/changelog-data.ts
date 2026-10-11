@@ -14,14 +14,14 @@ type ChangelogEntry = {
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
     id: 'website-launch',
-    date: '2026-10-11',
+    date: '2026-10-12',
     title: '产品官网上线',
     groups: [{
       platform: 'Website',
       changes: [
-      '上线 exts.linguio.dev，提供产品介绍与统一下载入口',
-      '下载链接跟随最新正式发布，无需随版本更换地址',
+      '提供产品展示与统一下载入口',
       '新增更新日志，以时间线记录产品变化与进展',
+      '新增产品介绍，按扩展、桌面与协同分类展示模块用途',
       ],
     }],
   },
