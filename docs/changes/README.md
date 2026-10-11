@@ -79,7 +79,7 @@ docs/
 
 ## 当前 Issue
 
-无；前置部署与 Changelog 工作项均已完成，下一项统一官网样式进入规划。
+无。
 
 ## Issue 队列
 
@@ -90,6 +90,8 @@ docs/
 - [X Download 下载失败恢复](./todo.md)
 
 ## 已完成
+
+- [建立官网视觉规范并统一布局](./issues/2026-10-11-website-layout-system-issue.md) · [Commit 记录](./commits/2026-10-11-website-layout-system-commit.md)；用户验收通过并批准三笔本地提交，规范引用、固定共享布局和平台分组日志已交付；未推送或部署。
 
 - [添加独立更新时间线页面](./issues/2026-10-11-website-changelog-timeline-issue.md) · [Commit 记录](./commits/2026-10-11-website-changelog-timeline-commit.md)；用户确认本地阶段验收并批准提交，独立页面、年份分组与锚点、三条日志已交付；线上部署由用户操作。
 

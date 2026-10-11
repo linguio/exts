@@ -36,14 +36,16 @@ export function ChangelogTimeline() {
                   <h3 id={`changelog-${entry.id}`} className="site-anchor mb-2 text-xl leading-8 font-semibold tracking-[-0.025em]">
                     {entry.title}
                   </h3>
-                  <ul aria-label="涉及平台" className="mb-4 flex list-none flex-wrap gap-1.5 p-0">
-                    {entry.platforms.map((platform) => (
-                      <li key={platform}><Badge className="rounded-md px-2 py-0.5 text-xs leading-[18px]">{platform}</Badge></li>
+                  <div className="space-y-6">
+                    {entry.groups.map((group) => (
+                      <section key={group.platform} aria-label={`${group.platform} 更新`}>
+                        <Badge className="mb-4 rounded-md px-2 py-0.5 text-xs leading-[18px]">{group.platform}</Badge>
+                        <ul className="list-disc space-y-2 pl-[18px] text-sm leading-6 text-foreground marker:text-muted-foreground">
+                          {group.changes.map((change) => <li key={change} className="pl-0.5">{change}</li>)}
+                        </ul>
+                      </section>
                     ))}
-                  </ul>
-                  <ul className="list-disc space-y-2 pl-[18px] text-sm leading-6 text-foreground marker:text-muted-foreground">
-                    {entry.changes.map((change) => <li key={change} className="pl-0.5">{change}</li>)}
-                  </ul>
+                  </div>
                 </article>
               </li>
             ))}
