@@ -79,8 +79,7 @@ docs/
 
 ## 当前 Issue
 
-- [配置官网手动部署并统一 Actions 名称](./issues/2026-10-11-website-manual-pages-deploy-issue.md) · [Commit 记录](./commits/2026-10-11-website-manual-pages-deploy-commit.md)
-  - 状态：待验收；本地阶段已验收且用户已批准本地代码提交；实际 Actions、域名和 HTTPS 待用户操作确认。
+无；前置部署工作项已完成，Changelog 工作项随下一笔交付提交登记。
 
 ## Issue 队列
 
@@ -91,6 +90,8 @@ docs/
 - [X Download 下载失败恢复](./todo.md)
 
 ## 已完成
+
+- [配置官网手动部署并统一 Actions 名称](./issues/2026-10-11-website-manual-pages-deploy-issue.md) · [Commit 记录](./commits/2026-10-11-website-manual-pages-deploy-commit.md)；用户确认最终验收通过并批准结项提交，线上 HTTPS、产物一致性和 Latest 链接已只读核验。
 
 - [固定发布包名并接入官网最新下载](./issues/2026-10-11-exts-fixed-release-assets-issue.md) · [Commit 记录](./commits/2026-10-11-exts-fixed-release-assets-commit.md)；用户明确确认前述事项全部验证完成并批准本地结项提交，远程验收以用户确认作为依据，本轮代理未独立复核。
 
