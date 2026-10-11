@@ -1,6 +1,6 @@
 # Exts 产品官网
 
-React 单页产品官网，使用 Vite、TypeScript、Tailwind CSS 与 shadcn/ui。网站显示 Exts 标语、现有品牌 logo、Chrome 与 macOS latest 直链入口；页脚为 © 2026 Lin Gui。
+React 静态产品官网，使用 Vite、TypeScript、Tailwind CSS 与 shadcn/ui。首页显示 Exts 标语、现有品牌 logo、Chrome 与 macOS latest 直链入口；独立 Changelog 页面记录产品进展，页脚为 © 2026 Lin Gui。
 
 ## 开发与构建
 
@@ -27,6 +27,7 @@ pnpm web:build
 - src/pages/home：首页正文布局，组合布局组件与下载模块。
 - src/components/layout：网站页头、页脚；src/components/ui：纳入 Git 的 shadcn 基础组件。
 - src/features/download：组合 shadcn 平台下载链接。
+- src/pages/changelog：更新日志页面与独立 React 入口；src/features/changelog：静态日志数据与时间线模块。
 - src/config/site.ts：产品文案、GitHub 地址、固定 latest 下载链接与署名。
 - src/assets：用户提供的单色 Chrome、Apple 与 GitHub 品牌 SVG；public：已有正式品牌资源、favicon 与第三方许可声明。
 - src/lib/utils.ts：class-variance-authority 配合的本地样式合并工具，不提取共享 UI 包。
@@ -36,6 +37,14 @@ pnpm web:build
 Button 来源于 shadcn 官方 new-york-v4 registry，保持 Radix Slot、variant、size 与 disabled 语义。仅把官方源码的 cn 导入改为本地已固定 clsx、tailwind-merge 工具；未引入新的 cn 包。components.json 保存网站组件生成配置；如使用 CLI，固定为 shadcn@4.21.4，生成后检查源码和依赖，禁止保留浮动版本或直接运行 @latest。
 
 Lucide React 用于通用状态图标，平台与 GitHub 用品牌 SVG。Google Chrome 与 Apple SVG 使用用户提供的原文件，不在运行时读取 Downloads。public/exts.svg 及各尺寸 PNG 沿用根 assets/brand/website 正式派生资源；不重绘或修改源稿。主体与跨平台外形见 [Logo 规范](../../docs/exts-logo.md)。第三方许可证随产物保留在 public/third-party-notices.txt，不作为页脚署名。
+
+## 更新日志
+
+页头 History 图标链接到 /changelog/，点击 Exts 返回首页。首页和 changelog/index.html 是两个 Vite HTML 入口，共享页头、页脚和样式；正式产物同时包含 index.html 与 changelog/index.html，支持 GitHub Pages 直接访问与刷新，不依赖 SPA 回退或额外路由库。
+
+日志维护在 src/features/changelog/changelog-data.ts，按相关交付 Git 提交的实际时间倒序，日期统一转换为北京时间；同一天按实际提交顺序排列。按年份分组，桌面年份位于最左侧且每组仅显示一次，日期仅显示月日；手机端年份置于该组记录上方。年份可点击返回该年第一条，使用现有 shadcn Button 和原生锚点，具有悬停、按下及焦点反馈。每条只包含事件标题、平台标签和无序列表，无版本号或副标题。平台限定 Website、Chrome、macOS，使用官方 shadcn Badge 的黑底白字样式与小圆角；History 入口沿用现有 Button。
+
+首批记录为首版发布、Latest 下载入口和官网上线，官网上线日期采用部署配置的交付提交日期。日志不会自动从 Git 或 GitHub 生成；修改日志后需手动部署官网，不要求改根产品版本。首版之后的书签添加未作为独立条目，本次不增加未经确认的日志内容。
 
 ## 下载行为
 

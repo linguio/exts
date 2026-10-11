@@ -15,5 +15,11 @@ export default defineConfig({
   build: {
     outDir: '../../dist/build/exts-web',
     emptyOutDir: true,
+    rolldownOptions: {
+      input: {
+        home: fileURLToPath(new URL('./index.html', import.meta.url)),
+        changelog: fileURLToPath(new URL('./changelog/index.html', import.meta.url)),
+      },
+    },
   },
 });
