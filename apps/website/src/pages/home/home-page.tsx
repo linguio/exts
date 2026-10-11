@@ -1,6 +1,7 @@
 import { SiteHeader } from '@/components/layout/site-header';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { PlatformDownloads } from '@/features/download/platform-downloads';
+import { ModuleShowcase } from '@/features/showcase/module-showcase';
 import { site } from '@/config/site';
 
 export function HomePage() {
@@ -14,9 +15,7 @@ export function HomePage() {
           </h1>
           <PlatformDownloads />
         </div>
-        <div className="flex items-center justify-center sm:pb-12">
-          <img src="/exts.svg" alt="Exts" width="220" height="220" className="size-40 sm:size-[220px]" />
-        </div>
+        <ModuleShowcase />
       </main>
       <SiteFooter />
     </div>
