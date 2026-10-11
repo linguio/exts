@@ -17,6 +17,16 @@
   --input: #e8e8e8;
   --ring: #737373;
   --radius: 0.5rem;
+  --site-header-height: 52px;
+  --site-footer-height: 48px;
+  --site-header-offset: calc(var(--site-header-height) + env(safe-area-inset-top, 0px));
+  --site-footer-offset: calc(var(--site-footer-height) + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 640px) {
+  :root {
+    --site-header-height: 56px;
+  }
 }
 
 @theme inline {
@@ -38,6 +48,51 @@
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
+}
+
+@layer components {
+  .site-container {
+    @apply mx-auto w-full max-w-6xl px-6 sm:px-10 lg:px-12;
+  }
+
+  .site-shell {
+    @apply flex min-h-svh flex-col;
+    padding-top: var(--site-header-offset);
+    padding-bottom: calc(var(--site-footer-offset) + 24px);
+  }
+
+  .site-header {
+    @apply fixed inset-x-0 top-0 z-30 border-b border-border bg-background;
+    height: var(--site-header-offset);
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .site-header-content {
+    @apply flex items-center justify-between;
+    height: calc(var(--site-header-height) - 1px);
+  }
+
+  .site-footer {
+    @apply fixed inset-x-0 bottom-0 z-30 bg-background text-center text-xs leading-5 text-muted-foreground;
+    height: var(--site-footer-offset);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .site-footer-content {
+    @apply flex items-center justify-center;
+    height: var(--site-footer-height);
+  }
+
+  .site-anchor {
+    scroll-margin-top: calc(var(--site-header-offset) + 24px);
+  }
+}
+
+@supports (backdrop-filter: blur(12px)) {
+  .site-header {
+    background-color: color-mix(in srgb, var(--background) 85%, transparent);
+    backdrop-filter: blur(12px);
+  }
 }
 
 @layer base {

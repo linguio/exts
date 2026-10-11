@@ -13,8 +13,8 @@ export function ChangelogTimeline() {
     <div aria-label="更新时间线" className="space-y-6">
       {Array.from(entriesByYear, ([year, entries]) => (
         <section key={year} aria-labelledby={`changelog-year-${year}`} className="sm:grid sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-x-5">
-          <h2 id={`changelog-year-${year}`} className="mb-6 text-xl leading-8 font-medium text-muted-foreground sm:mb-0">
-            <Button asChild variant="ghost" className="-ml-2 h-10 px-2 text-xl font-medium text-muted-foreground active:scale-95 active:bg-accent">
+          <h2 id={`changelog-year-${year}`} className="mb-6 text-xl leading-8 font-medium text-foreground sm:sticky sm:top-[calc(var(--site-header-offset)+24px)] sm:mb-0 sm:self-start">
+            <Button asChild variant="ghost" className="-ml-2 h-10 px-2 text-xl leading-8 font-medium text-foreground active:scale-95 active:bg-accent">
               <a href={`#changelog-${entries[0].id}`} aria-label={`返回 ${year} 年第一条更新`}>
                 {year}
               </a>
@@ -33,15 +33,15 @@ export function ChangelogTimeline() {
                   <span className={`relative mt-[7px] size-2.5 rounded-full border-2 sm:mt-[13px] ${entry.id === changelogEntries[0]?.id ? 'border-primary bg-primary' : 'border-border bg-background'}`} />
                 </div>
                 <article aria-labelledby={`changelog-${entry.id}`} className="col-start-2 row-start-2 pb-12 sm:col-start-3 sm:row-start-1 sm:pb-16">
-                  <h3 id={`changelog-${entry.id}`} className="mb-2.5 scroll-mt-6 text-xl leading-[1.6] font-semibold tracking-[-0.025em]">
+                  <h3 id={`changelog-${entry.id}`} className="site-anchor mb-2 text-xl leading-8 font-semibold tracking-[-0.025em]">
                     {entry.title}
                   </h3>
                   <ul aria-label="涉及平台" className="mb-4 flex list-none flex-wrap gap-1.5 p-0">
                     {entry.platforms.map((platform) => (
-                      <li key={platform}><Badge className="rounded-md px-2 text-[11px]">{platform}</Badge></li>
+                      <li key={platform}><Badge className="rounded-md px-2 py-0.5 text-xs leading-[18px]">{platform}</Badge></li>
                     ))}
                   </ul>
-                  <ul className="list-disc space-y-1.5 pl-[18px] text-sm leading-[1.8] text-foreground/75 marker:text-muted-foreground/70">
+                  <ul className="list-disc space-y-2 pl-[18px] text-sm leading-6 text-foreground marker:text-muted-foreground">
                     {entry.changes.map((change) => <li key={change} className="pl-0.5">{change}</li>)}
                   </ul>
                 </article>

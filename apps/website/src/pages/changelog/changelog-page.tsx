@@ -4,11 +4,13 @@ import { ChangelogTimeline } from '@/features/changelog/changelog-timeline';
 
 export function ChangelogPage() {
   return (
-    <div className="mx-auto flex min-h-svh w-full max-w-6xl flex-col px-6 sm:px-10 lg:px-12">
+    <div className="site-shell">
       <SiteHeader currentPage="changelog" />
-      <main className="mx-auto w-full max-w-[720px] flex-1 pt-9 pb-8 sm:pt-14">
-        <h1 className="mb-12 text-[32px] leading-[1.2] font-semibold tracking-[-0.035em] sm:mb-16 sm:text-[38px]">Changelog</h1>
-        <ChangelogTimeline />
+      <main className="site-container flex-1 pt-8 sm:pt-12">
+        <div className="mx-auto max-w-[720px]">
+          <h1 className="mb-6 text-[28px] leading-[1.2] font-semibold tracking-[-0.035em] sm:mb-8 sm:text-[32px]">Changelog</h1>
+          <ChangelogTimeline />
+        </div>
       </main>
       <SiteFooter />
     </div>

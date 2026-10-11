@@ -5,9 +5,9 @@ import { site } from '@/config/site';
 
 export function HomePage() {
   return (
-    <div className="mx-auto flex min-h-svh w-full max-w-6xl flex-col px-6 sm:px-10 lg:px-12">
+    <div className="site-shell">
       <SiteHeader />
-      <main className="grid flex-1 content-center items-center gap-12 pt-8 pb-12 sm:grid-cols-[1.2fr_1fr] sm:gap-8 sm:pt-14 sm:pb-20">
+      <main className="site-container grid flex-1 content-center items-center gap-12 pt-8 sm:grid-cols-[1.2fr_1fr] sm:gap-8 sm:pt-12">
         <div>
           <h1 className="text-[clamp(1.8rem,4.2vw,2.625rem)] leading-[1.38] font-semibold tracking-[-0.04em]">
             {site.headline.map((line) => <span key={line} className="block">{line}</span>)}
