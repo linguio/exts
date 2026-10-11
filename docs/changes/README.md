@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [添加简洁的官网功能介绍页](./issues/2026-10-12-website-feature-overview-issue.md) · [Commit 记录](./commits/2026-10-12-website-feature-overview-commit.md)；用户验收通过并批准官网实现、文档收尾两笔本地提交，产品介绍、共享布局与中文导航提示已交付；未推送或部署。
+
 - [用模块叠放示意卡片替换首页 Logo](./issues/2026-10-11-website-module-showcase-issue.md) · [Commit 记录](./commits/2026-10-11-website-module-showcase-commit.md)；用户验收通过并批准两笔本地提交，Tabs／Photos 示意卡片、循环补位和展示规范已交付；未推送或部署。
 
 - [建立官网视觉规范并统一布局](./issues/2026-10-11-website-layout-system-issue.md) · [Commit 记录](./commits/2026-10-11-website-layout-system-commit.md)；用户验收通过并批准三笔本地提交，规范引用、固定共享布局和平台分组日志已交付；未推送或部署。

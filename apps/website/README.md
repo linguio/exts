@@ -1,6 +1,6 @@
 # Exts 产品官网
 
-React 静态产品官网，使用 Vite、TypeScript、Tailwind CSS 与 shadcn/ui。首页显示 Exts 标语、Tabs／Media 叠放示意卡片、Chrome 与 macOS latest 直链入口；页头保留品牌 Logo，独立 Changelog 页面记录产品进展，页脚为 © 2026 Lin Gui。
+React 静态产品官网，使用 Vite、TypeScript、Tailwind CSS 与 shadcn/ui。首页显示 Exts 标语、Tabs／Media 叠放示意卡片、Chrome 与 macOS latest 直链入口；页头保留品牌 Logo，独立产品介绍页介绍模块用途，独立 Changelog 页面记录产品进展，页脚为 © 2026 Lin Gui。
 
 ## 开发与构建
 
@@ -25,17 +25,20 @@ pnpm web:build
 
 - src/app：React 启动、顶层页面组合与全局设计变量。
 - src/pages/home：首页正文布局，组合布局组件与下载模块。
-- src/components/layout：网站页头、页脚；src/components/ui：纳入 Git 的 shadcn 基础组件。
+- src/components/layout：SiteLayout 统一装配页头、页脚和正文，SiteDocumentLayout 统一产品介绍与更新日志的阅读框架；src/components/ui：纳入 Git 的 shadcn 基础组件。
 - src/features/download：组合 shadcn 平台下载链接。
 - src/features/showcase：首页模块示意卡片与轮换行为；assets 为现有扩展书签 SVG 的本地副本，网站不直接依赖扩展业务模块。
 - src/pages/changelog：更新日志页面与独立 React 入口；src/features/changelog：静态日志数据与时间线模块。
+- src/pages/features：功能介绍页面、独立 React 入口及本地静态模块文案。
 - src/config/site.ts：产品文案、GitHub 地址、固定 latest 下载链接与署名。
 - src/assets：用户提供的单色 Chrome、Apple 与 GitHub 品牌 SVG；public：已有正式品牌资源、favicon 与第三方许可声明。
 - src/lib/utils.ts：class-variance-authority 配合的本地样式合并工具，不提取共享 UI 包。
 
 ## 组件与资源
 
-视觉规则统一维护在[官网视觉规范](../../docs/website-ui.md)，包含已批准的主题、排版、间距和共享固定布局。两页使用共享 site-shell/site-container 样式与固定页头页脚，正文及锚点偏移引用相同高度变量，包含设备安全区；实际布局由用户验收。
+视觉规则统一维护在[官网视觉规范](../../docs/website-ui.md)，包含已批准的主题、排版、间距和共享固定布局。三页使用同一个 SiteLayout 与固定页头页脚；产品介绍与更新日志使用同一个 SiteDocumentLayout，统一阅读宽度、标题及基础排版。各页使用共享 site-shell/site-container 样式，正文及锚点偏移引用相同高度变量，包含设备安全区；实际布局由用户验收。
+
+Tooltip 使用现有 radix-ui 的 Provider、Trigger、Content 与 Portal；提示显示在入口下方，沿用语义颜色和固定页头之上的层级。实际交互由用户验收。全局 html 使用 scrollbar-gutter: stable 预留滚动条空间，减少长短页面切换的横向偏移。
 
 Button 来源于 shadcn 官方 new-york-v4 registry，保持 Radix Slot、variant、size 与 disabled 语义。仅把官方源码的 cn 导入改为本地已固定 clsx、tailwind-merge 工具；未引入新的 cn 包。components.json 保存网站组件生成配置；如使用 CLI，固定为 shadcn@4.21.4，生成后检查源码和依赖，禁止保留浮动版本或直接运行 @latest。
 
@@ -53,11 +56,17 @@ Lucide React 用于通用状态图标，平台与 GitHub 用品牌 SVG。Google 
 
 ## 更新日志
 
-页头 History 图标链接到 /changelog/，点击 Exts 返回首页。首页和 changelog/index.html 是两个 Vite HTML 入口，共享页头、页脚和样式；正式产物同时包含 index.html 与 changelog/index.html，支持 GitHub Pages 直接访问与刷新，不依赖 SPA 回退或额外路由库。
+页头 FileClock 图标以“更新日志”为提示，链接到 /changelog/，点击 Exts 返回首页。首页、changelog/index.html 和 features/index.html 是独立 Vite HTML 入口，共享页头、页脚和样式；正式产物包含三个页面，支持 GitHub Pages 直接访问与刷新，不依赖 SPA 回退或额外路由库。
 
-日志维护在 src/features/changelog/changelog-data.ts，按相关交付 Git 提交的实际时间倒序，日期统一转换为北京时间；同一天按实际提交顺序排列。按年份分组，桌面年份位于最左侧且每组仅显示一次，日期仅显示月日；手机端年份置于该组记录上方。年份可点击返回该年第一条，使用现有 shadcn Button 和原生锚点，具有悬停、按下及焦点反馈。每条只包含事件标题、平台标签和无序列表，无版本号或副标题。平台限定 Website、Chrome、macOS，使用官方 shadcn Badge 的黑底白字样式与小圆角；History 入口沿用现有 Button。
+日志维护在 src/features/changelog/changelog-data.ts，按相关交付 Git 提交的实际时间倒序，日期统一转换为北京时间；同一天按实际提交顺序排列。按年份分组，桌面年份位于最左侧且每组仅显示一次，日期仅显示月日；手机端年份置于该组记录上方。年份可点击返回该年第一条，使用现有 shadcn Button 和原生锚点，具有悬停、按下及焦点反馈。每条只包含事件标题、平台标签和无序列表，无版本号或副标题。平台限定 Website、Chrome、macOS，使用官方 shadcn Badge 的黑底白字样式与小圆角；更新日志入口沿用现有 Button，并使用共享 Tooltip。
 
 首批记录为“产品官网上线”和“Chrome 插件首次发布”；官网条目合并产品介绍、Latest 下载入口与更新时间线，日期按官网完善后的实际交付 Git 提交北京时间确认。日志不会自动从 Git 或 GitHub 生成；修改日志后需手动部署官网，不要求改根产品版本。
+
+## 产品介绍
+
+页头 BookOpen 图标位于更新日志入口旁，链接到 /features/；提示与页面标题均为“产品介绍”。两个入口共用基于现有 radix-ui 的 Tooltip，悬停或键盘聚焦显示名称，取代原生 title，不新增依赖。左侧提供“浏览器扩展”“桌面应用”“协同功能”三个分类，默认展示浏览器扩展；右侧每个模块仅包含标题和一句介绍。
+
+首批内容为 Tabs 与 Photos；协同分类显示“暂无协同功能”，不承诺上线时间。页面不放截图、卡片、能力标签或详细使用步骤。文案维护在 src/pages/features/features-page.tsx，不请求外部数据；已有模块用途改变或新模块交付时再更新。
 
 ## 下载行为
 
