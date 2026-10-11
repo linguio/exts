@@ -34,6 +34,8 @@ pnpm web:build
 
 ## 组件与资源
 
+视觉规则统一维护在[官网视觉规范](../../docs/website-ui.md)，包含已批准的主题、排版、间距和共享固定布局。两页使用共享 site-shell/site-container 样式与固定页头页脚，正文及锚点偏移引用相同高度变量，包含设备安全区；实际布局由用户验收。
+
 Button 来源于 shadcn 官方 new-york-v4 registry，保持 Radix Slot、variant、size 与 disabled 语义。仅把官方源码的 cn 导入改为本地已固定 clsx、tailwind-merge 工具；未引入新的 cn 包。components.json 保存网站组件生成配置；如使用 CLI，固定为 shadcn@4.21.4，生成后检查源码和依赖，禁止保留浮动版本或直接运行 @latest。
 
 Lucide React 用于通用状态图标，平台与 GitHub 用品牌 SVG。Google Chrome 与 Apple SVG 使用用户提供的原文件，不在运行时读取 Downloads。public/exts.svg 及各尺寸 PNG 沿用根 assets/brand/website 正式派生资源；不重绘或修改源稿。主体与跨平台外形见 [Logo 规范](../../docs/exts-logo.md)。第三方许可证随产物保留在 public/third-party-notices.txt，不作为页脚署名。
