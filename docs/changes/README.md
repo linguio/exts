@@ -79,7 +79,7 @@ docs/
 
 ## 当前 Issue
 
-无；前置部署工作项已完成，Changelog 工作项随下一笔交付提交登记。
+无；前置部署与 Changelog 工作项均已完成，下一项统一官网样式进入规划。
 
 ## Issue 队列
 
@@ -90,6 +90,8 @@ docs/
 - [X Download 下载失败恢复](./todo.md)
 
 ## 已完成
+
+- [添加独立更新时间线页面](./issues/2026-10-11-website-changelog-timeline-issue.md) · [Commit 记录](./commits/2026-10-11-website-changelog-timeline-commit.md)；用户确认本地阶段验收并批准提交，独立页面、年份分组与锚点、三条日志已交付；线上部署由用户操作。
 
 - [配置官网手动部署并统一 Actions 名称](./issues/2026-10-11-website-manual-pages-deploy-issue.md) · [Commit 记录](./commits/2026-10-11-website-manual-pages-deploy-commit.md)；用户确认最终验收通过并批准结项提交，线上 HTTPS、产物一致性和 Latest 链接已只读核验。
 
