@@ -1,6 +1,6 @@
 # Exts 产品官网
 
-React 静态产品官网，使用 Vite、TypeScript、Tailwind CSS 与 shadcn/ui。首页显示 Exts 标语、现有品牌 logo、Chrome 与 macOS latest 直链入口；独立 Changelog 页面记录产品进展，页脚为 © 2026 Lin Gui。
+React 静态产品官网，使用 Vite、TypeScript、Tailwind CSS 与 shadcn/ui。首页显示 Exts 标语、Tabs／Media 叠放示意卡片、Chrome 与 macOS latest 直链入口；页头保留品牌 Logo，独立 Changelog 页面记录产品进展，页脚为 © 2026 Lin Gui。
 
 ## 开发与构建
 
@@ -27,6 +27,7 @@ pnpm web:build
 - src/pages/home：首页正文布局，组合布局组件与下载模块。
 - src/components/layout：网站页头、页脚；src/components/ui：纳入 Git 的 shadcn 基础组件。
 - src/features/download：组合 shadcn 平台下载链接。
+- src/features/showcase：首页模块示意卡片与轮换行为；assets 为现有扩展书签 SVG 的本地副本，网站不直接依赖扩展业务模块。
 - src/pages/changelog：更新日志页面与独立 React 入口；src/features/changelog：静态日志数据与时间线模块。
 - src/config/site.ts：产品文案、GitHub 地址、固定 latest 下载链接与署名。
 - src/assets：用户提供的单色 Chrome、Apple 与 GitHub 品牌 SVG；public：已有正式品牌资源、favicon 与第三方许可声明。
@@ -39,6 +40,16 @@ pnpm web:build
 Button 来源于 shadcn 官方 new-york-v4 registry，保持 Radix Slot、variant、size 与 disabled 语义。仅把官方源码的 cn 导入改为本地已固定 clsx、tailwind-merge 工具；未引入新的 cn 包。components.json 保存网站组件生成配置；如使用 CLI，固定为 shadcn@4.21.4，生成后检查源码和依赖，禁止保留浮动版本或直接运行 @latest。
 
 Lucide React 用于通用状态图标，平台与 GitHub 用品牌 SVG。Google Chrome 与 Apple SVG 使用用户提供的原文件，不在运行时读取 Downloads。public/exts.svg 及各尺寸 PNG 沿用根 assets/brand/website 正式派生资源；不重绘或修改源稿。主体与跨平台外形见 [Logo 规范](../../docs/exts-logo.md)。第三方许可证随产物保留在 public/third-party-notices.txt，不作为页脚署名。
+
+## 首页模块展示
+
+正式卡片池只包含 Tabs、Photos，不保留示例卡。最多展示连续三张，少于三张时不重复补卡。自动轮播每次推进池起点，补入下一张，整池循环；点击只临时将当前可见卡片置前，自动下一组仍按原池顺序推进。十张卡片的补位与循环规则通过纯逻辑测试覆盖，无需将假模块加入正式页面。
+
+右侧为独立 Tabs／Media 示意，不是真实截图或业务入口。Tabs 只显示书签 SVG 与底部 Dock；Media 只显示图片和视频占位、月份、“已选 2”和文字“下载”。点击卡片仅置前，不下载媒体。点击与自动切换共用过渡，鼠标点击焦点不会阻止移开后继续轮换。
+
+默认 Tabs 在前，每 3 秒自动轮换；鼠标悬停或键盘焦点进入展示区时暂停，离开后重新计时。两张卡片为原生按钮，可用 Enter/Space 置前；没有底部切换栏。页面隐藏时暂停，减少动态效果时只手动切换，组件卸载清理定时器和监听。窄展示区自动收紧图标与 Dock 尺寸，实际布局由用户验收。
+
+卡片池规则检查：node --test apps/website/tests/showcase/card-pool.test.ts。测试覆盖十张池两轮循环、末尾补位、点击临时置前与小池场景；不覆盖浏览器动画、焦点或布局。
 
 ## 更新日志
 
