@@ -1,4 +1,4 @@
-import type { BuildOutput, Wxt } from 'wxt';
+import type { BuildOutput, Wxt, WxtDevServer } from 'wxt';
 
 /** 可替换的文件系统边界，用于测试复制、替换和权限异常。 */
 export interface StableBuildFileSystem {
@@ -41,6 +41,7 @@ export interface PublishStableBuildResult {
 
 /** 构建产物校验或稳定目录替换失败时抛出的错误。 */
 export class StableDevelopmentError extends Error {
+  constructor(message: string, cause?: Error & { code?: string });
   code?: string;
 }
 
@@ -61,4 +62,7 @@ export function createStableDevelopmentHooks(
   options?: StableDevelopmentHookOptions,
 ): {
   'build:done': (wxt: Wxt, output: Readonly<BuildOutput>) => Promise<void>;
+  'server:created': (wxt: Wxt, server: WxtDevServer) => void;
+  'server:started': (wxt: Wxt, server: WxtDevServer) => void;
+  'server:closed': (wxt: Wxt, server: WxtDevServer) => Promise<void>;
 };

@@ -13,6 +13,7 @@ import {
   join,
   relative,
   resolve,
+  sep,
 } from 'node:path';
 
 const nodeFileSystem = {
@@ -24,6 +25,9 @@ const nodeFileSystem = {
   rename,
   rm,
 };
+
+// 同一 WXT 实例重启时复用状态，避免叠加通知包装。
+const serverStates = new WeakMap();
 
 export class StableDevelopmentError extends Error {
   constructor(message, cause) {
@@ -43,8 +47,8 @@ export async function publishStableBuild({
   const sourcePath = resolve(sourceDir);
   const targetPath = resolve(targetDir);
 
-  if (sourcePath === targetPath) {
-    throw new StableDevelopmentError('源构建目录和稳定目录不能相同');
+  if (isWithin(sourcePath, targetPath) || isWithin(targetPath, sourcePath)) {
+    throw new StableDevelopmentError('源构建目录和稳定目录不能重叠');
   }
 
   const normalizedRequiredFiles = normalizeRequiredFiles(requiredFiles);
@@ -59,11 +63,11 @@ export async function publishStableBuild({
   try {
     await fileSystem.mkdir(dirname(targetPath), { recursive: true });
     await fileSystem.rm(stagingPath, { recursive: true, force: true });
+    stagingExists = true;
     await fileSystem.cp(sourcePath, stagingPath, {
       recursive: true,
       force: true,
     });
-    stagingExists = true;
     // 复制完成后再次校验，防止复制过程中的文件缺失进入稳定目录。
     await validateBuild(stagingPath, normalizedRequiredFiles, fileSystem);
 
@@ -134,30 +138,85 @@ export function createStableDevelopmentHooks({ suffix = '-stable', targetDir } =
     throw new StableDevelopmentError('稳定目录后缀必须是单一目录名片段');
   }
 
-  return {
-    'build:done': async (wxt, output) => {
-      // 生产构建仍使用 WXT 原始输出，不额外维护稳定目录。
-      if (wxt.config.command !== 'serve') return;
-
-      // WXT 的构建报告提供公共资源和 chunk，全部纳入发布前校验。
-      const requiredFiles = [
+  async function publishOutput(wxt, output) {
+    const result = await publishStableBuild({
+      sourceDir: wxt.config.outDir,
+      targetDir: targetDir ?? `${wxt.config.outDir}${suffix}`,
+      requiredFiles: [
         'manifest.json',
         ...(output?.publicAssets ?? []).map(asset => asset.fileName),
         ...(output?.steps ?? []).flatMap(step =>
           (step.chunks ?? []).map(chunk => chunk.fileName),
         ),
-      ];
-      const result = await publishStableBuild({
-        sourceDir: wxt.config.outDir,
-        targetDir: targetDir ?? `${wxt.config.outDir}${suffix}`,
-        requiredFiles,
-      });
+      ],
+    });
+    wxt.logger?.info?.(`稳定开发产物已发布到 ${relative(process.cwd(), result.targetDir)}`);
+    if (result.backupDir) wxt.logger?.warn?.(`旧产物清理失败，备份保留在 ${result.backupDir}`);
+  }
 
-      wxt.logger?.info?.(
-        `稳定开发产物已发布到 ${relative(process.cwd(), result.targetDir)}`,
-      );
+  function attach(wxt, server) {
+    if (wxt.config.command !== 'serve') return;
+    let state = serverStates.get(server);
+    if (state) {
+      state.wxt = wxt;
+      state.publish = publishOutput;
+      return state;
+    }
+    state = { active: true, generation: 0, lastOutput: undefined, queue: Promise.resolve(), wxt, publish: publishOutput };
+    serverStates.set(server, state);
+    for (const method of ['reloadExtension', 'reloadPage', 'reloadContentScript']) {
+      const original = server[method];
+      server[method] = function (...args) {
+        const output = server.currentOutput;
+        const generation = state.generation;
+        const context = this;
+        state.queue = state.queue.then(async () => {
+          if (!state.active || generation !== state.generation || !output || server.currentOutput !== output) return;
+          if (state.lastOutput !== output) {
+            await state.publish(state.wxt, output);
+            if (!state.active || generation !== state.generation || server.currentOutput !== output) return;
+            state.lastOutput = output;
+          }
+          original.apply(context, args);
+        }).catch(error => {
+          // 发布失败不让浏览器重载半成品；捕获后允许下一次成功构建恢复。
+          state.wxt.logger?.error?.('稳定产物同步失败，本次重载已取消', error);
+        });
+      };
+    }
+    return state;
+  }
+
+  return {
+    'server:created': (wxt, server) => { attach(wxt, server); },
+    'server:started': (wxt, server) => {
+      const state = attach(wxt, server);
+      if (state) {
+        state.active = true;
+        state.generation++;
+        state.lastOutput = undefined;
+      }
+    },
+    'server:closed': async (_, server) => {
+      const state = serverStates.get(server);
+      if (!state) return;
+      state.active = false;
+      state.generation++;
+      await state.queue;
+    },
+    'build:done': async (wxt, output) => {
+      // 生产构建仍使用 WXT 原始输出，不额外维护稳定目录。
+      if (wxt.config.command !== 'serve') return;
+      await publishOutput(wxt, output);
+      const state = wxt.server && serverStates.get(wxt.server);
+      if (state) state.lastOutput = output;
     },
   };
+}
+
+function isWithin(parent, child) {
+  const path = relative(parent, child);
+  return path === '' || (!path.startsWith(`..${sep}`) && path !== '..' && !isAbsolute(path));
 }
 
 function normalizeRequiredFiles(requiredFiles) {

@@ -48,6 +48,14 @@ async function createDirectory(directory) {
 }
 
 describe('publishStableBuild', () => {
+  it('拒绝源目录和目标目录重叠，保留源文件', async () => {
+    const { sourceDir, targetDir, root } = await createFixture();
+    for (const target of [sourceDir, join(sourceDir, 'nested'), root]) {
+      await expect(publishStableBuild({ sourceDir, targetDir: target })).rejects.toThrow('重叠');
+      expect(await readFile(join(sourceDir, 'background.js'), 'utf8')).toContain('new');
+    }
+    expect(await readFile(join(targetDir, 'manifest.json'), 'utf8')).toBe('old-manifest');
+  });
   it('publishes a complete build and removes temporary swap directories', async () => {
     const { root, sourceDir, targetDir } = await createFixture();
 
@@ -164,6 +172,60 @@ describe('publishStableBuild', () => {
 });
 
 describe('createStableDevelopmentHooks', () => {
+  it('增量产物先同步再转发重载，保留参数与上下文，失败后可恢复', async () => {
+    const { sourceDir, targetDir } = await createFixture();
+    const events = [];
+    const errors = [];
+    const makeOutput = () => ({ publicAssets: [], steps: [{ chunks: [{ fileName: 'background.js' }] }] });
+    const server = {
+      currentOutput: undefined,
+      reloadExtension() { events.push({ self: this, kind: 'extension' }); },
+      reloadPage(path) { events.push({ self: this, kind: 'page', path }); },
+      reloadContentScript(payload) { events.push({ self: this, kind: 'content', payload }); },
+    };
+    const wxt = {
+      config: { command: 'serve', outDir: sourceDir }, server,
+      logger: { info() {}, error(error) { errors.push(error); } },
+    };
+    const hooks = createStableDevelopmentHooks({ targetDir });
+    hooks['server:created'](wxt, server);
+    hooks['server:started'](wxt, server);
+    const initial = makeOutput();
+    await hooks['build:done'](wxt, initial);
+    server.currentOutput = initial;
+    await writeFile(join(sourceDir, 'background.js'), 'incremental');
+    server.currentOutput = makeOutput();
+    const payload = { contentScript: { js: ['background.js'] } };
+    server.reloadPage('newtab.html');
+    server.reloadContentScript(payload);
+    expect(events).toEqual([]);
+    await expect.poll(async () => (await readFile(join(targetDir, 'background.js'), 'utf8'))).toBe('incremental');
+    await expect.poll(() => events.length).toBe(2);
+    expect(events[0]).toEqual({ self: server, kind: 'page', path: 'newtab.html' });
+    expect(events[1].payload).toBe(payload);
+    await rm(join(sourceDir, 'background.js'));
+    server.currentOutput = makeOutput();
+    server.reloadExtension();
+    await expect.poll(() => errors.length).toBe(1);
+    expect(events.length).toBe(2);
+    expect(await readFile(join(targetDir, 'background.js'), 'utf8')).toBe('incremental');
+    await writeFile(join(sourceDir, 'background.js'), 'recovered');
+    server.currentOutput = makeOutput();
+    server.reloadExtension();
+    await expect.poll(() => events.length).toBe(3);
+    expect(await readFile(join(targetDir, 'background.js'), 'utf8')).toBe('recovered');
+    hooks['server:closed'](wxt, server);
+    server.reloadExtension();
+    await new Promise(resolve => setTimeout(resolve, 30));
+    expect(events.length).toBe(3);
+    hooks['server:started'](wxt, server);
+    await hooks['build:done'](wxt, server.currentOutput);
+    server.reloadPage('newtab.html');
+    await expect.poll(() => events.length).toBe(4);
+    server.reloadPage('cancelled.html');
+    await hooks['server:closed'](wxt, server);
+    expect(events.length).toBe(4);
+  });
   it('发布到指定根目标且缺失文件时保留上一份稳定产物', async () => {
     const { root, sourceDir } = await createFixture();
     const targetDir = join(root, 'dist', 'dev', 'chrome-mv3-dev-stable');
