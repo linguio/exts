@@ -83,7 +83,7 @@ docs/
 
 ## Issue 队列
 
-无。
+- [扩展首页工具介绍并统一许可证页脚](./issues/2026-10-12-website-home-tool-categories-issue.md) · [Commit 记录](./commits/2026-10-12-website-home-tool-categories-commit.md)；已排队，用户批准整理工作项，当前 npm 发布 Issue 完结后再确认开始，尚未修改页面。
 
 ## 待办
 
