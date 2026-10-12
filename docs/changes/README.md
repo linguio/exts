@@ -79,7 +79,7 @@ docs/
 
 ## 当前 Issue
 
-无。
+- [公开发布 WXT 稳定产物工具并建立手动发布流程](./issues/2026-10-12-wxt-stable-output-npm-release-issue.md) · [Commit 记录](./commits/2026-10-12-wxt-stable-output-npm-release-commit.md)；用户已验收本地交付并批准两笔本地提交；浏览器、首发、Trusted Publisher 和 Action 远程验证仍待完成，不关闭 Issue，未推送或发布。
 
 ## Issue 队列
 

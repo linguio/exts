@@ -1,154 +1,100 @@
-# Stable Extension Dev
+# @linguio/wxt-stable-output
 
-为基于 WXT 的 Chrome/Edge 扩展提供稳定的本地开发产物。
+[中文说明](./README.zh-CN.md)
 
-## 为什么需要它
+Keep a validated, last-successful unpacked extension directory during WXT development.
 
-WXT 开发模式会持续把产物写入临时目录。重新构建开始时，这个目录可能被清空；如果浏览器直接加载该目录，构建失败或构建过程中的中间状态可能让已加载的扩展暂时不可用。
+WXT clears its working output on a full startup or restart. Loading that directory directly in Chrome/Edge can expose missing extension files during rebuilding. This package publishes complete builds to a separate stable directory and preserves the previous build if validation or replacement fails.
 
-本工具在 WXT 构建完成后校验完整产物，并将它发布到同级的稳定目录：
+Ordinary page HMR is still provided by WXT/Vite. This package does not make it faster or keep dev-server-dependent pages working while the server is unavailable.
 
-```text
-临时开发产物：dist/chrome-mv3-dev/
-稳定开发产物：dist/chrome-mv3-dev-stable/
-生产产物：    dist/chrome-mv3/
-```
+## Compatibility
 
-浏览器只加载稳定开发目录。成功构建才会更新稳定目录；失败构建不会删除或覆盖上一份成功产物。
+The initial release is tested with **WXT 0.21.4**, **Node.js 24.16.0**, and Chrome/Edge unpacked extensions. WXT is an exact peer dependency because reload synchronization depends on its lifecycle. Other versions and browsers are not claimed as supported.
 
-## 适用范围
+## Installation
 
-- WXT 管理的 Chrome 或 Edge 扩展。
-- 需要让浏览器持续加载上一份完整开发产物的本地开发流程。
-- 不希望额外启动常驻复制脚本或第二个终端进程的项目。
+~~~sh
+npm install --save-dev --save-exact @linguio/wxt-stable-output@1.0.0 wxt@0.21.4
+~~~
 
-本工具只处理构建产物发布，不负责启动 WXT、提供 HMR，也不负责自动打开浏览器。
-
-## WXT 接入
-
-在扩展的 `wxt.config.ts` 中引入 hook：
-
-```ts
-import { createStableDevelopmentHooks } from '@exts/stable-extension-dev';
+~~~ts
 import { defineConfig } from 'wxt';
+import { createStableDevelopmentHooks } from '@linguio/wxt-stable-output';
 
 export default defineConfig({
   hooks: {
     ...createStableDevelopmentHooks(),
   },
 });
-```
+~~~
 
-接入后继续使用项目原有的开发命令，例如：
+Run your existing development command. After the first successful build, load **.output/chrome-mv3-dev-stable** using Load unpacked in Chrome or Edge. With a custom outDir, the default stable target is its resolved development output directory plus -stable.
 
-```bash
-pnpm dev
-```
+Keep the dev server running: development HTML can load scripts/styles from localhost. Production builds do not publish a stable copy.
 
-工具只在 WXT 的 `serve` 开发命令中发布稳定产物。生产构建不会额外生成 `-stable` 目录。
+## Updates
 
-## 发布保证
+- Full successful builds publish through build:done.
+- Incremental disk builds update server.currentOutput; the package publishes before forwarding WXT's extension/page/content-script reload notification.
+- Vite module HMR continues unchanged without copying the full extension on every edit.
+- Missing output, invalid Manifest, copying or replacement failure prevents publication. Incremental errors are logged and that reload is suppressed; later success can recover.
 
-每次开发构建完成后，工具会：
+The integration wraps reloadExtension, reloadPage and reloadContentScript. Arguments, context and void returns are preserved. Notifications can be delayed until publication finishes. Closing/restarting invalidates queued notifications. Avoid replacing these methods yourself after registration.
 
-1. 确认源构建目录存在且确实是目录。
-2. 确认 `manifest.json` 可读取、可解析，且 Manifest 版本、名称和版本号完整。
-3. 确认 WXT 报告的公共资源和构建 chunk 都存在且是普通文件。
-4. 将完整源目录复制到稳定目录旁的暂存目录。
-5. 再次校验暂存目录。
-6. 通过同文件系统的目录替换更新稳定目录。
+## Options
 
-如果校验、复制或目录替换失败：
-
-- 当前稳定目录保持不变。
-- 不会把不完整的开发产物发布给浏览器。
-- Windows 文件占用或替换失败时会抛出带错误码的 `StableDevelopmentError`。
-- 如果旧目录无法恢复，错误信息会给出旧目录备份路径。
-
-暂存目录和备份目录会在成功完成后清理；清理失败不会破坏已经发布的稳定目录。
-
-## 自定义稳定目录后缀
-
-默认后缀是 `-stable`：
-
-```ts
+~~~ts
 createStableDevelopmentHooks({ suffix: '-browser' });
-```
+createStableDevelopmentHooks({ targetDir: '/absolute/path/to/stable-extension' });
+~~~
 
-例如，`dist/chrome-mv3-dev` 会发布到 `dist/chrome-mv3-dev-browser`。后缀必须是单一目录名片段，不能包含路径分隔符。
+The default suffix is -stable. A custom target overrides the suffix-derived path. Source and target must not be the same or contain each other. Use separate targets for different browser/manifest configurations and one WXT process per target.
 
-## 直接使用发布器
+Spread **all** hooks. When overriding build:done, delegate to the original:
 
-统一应用可以配置绝对稳定目标目录，将临时目录放到根缓存目录，完整稳定产物发布到根开发目录：
-
-```ts
-createStableDevelopmentHooks({ targetDir: '/absolute/repository/dist/dev/chrome-mv3-dev-stable' });
-```
-
-省略 targetDir 时继续采用同级后缀；配置目标也保留相同的完整性校验、暂存和异常恢复规则。
-
-如果项目需要自行控制 WXT hook，也可以直接调用 `publishStableBuild`：
-
-```ts
-import { publishStableBuild } from '@exts/stable-extension-dev';
-
-await publishStableBuild({
-  sourceDir: 'dist/chrome-mv3-dev',
-  targetDir: 'dist/chrome-mv3-dev-stable',
-  requiredFiles: ['manifest.json', 'background.js'],
+~~~ts
+const stable = createStableDevelopmentHooks();
+export default defineConfig({
+  hooks: {
+    ...stable,
+    'build:done': async (wxt, output) => {
+      await stable['build:done'](wxt, output);
+    },
+  },
 });
-```
+~~~
 
-`manifest.json` 无论是否出现在 `requiredFiles` 中都会被强制校验。`requiredFiles` 中的路径必须是源目录内的相对文件路径，不能包含绝对路径或 `..`。
+## Direct publisher
 
-返回值：
+~~~ts
+import { publishStableBuild } from '@linguio/wxt-stable-output';
 
-```ts
-{
-  targetDir: string;
-  backupDir?: string;
-}
-```
+const result = await publishStableBuild({
+  sourceDir: '/absolute/path/to/complete-build',
+  targetDir: '/absolute/path/to/stable-extension',
+  requiredFiles: ['background.js'],
+});
+~~~
 
-正常情况下 `backupDir` 不存在；只有旧目录替换完成后清理失败时才会返回备份目录路径。
+manifest.json is always required. Additional paths must be relative files inside the source, without .. segments. The result contains targetDir and optional backupDir when old-output cleanup fails. StableDevelopmentError includes a filesystem code when available.
 
-## 浏览器使用方式
+## Guarantees and limits
 
-开发时：
+The publisher validates source and staging output, then replaces the stable directory using a sibling backup. Installation failure triggers attempted restoration; failure to restore reports the backup location.
 
-1. 运行扩展原有的 WXT 开发命令。
-2. 等待第一次构建成功并看到稳定产物发布日志。
-3. 在 Chrome 或 Edge 的扩展管理页面选择“加载已解压的扩展程序”。
-4. 选择 `dist/<browser>-mv<manifest>-dev-stable/`。
+This is **not an uninterrupted atomic directory exchange**: the target briefly disappears between renames. Validation checks Manifest fields and reported file existence, not code correctness. Concurrent source writes are not a guaranteed byte-for-byte snapshot. Run one WXT process per target. The package does not eliminate browser context invalidation or dependencies on the dev server.
 
-生产验收时选择 `dist/<browser>-mv<manifest>/`，不要加载 WXT 的 `-dev` 临时目录。
+## Development
 
-如果控制台出现 `localhost:<port>` 的 WebSocket connection refused：
+~~~sh
+pnpm --filter @linguio/wxt-stable-output test
+pnpm --filter @linguio/wxt-stable-output typecheck
+pnpm --filter @linguio/wxt-stable-output verify:integration
+~~~
 
-- 确认 WXT 开发命令仍在运行。
-- 确认浏览器连接的是当前开发服务器端口。
-- 稳定产物工具不会启动或代理 WXT 的 WebSocket 服务。
+The integration check installs an actual tarball into an isolated consumer and reuses locally installed exact-version WXT/Node type peers. It checks public types and real WXT startup, incremental background rebuilding, failure preservation, recovery and restart without opening a browser. Browser acceptance is manual.
 
-## 测试
+This monorepo uses a local workspace dependency; npm publication does not change it. The package version is independent of the application version.
 
-本包的自动化测试覆盖：
-
-- 成功发布完整构建。
-- 无效 Manifest 拒绝发布。
-- 缺少必需文件拒绝发布。
-- 复制或目录替换失败时保留旧稳定目录。
-- Windows 风格的 `EPERM` 替换异常。
-- WXT 开发命令发布稳定目录。
-- WXT 生产构建不发布稳定目录。
-
-运行测试：
-
-```bash
-pnpm --filter @exts/stable-extension-dev test
-```
-
-集成扩展还应在 Chrome 或 Edge 中完成一次“成功构建 → 构建失败 → 修复后恢复构建”的实际加载验证。
-
-## 当前状态
-
-当前包作为 `exts` monorepo 中的共享 WXT 开发工具，已由现有扩展项目接入。扩展项目不应复制内部的校验、复制或目录替换逻辑。
+MIT. See [LICENSE](./LICENSE) and [CHANGELOG](./CHANGELOG.md).

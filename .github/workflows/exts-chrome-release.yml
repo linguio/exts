@@ -63,7 +63,7 @@ jobs:
       - name: Test release behavior
         run: node --test tests/build-release.test.mjs tests/extension-release.test.mjs
       - name: Test stable extension publication
-        run: pnpm --filter @exts/stable-extension-dev test
+        run: pnpm --filter @linguio/wxt-stable-output test
       - name: Test extension
         run: pnpm --filter @exts/extension test
       - name: Typecheck extension

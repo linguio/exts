@@ -2,7 +2,7 @@ import { basename, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import tailwindcss from '@tailwindcss/vite';
-import { createStableDevelopmentHooks } from '@exts/stable-extension-dev';
+import { createStableDevelopmentHooks } from '@linguio/wxt-stable-output';
 import { defineConfig } from 'wxt';
 
 import { createBundleSizeWarningHook } from './scripts/bundle-size.mjs';
