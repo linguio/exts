@@ -79,7 +79,7 @@ docs/
 
 ## 当前 Issue
 
-- [修复 NPM 发布器的跨平台 CLI 路径](./issues/2026-10-13-repo-npm-cli-path-issue.md) · [Commit 记录](./commits/2026-10-13-repo-npm-cli-path-commit.md)；待验收，本地 9 项测试和 CLI 调用通过；远程 Actions 尚未运行，不提交、推送或发布。
+无。
 
 
 
@@ -94,6 +94,8 @@ docs/
 - [X Download 下载失败恢复](./todo.md)
 
 ## 已完成
+
+- [修复 NPM 发布器的跨平台 CLI 路径](./issues/2026-10-13-repo-npm-cli-path-issue.md) · [Commit 记录](./commits/2026-10-13-repo-npm-cli-path-commit.md)；路径修复已存在本地提交，本轮关闭 stage 自动缓存并按用户批准本地结项；原 9 项测试及 CLI 调用通过，本轮配置核对通过，远程仍待验证，不推送或发布。
 
 - [统一 Actions 名称与部署入口](./issues/2026-10-13-repo-unify-actions-entrypoints-issue.md) · [Commit 记录](./commits/2026-10-13-repo-unify-actions-entrypoints-commit.md)；用户验收通过并批准两笔本地提交，Exts Deploy / NPM Publish 与目标选择已交付；Desktop 仅提示尚未接入，远程 Actions 未运行，未推送或发布。
 
