@@ -1,18 +1,72 @@
-name: Exts Release Deploy
+name: Exts Deploy
 
 on:
   workflow_dispatch:
+    inputs:
+      target:
+        description: '选择部署目标；Desktop 暂未接入发布'
+        required: true
+        type: choice
+        default: Website
+        options:
+          - Website
+          - Chrome
+          - Desktop
 
 permissions:
   contents: read
 
 concurrency:
-  group: exts-chrome-release
+  group: exts-deploy-${{ inputs.target }}
   cancel-in-progress: false
 
 jobs:
-  release:
-    if: github.ref == 'refs/heads/main'
+  website-build:
+    if: github.ref == 'refs/heads/main' && inputs.target == 'Website'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout website commit
+        uses: actions/checkout@v5.0.0
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 12.4.2
+      - name: Setup Node.js
+        uses: actions/setup-node@v5.0.0
+        with:
+          node-version: 24.16.0
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5.0.0
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck website
+        run: pnpm --filter @exts/website typecheck
+      - name: Build website
+        run: pnpm web:build
+      - name: Upload website artifact
+        uses: actions/upload-pages-artifact@v4.0.0
+        with:
+          path: dist/build/exts-web
+
+  website-deploy:
+    if: github.ref == 'refs/heads/main' && inputs.target == 'Website'
+    needs: website-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy website to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4.0.5
+
+  chrome-release:
+    if: github.ref == 'refs/heads/main' && inputs.target == 'Chrome'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
@@ -96,3 +150,14 @@ jobs:
             --title "Exts $VERSION" --notes-file "$RUNNER_TEMP/exts-release-notes.md"
           gh release view "$TAG" --json url,tagName,isDraft,assets >> "$GITHUB_STEP_SUMMARY"
           echo '草稿已生成；浏览器验收并公开 Release 后才有公开下载入口。' >> "$GITHUB_STEP_SUMMARY"
+
+  desktop:
+    if: github.ref == 'refs/heads/main' && inputs.target == 'Desktop'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    permissions: {}
+    steps:
+      - name: Explain Desktop availability
+        run: |
+          echo 'Desktop 发布尚未接入；本次仅展示提示，不构建、打包或上传桌面产物。'
+          echo 'Desktop 发布尚未接入；没有生成或发布桌面产物。' >> "$GITHUB_STEP_SUMMARY"

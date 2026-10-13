@@ -94,7 +94,11 @@ project.yml 是原生配置入口，desk 命令先用 XcodeGen 生成工程再�
 
 pnpm ext:release 独立构建扩展，检查 Manifest 版本、新标签页入口及图标资源，生成 ZIP 并校验后发布到根 dist/release。本地允许再次打包，完成暂存生成与校验后替换固定文件，失败保留旧包。Windows 使用系统 PowerShell/.NET ZIP，Linux/macOS 使用 zip/unzip；此命令不构建网站或桌面，不创建 Tag 或上传。
 
-手动流程 .github/workflows/exts-chrome-release.yml 仅允许 main，执行冻结安装、发布脚本与稳定目录测试、扩展测试、类型检查、构建打包与体积检查。全部通过后创建指向本次构建提交的 v<版本> Tag 与 Release 草稿，只上传固定名 exts-chrome.zip。已有 Release 拒绝覆盖，已有 Tag 指向不同提交时失败；失败草稿需人工检查，不自动删除或覆盖。
+手动流程 .github/workflows/exts-deploy.yml 展示为 Exts Deploy，仅允许 main，通过下拉选择 Website、Chrome 或 Desktop，不因推送自动运行。选择 Chrome 时执行冻结安装、发布脚本与稳定目录测试、扩展测试、类型检查、构建打包与体积检查。全部通过后创建指向本次构建提交的 v<版本> Tag 与 Release 草稿，只上传固定名 exts-chrome.zip。已有 Release 拒绝覆盖，已有 Tag 指向不同提交时失败；失败草稿需人工检查，不自动删除或覆盖。
+
+选择 Website 时只构建、校验官网并部署 dist/build/exts-web 到 GitHub Pages，保留 github-pages 环境。选择 Desktop 时只显示“发布尚未接入”，不检出源码、不构建或上传产物，不创建 Tag 或 Release。各目标使用独立并发组，只有官网部署 job 获得 Pages/OIDC 权限，只有 Chrome job 获得 Release 写权限，Desktop job 无仓库权限。
+
+GitHub Actions → Exts Deploy → Run workflow，分支选择 main，在 target 下拉选择目标。NPM 工具包使用独立 NPM Publish 入口，暂存上传与网页批准规则见 [NPM 发布指导](./npm-release.md)。旧 Website Deploy 与 Release Deploy 文件已由统一入口替代。
 
 首次运行需先提交并推送 workflow 到 main，再从 Actions 手动运行。下载草稿 ZIP 后由用户解压并在 Chrome/Edge 扩展管理页加载验收；公开 Release 后核实附件下载地址。草稿和成功打包都不等于公开发布成功，GitHub 自动生成的 Source code ZIP 不是扩展安装包。
 
