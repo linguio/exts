@@ -42,12 +42,12 @@
 
 ## 发布流程
 
-- 新增一个仓库级手动 workflow，输入完整包名，在 main 的明确提交上运行；不因 push 自动发布。
+- 新增一个仓库级手动 workflow，通过 GitHub 原生下拉框选择公开包，在 main 的明确提交上运行；不因 push 自动发布。选项列出当前全部可发布包（现有 `@linguio/wxt-stable-output`），新增公开包时同步维护，私有工具不列入。
 - 发布工具只从 `packages` 中选择名称完全匹配、允许公开发布的包，拒绝路径输入、私有包、应用包、重复名称和已存在的 npm 版本。参数通过环境变量或参数数组传递，不拼接执行输入。
-- 串行完成目标包测试、类型检查、必要构建与 tarball 消费验证；先验证打包元信息和文件清单，再发布同一份已验证 tarball。
+- 串行完成目标包测试、类型检查、必要构建与 tarball 消费验证；先验证打包元信息和文件清单，再暂存同一份已验证 tarball。2026-10-13 用户选择暂存发布：Action 不直接正式发布，用户在 npm 网页审核并完成 2FA 后批准。
 - 同一包串行发布，不取消运行中的发布；失败退出非零，日志和摘要给出所选包、版本、Git 提交及实际结果。不改版本、锁文件、Git 状态或其他包。
-- 使用 GitHub 托管 runner、精确 Node/pnpm/npm 和 Action 版本，发布 job 获得 `id-token: write`，使用 npm Trusted Publishing；不保存长期 npm Token。
-- 每个包在 npm 设置中分别绑定同一 GitHub 仓库和 workflow 文件。首版包尚未存在时，先引导用户批准并完成本地首发，再绑定 Trusted Publisher；后续版本用于验收 Action 发布，不能重复发布同一个版本。
+- 使用 GitHub 托管 runner、精确 Node/pnpm/Action 和 npm CLI 11.15.0；stage job 使用用户自行配置的 stage-only `NPM_TOKEN`，不授予 `id-token: write`，prepare job 不接收 Token。不把 Token 写入源码或日志。
+- 首次也从 Actions 上传暂存区，不要求本地首发；新包会建立公开 `0.0.0-stage` 占位版本，目标版本和内容在人工批准前不公开。摘要提供暂存编号、包名、版本和源码提交，不能写成正式发布成功。已有暂存或正式版本拒绝重传；结果解析异常时先人工核对，不自动重试。未来改用 OIDC 需单独批准配置。
 - 可在未提交前执行本地验证，但远程运行需 workflow 已提交并推送，实际发布需用户分别批准。Actions 验收不以 YAML 或本地测试通过替代。
 
 ## 验证与停止点

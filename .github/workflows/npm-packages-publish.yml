@@ -4,9 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: '完整公开包名，例如 @linguio/wxt-stable-output'
+        description: '选择要上传到 npm 暂存区的公开包'
         required: true
-        type: string
+        type: choice
+        default: '@linguio/wxt-stable-output'
+        options:
+          - '@linguio/wxt-stable-output'
 
 permissions:
   contents: read
@@ -32,7 +35,7 @@ jobs:
         with:
           node-version: 24.16.0
       - name: Pin npm CLI
-        run: npm install --global npm@11.13.0 --ignore-scripts
+        run: npm install --global npm@11.15.0 --ignore-scripts
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
       - name: Test common release rules
@@ -50,13 +53,12 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  publish:
+  stage:
     needs: prepare
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
       contents: read
-      id-token: write
     steps:
       - name: Checkout same commit
         uses: actions/checkout@v5.0.0
@@ -64,14 +66,21 @@ jobs:
         uses: actions/setup-node@v5.0.0
         with:
           node-version: 24.16.0
+          registry-url: https://registry.npmjs.org/
       - name: Pin npm CLI
-        run: npm install --global npm@11.13.0 --ignore-scripts
+        run: npm install --global npm@11.15.0 --ignore-scripts
       - name: Download verified package
         uses: actions/download-artifact@v4.3.0
         with:
           name: npm-release-${{ github.run_id }}
           path: dist/.cache/npm-publish
-      - name: Publish using npm Trusted Publishing
+      - name: Upload to npm staging for manual approval
         env:
           PACKAGE_NAME: ${{ inputs.package }}
-        run: node packages/npm-release-tools/publish.mjs publish "$PACKAGE_NAME" dist/.cache/npm-publish
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "请先配置 stage-only NPM_TOKEN 仓库 Secret"
+            exit 1
+          fi
+          node packages/npm-release-tools/publish.mjs stage "$PACKAGE_NAME" dist/.cache/npm-publish

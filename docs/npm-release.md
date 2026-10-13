@@ -6,11 +6,11 @@
 
 源码仍在 `packages/wxt-stable-output`。仓库内用精确 workspace 引用本地源码，外部项目安装 npm 版本。工具版本独立于根产品版本；升级时同步包 `package.json`、内部引用和 `pnpm-lock.yaml`，写变更说明，再验证。已发布的同版本不能覆盖。
 
-本地及 CI 固定 Node.js `24.16.0`、pnpm `12.4.2`，发布 npm CLI `11.13.0`。首版 WXT peer 为 `0.21.4`，不默认兼容未验证版本。
+本地及 CI 固定 Node.js `24.16.0`、pnpm `12.4.2`，发布 npm CLI `11.15.0`。首版 WXT peer 为 `0.21.4`，不默认兼容未验证版本。
 
 ## 当前阶段与批准
 
-本地完成不代表已在 npm 发布，也不代表 Actions 已远程通过。Git 提交、推送、首次 npm 发布、npm 账号配置和 workflow 触发需分别批准；本文中的外部操作在对应批准后进行。
+本地完成不代表已在 npm 发布，也不代表 Actions 已远程通过。Git 提交、推送、npm 账号配置、workflow 上传暂存区和最终批准发布需分别批准；本文中的外部操作在对应批准后进行。
 
 ## 本地验证
 
@@ -52,53 +52,60 @@ pnpm --filter @linguio/wxt-stable-output exec wxt --root "<fixture绝对路径>"
 
 不要用破坏入口语法替代第 4 步：当前 WXT 入口解析错误可能终止开发进程，本包不修复上游解析器。两次 rename 间存在短暂路径窗口；并发改写源文件不是逐字节快照，必须一进程一目标。
 
-## 首次发布
+## Actions 上传暂存区
 
-首次发布前确认 npm 邮箱和 2FA，`npm whoami` 应为 `linguio`，确认目标包版本未发布。不要把登录 Token 或 OTP 发到聊天中。
+当前流程：GitHub Actions 验证并打包 → 上传 npm 暂存区 → 用户在 npm 网页审核、完成 2FA 并批准 → 正式发布。Action 成功只表示暂存成功，不表示已正式发布。首次发布也采用此流程，不要求本地先发布 1.0.0。
 
-完成本地验收、提交与推送并分别批准发布后，可先准备可审核 tarball：
+暂存发布要求 npm CLI 11.15.0 或更高；本流程固定 11.15.0，Node.js 仍为 24.16.0。提交前可使用仓库专属缓存中的 CLI 验证，不修改系统 npm 或业务依赖。
+
+### 首次配置
+
+1. 确认 npm 用户为 `linguio`，账号已启用 2FA，邮箱已验证。
+2. npm 头像 → Access Tokens → Generate New Token：
+   - 名称：`github-actions-exts-npm-publish`。
+   - Packages and scopes：**Read and write (stage only)**，仅授权 `@linguio` scope。
+   - Organizations：**No access**；Allowed IP ranges 留空。
+   - 无需 Bypass 2FA；选择符合使用周期的有效期，Token 过期后需重新生成并替换 Secret。
+3. GitHub 仓库 → Settings → Secrets and variables → Actions → New repository secret，名称 `NPM_TOKEN`，值填写生成的 Token。不要把 Token 写入仓库或聊天。
+4. 用户验收并批准提交、推送后，确认 main 上包含本次 workflow 和源码。
+
+Token 仅提供给 stage job 的上传步骤。prepare job 不接收 Token；stage job 不具备 OIDC 发布权限。缺少 Token 时明确失败，不降级为直接发布。
+
+### 手动运行
+
+1. GitHub 仓库 → Actions → **npm Packages Publish** → **Run workflow**。
+2. 分支选 `main`，在包名下拉框选择 `@linguio/wxt-stable-output`；当前只列出这一项公开包，私有发布工具不列入选项。
+3. prepare job 检查包和版本，串行验证，打包并上传 tarball/receipt。
+4. stage job 核对同一源码提交、文件清单与 SHA-512，执行 `npm stage publish` 上传同一 tarball。
+5. 摘要显示包名、版本、源码提交和暂存编号，并明确“尚未正式发布”。不自动执行 `npm publish` 或 `npm stage approve`。
+
+非法输入、私有包、已发布版本、验证或校验失败均不上传。相同版本已在暂存区时 npm 会拒绝再次上传；先检查已有暂存项，不盲目重跑。上传命令成功但结果解析失败时也先检查 Staged Packages，不重传同版本。
+
+新包首次暂存会建立公开占位版本 `0.0.0-stage`；待审核版本及其内容不会公开。占位版本不表示 `1.0.0` 已发布。
+
+### npm 网页审核与批准
+
+1. 登录 npm，打开 **Staged Packages**，找到摘要中相同的暂存编号。
+2. 核对包名 `@linguio/wxt-stable-output`、版本 `1.0.0`、文件清单和包内容；必要时下载 tarball 检查。
+3. 点击 **Approve** 并完成 2FA。Token 不会跳过人工批准。
+4. 打开 [npm 包页面](https://www.npmjs.com/package/@linguio/wxt-stable-output)，确认正式版本出现；在仓库外安装该精确版本并按 README 接入 WXT。
+5. 不接受产物时拒绝暂存项；不需要以虚构新版本绕过已有暂存项。
+
+远程 Action 上传、网页批准与公开安装必须分别实际验证；本地测试通过不代表这些操作完成。本轮代理不操作 Token、Secret、推送、workflow 或 npm 批准。
+
+## 本地准备
+
+在仓库根执行下列命令只查询、验证和打包，不上传或发布：
 
 ```sh
 node packages/npm-release-tools/publish.mjs prepare @linguio/wxt-stable-output
 ```
 
-此命令只查询版本、验证和打包，不发布。控制台给出根 `dist/.cache/npm-release` 下的产物目录。人工检查包名、版本、文件及对应提交后，在仓库根发布那一份 tarball：
-
-```sh
-npm publish "<产物目录>/linguio-wxt-stable-output-1.0.0.tgz" --access public --registry https://registry.npmjs.org/ --ignore-scripts
-```
-
-完成 npm 的 2FA 提示，检查 [npm 包页面](https://www.npmjs.com/package/@linguio/wxt-stable-output)。首次建立包后再设置 Trusted Publisher；发布不会自动把本地 workspace 改成远程依赖。
-
-## 配置 npm Trusted Publisher
-
-打开 npm 包页面 → Settings → Trusted Publisher → GitHub Actions，填写：
-
-| 字段 | 值 |
-|---|---|
-| GitHub owner | linguio |
-| Repository | exts |
-| Workflow filename | npm-packages-publish.yml |
-| Environment | 留空；当前 workflow 不使用 environment |
-
-不要填 workflow 的展示名称 `npm Packages Publish`，也不要填 `.github/workflows/` 前缀。无需添加 NPM_TOKEN。绑定配置需在 npm 要求的有效期内完成首次成功使用；按当前规则是两天，超时需删除后重新配置。配置前应先准备好下一个真实版本，避免绑定后无版本可发布。
-
-依据：[npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/)。账号界面字段以实际页面为准；我们不自动修改账号设置。
-
-## 后续 Actions 发布与首次远程验收
-
-1. 有实际修复/更新时提升工具版本，更新内部精确引用、锁文件及 CHANGELOG，完成验收与提交审批后推送 main。
-2. GitHub 仓库 → Actions → **npm Packages Publish** → **Run workflow**；分支选 main，包名填 `@linguio/wxt-stable-output`。
-3. prepare job 查询版本、测试、类型检查、独立验证和打包，上传 tarball/receipt；此 job 没有 npm 发布权限。
-4. publish job 使用 OIDC，核对包名、版本、源码提交、清单和 SHA-512，再发布同一 tarball。摘要给出结果和 npm 链接。
-5. npm 页面应出现新版本；在仓库外测试目录安装该精确版本，并按 README 接入一个 WXT 项目。
-6. 输入不存在的包名应失败且无发布；同版本再次运行应在准备阶段拒绝，不覆盖线上包。
-
-远程流程需实际运行后才算验收。`1.0.0` 本地首发后不能再用 Action 发布同版本；若暂时没有真实更新，不为验收凭空制造版本，先记录远程待验证。
+该产物不替代 Action 中基于所选源码提交准备的 tarball。发布工具仅提供 `prepare` 与 `stage`，不提供直接正式发布或自动批准命令。
 
 ## 未来增加包
 
-不复制 workflow。公开包放在 `packages`，使用 `@linguio/<包名>`、精确独立版本，明确 `publishConfig.access: public`，并在自身元信息中配置：
+公开包放在 `packages`，使用 `@linguio/<包名>`、精确独立版本和 `publishConfig.access: public`，并声明本包串行验证脚本：
 
 ```json
 {
@@ -107,6 +114,8 @@ npm publish "<产物目录>/linguio-wxt-stable-output-1.0.0.tgz" --access public
 }
 ```
 
-每个包单独在 npm 绑定同一 workflow。输入包名后只发布所选包，应用和私有工具包不能发布。批量发布、Changesets 和自动版本 PR 不属于本流程。
+复用同一 workflow，新增公开包时同步加入 `workflow_dispatch.inputs.package.options`；下拉选择后只暂存所选包。应用和私有工具不列入选项，也不能发布；批量发布、Changesets 与自动版本 PR 不属于本流程。
 
-registry 查询只有 404 被视为未发布；认证、限流或网络错误中止。发布命令成功而后续查询失败时，先查线上状态，不重复发布同版本。
+以后改为 OIDC 暂存上传时需另行配置每个包的 Trusted Publisher，并修改当前 Token 认证配置；正式发布仍由用户在 npm 网页批准。不在本轮自动配置。
+
+依据：[npm 暂存发布](https://docs.npmjs.com/staged-publishing/)、[npm stage 命令](https://docs.npmjs.com/cli/v11/commands/npm-stage/)、[Token 配置](https://docs.npmjs.com/creating-and-viewing-access-tokens/)。

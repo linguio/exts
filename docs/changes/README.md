@@ -79,7 +79,7 @@ docs/
 
 ## 当前 Issue
 
-- [公开发布 WXT 稳定产物工具并建立手动发布流程](./issues/2026-10-12-wxt-stable-output-npm-release-issue.md) · [Commit 记录](./commits/2026-10-12-wxt-stable-output-npm-release-commit.md)；用户已验收本地交付并批准两笔本地提交；浏览器、首发、Trusted Publisher 和 Action 远程验证仍待完成，不关闭 Issue，未推送或发布。
+- [公开发布 WXT 稳定产物工具并建立手动发布流程](./issues/2026-10-12-wxt-stable-output-npm-release-issue.md) · [Commit 记录](./commits/2026-10-12-wxt-stable-output-npm-release-commit.md)；此前本地交付已按两笔提交；2026-10-13 统一源码目录、精简 README，并改为 Actions 暂存上传、公开包下拉选择及 npm 网页人工批准，本轮已验收并按两笔本地提交；用户表示已配置 `NPM_TOKEN`，代理未独立核验。浏览器、远程上传与正式发布待验证，不关闭 Issue，未推送或发布。
 
 ## Issue 队列
 

@@ -107,33 +107,44 @@ async function prepare(name) {
   if (process.env.GITHUB_OUTPUT) await appendFile(process.env.GITHUB_OUTPUT, `artifact=${artifact}\nversion=${metadata.version}\n`);
 }
 
-async function publish(name, artifactPath) {
-  const { metadata } = await selectPackage(repositoryRoot, name);
+export async function stagePackage(name, artifactPath, {
+  root = repositoryRoot, run = runNpm, request = fetch, env = process.env,
+} = {}) {
+  root = await realpath(root);
+  const { metadata } = await selectPackage(root, name);
   const artifact = await realpath(resolve(artifactPath));
-  if (!isInside(repositoryRoot, artifact)) throw new Error('发布产物必须在当前仓库中');
+  if (!isInside(root, artifact)) throw new Error('暂存产物必须在当前仓库中');
   const receipt = JSON.parse(await readFile(join(artifact, 'release.json'), 'utf8'));
   const expectedFilename = `${metadata.name.slice(1).replace('/', '-')}-${metadata.version}.tgz`;
   if (receipt.name !== name || receipt.version !== metadata.version || receipt.filename !== expectedFilename) throw new Error('发布凭据与所选包或版本不一致');
-  if (!process.env.GITHUB_ACTIONS || !process.env.GITHUB_SHA || receipt.commit !== process.env.GITHUB_SHA) throw new Error('发布仅允许同一 GitHub Actions 提交，首次本地发布按文档执行');
+  if (!env.GITHUB_ACTIONS || !env.GITHUB_SHA || receipt.commit !== env.GITHUB_SHA) throw new Error('暂存仅允许同一 GitHub Actions 提交');
   const tarball = join(artifact, receipt.filename);
   if (await hashFile(tarball) !== receipt.sha512) throw new Error('tarball 校验和不一致');
-  const [pack] = JSON.parse(await runNpm(['pack', tarball, '--dry-run', '--json', '--ignore-scripts'], { quiet: true }));
+  const [pack] = JSON.parse(await run(['pack', tarball, '--dry-run', '--json', '--ignore-scripts'], { quiet: true }));
   validatePack(pack, metadata);
-  await assertUnpublished(name, metadata.version);
-  await runNpm(['publish', tarball, '--access', 'public', '--registry', registry, '--ignore-scripts']);
-  const response = await fetch(`${registry}/${encodeURIComponent(name)}/${metadata.version}`, { signal: AbortSignal.timeout(20000) });
-  if (!response.ok) throw new Error('publish 命令已成功，但 registry 核验未成功；请人工检查，不要重发同版本');
-  console.log(`已发布：${name}@${metadata.version}`);
-  if (process.env.GITHUB_STEP_SUMMARY) await appendFile(process.env.GITHUB_STEP_SUMMARY,
-    `已发布 **${name}@${metadata.version}**\n\n源码提交：${process.env.GITHUB_SHA}\n\n[npm 包](https://www.npmjs.com/package/${name}/v/${metadata.version})\n`);
+  await assertUnpublished(name, metadata.version, request);
+  const output = await run(['stage', 'publish', tarball, '--access', 'public', '--registry', registry, '--ignore-scripts', '--json'], { quiet: true });
+  let staged;
+  try {
+    staged = JSON.parse(output)[name];
+  } catch {
+    throw new Error('暂存命令已成功但结果无法解析；请检查 npm Staged Packages，不要重传同版本');
+  }
+  if (!staged?.stageId || typeof staged.stageId !== 'string' || staged.name !== name || staged.version !== metadata.version) {
+    throw new Error('暂存命令已成功但编号或包信息不完整；请检查 npm Staged Packages，不要重传同版本');
+  }
+  console.log(`已暂存：${name}@${metadata.version}\n暂存编号：${staged.stageId}\n请在 npm Staged Packages 审核并完成 2FA 批准；尚未正式发布`);
+  if (env.GITHUB_STEP_SUMMARY) await appendFile(env.GITHUB_STEP_SUMMARY,
+    `已暂存 **${name}@${metadata.version}**，尚未正式发布\n\n暂存编号：\`${staged.stageId}\`\n\n源码提交：${env.GITHUB_SHA}\n\n请登录 [npm](https://www.npmjs.com/)，在 **Staged Packages** 核对包名、版本及文件，完成 2FA 后点击 **Approve**。\n\n不要重新运行 workflow 上传同版本；需要撤销时在 npm 中拒绝暂存项。\n`);
+  return { name, version: metadata.version, stageId: staged.stageId };
 }
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
   const [mode, name, artifact] = process.argv.slice(2);
   try {
     if (mode === 'prepare') await prepare(name);
-    else if (mode === 'publish' && artifact) await publish(name, artifact);
-    else throw new Error('用法：node publish.mjs prepare <包名> 或 publish <包名> <产物目录>');
+    else if (mode === 'stage' && artifact) await stagePackage(name, artifact);
+    else throw new Error('用法：node publish.mjs prepare <包名> 或 stage <包名> <产物目录>');
   } catch (error) {
     console.error(error.message);
     process.exitCode = 1;
