@@ -95,6 +95,8 @@ docs/
 
 ## 已完成
 
+- [统一发布入口与任务展示名称](./issues/2026-10-14-repo-publish-display-names-issue.md) · [Commit 记录](./commits/2026-10-14-repo-publish-display-names-commit.md)；用户验收通过并批准本地结项提交，Exts Publish、动态运行标题与六个任务名称已交付，配置对比与 diff 检查通过；远程未验证，不推送或运行发布。
+
 - [补充发布失败与重复发布提示](./issues/2026-10-13-repo-npm-stage-error-guidance-issue.md) · [Commit 记录](./commits/2026-10-13-repo-npm-stage-error-guidance-commit.md)；2026-10-14 用户验收通过并批准本地提交，NPM 9 项测试、Exts 5 个隔离场景、语法与 diff 检查通过；远程尚未验证，不推送、发布或改名。
 
 - [修复 NPM 发布器的跨平台 CLI 路径](./issues/2026-10-13-repo-npm-cli-path-issue.md) · [Commit 记录](./commits/2026-10-13-repo-npm-cli-path-commit.md)；路径修复已存在本地提交，本轮关闭 stage 自动缓存并按用户批准本地结项；原 9 项测试及 CLI 调用通过，本轮配置核对通过，远程仍待验证，不推送或发布。

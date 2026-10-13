@@ -82,13 +82,13 @@ Lucide React 用于通用状态图标，平台与 GitHub 用品牌 SVG。Google 
 
 ## 手动部署
 
-官网复用 .github/workflows/exts-deploy.yml，Actions 显示名称为 Exts Deploy，目标选择 Website。仅支持手动触发并限制 main；提交代码不会自动部署。流程使用固定工具版本执行冻结安装、网站类型检查与 web:build，上传 dist/build/exts-web 后部署 GitHub Pages；检查或构建失败不会执行部署。同一时间只运行一条官网部署流水线，运行中的部署不会被新请求取消。
+官网复用 .github/workflows/exts-deploy.yml，Actions 显示名称为 Exts Publish，目标选择 Website。仅支持手动触发并限制 main；提交代码不会自动部署。流程使用固定工具版本执行冻结安装、网站类型检查与 web:build，上传 dist/build/exts-web 后部署 GitHub Pages；检查或构建失败不会执行部署。同一时间只运行一条官网部署流水线，运行中的部署不会被新请求取消。
 
 首次上线先在仓库 Settings → Pages 将 Source 设为 GitHub Actions，将 Custom domain 保存为 exts.linguio.dev；随后在 DNS 管理平台配置 CNAME：exts → linguio.github.io。使用 Actions 发布时无需在源码添加 CNAME 文件。DNS 检查及证书就绪后开启 Enforce HTTPS。
 
-配置提交并推送到 main 后，用户打开 Actions → Exts Deploy → Run workflow，分支选择 main，target 选择 Website 并手动运行。成功后访问 https://exts.linguio.dev/，确认静态资源、页面与原有下载链接。其他分支触发会跳过构建和部署。实际网站视觉与交互由用户在 Chrome 或 Edge 验收。
+配置提交并推送到 main 后，用户打开 Actions → Exts Publish → Run workflow，分支选择 main，target 选择 Website 并手动运行。成功后访问 https://exts.linguio.dev/，确认静态资源、页面与原有下载链接。其他分支触发会跳过构建和部署。实际网站视觉与交互由用户在 Chrome 或 Edge 验收。
 
-Exts Deploy 的 Chrome 目标由用户从 main 手动触发，生成扩展 ZIP 与 Release 草稿；公开 Release 仍由用户审核操作。Website 与 Chrome 每次只执行所选目标，不互相触发。Desktop 当前只显示尚未接入提示，不构建或发布产物。官网依赖固定 latest 下载链接，不需要随产品版本重新部署。
+Exts Publish 的 Chrome 目标由用户从 main 手动触发，生成扩展 ZIP 与 Release 草稿；公开 Release 仍由用户审核操作。Website 与 Chrome 每次只执行所选目标，不互相触发。Desktop 当前只显示尚未接入提示，不构建或发布产物。官网依赖固定 latest 下载链接，不需要随产品版本重新部署。
 
 GitHub Pages 使用 workflow 的 GITHUB_TOKEN 与 OIDC，不需要额外 PAT 或部署密钥。仓库或组织的 Actions 策略及 github-pages 环境规则需要允许所用 Actions 与 main 部署；已有审批规则仍需由用户处理。
 

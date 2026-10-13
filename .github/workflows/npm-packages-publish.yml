@@ -1,4 +1,5 @@
 name: NPM Publish
+run-name: NPM Publish · ${{ inputs.package }}
 
 on:
   workflow_dispatch:
@@ -20,6 +21,7 @@ concurrency:
 
 jobs:
   prepare:
+    name: Package · Verify & Pack
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -54,6 +56,7 @@ jobs:
           retention-days: 7
 
   stage:
+    name: Package · Stage Upload
     needs: prepare
     runs-on: ubuntu-24.04
     timeout-minutes: 5

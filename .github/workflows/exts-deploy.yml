@@ -1,4 +1,5 @@
-name: Exts Deploy
+name: Exts Publish
+run-name: Exts Publish · ${{ inputs.target }}
 
 on:
   workflow_dispatch:
@@ -22,6 +23,7 @@ concurrency:
 
 jobs:
   website-build:
+    name: Website · Build
     if: github.ref == 'refs/heads/main' && inputs.target == 'Website'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -50,6 +52,7 @@ jobs:
           path: dist/build/exts-web
 
   website-deploy:
+    name: Website · Deploy
     if: github.ref == 'refs/heads/main' && inputs.target == 'Website'
     needs: website-build
     runs-on: ubuntu-24.04
@@ -66,6 +69,7 @@ jobs:
         uses: actions/deploy-pages@v4.0.5
 
   chrome-release:
+    name: Chrome · Draft Release
     if: github.ref == 'refs/heads/main' && inputs.target == 'Chrome'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -161,6 +165,7 @@ jobs:
           echo '草稿已生成；浏览器验收并公开 Release 后才有公开下载入口。' >> "$GITHUB_STEP_SUMMARY"
 
   desktop:
+    name: Desktop · Draft Release
     if: github.ref == 'refs/heads/main' && inputs.target == 'Desktop'
     runs-on: ubuntu-24.04
     timeout-minutes: 1
