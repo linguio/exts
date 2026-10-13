@@ -107,7 +107,7 @@ pnpm release 先检查版本、平台与工具，再调用统一 build；本地�
 ## 验证与当前限制
 
 - 逻辑检查：node --test tests/build-release.test.mjs apps/desktop/tests/scripts/desk.test.mjs。
-- 稳定工具：pnpm --filter @exts/stable-extension-dev test。
+- 稳定工具：pnpm --filter @linguio/wxt-stable-output test。
 - 扩展：pnpm --filter @exts/extension test、typecheck、check:bundle-size；先运行 ext:build 再检查体积。
 - Chrome/Edge 实际加载根稳定目录，成功→编译失败保留→恢复成功由用户验收；代理不执行视觉、布局或交互验收。
 - macOS 真实 XcodeGen/Xcode 构建、XCTest、双应用并存与数据隔离、真实 ZIP/DMG 生成及挂载尚未实测。用户已允许本次实现继续并记录这些限制；系统命令替代测试只验证调度和文件保护。

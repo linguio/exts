@@ -6,10 +6,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/linguio/exts.git",
-    "directory": "packages/stable-extension-dev"
+    "directory": "packages/wxt-stable-output"
   },
   "bugs": "https://github.com/linguio/exts/issues",
-  "homepage": "https://github.com/linguio/exts/tree/main/packages/stable-extension-dev#readme",
+  "homepage": "https://github.com/linguio/exts/tree/main/packages/wxt-stable-output#readme",
   "keywords": ["wxt", "wxt-module", "browser-extension", "development", "stable-output"],
   "files": ["src", "README.md", "README.zh-CN.md", "LICENSE", "CHANGELOG.md"],
   "publishConfig": { "access": "public", "registry": "https://registry.npmjs.org/" },

@@ -12,7 +12,7 @@
 
 ## 背景
 
-当前 `packages/stable-extension-dev` 是内部工具，通过 `workspace:1.0.0` 由扩展引用，只在 WXT 开发模式下发布稳定产物。用户希望将它公开发布到 npm，并建立可供未来多个包共用的手动发布 Action。
+当前 `packages/wxt-stable-output` 是内部工具，通过 `workspace:1.0.0` 由扩展引用，只在 WXT 开发模式下发布稳定产物。用户希望将它公开发布到 npm，并建立可供未来多个包共用的手动发布 Action。
 
 用户确认 npm 用户名是 `linguio`，对应个人 scope `@linguio`，无需创建同名组织；包名可用性与实际发布权限仍需核实。
 
@@ -71,7 +71,7 @@
 
 - [Commit 记录](../commits/2026-10-12-wxt-stable-output-npm-release-commit.md)
 - [工作台](../README.md)
-- [现有包说明](../../../packages/stable-extension-dev/README.md)
+- [现有包说明](../../../packages/wxt-stable-output/README.md)
 - [构建与分发规范](../../build-release.md)
 - [发布与验收指导](../../npm-release.md)
 - [Spec](../../superpowers/specs/2026-10-12-wxt-stable-output-npm-release-design.md)：已批准。

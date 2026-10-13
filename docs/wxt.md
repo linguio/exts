@@ -116,7 +116,7 @@ WXT 的开发构建会重建临时输出目录，因此浏览器不得直接加�
 
 只有完整开发构建成功后，稳定目录才会更新；构建失败时继续保留上一份成功产物。该机制不改变项目原有的开发命令，也不要求额外启动常驻脚本或终端。
 
-具体接入方式和发布规则见 [`stable-extension-dev` README](../packages/stable-extension-dev/README.md)。
+具体接入方式和发布规则见 [`wxt-stable-output` README](../packages/wxt-stable-output/README.md)。
 
 ## 浏览器加载
 

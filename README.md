@@ -27,7 +27,7 @@ exts/
 │  ├─ apps/                     # 旧扩展、Photos 和 Helper 源码
 │  └─ .github/workflows/        # 已退役的旧发布流程
 ├─ packages/
-│  └─ stable-extension-dev/       # 稳定开发产物工具
+│  └─ wxt-stable-output/         # 稳定开发产物工具
 ├─ skills/
 │  └─ local-issue-commit-workflow/ # 本地 Issue 与 Commit 工作流
 ├─ docs/                          # 项目文档

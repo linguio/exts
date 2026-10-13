@@ -4,7 +4,7 @@
 
 公开包：`@linguio/wxt-stable-output`，首版 `1.0.0`。`linguio` 是用户的 npm 账号，对应个人 scope，公开发布免费，不需要组织或独立仓库。
 
-源码仍在 `packages/stable-extension-dev`。仓库内用精确 workspace 引用本地源码，外部项目安装 npm 版本。工具版本独立于根产品版本；升级时同步包 `package.json`、内部引用和 `pnpm-lock.yaml`，写变更说明，再验证。已发布的同版本不能覆盖。
+源码仍在 `packages/wxt-stable-output`。仓库内用精确 workspace 引用本地源码，外部项目安装 npm 版本。工具版本独立于根产品版本；升级时同步包 `package.json`、内部引用和 `pnpm-lock.yaml`，写变更说明，再验证。已发布的同版本不能覆盖。
 
 本地及 CI 固定 Node.js `24.16.0`、pnpm `12.4.2`，发布 npm CLI `11.13.0`。首版 WXT peer 为 `0.21.4`，不默认兼容未验证版本。
 
@@ -19,7 +19,7 @@
 ```sh
 pnpm --filter @linguio/wxt-stable-output test
 pnpm --filter @linguio/wxt-stable-output typecheck
-node packages/stable-extension-dev/scripts/verify-package.mjs
+node packages/wxt-stable-output/scripts/verify-package.mjs
 node --test --test-isolation=none packages/npm-release-tools/tests/publish.test.mjs
 ```
 

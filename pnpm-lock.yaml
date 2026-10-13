@@ -196,7 +196,7 @@ importers:
     devDependencies:
       '@linguio/wxt-stable-output':
         specifier: workspace:1.0.0
-        version: link:../../packages/stable-extension-dev
+        version: link:../../packages/wxt-stable-output
       '@tailwindcss/vite':
         specifier: 4.3.3
         version: 4.3.3(vite@8.3.0(@types/node@24.13.4)(jiti@2.7.0))
@@ -285,7 +285,7 @@ importers:
 
   packages/npm-release-tools: {}
 
-  packages/stable-extension-dev:
+  packages/wxt-stable-output:
     devDependencies:
       '@types/node':
         specifier: 24.13.4

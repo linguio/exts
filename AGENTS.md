@@ -175,7 +175,7 @@ fix(ohmy-tabs): 修复深色模式首屏白闪
 ## 稳定开发产物
 
 - 基于 WXT 的扩展开发时，浏览器不得直接加载会在构建开始时被清空的 `dist/<browser>-mv<manifest>-dev` 临时目录。
-- 公共稳定发布工具位于 `packages/stable-extension-dev`；WXT 子项目在 `wxt.config.ts` 中接入 `createStableDevelopmentHooks()`，不自行实现复制、校验或目录替换逻辑。
+- 公共稳定发布工具位于 `packages/wxt-stable-output`；WXT 子项目在 `wxt.config.ts` 中接入 `createStableDevelopmentHooks()`，不自行实现复制、校验或目录替换逻辑。
 - 开发命令必须保持项目原有用法不变；扩展临时产物生成在根 `dist/.cache/extension/<browser>-mv<manifest>-dev`，公共 hook 在 WXT `build:done` 成功后发布到根 `dist/dev/<browser>-mv<manifest>-dev-stable`；浏览器只加载稳定目录。路径规范见 [docs/build-release.md](docs/build-release.md)。
 - 发布前必须确认 `manifest.json` 可解析、Manifest 字段完整，并确认构建输出报告中的全部文件存在；校验或构建失败不得删除或覆盖上一份稳定产物。
 - 稳定目录更新必须通过同文件系统的暂存目录和目录替换完成；Windows 文件占用或替换异常时必须保留旧稳定目录并返回可诊断错误。

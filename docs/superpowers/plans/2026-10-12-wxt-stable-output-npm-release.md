@@ -14,7 +14,7 @@
 
 ## 任务一：完成开发同步与类型边界
 
-文件：`packages/stable-extension-dev/src/index.mjs`、`src/index.d.ts`、`tests/publish-stable-build.test.mjs`。
+文件：`packages/wxt-stable-output/src/index.mjs`、`src/index.d.ts`、`tests/publish-stable-build.test.mjs`。
 
 接口：保留现有发布器；hook 增加 `server:created`、`server:started`、`server:closed`，完整构建仍用 `build:done`。
 
