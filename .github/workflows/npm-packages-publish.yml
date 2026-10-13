@@ -1,10 +1,10 @@
-name: npm Packages Publish
+name: NPM Packages Publish
 
 on:
   workflow_dispatch:
     inputs:
       package:
-        description: '选择要上传到 npm 暂存区的公开包'
+        description: '选择要上传到 NPM 暂存区的公开包'
         required: true
         type: choice
         default: '@linguio/wxt-stable-output'
@@ -34,7 +34,7 @@ jobs:
         uses: actions/setup-node@v5.0.0
         with:
           node-version: 24.16.0
-      - name: Pin npm CLI
+      - name: Pin NPM CLI
         run: npm install --global npm@11.15.0 --ignore-scripts
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
@@ -67,14 +67,14 @@ jobs:
         with:
           node-version: 24.16.0
           registry-url: https://registry.npmjs.org/
-      - name: Pin npm CLI
+      - name: Pin NPM CLI
         run: npm install --global npm@11.15.0 --ignore-scripts
       - name: Download verified package
         uses: actions/download-artifact@v4.3.0
         with:
           name: npm-release-${{ github.run_id }}
           path: dist/.cache/npm-publish
-      - name: Upload to npm staging for manual approval
+      - name: Upload to NPM staging for manual approval
         env:
           PACKAGE_NAME: ${{ inputs.package }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

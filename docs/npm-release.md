@@ -73,7 +73,7 @@ Token 仅提供给 stage job 的上传步骤。prepare job 不接收 Token；sta
 
 ### 手动运行
 
-1. GitHub 仓库 → Actions → **npm Packages Publish** → **Run workflow**。
+1. GitHub 仓库 → Actions → **NPM Packages Publish** → **Run workflow**。
 2. 分支选 `main`，在包名下拉框选择 `@linguio/wxt-stable-output`；当前只列出这一项公开包，私有发布工具不列入选项。
 3. prepare job 检查包和版本，串行验证，打包并上传 tarball/receipt。
 4. stage job 核对同一源码提交、文件清单与 SHA-512，执行 `npm stage publish` 上传同一 tarball。

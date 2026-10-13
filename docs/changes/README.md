@@ -79,17 +79,22 @@ docs/
 
 ## 当前 Issue
 
-- [公开发布 WXT 稳定产物工具并建立手动发布流程](./issues/2026-10-12-wxt-stable-output-npm-release-issue.md) · [Commit 记录](./commits/2026-10-12-wxt-stable-output-npm-release-commit.md)；此前本地交付已按两笔提交；2026-10-13 统一源码目录、精简 README，并改为 Actions 暂存上传、公开包下拉选择及 npm 网页人工批准，本轮已验收并按两笔本地提交；用户表示已配置 `NPM_TOKEN`，代理未独立核验。浏览器、远程上传与正式发布待验证，不关闭 Issue，未推送或发布。
+无；上一 NPM 工作项已获用户验收及本地结项提交批准，提交成功后才开启下一项。
+
+
 
 ## Issue 队列
 
 - [扩展首页工具介绍并统一许可证页脚](./issues/2026-10-12-website-home-tool-categories-issue.md) · [Commit 记录](./commits/2026-10-12-website-home-tool-categories-commit.md)；已排队，用户批准整理工作项，当前 npm 发布 Issue 完结后再确认开始，尚未修改页面。
+
 
 ## 待办
 
 - [X Download 下载失败恢复](./todo.md)
 
 ## 已完成
+
+- [公开发布 WXT 稳定产物工具并建立手动发布流程](./issues/2026-10-12-wxt-stable-output-npm-release-issue.md) · [Commit 记录](./commits/2026-10-12-wxt-stable-output-npm-release-commit.md)；用户确认工作项可以收尾并批准本地结项提交，NPM 暂存上传、包选择和展示文案已交付；远程及浏览器结果以用户确认作为依据，代理未独立复核，不推送或发布。
 
 - [调整官网上线日志的日期与内容](./issues/2026-10-12-website-launch-changelog-issue.md) · [Commit 记录](./commits/2026-10-12-website-launch-changelog-commit.md)；用户验收通过并批准本地提交，官网上线日期与三条功能说明已调整，构建及 diff 检查通过；未推送或部署。
 
