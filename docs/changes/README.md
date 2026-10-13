@@ -79,7 +79,7 @@ docs/
 
 ## 当前 Issue
 
-无。
+- [修复 NPM 发布器的跨平台 CLI 路径](./issues/2026-10-13-repo-npm-cli-path-issue.md) · [Commit 记录](./commits/2026-10-13-repo-npm-cli-path-commit.md)；待验收，本地 9 项测试和 CLI 调用通过；远程 Actions 尚未运行，不提交、推送或发布。
 
 
 

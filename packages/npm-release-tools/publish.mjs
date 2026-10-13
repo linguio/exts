@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { access, appendFile, mkdir, readFile, readdir, realpath, writeFile } from 'node:fs/promises';
-import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { isAbsolute, join, posix, relative, resolve, sep, win32 } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const registry = 'https://registry.npmjs.org';
@@ -54,9 +54,19 @@ export function validatePack(pack, metadata) {
   }
 }
 
+export function resolveNpmCli({ execPath = process.execPath, platform = process.platform, env = process.env } = {}) {
+  if (env.NPM_CLI_PATH != null) return env.NPM_CLI_PATH;
+  const path = platform === 'win32' ? win32 : posix;
+  const directory = path.dirname(execPath);
+  // Unix 全局包位于安装前缀的 lib 下，Windows 位于 Node 所在目录。
+  return platform === 'win32'
+    ? path.resolve(directory, 'node_modules/npm/bin/npm-cli.js')
+    : path.resolve(directory, '../lib/node_modules/npm/bin/npm-cli.js');
+}
+
 // 直接运行 npm CLI，避免 Windows .cmd 和用户输入进入 Shell 拼接。
 export async function runNpm(args, { cwd = repositoryRoot, timeout = 120000, quiet = false } = {}) {
-  const cli = process.env.NPM_CLI_PATH ?? resolve(dirname(process.execPath), 'node_modules/npm/bin/npm-cli.js');
+  const cli = resolveNpmCli();
   await access(cli);
   return new Promise((resolveResult, reject) => {
     const child = spawn(process.execPath, [cli, ...args], {

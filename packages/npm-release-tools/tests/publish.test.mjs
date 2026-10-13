@@ -7,6 +7,21 @@ import { createHash } from 'node:crypto';
 import * as release from '../publish.mjs';
 import { selectPackage, assertUnpublished, validatePack } from '../publish.mjs';
 
+test('npm CLI 按平台解析安装路径，显式路径优先', () => {
+  assert.equal(typeof release.resolveNpmCli, 'function');
+  for (const platform of ['linux', 'darwin']) {
+    assert.equal(release.resolveNpmCli({
+      execPath: '/opt/node/24.16.0/bin/node', platform, env: {},
+    }), '/opt/node/24.16.0/lib/node_modules/npm/bin/npm-cli.js');
+  }
+  assert.equal(release.resolveNpmCli({
+    execPath: 'C:\\Program Files\\nodejs\\node.exe', platform: 'win32', env: {},
+  }), 'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js');
+  assert.equal(release.resolveNpmCli({
+    execPath: '/opt/node/bin/node', platform: 'linux', env: { NPM_CLI_PATH: '/custom/npm-cli.js' },
+  }), '/custom/npm-cli.js');
+});
+
 test('只选择明确允许发布的包，拒绝非法输入、私有包和重复包', async () => {
   const root = await mkdtemp(join(tmpdir(), 'npm-release-'));
   try {
