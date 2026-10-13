@@ -79,7 +79,8 @@ docs/
 
 ## 当前 Issue
 
-无；上一 NPM 工作项已获用户验收及本地结项提交批准，提交成功后才开启下一项。
+无。
+
 
 
 
@@ -93,6 +94,8 @@ docs/
 - [X Download 下载失败恢复](./todo.md)
 
 ## 已完成
+
+- [统一 Actions 名称与部署入口](./issues/2026-10-13-repo-unify-actions-entrypoints-issue.md) · [Commit 记录](./commits/2026-10-13-repo-unify-actions-entrypoints-commit.md)；用户验收通过并批准两笔本地提交，Exts Deploy / NPM Publish 与目标选择已交付；Desktop 仅提示尚未接入，远程 Actions 未运行，未推送或发布。
 
 - [公开发布 WXT 稳定产物工具并建立手动发布流程](./issues/2026-10-12-wxt-stable-output-npm-release-issue.md) · [Commit 记录](./commits/2026-10-12-wxt-stable-output-npm-release-commit.md)；用户确认工作项可以收尾并批准本地结项提交，NPM 暂存上传、包选择和展示文案已交付；远程及浏览器结果以用户确认作为依据，代理未独立复核，不推送或发布。
 
