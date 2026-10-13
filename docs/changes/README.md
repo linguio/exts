@@ -95,6 +95,8 @@ docs/
 
 ## 已完成
 
+- [补充发布失败与重复发布提示](./issues/2026-10-13-repo-npm-stage-error-guidance-issue.md) · [Commit 记录](./commits/2026-10-13-repo-npm-stage-error-guidance-commit.md)；2026-10-14 用户验收通过并批准本地提交，NPM 9 项测试、Exts 5 个隔离场景、语法与 diff 检查通过；远程尚未验证，不推送、发布或改名。
+
 - [修复 NPM 发布器的跨平台 CLI 路径](./issues/2026-10-13-repo-npm-cli-path-issue.md) · [Commit 记录](./commits/2026-10-13-repo-npm-cli-path-commit.md)；路径修复已存在本地提交，本轮关闭 stage 自动缓存并按用户批准本地结项；原 9 项测试及 CLI 调用通过，本轮配置核对通过，远程仍待验证，不推送或发布。
 
 - [统一 Actions 名称与部署入口](./issues/2026-10-13-repo-unify-actions-entrypoints-issue.md) · [Commit 记录](./commits/2026-10-13-repo-unify-actions-entrypoints-commit.md)；用户验收通过并批准两笔本地提交，Exts Deploy / NPM Publish 与目标选择已交付；Desktop 仅提示尚未接入，远程 Actions 未运行，未推送或发布。

@@ -103,7 +103,14 @@ test('Actions 只暂存校验过的产物，上传失败或产物被篡改时中
           if (args[0] === 'stage') throw new Error('registry staging failed');
           return JSON.stringify([pack]);
         },
-      }), /registry staging failed/);
+      }), error => {
+        assert.match(error.message, /registry staging failed/);
+        assert.match(error.message, /Staged Packages/);
+        assert.match(error.message, /不要重复上传/);
+        assert.match(error.message, /拒绝.*重新运行/);
+        assert.equal(error.cause?.message, 'registry staging failed');
+        return true;
+      });
     });
     await t.test('暂存成功但返回缺少编号时提示检查，不重传', async () => {
       await assert.rejects(release.stagePackage(metadata.name, artifact, {

@@ -100,15 +100,24 @@ jobs:
           TAG: ${{ steps.version.outputs.tag }}
         run: |
           set -euo pipefail
-          releases="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate --jq '.[] | .tag_name')"
-          if printf '%s\n' "$releases" | grep -Fxq "$TAG"; then
-            echo "Release $TAG 已存在，禁止覆盖。失败草稿需人工检查后处理。" >&2
-            exit 1
-          fi
+          releases="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate --jq '.[] | [.tag_name, (if .draft then "draft" else "published" end), .html_url] | @tsv')"
+          while IFS=$'\t' read -r release_tag release_state release_url; do
+            if [[ "$release_tag" == "$TAG" ]]; then
+              if [[ "$release_state" == 'draft' ]]; then
+                echo "草稿 Release $TAG 已存在，禁止重复创建或覆盖：$release_url" >&2
+                echo '请检查已有草稿和附件；内容正确时直接验收并公开。若草稿不完整，请先人工确认并处理旧草稿，再重新运行 Action；不会自动删除草稿或标签。' >&2
+              else
+                echo "Release $TAG 已正式发布，禁止覆盖：$release_url" >&2
+                echo '若要发布新内容，请提升根 package.json 的产品版本，提交并推送后重新运行 Action；不要重跑同版本。' >&2
+              fi
+              exit 1
+            fi
+          done <<< "$releases"
           if git show-ref --verify --quiet "refs/tags/$TAG"; then
             target="$(git rev-parse "$TAG^{commit}")"
             if [[ "$target" != "$GITHUB_SHA" ]]; then
-              echo "Tag $TAG 指向其他提交，禁止移动标签。" >&2
+              echo "Tag $TAG 指向其他提交（$target），当前提交为 $GITHUB_SHA，禁止移动标签。" >&2
+              echo '请核对所选提交和已有标签；若要发布新版本，请提升根 package.json 的产品版本，提交并推送后重新运行 Action。不会自动删除或移动已有标签。' >&2
               exit 1
             fi
           fi

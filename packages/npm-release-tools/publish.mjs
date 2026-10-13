@@ -133,7 +133,18 @@ export async function stagePackage(name, artifactPath, {
   const [pack] = JSON.parse(await run(['pack', tarball, '--dry-run', '--json', '--ignore-scripts'], { quiet: true }));
   validatePack(pack, metadata);
   await assertUnpublished(name, metadata.version, request);
-  const output = await run(['stage', 'publish', tarball, '--access', 'public', '--registry', registry, '--ignore-scripts', '--json'], { quiet: true });
+  let output;
+  try {
+    output = await run(['stage', 'publish', tarball, '--access', 'public', '--registry', registry, '--ignore-scripts', '--json'], { quiet: true });
+  } catch (error) {
+    throw new Error(
+      `${name}@${metadata.version} 暂存上传失败：${error.message}\n` +
+      '请先在 npm Staged Packages 检查该版本是否已暂存；若已暂存，请审核已有暂存项，不要重复上传。\n' +
+      '若需替换暂存内容，请先人工拒绝旧暂存项，再重新运行 Action；若该版本已正式发布，请提升版本号。\n' +
+      '若没有对应暂存项，请按上方原始错误检查权限或网络。',
+      { cause: error },
+    );
+  }
   let staged;
   try {
     staged = JSON.parse(output)[name];
