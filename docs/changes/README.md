@@ -95,6 +95,8 @@ docs/
 
 ## 已完成
 
+- [切换扩展到 npm 正式稳定产物工具](./issues/2026-10-14-extension-registry-stable-output-issue.md) · [Commit 记录](./commits/2026-10-14-extension-registry-stable-output-commit.md)；用户验收通过并批准本地结项提交，已确认加载官方 1.0.0 包，15 项扩展测试、类型检查、构建、体积与稳定发布逻辑验证通过；浏览器与 dev server 生命周期未验证，不推送或发布。
+
 - [统一发布入口与任务展示名称](./issues/2026-10-14-repo-publish-display-names-issue.md) · [Commit 记录](./commits/2026-10-14-repo-publish-display-names-commit.md)；用户验收通过并批准本地结项提交，Exts Publish、动态运行标题与六个任务名称已交付，配置对比与 diff 检查通过；远程未验证，不推送或运行发布。
 
 - [补充发布失败与重复发布提示](./issues/2026-10-13-repo-npm-stage-error-guidance-issue.md) · [Commit 记录](./commits/2026-10-13-repo-npm-stage-error-guidance-commit.md)；2026-10-14 用户验收通过并批准本地提交，NPM 9 项测试、Exts 5 个隔离场景、语法与 diff 检查通过；远程尚未验证，不推送、发布或改名。
