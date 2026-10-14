@@ -3,4 +3,4 @@ packages:
   - apps/website
   - packages/*
 minimumReleaseAgeExclude:
-  - '@linguio/wxt-stable-output@1.0.0'
+  - '@linguio/wxt-stable-output@1.0.1'

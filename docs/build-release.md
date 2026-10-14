@@ -16,7 +16,7 @@ node scripts/version.mjs
 
 ## 根命令
 
-公开 npm 工具包独立于应用构建与产品 Release；当前 `@linguio/wxt-stable-output` 使用包目录中的精确版本，扩展消费 npm 官方 registry 的精确 `1.0.0`，本地工具源码仅用于维护与发布。手动发布流程、首次发布与账号配置见 [npm 工具包发布与验收](./npm-release.md)，不通过根 build/release 发布 npm。
+公开 npm 工具包独立于应用构建与产品 Release；当前 `@linguio/wxt-stable-output` 使用包目录中的精确版本，扩展消费 npm 官方 registry 的精确 `1.0.1`，本地工具源码仅用于维护与发布。手动发布流程、首次发布与账号配置见 [npm 工具包发布与验收](./npm-release.md)，不通过根 build/release 发布 npm。
 
 | 命令 | 用途 | 支持平台 |
 |---|---|---|

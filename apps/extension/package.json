@@ -20,7 +20,7 @@
     "tailwind-merge": "3.7.0"
   },
   "devDependencies": {
-    "@linguio/wxt-stable-output": "1.0.0",
+    "@linguio/wxt-stable-output": "1.0.1",
     "@tailwindcss/vite": "4.3.3",
     "@types/chrome": "0.2.9",
     "@types/node": "24.13.4",

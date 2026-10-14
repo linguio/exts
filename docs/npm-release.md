@@ -4,9 +4,9 @@
 
 公开包：`@linguio/wxt-stable-output`，首版 `1.0.0`。`linguio` 是用户的 npm 账号，对应个人 scope，公开发布免费，不需要组织或独立仓库。
 
-当前准备版本为 `1.0.1`，仅修订文档和展示元数据，尚未上传暂存或正式发布。扩展继续使用已发布的 `1.0.0`；待新版本正式发布后，再单独升级消费方引用及锁文件并验证。
+当前正式版本为 `1.0.1`，已通过官方 registry 查询确认，扩展同步使用该版本。本次仅修订文档和展示元数据，功能、API 与依赖要求不变。
 
-源码仍在 `packages/wxt-stable-output`，用于维护与发布。扩展与外部项目均安装 npm 正式包，扩展当前锁定精确 `1.0.0`，不通过 workspace 引用本地源码。工具版本独立于根产品版本；升级时同步包 `package.json`、消费方引用和 `pnpm-lock.yaml`，写变更说明，再验证。已发布的同版本不能覆盖。
+源码仍在 `packages/wxt-stable-output`，用于维护与发布。扩展与外部项目均安装 npm 正式包，扩展当前锁定精确 `1.0.1`，不通过 workspace 引用本地源码。工具版本独立于根产品版本；升级时同步包 `package.json`、消费方引用和 `pnpm-lock.yaml`，写变更说明，再验证。已发布的同版本不能覆盖。
 
 本地及 CI 固定 Node.js `24.16.0`、pnpm `12.4.2`，发布 npm CLI `11.15.0`。首版 WXT peer 为 `0.21.4`，不默认兼容未验证版本。
 
@@ -88,7 +88,7 @@ Token 仅提供给 stage job 的上传步骤。prepare job 不接收 Token；sta
 ### npm 网页审核与批准
 
 1. 登录 npm，打开 **Staged Packages**，找到摘要中相同的暂存编号。
-2. 核对包名 `@linguio/wxt-stable-output`、版本 `1.0.0`、文件清单和包内容；必要时下载 tarball 检查。
+2. 核对包名 `@linguio/wxt-stable-output`、本次所选源码中声明的包版本、文件清单和包内容；必要时下载 tarball 检查。
 3. 点击 **Approve** 并完成 2FA。Token 不会跳过人工批准。
 4. 打开 [npm 包页面](https://www.npmjs.com/package/@linguio/wxt-stable-output)，确认正式版本出现；在仓库外安装该精确版本并按 README 接入 WXT。
 5. 不接受产物时拒绝暂存项；不需要以虚构新版本绕过已有暂存项。

@@ -195,8 +195,8 @@ importers:
         version: 3.7.0
     devDependencies:
       '@linguio/wxt-stable-output':
-        specifier: 1.0.0
-        version: 1.0.0(wxt@0.21.4(rolldown@1.2.8)(typescript@7.0.2)(vite@8.3.0(@types/node@24.13.4)(jiti@2.7.0)))
+        specifier: 1.0.1
+        version: 1.0.1(wxt@0.21.4(rolldown@1.2.8)(typescript@7.0.2)(vite@8.3.0(@types/node@24.13.4)(jiti@2.7.0)))
       '@tailwindcss/vite':
         specifier: 4.3.3
         version: 4.3.3(vite@8.3.0(@types/node@24.13.4)(jiti@2.7.0))
@@ -366,8 +366,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@linguio/wxt-stable-output@1.0.0':
-    resolution: {integrity: sha512-XvVPvQS3Nqr5SDREOzA6kxlmoUYIKFxzLSj8zfxmC4u1nC2QqPW3iFoxA5DDIc+c3aW/KIwfYSHaUgh+j/JkDg==}
+  '@linguio/wxt-stable-output@1.0.1':
+    resolution: {integrity: sha512-XNG/KGrfqGOhBp0WUXHF5tr8GNscXttyYkrhvt6y/UhsBNp2tjIXo9CwGoO6bn/qzlBwG3TCXEc1T9M2xxesqw==}
     engines: {node: 24.16.0}
     peerDependencies:
       wxt: 0.21.4
@@ -2418,7 +2418,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  '@linguio/wxt-stable-output@1.0.0(wxt@0.21.4(rolldown@1.2.8)(typescript@7.0.2)(vite@8.3.0(@types/node@24.13.4)(jiti@2.7.0)))':
+  '@linguio/wxt-stable-output@1.0.1(wxt@0.21.4(rolldown@1.2.8)(typescript@7.0.2)(vite@8.3.0(@types/node@24.13.4)(jiti@2.7.0)))':
     dependencies:
       wxt: 0.21.4(rolldown@1.2.8)(typescript@7.0.2)(vite@8.3.0(@types/node@24.13.4)(jiti@2.7.0))
 
