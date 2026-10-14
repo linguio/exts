@@ -1,6 +1,6 @@
 # Exts 产品官网
 
-React 静态产品官网，使用 Vite、TypeScript、Tailwind CSS 与 shadcn/ui。首页显示 Exts 标语、Tabs／Media 叠放示意卡片、Chrome 与 macOS latest 直链入口；页头保留品牌 Logo，独立产品介绍页介绍模块用途，独立 Changelog 页面记录产品进展，页脚为 © 2026 Lin Gui。
+React 静态产品官网，使用 Vite、TypeScript、Tailwind CSS 与 shadcn/ui。首页显示 Exts 标题、副标题、介绍、Tabs／Photos 叠放示意和 Chrome、macOS latest 下载入口，下方四张卡片进入对应产品分类。产品介绍与更新日志使用独立页面；全站共享两行 MIT 许可证和版权页脚。
 
 ## 开发与构建
 
@@ -15,6 +15,7 @@ pnpm web:dev
 
 ```sh
 node --test tests/build-release.test.mjs
+node --test apps/website/tests/showcase/card-pool.test.ts apps/website/tests/products/categories.test.ts
 pnpm --filter @exts/website typecheck
 pnpm web:build
 ```
@@ -29,7 +30,8 @@ pnpm web:build
 - src/features/download：组合 shadcn 平台下载链接。
 - src/features/showcase：首页模块示意卡片与轮换行为；assets 为现有扩展书签 SVG 的本地副本，网站不直接依赖扩展业务模块。
 - src/pages/changelog：更新日志页面与独立 React 入口；src/features/changelog：静态日志数据与时间线模块。
-- src/pages/features：功能介绍页面、独立 React 入口及本地静态模块文案。
+- src/pages/features：产品介绍页面与独立 React 入口，分类由 URL hash 控制。
+- src/features/products：首页卡片与产品介绍共用的四类数据，以及分类 URL 解析逻辑。
 - src/config/site.ts：产品文案、GitHub 地址、固定 latest 下载链接与署名。
 - src/assets：用户提供的单色 Chrome、Apple 与 GitHub 品牌 SVG；public：已有正式品牌资源、favicon 与第三方许可声明。
 - src/lib/utils.ts：class-variance-authority 配合的本地样式合并工具，不提取共享 UI 包。
@@ -58,15 +60,17 @@ Lucide React 用于通用状态图标，平台与 GitHub 用品牌 SVG。Google 
 
 页头 FileClock 图标以“更新日志”为提示，链接到 /changelog/，点击 Exts 返回首页。首页、changelog/index.html 和 features/index.html 是独立 Vite HTML 入口，共享页头、页脚和样式；正式产物包含三个页面，支持 GitHub Pages 直接访问与刷新，不依赖 SPA 回退或额外路由库。
 
-日志维护在 src/features/changelog/changelog-data.ts，按相关交付 Git 提交的实际时间倒序，日期统一转换为北京时间；同一天按实际提交顺序排列。按年份分组，桌面年份位于最左侧且每组仅显示一次，日期仅显示月日；手机端年份置于该组记录上方。年份可点击返回该年第一条，使用现有 shadcn Button 和原生锚点，具有悬停、按下及焦点反馈。每条只包含事件标题、平台标签和无序列表，无版本号或副标题。平台限定 Website、Chrome、macOS，使用官方 shadcn Badge 的黑底白字样式与小圆角；更新日志入口沿用现有 Button，并使用共享 Tooltip。
+日志维护在 src/features/changelog/changelog-data.ts，按实际发布或代码交付时间倒序，日期统一转换为北京时间。按年份分组，桌面年份位于最左侧且每组仅显示一次，日期仅显示月日；手机端年份置于该组记录上方。年份可点击返回该年第一条，使用现有 shadcn Button 和原生锚点。每条包含事件标题、平台标签和无序列表，无单独版本号或副标题，可附对应历史版本链接。分类为 Website、Chrome、macOS、Packages，使用黑底白字 Badge；不重复添加最新下载按钮。
 
 首批记录为“产品官网上线”和“Chrome 插件首次发布”；官网条目合并产品介绍、Latest 下载入口与更新时间线，日期按官网完善后的实际交付 Git 提交北京时间确认。日志不会自动从 Git 或 GitHub 生成；修改日志后需手动部署官网，不要求改根产品版本。
 
+Packages 首次公开发布记录为 2026-10-14，依据 npm 官方 registry 的 1.0.0 发布时间转换北京时间；链接指向该历史版本。1.0.1 文档修订保留在包自己的更新记录，不单列官网事件。
+
 ## 产品介绍
 
-页头 BookOpen 图标位于更新日志入口旁，链接到 /features/；提示与页面标题均为“产品介绍”。两个入口共用基于现有 radix-ui 的 Tooltip，悬停或键盘聚焦显示名称，取代原生 title，不新增依赖。左侧提供“浏览器扩展”“桌面应用”“协同功能”三个分类，默认展示浏览器扩展；右侧每个模块仅包含标题和一句介绍。
+页头 BookOpen 图标位于更新日志入口旁，链接到 /features/；提示与页面标题均为“产品介绍”。左侧四类为浏览器扩展、桌面应用、开发工具包、AI 工作流，默认浏览器扩展；原生 hash 链接支持直接打开、刷新与前进/后退，空或无效 hash 回到默认分类，不新增路由依赖。
 
-首批内容为 Tabs 与 Photos；协同分类显示“暂无协同功能”，不承诺上线时间。页面不放截图、卡片、能力标签或详细使用步骤。文案维护在 src/pages/features/features-page.tsx，不请求外部数据；已有模块用途改变或新模块交付时再更新。
+内容包含 Tabs、Photos 与 wxt-stable-output，Skills 显示“暂无公开 Skills”，移除原协同分类。模块以标题和一句介绍呈现，工具包附当前 npm 包主页与源码链接；不放截图、卡片、能力标签或详细安装步骤。文案维护在 src/features/products/categories.ts，不请求外部数据。
 
 ## 下载行为
 
@@ -95,7 +99,7 @@ GitHub Pages 使用 workflow 的 GITHUB_TOKEN 与 OIDC，不需要额外 PAT 或
 - [部署 Issue](../../docs/changes/issues/2026-10-11-website-manual-pages-deploy-issue.md)
 - [GitHub 官方自定义 workflow 说明](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
 
-- [当前 Issue](../../docs/changes/issues/2026-10-11-website-product-homepage-issue.md)
+- [当前 Issue](../../docs/changes/issues/2026-10-12-website-home-tool-categories-issue.md)
 - [设计](../../docs/superpowers/specs/2026-10-11-website-product-homepage-design.md)
 - [Plan](../../docs/superpowers/plans/2026-10-11-website-product-homepage.md)
 - [构建规范](../../docs/build-release.md)
