@@ -24,22 +24,23 @@ const bookmarkCardVariants = cva(
 
 interface BookmarkCardProps extends VariantProps<typeof bookmarkCardVariants> {
   bookmark: Bookmark;
+  target?: '_self' | '_blank';
   onClick?: MouseEventHandler<HTMLAnchorElement>;
   linkRef?: Ref<HTMLAnchorElement>;
   renderAnchor?: (anchor: ReactElement) => ReactNode;
 }
 
-/** 渲染一个安全地在新标签页打开目标网站的通用书签卡片。 */
-export function BookmarkCard({ bookmark, onClick, linkRef, renderAnchor, variant = 'grid' }: BookmarkCardProps) {
+/** 渲染通用书签卡片，由调用方选择打开目标，默认使用新标签页。 */
+export function BookmarkCard({ bookmark, target = '_blank', onClick, linkRef, renderAnchor, variant = 'grid' }: BookmarkCardProps) {
   const anchor = (
     <a
       ref={linkRef}
       className={bookmarkCardVariants({ variant })}
       data-variant={variant}
       href={bookmark.url}
-      target="_blank"
+      target={target}
       rel="noopener noreferrer"
-      aria-label={`在新标签页打开 ${bookmark.name}`}
+      aria-label={`在${target === '_self' ? '当前标签页' : '新标签页'}打开 ${bookmark.name}`}
       onClick={onClick}
     >
       <span

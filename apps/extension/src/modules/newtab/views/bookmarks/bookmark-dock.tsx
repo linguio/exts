@@ -24,6 +24,7 @@ export function BookmarkDock({ favorites, components, devtools, onOpenBookmark }
             <BookmarkCard
               bookmark={bookmark}
               variant="dock"
+              target="_self"
               renderAnchor={(anchor) => <TooltipTrigger asChild>{anchor}</TooltipTrigger>}
             />
             <TooltipContent side="top" align="center" sideOffset={12}>{bookmark.name}</TooltipContent>
