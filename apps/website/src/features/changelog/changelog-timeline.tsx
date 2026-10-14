@@ -43,6 +43,11 @@ export function ChangelogTimeline() {
                         <ul className="list-disc space-y-2 pl-[18px] text-sm leading-6 text-foreground marker:text-muted-foreground">
                           {group.changes.map((change) => <li key={change} className="pl-0.5">{change}</li>)}
                         </ul>
+                        {group.links && (
+                          <div className="mt-3 flex flex-wrap gap-4 text-sm leading-6">
+                            {group.links.map((link) => <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">{link.label}</a>)}
+                          </div>
+                        )}
                       </section>
                     ))}
                   </div>
