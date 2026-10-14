@@ -18,7 +18,7 @@
   --ring: #737373;
   --radius: 0.5rem;
   --site-header-height: 52px;
-  --site-footer-height: 48px;
+  --site-footer-height: 64px;
   --site-header-offset: calc(var(--site-header-height) + env(safe-area-inset-top, 0px));
   --site-footer-offset: calc(var(--site-footer-height) + env(safe-area-inset-bottom, 0px));
 }
@@ -53,6 +53,10 @@
 @layer components {
   .site-main {
     @apply flex-1 pt-8 sm:pt-12;
+  }
+
+  .home-main {
+    @apply py-6 sm:py-8;
   }
 
   .site-document {
@@ -95,7 +99,7 @@
   }
 
   .site-footer-content {
-    @apply flex items-center justify-center;
+    @apply flex flex-col items-center justify-center;
     height: var(--site-footer-height);
   }
 
