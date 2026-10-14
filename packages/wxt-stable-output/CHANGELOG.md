@@ -1,10 +1,12 @@
-# Changelog
+# 更新记录
+
+## 1.0.1
+
+- 本次为文档修订，功能、API 和依赖要求不变。
 
 ## 1.0.0
 
-- Validate and preserve the last successful unpacked WXT development output.
-- Synchronize incremental disk builds before forwarding WXT reload notifications.
-- Keep the previous output on validation or replacement failures, with diagnostic backup paths.
-- Reject overlapping source and target directories; expose ESM and TypeScript declarations.
-
-This is the initial public release. Tested with WXT 0.21.4 and Node.js 24.16.0.
+- 校验并保留最后一次成功的 WXT 开发模式已解压扩展产物。
+- 转发 WXT 重载通知前，先同步增量磁盘构建产物。
+- 校验或目录替换失败时保留旧产物，并在需要时提供可诊断的备份路径。
+- 拒绝源目录与目标目录重叠，提供 ESM 入口和 TypeScript 类型声明。

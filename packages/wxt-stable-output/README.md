@@ -2,14 +2,24 @@
 
 [中文](./README.zh-CN.md)
 
-Keep a stable unpacked extension directory during WXT development. Successful builds update it; failed builds leave the previous output in place.
+[Source](https://github.com/linguio/exts/tree/main/packages/wxt-stable-output) · [npm](https://www.npmjs.com/package/@linguio/wxt-stable-output)
 
-Supports WXT **0.21.4**, Node.js **24.16.0**, and Chrome/Edge.
+Keep a stable unpacked extension directory during WXT development. WXT's temporary output can be cleared or incomplete during a rebuild. If Chrome or Edge loads that directory directly, reloading the extension or opening a new tab during this window may fail because the Manifest or page resources are missing. A failed build can also leave the temporary directory unusable.
+
+Load the stable directory instead: successful, validated builds update it; failed builds preserve the last successful output. Incremental disk builds are synchronized before reload notifications. This protects the on-disk output; it does not fix code errors or replace WXT/Vite's development server.
+
+## Requirements
+
+- WXT **0.21.4** is declared in `peerDependencies` and must be available in the consuming project.
+- Node.js **24.16.0** is declared in `engines`.
+- The extension loading workflow targets Chrome and Edge.
+
+The package's `devDependencies` are tools for maintaining and testing this package. They do not replace the consumer requirements above.
 
 ## Quick start
 
 ```sh
-npm install --save-dev --save-exact @linguio/wxt-stable-output@1.0.0 wxt@0.21.4
+npm install --save-dev --save-exact @linguio/wxt-stable-output@1.0.1 wxt@0.21.4
 ```
 
 Add the hooks to `wxt.config.ts`:
@@ -62,4 +72,4 @@ await publishStableBuild({
 - Directory replacement has a brief gap between renames. On failure, restoration is attempted; if it fails, the error reports the backup path.
 - Validation checks Manifest fields and file existence, not code correctness. Concurrent source writes are not a guaranteed snapshot.
 
-[MIT](./LICENSE) · [Changelog](./CHANGELOG.md)
+[MIT](./LICENSE) · [更新记录](./CHANGELOG.md)

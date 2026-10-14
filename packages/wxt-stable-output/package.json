@@ -1,6 +1,6 @@
 {
   "name": "@linguio/wxt-stable-output",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Keep a validated, last-successful unpacked extension directory during WXT development",
   "license": "MIT",
   "repository": {
@@ -10,7 +10,7 @@
   },
   "bugs": "https://github.com/linguio/exts/issues",
   "homepage": "https://github.com/linguio/exts/tree/main/packages/wxt-stable-output#readme",
-  "keywords": ["wxt", "wxt-module", "browser-extension", "development", "stable-output"],
+  "keywords": ["wxt", "browser-extension", "development"],
   "files": ["src", "README.md", "README.zh-CN.md", "LICENSE", "CHANGELOG.md"],
   "publishConfig": { "access": "public", "registry": "https://registry.npmjs.org/" },
   "engines": { "node": "24.16.0" },

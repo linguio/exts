@@ -95,6 +95,8 @@ docs/
 
 ## 已完成
 
+- [完善稳定产物工具的说明与包元数据](./issues/2026-10-14-wxt-stable-output-package-docs-issue.md) · [Commit 记录](./commits/2026-10-14-wxt-stable-output-package-docs-commit.md)；2026-10-15 用户验收通过并批准本地提交，1.0.1 文档修订、三项关键词与中文更新记录已准备，元数据、打包 dry-run 与 diff 核对通过；不推送或上传发布，扩展仍消费 1.0.0。
+
 - [切换扩展到 npm 正式稳定产物工具](./issues/2026-10-14-extension-registry-stable-output-issue.md) · [Commit 记录](./commits/2026-10-14-extension-registry-stable-output-commit.md)；用户验收通过并批准本地结项提交，已确认加载官方 1.0.0 包，15 项扩展测试、类型检查、构建、体积与稳定发布逻辑验证通过；浏览器与 dev server 生命周期未验证，不推送或发布。
 
 - [统一发布入口与任务展示名称](./issues/2026-10-14-repo-publish-display-names-issue.md) · [Commit 记录](./commits/2026-10-14-repo-publish-display-names-commit.md)；用户验收通过并批准本地结项提交，Exts Publish、动态运行标题与六个任务名称已交付，配置对比与 diff 检查通过；远程未验证，不推送或运行发布。

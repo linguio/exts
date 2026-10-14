@@ -2,14 +2,24 @@
 
 [English](./README.md)
 
-为 WXT 开发模式提供稳定的扩展加载目录。构建成功时更新，构建失败时保留上一份产物。
+[源码目录](https://github.com/linguio/exts/tree/main/packages/wxt-stable-output) · [npm 包](https://www.npmjs.com/package/@linguio/wxt-stable-output)
 
-支持 WXT **0.21.4**、Node.js **24.16.0** 和 Chrome/Edge。
+为 WXT 开发模式提供稳定的扩展加载目录。WXT 重建时，临时输出目录可能被清空，或尚未完整生成。如果 Chrome/Edge 直接加载这个目录，在此期间重载扩展或打开新标签页，可能因 Manifest 或页面资源缺失而加载失败；构建失败后，临时目录也可能没有可用产物。
+
+浏览器改为加载稳定目录后，只有构建成功且产物校验通过时才更新，构建失败则保留上一份成功产物。增量磁盘构建也会在发送重载通知前同步。它保护的是磁盘上的构建产物，不修复代码错误，也不替代 WXT/Vite 开发服务器。
+
+## 使用要求
+
+- WXT **0.21.4**：已通过 `peerDependencies` 声明，使用方项目需要提供。
+- Node.js **24.16.0**：已通过 `engines` 声明。
+- 扩展加载流程面向 Chrome 和 Edge。
+
+本包的 `devDependencies` 是维护、类型检查和测试本包所用的工具，不能代替上面的使用要求。
 
 ## 快速开始
 
 ```sh
-npm install --save-dev --save-exact @linguio/wxt-stable-output@1.0.0 wxt@0.21.4
+npm install --save-dev --save-exact @linguio/wxt-stable-output@1.0.1 wxt@0.21.4
 ```
 
 在 `wxt.config.ts` 中接入：
