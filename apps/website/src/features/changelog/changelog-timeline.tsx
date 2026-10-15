@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui/badge';
+import { ArrowUpRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { changelogEntries } from './changelog-data';
 
@@ -33,19 +34,27 @@ export function ChangelogTimeline() {
                   <span className={`relative mt-[7px] size-2.5 rounded-full border-2 sm:mt-[13px] ${entry.id === changelogEntries[0]?.id ? 'border-primary bg-primary' : 'border-border bg-background'}`} />
                 </div>
                 <article aria-labelledby={`changelog-${entry.id}`} className="col-start-2 row-start-2 pb-12 sm:col-start-3 sm:row-start-1 sm:pb-16">
-                  <h3 id={`changelog-${entry.id}`} className="site-anchor site-section-title">
+                  <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+                  <h3 id={`changelog-${entry.id}`} className="site-anchor min-w-0 break-words text-xl leading-8 font-semibold tracking-[-0.025em]">
                     {entry.title}
                   </h3>
+                  {entry.groups.map((group) => (
+                    <Badge key={group.platform} className="shrink-0 rounded-md px-2 py-0.5 text-xs leading-[18px]">{group.platform}</Badge>
+                  ))}
+                  </div>
                   <div className="space-y-6">
                     {entry.groups.map((group) => (
                       <section key={group.platform} aria-label={`${group.platform} 更新`}>
-                        <Badge className="mb-4 rounded-md px-2 py-0.5 text-xs leading-[18px]">{group.platform}</Badge>
                         <ul className="list-disc space-y-2 pl-[18px] text-sm leading-6 text-foreground marker:text-muted-foreground">
                           {group.changes.map((change) => <li key={change} className="pl-0.5">{change}</li>)}
                         </ul>
                         {group.links && (
                           <div className="mt-3 flex flex-wrap gap-4 text-sm leading-6">
-                            {group.links.map((link) => <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">{link.label}</a>)}
+                            {group.links.map((link) => (
+                              <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="site-resource-link">
+                                {link.label}<ArrowUpRight aria-hidden="true" className="size-3.5 shrink-0" />
+                              </a>
+                            ))}
                           </div>
                         )}
                       </section>

@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import { ArrowUpRight } from 'lucide-react';
 import { SiteDocumentLayout } from '@/components/layout/site-document-layout';
 import { Button } from '@/components/ui/button';
 import { productCategories, resolveCategoryId } from '@/features/products/categories';
@@ -34,11 +35,18 @@ export function FeaturesPage() {
         <section id="feature-modules" aria-label={selected.label} aria-live="polite" className="min-w-0 space-y-8 pt-1">
           {selected.modules.length > 0 ? selected.modules.map((module) => (
             <article key={module.name}>
-              <h2 className="site-section-title">{module.name}</h2>
+              <h2 className="site-section-title break-words">{module.name}</h2>
               <p className="text-sm leading-6 text-foreground">{module.description}</p>
+              {module.installCommand && (
+                <pre className="mt-3 overflow-x-auto rounded-md bg-secondary p-3 text-sm leading-6"><code>{module.installCommand}</code></pre>
+              )}
               {module.links && (
                 <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm leading-6">
-                  {module.links.map((link) => <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">{link.label}</a>)}
+                  {module.links.map((link) => (
+                    <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="site-resource-link">
+                      {link.label}<ArrowUpRight aria-hidden="true" className="size-3.5 shrink-0" />
+                    </a>
+                  ))}
                 </div>
               )}
             </article>

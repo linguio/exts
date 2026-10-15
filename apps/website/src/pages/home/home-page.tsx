@@ -10,12 +10,12 @@ const categoryIcons = { extension: Blocks, desktop: Monitor, packages: Package, 
 export function HomePage() {
   return (
     <SiteLayout mainClassName="home-main grid content-center gap-8">
-      <section aria-label="Exts 产品概览" className="grid gap-8 sm:grid-cols-[1.2fr_1fr] sm:items-stretch">
-        <div className="flex min-w-0 flex-col justify-between gap-6">
+      <section aria-label="Exts 产品概览" className="grid gap-8 md:grid-cols-[1.2fr_1fr] md:items-center">
+        <div className="flex min-w-0 flex-col gap-6">
           <div>
-            <h1 className="text-[32px] leading-[1.2] font-semibold tracking-[-0.04em] sm:text-[42px]">{site.name}</h1>
-            <p className="mt-3 text-2xl leading-[1.38] font-semibold tracking-[-0.035em] sm:text-[28px]">{site.subtitle}</p>
-            <p className="mt-4 max-w-lg text-sm leading-6 text-muted-foreground">{site.description}</p>
+            <h1 className="text-[40px] leading-[1.1] font-semibold tracking-[-0.04em] sm:text-[56px]">{site.name}</h1>
+            <p className="mt-3 text-[32px] leading-[1.2] font-semibold tracking-[-0.035em] sm:text-[40px] lg:text-[48px]">{site.subtitle}</p>
+            <p className="mt-4 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-xl">{site.description}</p>
           </div>
           <PlatformDownloads />
         </div>

@@ -3,6 +3,7 @@ export type CategoryId = 'extension' | 'desktop' | 'packages' | 'skills';
 type ProductModule = {
   name: string;
   description: string;
+  installCommand?: string;
   links?: readonly { label: string; href: string }[];
 };
 
@@ -31,10 +32,11 @@ export const productCategories: readonly ProductCategory[] = [
     id: 'packages', name: 'Packages', label: '开发工具包',
     description: '将项目中实用的能力整理成独立 npm 包，在更多项目中复用。', action: '浏览工具包',
     modules: [{
-      name: 'wxt-stable-output',
-      description: '为 WXT 开发提供稳定的扩展加载目录，构建失败时保留上一份成功产物。',
+      name: 'WXT 稳定构建产物工具',
+      description: '为 WXT 开发模式提供稳定的扩展加载目录，避免重建或构建失败导致扩展加载异常。',
+      installCommand: 'pnpm add -D @linguio/wxt-stable-output',
       links: [
-        { label: '在 npm 查看', href: 'https://www.npmjs.com/package/@linguio/wxt-stable-output' },
+        { label: 'npm 包', href: 'https://www.npmjs.com/package/@linguio/wxt-stable-output' },
         { label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/packages/wxt-stable-output' },
       ],
     }],

@@ -5,5 +5,5 @@ export const site = {
   githubUrl: 'https://github.com/linguio/exts',
   chromeDownloadUrl: 'https://github.com/linguio/exts/releases/latest/download/exts-chrome.zip',
   macDownloadUrl: 'https://github.com/linguio/exts/releases/latest/download/exts-mac.dmg',
-  copyright: 'Copyright © 2026-present Lin Gui',
+  copyright: 'Copyright © 2026 Lin Gui',
 } as const;

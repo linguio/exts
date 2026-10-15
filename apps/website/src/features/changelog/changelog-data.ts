@@ -14,16 +14,29 @@ type ChangelogEntry = {
 // 日期取实际发布或代码交付时间并转换为北京时间，不使用补录日期。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'website-content-layout',
+    date: '2026-10-15',
+    title: '完善官网内容与布局',
+    groups: [{
+      platform: 'Website',
+      changes: [
+        '新增更新日志页面，集中展示各项工具的发布与改动。',
+        '新增产品说明页面，介绍工具用途、使用方式与相关入口。',
+        '调整首页布局，新增工具分类与产品展示。',
+      ],
+    }],
+  },
+  {
     id: 'wxt-stable-output-first-release',
     date: '2026-10-14',
-    title: 'WXT 稳定产物工具首次发布',
+    title: '发布 WXT 稳定构建产物工具',
     groups: [{
       platform: 'Packages',
       changes: [
-        '公开发布 wxt-stable-output，为 WXT 开发提供稳定的扩展加载目录',
-        '构建成功时同步产物，校验或替换失败时保留上一份成功产物',
+        '转发 WXT 重载通知前，先同步最新构建产物到稳定加载目录。',
+        '校验或目录替换失败时，保留最后一次成功的产物，并提供错误信息供排查。',
       ],
-      links: [{ label: '查看 npm 包', href: 'https://www.npmjs.com/package/@linguio/wxt-stable-output/v/1.0.0' }],
+      links: [{ label: '@linguio/wxt-stable-output · 1.0.0', href: 'https://www.npmjs.com/package/@linguio/wxt-stable-output/v/1.0.0' }],
     }],
   },
   {
