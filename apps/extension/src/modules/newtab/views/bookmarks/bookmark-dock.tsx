@@ -3,6 +3,7 @@ import { Separator } from '../../../../shared/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
 import type { Bookmark, BookmarkGroup, OpenBookmark } from '../../types/bookmarks';
 import { DockToolMenu } from './dock-tool-menu';
+import { DockSettings } from './dock-settings';
 
 interface BookmarkDockProps {
   favorites: Bookmark[];
@@ -38,6 +39,7 @@ export function BookmarkDock({ favorites, components, devtools, onOpenBookmark }
             <DockToolMenu group={group} onOpenBookmark={onOpenBookmark} />
           </div>
         ))}
+        <DockSettings />
       </div>
     </nav>
   );

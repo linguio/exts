@@ -49,8 +49,9 @@ export const BOOKMARK_GRID: BookmarkGridItem[] = [
 // Dock 收藏区只保存直接可点击的常用书签。
 export const DOCK_FAVORITES: Bookmark[] = [
   { type: 'bookmark', id: 'chatgpt', name: 'ChatGPT', url: 'https://chatgpt.com', icon: 'brand/chatgpt.svg', iconTone: 'adaptive' },
-  { type: 'bookmark', id: 'github', name: 'GitHub', url: 'https://github.com', icon: 'brand/github.svg', iconTone: 'adaptive' },
   { type: 'bookmark', id: 'gmail', name: 'Gmail', url: 'https://mail.google.com', icon: 'brand/gmail.svg', iconTone: 'adaptive' },
+  { type: 'bookmark', id: 'github', name: 'GitHub', url: 'https://github.com', icon: 'brand/github.svg', iconTone: 'adaptive' },
+  { type: 'bookmark', id: 'exts', name: 'Exts', url: 'https://exts.linguio.dev/', icon: 'brand/exts.svg' },
 ];
 
 // Components 与 DevTools 都是 Dock 内的聚合入口，内部书签按各自名称加入标签组。

@@ -46,7 +46,7 @@ export function DockToolMenu({ group, onOpenBookmark }: DockToolMenuProps) {
               type="button"
               variant="ghost"
               size="icon"
-              className="bookmark-card group bookmark-card--dock bookmark-dock__tool box-border h-16 w-16 flex-none cursor-pointer rounded-[var(--radius)] bg-transparent p-0 text-foreground hover:bg-transparent focus-visible:outline-none aria-expanded:bg-transparent"
+              className="bookmark-card entry-trigger bookmark-card--dock bookmark-dock__tool box-border h-16 w-16 flex-none cursor-pointer rounded-[var(--radius)] bg-transparent p-0 text-foreground hover:bg-transparent focus-visible:outline-none aria-expanded:bg-transparent"
               aria-label={`打开 ${group.name} 工具列表`}
               onPointerDown={() => setTooltipOpen(false)}
               onKeyDown={(event) => {
@@ -55,11 +55,11 @@ export function DockToolMenu({ group, onOpenBookmark }: DockToolMenuProps) {
                 }
               }}
             >
-              <span className="bookmark-card__icon grid h-16 w-16 place-items-center rounded-[var(--radius)] border border-border bg-card transition-[border-color,box-shadow,transform] duration-[var(--duration-fast)] ease-[var(--ease-standard)] motion-safe:group-hover:-translate-y-0.5 motion-safe:group-focus-visible:-translate-y-0.5 motion-safe:group-hover:shadow-[var(--shadow-hover)] motion-safe:group-focus-visible:shadow-[var(--shadow-hover)] group-focus-visible:outline-2 group-focus-visible:outline-ring group-focus-visible:outline-offset-2">
+              <span className="bookmark-card__icon entry-surface">
                 <DockIconView
                   icon={group.icon}
                   name={group.name}
-                  className="motion-safe:group-hover:scale-[1.06] motion-safe:group-focus-visible:scale-[1.06]"
+                  className="entry-glyph"
                 />
               </span>
             </Button>

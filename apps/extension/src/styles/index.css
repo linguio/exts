@@ -64,6 +64,9 @@
   --shadow-floating: 0 12px 28px rgb(24 24 27 / 12%);
   --size-icon-tile: 4rem;
   --size-icon-glyph: 2rem;
+  --overlay-blur: 8px;
+  --entry-hover-scale: 1.06;
+  --entry-hover-lift: -2px;
   --page-background: var(--background);
   --text-color: var(--foreground);
   --focus-color: var(--ring);
@@ -93,6 +96,70 @@
     --shadow-hover: 0 8px 18px rgb(0 0 0 / 28%);
     --shadow-floating: 0 16px 36px rgb(0 0 0 / 36%);
   }
+}
+
+/* 全局遮罩统一使用相同的主题透明色与模糊强度，供 Sheet、EDU 等场景复用。 */
+.blur-overlay {
+  background-color: var(--overlay);
+  backdrop-filter: blur(var(--overlay-blur));
+}
+
+/* 入口图块与图形分别承担容器反馈和图标反馈；触发方式在同一处维护。 */
+.entry-surface {
+  display: grid;
+  width: var(--size-icon-tile);
+  height: var(--size-icon-tile);
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--card);
+  transition: border-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+.entry-glyph {
+  transition: filter var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+.entry-trigger:focus-visible .entry-surface {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .entry-trigger:is(:hover, :focus-visible) .entry-surface {
+    translate: 0 var(--entry-hover-lift);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .entry-trigger:is(:hover, :focus-visible) .entry-glyph {
+    scale: var(--entry-hover-scale);
+  }
+
+  /* 无图块的遮罩入口只移动图形，透明遮罩本身保持不动。 */
+  .entry-trigger:is(:hover, :focus-visible) .entry-glyph--lift {
+    translate: 0 var(--entry-hover-lift);
+  }
+}
+
+.sheet-content[data-state='open'] {
+  animation: sheet-enter 200ms var(--ease-standard);
+}
+
+.sheet-content[data-state='closed'] {
+  animation: sheet-exit 160ms var(--ease-standard);
+}
+
+@keyframes sheet-enter {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes sheet-exit {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
 }
 
 @media (prefers-reduced-motion: reduce) {

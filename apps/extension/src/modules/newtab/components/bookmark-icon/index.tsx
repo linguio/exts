@@ -4,7 +4,7 @@ import type { IconSize, IconTone } from '../../types/icons';
 import { getExtensionAsset } from '../../../../shared/browser/assets.js';
 
 const bookmarkIconVariants = cva(
-  'bookmark-icon block object-contain transition-[filter,transform] duration-[var(--duration-fast)] ease-[var(--ease-standard)]',
+  'bookmark-icon block object-contain',
   {
     variants: {
       tone: {

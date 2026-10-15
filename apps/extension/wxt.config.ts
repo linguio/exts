@@ -39,11 +39,18 @@ const assetFiles = [
   'modules/newtab/assets/tools/lucide.svg',
 ] as const;
 
-const outputAssetPaths = assetFiles.map((file) => `/src/${file}`);
+const outputAssetPaths: string[] = assetFiles.map((file) => `/src/${file}`);
 const assetCopies = assetFiles.map((file) => ({
   absoluteSrc: resolve('src', file),
   relativeDest: `src/${file}`,
 }));
+
+// 直接复用品牌唯一源稿，避免为书签再维护一份派生 SVG。
+outputAssetPaths.push('/src/modules/newtab/assets/brand/exts.svg');
+assetCopies.push({
+  absoluteSrc: fileURLToPath(new URL('../../assets/brand/exts.svg', import.meta.url)),
+  relativeDest: 'src/modules/newtab/assets/brand/exts.svg',
+});
 
 const actionIcons = {
   16: '/src/assets/logo/exts-16.png',

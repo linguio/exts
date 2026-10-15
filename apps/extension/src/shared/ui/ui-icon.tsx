@@ -1,4 +1,4 @@
-import { Blocks, BrushCleaning, Wrench, type LucideIcon } from 'lucide-react';
+import { Blocks, BrushCleaning, Settings, Wrench, X, type LucideIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
 
 import type { UiIconName } from './types';
@@ -8,6 +8,8 @@ const uiIconMap: Record<UiIconName, LucideIcon> = {
   blocks: Blocks,
   'brush-cleaning': BrushCleaning,
   wrench: Wrench,
+  settings: Settings,
+  x: X,
 };
 
 interface UiIconProps extends Omit<ComponentProps<'svg'>, 'name'> {
