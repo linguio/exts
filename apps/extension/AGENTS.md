@@ -1,5 +1,9 @@
 # 子项目规范
 
+## 界面样式
+
+- 扩展界面样式规范维护在 [docs/extension-ui.md](../../docs/extension-ui.md)；主题 Token 与共用语义样式由 `src/styles/index.css` 实现，组件按用途引用，禁止复制一套相同参数自行维护。
+
 ## 网站图标
 
 - 网站图标的原始参考优先使用 [Simple Icons](https://simpleicons.org/)。
@@ -14,7 +18,7 @@
 
 - exts 新标签页模块 以 shadcn/ui 与 Radix 原语作为通用 UI 基础，但只按已批准的真实交互需求引入组件；禁止执行 `shadcn add --all`，不得为了形式统一机械替换业务组件。
 - `src/shared/ui/` 只维护项目持有的通用 shadcn/ui 原语源码，不得包含书签、Dock、Chrome API 或其他业务逻辑；业务差异应在 `src/modules/newtab/` 或现有业务组件中通过组合、variant 和 `className` 实现。
-- 当前受控范围只包含 `Button`、`Tooltip`、`DropdownMenu` 和已有 `Separator`；`Card`、shadcn `Popover`、`Dialog` 与 `AlertDialog` 在没有独立需求和用户批准前不得引入。
+- 当前受控范围包含 `Button`、`Tooltip`、`DropdownMenu`、`Separator` 与已批准的 Settings `Sheet`；Sheet 内部复用 Radix Dialog 原语。`Card`、shadcn `Popover`、独立 `Dialog` 与 `AlertDialog` 在没有独立需求和用户批准前不得引入。
 - 添加或更新 shadcn/ui 原语前必须检查生成差异，不得直接覆盖本地 Token、字体或已批准的可访问性定制；组件升级必须保留与真实行为和架构边界对应的现有测试。
 - 全局只创建一个 `TooltipProvider`；不得为每个 Dock 项目重复创建 Provider。
 - Tooltip 只承担简短的 Hover 与键盘 Focus 提示，不得包含链接、按钮、书签列表或其他可交互内容；书签入口显示书签名，工具分组显示分组名，菜单打开时不得残留 Tooltip。
@@ -29,13 +33,13 @@
 
 ## Dock 交互
 
-- Dock 当前只允许两类入口：`link` 入口使用真实链接语义并直接打开网页；`menu` 入口使用真实按钮语义并在点击或键盘操作后打开 `DropdownMenu`。
+- Dock 网页入口使用真实链接语义；工具分组使用真实按钮打开 `DropdownMenu`；已批准的 Settings 使用真实按钮打开 `Sheet`。各入口按已批准职责组合，不维护第二套交互实现。
 - Dock 入口 Hover 或键盘 Focus 时只显示 Tooltip；不得通过 Hover 直接展开 DropdownMenu，也不得让同一个弹层同时承担 Tooltip 和菜单职责。
 - DropdownMenu 中的网页入口优先使用真实 `<a>`；仅在需要调用 Chrome API、创建标签组或执行非导航操作时使用命令型菜单项。
 - Dock 位于视口底部，DropdownMenu 默认从上方弹出并支持碰撞调整；必须验证菜单在 `1280×720`、缩放后 CSS 视口 `640×360` 以及 100%、125%、150%、200% 缩放下不被裁剪或移出视口。
 - DropdownMenu 必须覆盖 Enter、Space 或 ArrowDown 打开、方向键移动、Enter 激活、Esc 关闭并恢复触发器焦点、外部点击关闭等行为；Portal 必须正确继承明暗主题 Token 和层级。
 - 已废弃的自定义 Popover 不得重新引入；DropdownMenu 与 Tooltip 分别承担菜单和提示职责，不维护双轨实现。
-- 桌面应用、搜索、编辑、拖拽、设置、主题按钮、`Dialog`、`AlertDialog` 和新的全局状态管理均不属于当前功能范围；新增时必须建立新的本地 Issue，并按任务规模完成必要设计批准。
+- Settings 当前仅包含已批准的 Sheet 外壳；内部设置项、桌面应用、搜索、编辑、拖拽、主题按钮、独立 `Dialog`、`AlertDialog` 和新的全局状态管理不属于当前功能范围，新增时须按本地 Issue 流程取得批准。
 
 ## exts 新标签页模块 验收
 

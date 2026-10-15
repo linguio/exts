@@ -80,9 +80,6 @@ docs/
 
 无。
 
-
-
-
 ## Issue 队列
 
 无。
@@ -93,6 +90,8 @@ docs/
 无。
 
 ## 已完成
+
+- [调整新标签页 Dock 书签与工具入口](./issues/2026-10-15-extension-newtab-dock-issue.md) · [Commit 记录](./commits/2026-10-15-extension-newtab-dock-commit.md)；用户确认验收并批准代码、文档两笔本地提交，书签换位与 Exts、560px Settings Sheet、EDU 反馈和共用语义样式已交付；扩展界面规范与 AGENTS 同步，15 项测试、类型检查、构建、包体积及 diff 检查通过；代理未独立实测浏览器，不推送或发布。
 
 - [拉宽官网整体内容区域](./issues/2026-10-15-website-container-width-issue.md) · [Commit 记录](./commits/2026-10-15-website-container-width-commit.md)；用户确认验收并批准本地提交，最大宽度改为 1280px，移除首页标语独立限宽；内边距及正文阅读宽度保持原样，9 项逻辑测试通过，追加修改后类型检查、构建与 diff 检查通过；代理未实测浏览器，不推送或部署。
 
