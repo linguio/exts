@@ -94,6 +94,9 @@ docs/
 
 ## 已完成
 
+- [完善官网首页展示与分类介绍](./issues/2026-10-15-website-category-arrow-issue.md) · [Commit 记录](./commits/2026-10-15-website-category-arrow-commit.md)；用户确认验收并批准代码、文档两笔本地提交，包含追加的 Chrome 与 NPM 发布日志标题；首页布局、卡片反馈、分类与页面说明已交付，9 项逻辑测试、类型检查、构建及最终文案与 diff 核对通过；代理未实测浏览器效果，不推送或部署。
+
+
 - [简化首页工具包介绍](./issues/2026-10-15-website-intro-packages-issue.md) · [Commit 记录](./commits/2026-10-15-website-intro-packages-commit.md)；用户确认验收并批准本地提交，仅将首页介绍中的“npm 工具包”改为“工具包”；配置加载与 diff 核对通过，纯文案变更未重复全量测试或构建，不推送。
 
 - [优化官网首页、产品说明与更新日志](./issues/2026-10-15-extension-newtab-changes-issue.md) · [Commit 记录](./commits/2026-10-15-extension-newtab-changes-commit.md)；用户确认验收并批准代码、文档两笔本地提交；首页排版、共享页脚、工具包说明、日志标签及版本入口已交付，9 项逻辑测试、类型检查、构建与 diff 核对通过；代理未实测浏览器效果，不推送或部署。
