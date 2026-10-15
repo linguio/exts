@@ -29,7 +29,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
   {
     id: 'wxt-stable-output-first-release',
     date: '2026-10-14',
-    title: '发布 WXT 稳定构建产物工具',
+    title: '发布 NPM 工具包 · WXT 稳定构建产物',
     groups: [{
       platform: 'Packages',
       changes: [
@@ -55,7 +55,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
   {
     id: 'first-release',
     date: '2026-10-10',
-    title: 'Chrome 插件首次发布',
+    title: '发布 Chrome 拓展 · 新标签页',
     groups: [{
       platform: 'Chrome',
       changes: [

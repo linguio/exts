@@ -22,7 +22,7 @@
   font: inherit;
   color: var(--foreground);
   background: var(--background);
-  border: 1px solid var(--border);
+  border: 1px solid color-mix(in srgb, var(--foreground) 20%, var(--background));
   border-radius: 6px;
   transition: transform 700ms cubic-bezier(.22,.8,.25,1), opacity 700ms;
 }

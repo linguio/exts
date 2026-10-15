@@ -54,7 +54,7 @@
   }
 
   .home-main {
-    @apply py-6 sm:py-8;
+    @apply py-4;
   }
 
   .site-document {
@@ -95,7 +95,7 @@
   }
 
   .site-footer-content {
-    @apply flex min-h-16 items-center justify-center py-4;
+    @apply flex min-h-12 items-center justify-center py-3;
   }
 
   .site-anchor {
@@ -104,6 +104,43 @@
 
   .site-resource-link {
     @apply inline-flex items-center gap-1 text-sm leading-6 text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring;
+  }
+
+  .site-category-card {
+    border: 1px solid transparent;
+    background-color: var(--secondary);
+    transition: background-color 150ms, border-color 150ms, transform 150ms;
+  }
+
+  @media (hover: hover) {
+    .site-category-card:hover {
+      border-color: color-mix(in srgb, var(--foreground) 30%, var(--background));
+      background-color: var(--accent);
+      transform: translateY(-2px);
+    }
+  }
+
+  .site-category-card:focus-visible {
+    border-color: var(--ring);
+    outline: 2px solid var(--ring);
+    outline-offset: 4px;
+  }
+
+  .site-category-card:active {
+    border-color: var(--ring);
+    background-color: var(--accent);
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-category-card {
+      transition: none;
+    }
+
+    .site-category-card:hover,
+    .site-category-card:active {
+      transform: none;
+    }
   }
 }
 

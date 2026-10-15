@@ -19,6 +19,9 @@ export function FeaturesPage() {
 
   return (
     <SiteDocumentLayout currentPage="features" title="产品介绍">
+      <p className="mb-8 text-sm leading-6 text-foreground">
+        Exts 是我按个人习惯打造的工具集合，围绕日常开发、工作、生活与兴趣，把想法变成顺手的工具。
+      </p>
       <div className="grid grid-cols-[112px_minmax(0,1fr)] gap-4 sm:gap-8">
         <nav aria-label="功能分类" className="flex flex-col items-start gap-2">
           {productCategories.map((category) => (
