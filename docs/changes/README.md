@@ -94,6 +94,8 @@ docs/
 
 ## 已完成
 
+- [简化首页工具包介绍](./issues/2026-10-15-website-intro-packages-issue.md) · [Commit 记录](./commits/2026-10-15-website-intro-packages-commit.md)；用户确认验收并批准本地提交，仅将首页介绍中的“npm 工具包”改为“工具包”；配置加载与 diff 核对通过，纯文案变更未重复全量测试或构建，不推送。
+
 - [优化官网首页、产品说明与更新日志](./issues/2026-10-15-extension-newtab-changes-issue.md) · [Commit 记录](./commits/2026-10-15-extension-newtab-changes-commit.md)；用户确认验收并批准代码、文档两笔本地提交；首页排版、共享页脚、工具包说明、日志标签及版本入口已交付，9 项逻辑测试、类型检查、构建与 diff 核对通过；代理未实测浏览器效果，不推送或部署。
 
 - [完善官网工具介绍、更新日志与许可证页脚](./issues/2026-10-12-website-home-tool-categories-issue.md) · [Commit 记录](./commits/2026-10-12-website-home-tool-categories-commit.md)；用户验收通过并批准页面、日志、文档三笔本地提交；首页四类入口、产品说明、首次工具包日志与两行页脚已交付，9 项逻辑测试、类型检查、构建与资源核对通过；浏览器视觉交互未实测，不推送或部署。
