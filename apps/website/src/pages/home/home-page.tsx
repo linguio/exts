@@ -14,7 +14,7 @@ export function HomePage() {
         <div className="flex min-w-0 flex-col gap-4">
           <div>
             <h1 className="text-[40px] leading-[1.1] font-semibold tracking-[-0.04em] sm:text-[56px]">{site.name}</h1>
-            <p className="mt-3 text-[32px] leading-[1.2] font-semibold tracking-[-0.035em] sm:text-[40px] lg:max-w-[10em] lg:text-[48px]">{site.subtitle}</p>
+            <p className="mt-3 text-[32px] leading-[1.2] font-semibold tracking-[-0.035em] sm:text-[40px] lg:text-[48px]">{site.subtitle}</p>
             <p className="mt-4 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-xl lg:text-2xl">{site.description}</p>
           </div>
           <PlatformDownloads />

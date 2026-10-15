@@ -94,6 +94,8 @@ docs/
 
 ## 已完成
 
+- [拉宽官网整体内容区域](./issues/2026-10-15-website-container-width-issue.md) · [Commit 记录](./commits/2026-10-15-website-container-width-commit.md)；用户确认验收并批准本地提交，最大宽度改为 1280px，移除首页标语独立限宽；内边距及正文阅读宽度保持原样，9 项逻辑测试通过，追加修改后类型检查、构建与 diff 检查通过；代理未实测浏览器，不推送或部署。
+
 - [完善官网首页展示与分类介绍](./issues/2026-10-15-website-category-arrow-issue.md) · [Commit 记录](./commits/2026-10-15-website-category-arrow-commit.md)；用户确认验收并批准代码、文档两笔本地提交，包含追加的 Chrome 与 NPM 发布日志标题；首页布局、卡片反馈、分类与页面说明已交付，9 项逻辑测试、类型检查、构建及最终文案与 diff 核对通过；代理未实测浏览器效果，不推送或部署。
 
 
