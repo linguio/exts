@@ -94,6 +94,8 @@ docs/
 
 ## 已完成
 
+- [优化官网首页、产品说明与更新日志](./issues/2026-10-15-extension-newtab-changes-issue.md) · [Commit 记录](./commits/2026-10-15-extension-newtab-changes-commit.md)；用户确认验收并批准代码、文档两笔本地提交；首页排版、共享页脚、工具包说明、日志标签及版本入口已交付，9 项逻辑测试、类型检查、构建与 diff 核对通过；代理未实测浏览器效果，不推送或部署。
+
 - [完善官网工具介绍、更新日志与许可证页脚](./issues/2026-10-12-website-home-tool-categories-issue.md) · [Commit 记录](./commits/2026-10-12-website-home-tool-categories-commit.md)；用户验收通过并批准页面、日志、文档三笔本地提交；首页四类入口、产品说明、首次工具包日志与两行页脚已交付，9 项逻辑测试、类型检查、构建与资源核对通过；浏览器视觉交互未实测，不推送或部署。
 
 - [升级扩展的正式稳定产物工具到 1.0.1](./issues/2026-10-15-extension-stable-output-101-issue.md) · [Commit 记录](./commits/2026-10-15-extension-stable-output-101-commit.md)；用户验收通过并批准本地结项提交，已确认安装加载官方 1.0.1，15 项测试、类型检查、构建、体积与 diff 检查通过；浏览器和开发生命周期尚未验证，不推送或发布。
