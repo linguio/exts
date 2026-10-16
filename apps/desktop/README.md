@@ -2,6 +2,11 @@
 
 macOS 原生应用，正式 Bundle Identifier 为 `dev.linguio.exts`，开发为 `dev.linguio.exts.dev`，Organization Identifier 为 `dev.linguio`。
 
+## 功能文档
+
+- [桌面功能索引](../../docs/desktop/README.md)：当前产品与功能入口。
+- [Photos 设备媒体](../../docs/desktop/ohmy-photos.md)：功能流程、使用限制与数据位置。
+
 ## 当前结构
 
 - `src/app/`：ExtsApp 入口与窗口组合。
@@ -18,7 +23,7 @@ macOS 原生应用，正式 Bundle Identifier 为 `dev.linguio.exts`，开发为
 
 需要 macOS 27、Xcode 27 和 xcodegen；非 macOS 或缺少工具时明确报错。逻辑入口检查：`node --test apps/desktop/tests/scripts/desk.test.mjs`。
 
-正式版保留下载目录 `~/Downloads/OhMy Photos` 与缩略图缓存 `~/Library/Application Support/OhMy Photos/Thumbnails`；开发版分别使用 `~/Downloads/Exts Dev` 和 `~/Library/Application Support/Exts Dev/Thumbnails`。不自动迁移或删除已有文件。不同 Bundle Identifier 的配置独立，开发版可能需要重新授权设备或目录；用户主动选择同一外部目录不保证隔离。
+默认下载与缩略图位置见 [Photos 文件与数据](../../docs/desktop/ohmy-photos.md#文件与数据)。不同 Bundle Identifier 的配置独立，开发版可能需要重新授权设备或目录；用户主动选择同一外部目录不保证隔离。
 
 [当前 Issue](../../docs/changes/issues/2026-10-10-repo-unify-build-release-issue.md)
 

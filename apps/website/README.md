@@ -1,6 +1,6 @@
 # Exts 产品官网
 
-React 静态产品官网，使用 Vite、TypeScript、Tailwind CSS 与 shadcn/ui。首页显示 Exts 标题、副标题、介绍、Tabs／Photos 叠放示意和 Chrome、macOS latest 下载入口，下方四张卡片进入对应产品分类。产品介绍与更新日志使用独立页面；全站共享两行 MIT 许可证和版权页脚。
+React 静态产品官网，使用 Vite、TypeScript、Tailwind CSS 与 shadcn/ui。页面用途、模块展示、产品介绍、更新日志与下载行为统一见[官网功能说明](../../docs/website/README.md)；主题、排版和布局规则见[官网界面规范](../../docs/website/ui.md)。
 
 ## 开发与构建
 
@@ -38,47 +38,13 @@ pnpm web:build
 
 ## 组件与资源
 
-视觉规则统一维护在[官网视觉规范](../../docs/website-ui.md)，包含已批准的主题、排版、间距和共享固定布局。三页使用同一个 SiteLayout 与固定页头页脚；产品介绍与更新日志使用同一个 SiteDocumentLayout，统一阅读宽度、标题及基础排版。各页使用共享 site-shell/site-container 样式，正文及锚点偏移引用相同高度变量，包含设备安全区；实际布局由用户验收。
+视觉规则统一维护在[官网视觉规范](../../docs/website/ui.md)，包含已批准的主题、排版、间距和共享固定布局。三页使用同一个 SiteLayout 与固定页头页脚；产品介绍与更新日志使用同一个 SiteDocumentLayout，统一阅读宽度、标题及基础排版。各页使用共享 site-shell/site-container 样式，正文及锚点偏移引用相同高度变量，包含设备安全区；实际布局由用户验收。
 
 Tooltip 使用现有 radix-ui 的 Provider、Trigger、Content 与 Portal；提示显示在入口下方，沿用语义颜色和固定页头之上的层级。实际交互由用户验收。全局 html 使用 scrollbar-gutter: stable 预留滚动条空间，减少长短页面切换的横向偏移。
 
 Button 来源于 shadcn 官方 new-york-v4 registry，保持 Radix Slot、variant、size 与 disabled 语义。仅把官方源码的 cn 导入改为本地已固定 clsx、tailwind-merge 工具；未引入新的 cn 包。components.json 保存网站组件生成配置；如使用 CLI，固定为 shadcn@4.21.4，生成后检查源码和依赖，禁止保留浮动版本或直接运行 @latest。
 
 Lucide React 用于通用状态图标，平台与 GitHub 用品牌 SVG。Google Chrome 与 Apple SVG 使用用户提供的原文件，不在运行时读取 Downloads。public/exts.svg 及各尺寸 PNG 沿用根 assets/brand/website 正式派生资源；不重绘或修改源稿。主体与跨平台外形见 [Logo 规范](../../docs/exts-logo.md)。第三方许可证随产物保留在 public/third-party-notices.txt，不作为页脚署名。
-
-## 首页模块展示
-
-正式卡片池只包含 Tabs、Photos，不保留示例卡。最多展示连续三张，少于三张时不重复补卡。自动轮播每次推进池起点，补入下一张，整池循环；点击只临时将当前可见卡片置前，自动下一组仍按原池顺序推进。十张卡片的补位与循环规则通过纯逻辑测试覆盖，无需将假模块加入正式页面。
-
-右侧为独立 Tabs／Media 示意，不是真实截图或业务入口。Tabs 只显示书签 SVG 与底部 Dock；Media 只显示图片和视频占位、月份、“已选 2”和文字“下载”。点击卡片仅置前，不下载媒体。点击与自动切换共用过渡，鼠标点击焦点不会阻止移开后继续轮换。
-
-默认 Tabs 在前，每 3 秒自动轮换；鼠标悬停或键盘焦点进入展示区时暂停，离开后重新计时。两张卡片为原生按钮，可用 Enter/Space 置前；没有底部切换栏。页面隐藏时暂停，减少动态效果时只手动切换，组件卸载清理定时器和监听。窄展示区自动收紧图标与 Dock 尺寸，实际布局由用户验收。
-
-卡片池规则检查：node --test apps/website/tests/showcase/card-pool.test.ts。测试覆盖十张池两轮循环、末尾补位、点击临时置前与小池场景；不覆盖浏览器动画、焦点或布局。
-
-## 更新日志
-
-页头 FileClock 图标以“更新日志”为提示，链接到 /changelog/，点击 Exts 返回首页。首页、changelog/index.html 和 features/index.html 是独立 Vite HTML 入口，共享页头、页脚和样式；正式产物包含三个页面，支持 GitHub Pages 直接访问与刷新，不依赖 SPA 回退或额外路由库。
-
-日志维护在 src/features/changelog/changelog-data.ts，按实际发布或代码交付时间倒序，日期统一转换为北京时间。按年份分组，桌面年份位于最左侧且每组仅显示一次，日期仅显示月日；手机端年份置于该组记录上方。年份可点击返回该年第一条，使用现有 shadcn Button 和原生锚点。每条包含事件标题、平台标签和无序列表，无单独版本号或副标题，可附对应历史版本链接。分类为 Website、Chrome、macOS、Packages，使用黑底白字 Badge；不重复添加最新下载按钮。
-
-首批记录为“产品官网上线”和“Chrome 插件首次发布”；官网条目合并产品介绍、Latest 下载入口与更新时间线，日期按官网完善后的实际交付 Git 提交北京时间确认。日志不会自动从 Git 或 GitHub 生成；修改日志后需手动部署官网，不要求改根产品版本。
-
-Packages 首次公开发布记录为 2026-10-14，依据 npm 官方 registry 的 1.0.0 发布时间转换北京时间；链接指向该历史版本。1.0.1 文档修订保留在包自己的更新记录，不单列官网事件。
-
-## 产品介绍
-
-页头 BookOpen 图标位于更新日志入口旁，链接到 /features/；提示与页面标题均为“产品介绍”。左侧四类为浏览器扩展、桌面应用、开发工具包、AI 工作流，默认浏览器扩展；原生 hash 链接支持直接打开、刷新与前进/后退，空或无效 hash 回到默认分类，不新增路由依赖。
-
-内容包含 Tabs、Photos 与 wxt-stable-output，Skills 显示“暂无公开 Skills”，移除原协同分类。模块以标题和一句介绍呈现，工具包附当前 npm 包主页与源码链接；不放截图、卡片、能力标签或详细安装步骤。文案维护在 src/features/products/categories.ts，不请求外部数据。
-
-## 下载行为
-
-构建通过 scripts/version.mjs 校验根产品版本，但不向下载链接注入版本。Chrome 与 macOS 分别使用 https://github.com/linguio/exts/releases/latest/download/exts-chrome.zip、https://github.com/linguio/exts/releases/latest/download/exts-mac.dmg，正式 Release 为 Latest 且包含同名附件时直接转向对应包。
-
-不查询 API、不检查文件存在、不判断下载结果，不添加加载状态或成功/失败提示。用户已知当前 DMG 地址不存在，仍要求开放链接。后续产品版本发布不需要为下载链接重新构建官网；缺少对应附件时不自动回退旧包。源码入口为 https://github.com/linguio/exts。
-
-扩展 ZIP 需解压后在 Chrome 扩展管理页开启开发者模式并选择“加载已解压的扩展程序”，不是 Chrome 商店安装包。此版官网仅标注 Chrome，未宣称 Edge 已通过验收。
 
 ## 验证与上线边界
 

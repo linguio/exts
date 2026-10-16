@@ -67,7 +67,7 @@
 
 - [Commit 记录](../commits/2026-10-15-extension-newtab-dock-commit.md)
 - [工作台](../README.md)
-- [扩展界面样式规范](../../extension-ui.md)
+- [扩展界面样式规范](../../extension/ui.md)
 
 ## 验证结果
 

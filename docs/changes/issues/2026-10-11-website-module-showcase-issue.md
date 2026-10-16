@@ -60,7 +60,7 @@
 
 - [Commit 记录](../commits/2026-10-11-website-module-showcase-commit.md)
 - [工作台](../README.md)
-- [官网视觉规范](../../website-ui.md)
+- [官网视觉规范](../../website/ui.md)
 - [官网说明](../../../apps/website/README.md)
 
 最终设计参考：会话预览 exts-tabs-showcase.html；正式规则已写入本 Issue，不依赖会话预览文件作为唯一事实来源。

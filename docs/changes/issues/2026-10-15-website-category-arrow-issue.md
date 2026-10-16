@@ -64,7 +64,7 @@
 
 - [Commit 记录](../commits/2026-10-15-website-category-arrow-commit.md)
 - [工作台](../README.md)
-- [官网视觉规范](../../website-ui.md)
+- [官网视觉规范](../../website/ui.md)
 
 ## 唯一下一步
 

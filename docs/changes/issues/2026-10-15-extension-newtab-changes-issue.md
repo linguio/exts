@@ -98,7 +98,7 @@
 - [Commit 记录](../commits/2026-10-15-extension-newtab-changes-commit.md)
 - [工作台](../README.md)
 - [官网规范](../../../apps/website/AGENTS.md)
-- [官网视觉规范](../../website-ui.md)
+- [官网视觉规范](../../website/ui.md)
 - [构建与分发规范](../../build-release.md)
 
 ## 唯一下一步

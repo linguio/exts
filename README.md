@@ -8,6 +8,8 @@
 
 ## 2. 项目框架
 
+三端功能文档分别维护在 [浏览器扩展](docs/extension/README.md)、[产品官网](docs/website/README.md)和[桌面应用](docs/desktop/README.md)。每个独立功能维护一份说明；应用 README 提供开发入口，源码模块不重复维护功能 README。
+
 本仓库采用 Monorepo 组织方式，在同一个 Git 仓库中维护多个可以独立开发、构建和验证的子项目。
 
 - **Monorepo**：统一维护 website、desktop 和 extension；功能在应用内部按职责组织，不再分别维护独立产品入口。

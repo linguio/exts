@@ -104,7 +104,7 @@ Copyright © 2026-present Lin Gui
 
 - [Commit 记录](../commits/2026-10-12-website-home-tool-categories-commit.md)
 - [工作台](../README.md)
-- [官网视觉规范](../../website-ui.md)
+- [官网视觉规范](../../website/ui.md)
 - [npm 工具包发布说明](../../npm-release.md)
 - 本任务默认只用 Issue Todo，不额外创建 Spec 或 Plan。
 

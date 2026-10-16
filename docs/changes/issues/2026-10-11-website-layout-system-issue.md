@@ -52,7 +52,7 @@
 
 ## 关联文档
 
-- [官网视觉规范](../../website-ui.md)
+- [官网视觉规范](../../website/ui.md)
 
 - [Commit 记录](../commits/2026-10-11-website-layout-system-commit.md)
 - [工作台](../README.md)

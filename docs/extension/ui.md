@@ -1,6 +1,6 @@
 # 扩展界面样式规范
 
-适用于 `apps/extension`。本轮覆盖新标签页书签、Dock 工具、Settings Sheet 和 EDU 遮罩；实际交付及用户验收状态以[当前 Issue](./changes/issues/2026-10-15-extension-newtab-dock-issue.md)为准。
+适用于 `apps/extension`。本轮覆盖新标签页书签、Dock 工具、Settings Sheet 和 EDU 遮罩；实际交付及用户验收状态以[当前 Issue](../changes/issues/2026-10-15-extension-newtab-dock-issue.md)为准。
 
 ## 维护位置与职责
 

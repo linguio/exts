@@ -66,7 +66,7 @@
 
 - [Commit 记录](../commits/2026-10-12-website-feature-overview-commit.md)
 - [工作台](../README.md)
-- [官网视觉规范](../../website-ui.md)
+- [官网视觉规范](../../website/ui.md)
 - [官网说明](../../../apps/website/README.md)
 
 本任务无真实架构分歧或多阶段依赖，不创建独立 Spec 或 Plan。

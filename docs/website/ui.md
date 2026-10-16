@@ -1,12 +1,12 @@
 # 官网视觉规范
 
-状态：已批准，2026-10-11 用户确认尺寸方案；本地实施完成，实际页面效果待用户验收。适用于 apps/website 的首页、Changelog 与功能介绍页；本文件维护长期规则，布局交付进度见[对应 Issue](./changes/issues/2026-10-11-website-layout-system-issue.md)，功能介绍页交付进度见[功能介绍 Issue](./changes/issues/2026-10-12-website-feature-overview-issue.md)。
+状态：已批准，2026-10-11 用户确认尺寸方案；本地实施完成，实际页面效果待用户验收。适用于 apps/website 的首页、Changelog 与功能介绍页；本文件维护长期规则，布局交付进度见[对应 Issue](../changes/issues/2026-10-11-website-layout-system-issue.md)，功能介绍页交付进度见[功能介绍 Issue](../changes/issues/2026-10-12-website-feature-overview-issue.md)。
 
 ## 主题与组件
 
 - 固定浅色、黑白风格，不增加深色模式。沿用现有系统字体栈。
 - 颜色沿用 shadcn 语义 token，定义在 apps/website/src/app/styles.css；业务组件引用语义颜色，不各自新增硬编码颜色。
-- 图标入口和年份链接使用现有 shadcn Button，入口说明使用基于现有 radix-ui 的共用 Tooltip，平台标签使用 Badge，通用图标使用现有 Lucide；品牌资源遵循 [Logo 规范](./exts-logo.md)。
+- 图标入口和年份链接使用现有 shadcn Button，入口说明使用基于现有 radix-ui 的共用 Tooltip，平台标签使用 Badge，通用图标使用现有 Lucide；品牌资源遵循 [Logo 规范](../exts-logo.md)。
 - 仅将各页实际复用的排版与布局值提取为共享规则；不建设额外主题框架，不增加依赖。
 
 ## 颜色层级
@@ -80,7 +80,7 @@
 
 ## 首页工具分类改造设计
 
-状态：用户已批准实施，2026-10-15 已接入本地代码，实际视觉、点击及滚动效果待用户验收。用户确认桌面尽量一屏、小窗口允许滚动、手机不限制滚动，四类入口、单色图标；2026-10-15 本轮按最新批准将左侧文案与下载收为紧凑整体、放大字号，并使用正常文档流中的单行版权页脚。本轮交付进度以[当前 Issue](./changes/issues/2026-10-15-extension-newtab-changes-issue.md)为准，不把构建通过当作视觉验收。
+状态：用户已批准实施，2026-10-15 已接入本地代码，实际视觉、点击及滚动效果待用户验收。用户确认桌面尽量一屏、小窗口允许滚动、手机不限制滚动，四类入口、单色图标；2026-10-15 本轮按最新批准将左侧文案与下载收为紧凑整体、放大字号，并使用正常文档流中的单行版权页脚。本轮交付进度以[当前 Issue](../changes/issues/2026-10-15-extension-newtab-changes-issue.md)为准，不把构建通过当作视觉验收。
 
 ### 首页文字层级
 

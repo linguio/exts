@@ -2,7 +2,7 @@
 
 ## 界面样式
 
-- 扩展界面样式规范维护在 [docs/extension-ui.md](../../docs/extension-ui.md)；主题 Token 与共用语义样式由 `src/styles/index.css` 实现，组件按用途引用，禁止复制一套相同参数自行维护。
+- 扩展界面样式规范维护在 [docs/extension/ui.md](../../docs/extension/ui.md)；主题 Token 与共用语义样式由 `src/styles/index.css` 实现，组件按用途引用，禁止复制一套相同参数自行维护。
 
 ## 网站图标
 

@@ -2,6 +2,13 @@
 
 统一 Chrome／Edge 扩展，首批模块为新标签页，保留书签、Dock 和标签组功能。
 
+## 功能文档
+
+- [扩展功能索引](../../docs/extension/README.md)：功能状态与说明入口。
+- [Newtab](../../docs/extension/newtab.md)：书签、Dock、工具入口与 Settings。
+- [历史清理方案](../../docs/extension/history-cleaner.md)：尚未实现的方案与能力边界。
+- [界面规范](../../docs/extension/ui.md)：共用主题、样式和组件规则。
+
 ## 目录职责
 
 - `src/entrypoints/`：WXT 入口；`src/app/`：应用组合和图标配色适配。

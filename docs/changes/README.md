@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [按应用整理三端功能文档](./issues/2026-10-16-repo-app-documentation-issue.md) · [Commit 记录](./commits/2026-10-16-repo-app-documentation-commit.md)；用户确认验收并批准一笔本地提交；三端索引、功能说明与 UI 规范迁移完成，260 项本地链接及规范正文核对通过，仅文档变更；历史清理尚未实现，不推送。
+
 - [修正新标签页 Exts 书签图标](./issues/2026-10-16-extension-newtab-exts-icon-issue.md) · [Commit 记录](./commits/2026-10-16-extension-newtab-exts-icon-commit.md)；用户确认验收并批准本地提交；原样复用正式圆角 SVG，保留完整背景与主体，不新增反色；15 项测试、类型检查及最新构建、资源一致性与 diff 检查通过，代理未独立实测浏览器，不推送或发布。
 
 - [调整新标签页 Dock 书签与工具入口](./issues/2026-10-15-extension-newtab-dock-issue.md) · [Commit 记录](./commits/2026-10-15-extension-newtab-dock-commit.md)；用户确认验收并批准代码、文档两笔本地提交，书签换位与 Exts、560px Settings Sheet、EDU 反馈和共用语义样式已交付；扩展界面规范与 AGENTS 同步，15 项测试、类型检查、构建、包体积及 diff 检查通过；代理未独立实测浏览器，不推送或发布。

@@ -40,7 +40,7 @@
 ## 关联文档
 
 - [Commit 记录](../commits/2026-10-15-website-container-width-commit.md)
-- [视觉规范](../../website-ui.md)
+- [视觉规范](../../website/ui.md)
 - [工作台](../README.md)
 
 ## 唯一下一步
