@@ -29,6 +29,8 @@ test('构建配置扫描源码入口并声明全部实际发布资源', async ()
   for (const icon of ['npm', 'simpleicons', 'exts']) {
     assert(files.some(file => file.relativeDest === `src/modules/newtab/assets/brand/${icon}.svg`));
   }
+  const exts = files.find(file => file.relativeDest === 'src/modules/newtab/assets/brand/exts.svg');
+  assert.equal(exts.absoluteSrc, fileURLToPath(new URL('../../src/modules/newtab/assets/brand/exts.svg', import.meta.url)));
 });
 
 test('临时目录集中到根缓存且生产输出独立于网站目录', () => {
