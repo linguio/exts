@@ -6,19 +6,22 @@
 
 - [扩展功能索引](../../docs/extension/README.md)：功能状态与说明入口。
 - [Newtab](../../docs/extension/newtab.md)：书签、Dock、工具入口与 Settings。
-- [历史清理方案](../../docs/extension/history-cleaner.md)：尚未实现的方案与能力边界。
+- [历史清理](../../docs/extension/history-cleaner.md)：启动与关闭时清空访问历史的配置、权限与能力边界。
 - [界面规范](../../docs/extension/ui.md)：共用主题、样式和组件规则。
 
 ## 目录职责
 
 - `src/entrypoints/`：WXT 入口；`src/app/`：应用组合和图标配色适配。
 - `src/modules/newtab/`：书签数据、类型、业务组件、视图、标签组逻辑及品牌／工具资源。
+- `src/modules/history-cleaner/`：本机配置、可选权限、后台清理与设置区域；`src/entrypoints/background.ts` 注册独立后台功能。
 - `src/shared/ui/`：通用 UI 原语；`src/shared/lib/`：共用工具；`src/shared/browser/`：扩展资源地址工具。
 - `src/assets/`：应用图标与公共字体；`src/styles/`：全局样式。
 - `tests/modules/newtab/`：数据与标签组行为；`tests/config/`：图标分派、配置资源与体积边界。
 - 根 `wxt.config.ts`、`scripts/`、`package.json`：构建与应用配置。
 
 入口组合模块，shared 不导入业务模块。后续功能有独立模块，不预建占位目录。
+
+历史清理默认关闭，开启时由浏览器请求 `browsingData` 可选权限；必需的 `storage` 用于本机保存配置。不需要打开 Newtab 才能清理，不申请额外站点访问权限。
 
 ## 根目录用法
 

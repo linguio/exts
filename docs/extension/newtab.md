@@ -16,9 +16,9 @@ Components 和 DevTools 提供工具菜单；入口悬停或键盘聚焦时显�
 
 ## Settings
 
-Dock 右侧的 Settings 打开右侧设置面板，面板跟随当前明暗主题。目前只有面板外壳，没有可配置功能。
+Dock 右侧的 Settings 打开右侧设置面板，面板跟随当前明暗主题。Browsing history 区域提供默认关闭的 Clear history on startup and close 开关。
 
-[历史清理方案](./history-cleaner.md)计划在此提供开关，后台功能将独立运行；当前尚未接入，不应把该方案理解为现有功能。
+[历史清理](./history-cleaner.md)模块独立持有配置与后台行为；Newtab 只展示设置区域，不需要保持页面打开。启用时申请浏览器清理权限，拒绝则保持关闭；开启操作本身不立即清理。
 
 ## 使用与限制
 

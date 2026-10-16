@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [添加启动与关闭时清理访问历史](./issues/2026-10-16-extension-history-cleaner-issue.md) · [Commit 记录](./commits/2026-10-16-extension-history-cleaner-commit.md) · [Spec](../superpowers/specs/2026-10-16-extension-history-cleaner-design.md) · [Plan](../superpowers/plans/2026-10-16-extension-history-cleaner.md)；用户确认验收并批准代码、文档两笔本地提交；独立后台与 Settings 单开关已交付，30 项测试、类型检查、构建、体积和 Manifest 核对通过；权限可静默授予，代理未独立实测浏览器，不推送。
+
 - [按应用整理三端功能文档](./issues/2026-10-16-repo-app-documentation-issue.md) · [Commit 记录](./commits/2026-10-16-repo-app-documentation-commit.md)；用户确认验收并批准一笔本地提交；三端索引、功能说明与 UI 规范迁移完成，260 项本地链接及规范正文核对通过，仅文档变更；历史清理尚未实现，不推送。
 
 - [修正新标签页 Exts 书签图标](./issues/2026-10-16-extension-newtab-exts-icon-issue.md) · [Commit 记录](./commits/2026-10-16-extension-newtab-exts-icon-commit.md)；用户确认验收并批准本地提交；原样复用正式圆角 SVG，保留完整背景与主体，不新增反色；15 项测试、类型检查及最新构建、资源一致性与 diff 检查通过，代理未独立实测浏览器，不推送或发布。

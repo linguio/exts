@@ -1,6 +1,6 @@
 # 扩展界面样式规范
 
-适用于 `apps/extension`。本轮覆盖新标签页书签、Dock 工具、Settings Sheet 和 EDU 遮罩；实际交付及用户验收状态以[当前 Issue](../changes/issues/2026-10-15-extension-newtab-dock-issue.md)为准。
+适用于 `apps/extension`。覆盖新标签页书签、Dock 工具、Settings Sheet 和 EDU 遮罩；Dock 基础规则见[对应 Issue](../changes/issues/2026-10-15-extension-newtab-dock-issue.md)，历史清理设置区域的交付与验收状态见[历史清理 Issue](../changes/issues/2026-10-16-extension-history-cleaner-issue.md)。
 
 ## 维护位置与职责
 
@@ -50,7 +50,8 @@
 
 - 通用 `Button` 的普通 ghost 反馈保留；Dock 工具按钮使用透明外壳，实际反馈由内部 `entry-surface` 承担。
 - EDU 保留默认模糊和点击解除逻辑，Hover 背景不变、指针为手形；其 hover 背景引用同一个 `overlay` Token，覆盖 ghost 默认背景变化。
-- Settings 使用右侧 Sheet：宽 560px、最大不超过屏幕，Header 高 56px，标题及提示为 `Settings`，关闭按钮提示为 `Close`；内部暂时无设置项。
+- Settings 使用右侧 Sheet：宽 560px、最大不超过屏幕，Header 高 56px，标题及提示为 `Settings`，关闭按钮提示为 `Close`；正文由独立功能模块提供区域，目前包含 Browsing history。
+- 历史清理区域复用已有 Button 提供 `role="switch"`、`aria-checked`、可访问名称与说明；默认关闭，加载、授权和保存期间禁用重复操作，错误就地展示。配置和权限变更同步到已打开页面，不新增通用 UI 原语或全局设置状态。
 - Sheet 内容、边框与分隔线使用根主题；全屏遮罩使用 `blur-overlay`。打开/关闭动画为 200ms/160ms，减少动态效果时遵循全局规则。
 - Tooltip 只提供名称提示，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Sheet 打开时不显示 Tooltip，关闭恢复焦点不自动弹出提示，后续正常悬停仍可显示。
 - 品牌图标由 `BookmarkIcon` 负责；单色 adaptive 资源随主题转换，Exts 品牌 SVG 保持固定黑底白图。通用图标由 `UiIcon` 显式静态导入。

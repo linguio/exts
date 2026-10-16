@@ -39,7 +39,13 @@
 - Dock 位于视口底部，DropdownMenu 默认从上方弹出并支持碰撞调整；必须验证菜单在 `1280×720`、缩放后 CSS 视口 `640×360` 以及 100%、125%、150%、200% 缩放下不被裁剪或移出视口。
 - DropdownMenu 必须覆盖 Enter、Space 或 ArrowDown 打开、方向键移动、Enter 激活、Esc 关闭并恢复触发器焦点、外部点击关闭等行为；Portal 必须正确继承明暗主题 Token 和层级。
 - 已废弃的自定义 Popover 不得重新引入；DropdownMenu 与 Tooltip 分别承担菜单和提示职责，不维护双轨实现。
-- Settings 当前仅包含已批准的 Sheet 外壳；内部设置项、桌面应用、搜索、编辑、拖拽、主题按钮、独立 `Dialog`、`AlertDialog` 和新的全局状态管理不属于当前功能范围，新增时须按本地 Issue 流程取得批准。
+- Settings 已批准包含 Sheet 外壳及历史清理单开关；历史清理设置区域与后台业务由 `src/modules/history-cleaner/` 持有，Newtab 只组合区域。桌面应用、搜索、编辑、拖拽、主题按钮、独立 `Dialog`、`AlertDialog` 和新的全局状态管理不属于当前功能范围，新增时须按本地 Issue 流程取得批准。
+
+## 历史清理边界
+
+- 后台入口只注册独立模块，不导入 React 或 Newtab；注册、普通 worker 唤醒、安装或更新不能主动清理。
+- 历史清理默认关闭，只在配置开启且获得 `browsingData` 可选权限时调用 `removeHistory`；配置使用 `storage.local`，不得扩大到其他浏览数据或站点权限。
+- 开启操作申请权限并保存配置，不立即清理；浏览器真实启动、最后窗口关闭、授权和界面效果由用户在专用 Chrome/Edge 配置文件验收，代理测试不得删除真实历史。
 
 ## exts 新标签页模块 验收
 
