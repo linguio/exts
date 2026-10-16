@@ -11,7 +11,8 @@ test('统一扩展保留标签组权限并提供完整图标', async () => {
   assert.equal(wxtConfig.manifest.name, 'Exts');
   assert.equal(wxtConfig.manifest.version, readProjectVersion());
   assert.equal(wxtConfig.manifest.action.default_title, 'Exts');
-  assert.deepEqual(wxtConfig.manifest.permissions, ['tabGroups']);
+  assert.deepEqual(wxtConfig.manifest.permissions, ['tabGroups', 'storage']);
+  assert.deepEqual(wxtConfig.manifest.optional_permissions, ['browsingData']);
   for (const size of [16, 32, 48, 128]) {
     const icon = wxtConfig.manifest.icons[size];
     assert.equal(icon, `/src/assets/logo/exts-${size}.png`);

@@ -5,8 +5,9 @@ import { Separator } from '../../../../shared/ui/separator';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../../../../shared/ui/sheet';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
 import { UiIcon } from '../../../../shared/ui/ui-icon';
+import { HistoryCleanerSettings } from '../../../history-cleaner/settings-section';
 
-/** 设置入口暂时只提供随主题变化的面板外壳。 */
+/** 设置页面组合独立功能的设置区域，后台逻辑由对应模块持有。 */
 export function DockSettings() {
   const [open, setOpen] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
@@ -56,6 +57,9 @@ export function DockSettings() {
           <SheetTitle className="text-lg font-semibold">Settings</SheetTitle>
         </header>
         <Separator />
+        <div className="min-h-0 overflow-y-auto">
+          <HistoryCleanerSettings />
+        </div>
       </SheetContent>
     </Sheet>
   );

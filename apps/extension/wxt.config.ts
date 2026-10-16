@@ -95,7 +95,8 @@ export default defineConfig({
     name: 'Exts',
     version: readProjectVersion(),
     description: '将想法与能力延伸为实用工具',
-    permissions: ['tabGroups'],
+    permissions: ['tabGroups', 'storage'],
+    optional_permissions: ['browsingData'],
     icons: actionIcons,
     action: {
       default_icon: actionIcons,
