@@ -1,4 +1,4 @@
-export type ChangelogPlatform = 'Website' | 'Chrome' | 'macOS' | 'Packages';
+export type ChangelogPlatform = 'Website' | 'Extension' | 'macOS' | 'Packages';
 
 type ChangelogEntry = {
   id: string;
@@ -13,6 +13,33 @@ type ChangelogEntry = {
 
 // 日期取实际发布或代码交付时间并转换为北京时间，不使用补录日期。
 export const changelogEntries: readonly ChangelogEntry[] = [
+  {
+    id: 'extension-settings',
+    date: '2026-10-17',
+    title: '新增扩展设置',
+    groups: [{
+      platform: 'Extension',
+      changes: [
+        '新增主题切换，支持浅色、深色和跟随系统。',
+        '新增历史清理，支持在浏览器打开与关闭时清理访问历史，默认关闭。',
+        '优化界面样式，统一组件风格与交互反馈。',
+      ],
+    }],
+  },
+  {
+    id: 'extension-history-cleaner',
+    date: '2026-10-16',
+    title: '新增历史清理功能',
+    groups: [{
+      platform: 'Extension',
+      changes: [
+        '在浏览器打开与关闭时清理访问历史。',
+        '仅清理访问历史，保留 Cookie、缓存和下载记录。',
+        '默认关闭，可在 Settings 中手动开启。',
+      ],
+      links: [{ label: 'exts-chrome.zip · 1.1.0', href: 'https://github.com/linguio/exts/releases/tag/v1.1.0' }],
+    }],
+  },
   {
     id: 'website-content-layout',
     date: '2026-10-15',
@@ -57,12 +84,13 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-10-10',
     title: '发布 Chrome 拓展 · 新标签页',
     groups: [{
-      platform: 'Chrome',
+      platform: 'Extension',
       changes: [
       '新标签页：集中展示常用网站',
       '标签组：按分组打开并组织网页',
       '书签与 Dock：快速访问常用网站和工具',
       ],
+      links: [{ label: 'exts-chrome.zip · 1.0.0', href: 'https://github.com/linguio/exts/releases/tag/v1.0.0' }],
     }],
   },
 ];

@@ -18,7 +18,7 @@ type ProductCategory = {
 
 export const productCategories: readonly ProductCategory[] = [
   {
-    id: 'extension', name: 'Extensions', label: '浏览器拓展',
+    id: 'extension', name: 'Extension', label: '浏览器拓展',
     description: '按自己的使用习惯，为 Chrome 集成日常需要的浏览器拓展功能。',
     modules: [{ name: 'Tabs', description: '在新标签页集中访问常用网站，整理分组标签。' }],
   },
