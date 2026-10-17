@@ -1,13 +1,17 @@
 # 扩展界面样式规范
 
-适用于 `apps/extension`。覆盖新标签页书签、Dock 工具、Settings Sheet 和 EDU 遮罩；Dock 基础规则见[对应 Issue](../changes/issues/2026-10-15-extension-newtab-dock-issue.md)，历史清理设置区域的交付与验收状态见[历史清理 Issue](../changes/issues/2026-10-16-extension-history-cleaner-issue.md)。
+适用于 `apps/extension`。覆盖全部扩展 Web UI，现有场景包括新标签页书签、Dock 工具、Settings Sheet 与 EDU 遮罩；Dock 基础规则见[对应 Issue](../changes/issues/2026-10-15-extension-newtab-dock-issue.md)，历史清理设置区域的交付与验收状态见[历史清理 Issue](../changes/issues/2026-10-16-extension-history-cleaner-issue.md)。
 
 ## 维护位置与职责
 
 - `apps/extension/src/styles/index.css`：主题 Token、共用语义样式、减少动态效果规则的唯一实现位置。
-- `apps/extension/src/shared/ui/`：项目持有的 shadcn/Radix 通用原语，不包含书签或 Chrome API 业务逻辑。
-- `apps/extension/src/modules/newtab/`：组合通用原语与语义样式，负责布局、内容、状态和实际操作。
+- `apps/extension/src/shared/ui/`：以 shadcn 官方源码为基础的通用组件，不包含书签或 Chrome API 业务逻辑。
+- `apps/extension/src/modules/<功能>/`：持有对应功能的布局、内容、状态和操作；history-cleaner 持有设置区域与业务，Newtab 只组合设置区域。
 - 本文维护用途、参数与组合约定；不在模块 README 再维护一份样式规则。
+
+组件选型遵循根 [AGENTS.md](../../AGENTS.md#web-ui-选型与风格)。固定来源和逐项定制差异见 [Web UI 来源](../web-ui-sources.md)，不把 Radix 包装或组件数量少当作采用官方源码的依据。
+
+迁入官方组件保持修改前已确认的视觉效果；小差异沿用官方，明显差异保留必要定制，不逐像素复刻。Sheet 的官方结构不覆盖现有 `blur-overlay` 遮罩效果，具体 Token 与组合见下文。
 
 ## 主题与 Token
 
@@ -19,6 +23,8 @@
 | 图块 | `card` / `card-foreground` | 书签与工具入口图块 |
 | 浮层 | `popover` / `popover-foreground` | Tooltip 与菜单 |
 | 状态 | `accent` / `accent-foreground` | 通用按钮与菜单状态 |
+| 输入与辅助状态 | `input` / `secondary` / `secondary-foreground` | 输入轨道沿用 muted，辅助控件引用主题 |
+| 危险状态 | `destructive` / `destructive-foreground` | 按明暗主题集中定义，供官方组件状态引用 |
 | 边框与焦点 | `border` / `ring` | 分隔线、边框、焦点轮廓 |
 | 透明遮罩 | `overlay` | 浅色白色 42%，深色近黑色 62% |
 | 遮罩模糊 | `--overlay-blur` | 8px |
@@ -48,10 +54,11 @@
 
 ## 组件边界与约定
 
-- 通用 `Button` 的普通 ghost 反馈保留；Dock 工具按钮使用透明外壳，实际反馈由内部 `entry-surface` 承担。
+- 通用 `Button` 保留官方 variant 与常见状态；普通 ghost 反馈不变。Dock 工具按钮复用 `variant="entry" size="entry"` 透明外壳，实际反馈由内部 `entry-surface` 承担，不在调用方复制同套参数。
 - EDU 保留默认模糊和点击解除逻辑，Hover 背景不变、指针为手形；其 hover 背景引用同一个 `overlay` Token，覆盖 ghost 默认背景变化。
 - Settings 使用右侧 Sheet：宽 560px、最大不超过屏幕，Header 高 56px，标题及提示为 `Settings`，关闭按钮提示为 `Close`；正文由独立功能模块提供区域，目前包含 Browsing history。
-- 历史清理区域复用已有 Button 提供 `role="switch"`、`aria-checked`、可访问名称与说明；默认关闭，加载、授权和保存期间禁用重复操作，错误就地展示。配置和权限变更同步到已打开页面，不新增通用 UI 原语或全局设置状态。
+- 共用 `Switch` 可操作时显示手形指针，禁用时显示禁止指针；在组件内统一维护，不在设置调用方重复指定。
+- 历史清理区域使用官方基础的 `Switch`，通过 `checked` / `onCheckedChange` 连接状态，保留可访问名称与说明；默认关闭，加载、授权和保存期间禁用重复操作，错误就地展示。配置和权限变更同步到已打开页面，不把业务状态放入通用组件或新增全局设置状态。
 - Sheet 内容、边框与分隔线使用根主题；全屏遮罩使用 `blur-overlay`。打开/关闭动画为 200ms/160ms，减少动态效果时遵循全局规则。
 - Tooltip 只提供名称提示，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Sheet 打开时不显示 Tooltip，关闭恢复焦点不自动弹出提示，后续正常悬停仍可显示。
 - 品牌图标由 `BookmarkIcon` 负责；单色 adaptive 资源随主题转换，Exts 品牌 SVG 保持固定黑底白图。通用图标由 `UiIcon` 显式静态导入。

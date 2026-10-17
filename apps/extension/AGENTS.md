@@ -14,15 +14,13 @@
 - 本轮正式 SVG 采用透明背景、单色 `currentColor`，不维护独立黑色、深浅主题或上传版本；不得添加渐变、阴影、纹理或透明度效果，并保留小尺寸下可辨识的核心特征。未调整的既有黑色资源不在本次文档工作中改色。
 - 文字类书签 SVG 统一命名为 `text-<书签 id>.svg`（例如 `text-pmi.svg`）；本轮统一风格的新正式源稿同样使用透明 `1024×1024` 坐标画布，按视觉重量居中并保留安全边距，不另设一套交付尺寸。未调整的既有文字资源保持原状。
 
-## shadcn/ui 受控引入
+## 通用 UI 与组合
 
-- exts 新标签页模块 以 shadcn/ui 与 Radix 原语作为通用 UI 基础，但只按已批准的真实交互需求引入组件；禁止执行 `shadcn add --all`，不得为了形式统一机械替换业务组件。
-- `src/shared/ui/` 只维护项目持有的通用 shadcn/ui 原语源码，不得包含书签、Dock、Chrome API 或其他业务逻辑；业务差异应在 `src/modules/newtab/` 或现有业务组件中通过组合、variant 和 `className` 实现。
-- 当前受控范围包含 `Button`、`Tooltip`、`DropdownMenu`、`Separator` 与已批准的 Settings `Sheet`；Sheet 内部复用 Radix Dialog 原语。`Card`、shadcn `Popover`、独立 `Dialog` 与 `AlertDialog` 在没有独立需求和用户批准前不得引入。
-- 添加或更新 shadcn/ui 原语前必须检查生成差异，不得直接覆盖本地 Token、字体或已批准的可访问性定制；组件升级必须保留与真实行为和架构边界对应的现有测试。
-- 全局只创建一个 `TooltipProvider`；不得为每个 Dock 项目重复创建 Provider。
-- Tooltip 只承担简短的 Hover 与键盘 Focus 提示，不得包含链接、按钮、书签列表或其他可交互内容；书签入口显示书签名，工具分组显示分组名，菜单打开时不得残留 Tooltip。
-- Tooltip、DropdownMenu、Button 与链接组合时必须通过 `asChild` 等方式共享唯一真实交互元素；禁止生成嵌套 `<button>`、`<button><a>` 或其他嵌套交互控件。
+- 官网与扩展全部 Web UI 的选型、来源和风格维护原则遵循根 [AGENTS.md](../../AGENTS.md#web-ui-选型与风格)，不维护组件白名单。
+- `src/shared/ui/` 持有通用组件，不包含书签、Dock、Chrome API 或模块状态；各功能在自己的 `src/modules/<功能>/` 中组合，Newtab 也遵循此边界。
+- 扩展主题按系统 `prefers-color-scheme` 切换，Portal 继承根 Token；不直接依赖 `.dark` 类。官方源码接入和必要差异见 [Web UI 来源](../../docs/web-ui-sources.md)。
+- 应用根只创建一个 `TooltipProvider`。Tooltip 只提供简短 Hover/Focus 提示，不含可交互内容；菜单或 Sheet 打开时不得残留 Tooltip。
+- Tooltip、菜单、Sheet、Button 与链接通过 `asChild` 等方式共享唯一真实交互元素，禁止嵌套交互控件。
 
 ## 图标职责
 
@@ -36,10 +34,10 @@
 - Dock 网页入口使用真实链接语义；工具分组使用真实按钮打开 `DropdownMenu`；已批准的 Settings 使用真实按钮打开 `Sheet`。各入口按已批准职责组合，不维护第二套交互实现。
 - Dock 入口 Hover 或键盘 Focus 时只显示 Tooltip；不得通过 Hover 直接展开 DropdownMenu，也不得让同一个弹层同时承担 Tooltip 和菜单职责。
 - DropdownMenu 中的网页入口优先使用真实 `<a>`；仅在需要调用 Chrome API、创建标签组或执行非导航操作时使用命令型菜单项。
-- Dock 位于视口底部，DropdownMenu 默认从上方弹出并支持碰撞调整；必须验证菜单在 `1280×720`、缩放后 CSS 视口 `640×360` 以及 100%、125%、150%、200% 缩放下不被裁剪或移出视口。
-- DropdownMenu 必须覆盖 Enter、Space 或 ArrowDown 打开、方向键移动、Enter 激活、Esc 关闭并恢复触发器焦点、外部点击关闭等行为；Portal 必须正确继承明暗主题 Token 和层级。
+- Dock 位于视口底部，DropdownMenu 默认从上方弹出并支持碰撞调整；由用户验证菜单在 `1280×720`、缩放后 CSS 视口 `640×360` 以及 100%、125%、150%、200% 缩放下不被裁剪或移出视口。
+- 用户验收 DropdownMenu 应覆盖 Enter、Space 或 ArrowDown 打开、方向键移动、Enter 激活、Esc 关闭并恢复触发器焦点、外部点击关闭等行为；Portal 必须正确继承明暗主题 Token 和层级。
 - 已废弃的自定义 Popover 不得重新引入；DropdownMenu 与 Tooltip 分别承担菜单和提示职责，不维护双轨实现。
-- Settings 已批准包含 Sheet 外壳及历史清理单开关；历史清理设置区域与后台业务由 `src/modules/history-cleaner/` 持有，Newtab 只组合区域。桌面应用、搜索、编辑、拖拽、主题按钮、独立 `Dialog`、`AlertDialog` 和新的全局状态管理不属于当前功能范围，新增时须按本地 Issue 流程取得批准。
+- Settings 已批准包含 Sheet 外壳及历史清理单开关；历史清理设置区域与后台业务由 `src/modules/history-cleaner/` 持有，Newtab 只组合区域。新增功能按本地 Issue 流程确认范围，不由本文件限制通用组件选型。
 
 ## 历史清理边界
 
@@ -50,6 +48,6 @@
 ## exts 新标签页模块 验收
 
 - 自动化测试覆盖不依赖真实浏览器布局与焦点环境的配置、数据处理、链接安全属性和必要架构边界；不得用假 DOM 模拟 Tooltip、菜单、键盘、焦点或指针交互。
-- 架构测试只用于防止高风险边界回退，例如旧 Popover、Lucide 全量导入、业务逻辑进入 `src/shared/ui/` 或未批准的 shadcn 原语被重新引入；不得大量断言源码文本和内部实现形式。
+- 架构测试只用于防止高风险边界回退，例如旧 Popover、Lucide 全量导入或业务逻辑进入 `src/shared/ui/`；不得大量断言源码文本和内部实现形式。
 - 每个阶段的类型检查、定向测试、全量测试、生产构建和现有包体积检查必须通过；包体积检查继续作为安全门禁，但未触发预算失败时不单独扩展体积治理范围。
 - 功能阶段完成后由用户在 Chrome 或 Edge 实际加载稳定开发目录，验证明暗主题、Tooltip、菜单、键盘、焦点恢复和约定缩放场景；用户未明确验收通过前不得进入最终提交准备。
