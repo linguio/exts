@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [整理设置分区并添加主题切换与帮助提示](./issues/2026-10-17-extension-settings-theme-help-issue.md) · [Commit 记录](./commits/2026-10-17-extension-settings-theme-help-commit.md)；用户验收通过并批准代码、规范、工作记录三笔本地提交；设置分区、主题选择与同步、历史清理帮助已交付，保留官方选中效果与4px提示间距；34项测试及类型检查、构建、体积等验证通过，不推送、不部署。
+
 - [统一官网与扩展通用 UI 基础](./issues/2026-10-16-web-ui-consistency-issue.md) · [Commit 记录](./commits/2026-10-16-web-ui-consistency-commit.md)；用户验收通过并批准代码、规范与记录三笔本地提交；官方组件基础、Switch、现有视觉优先及跨应用规范已交付，扩展 30 项、官网 9 项测试及类型检查、构建等验证通过；代理未独立实测浏览器，不推送、不部署。
 
 - [添加启动与关闭时清理访问历史](./issues/2026-10-16-extension-history-cleaner-issue.md) · [Commit 记录](./commits/2026-10-16-extension-history-cleaner-commit.md) · [Spec](../superpowers/specs/2026-10-16-extension-history-cleaner-design.md) · [Plan](../superpowers/plans/2026-10-16-extension-history-cleaner.md)；用户确认验收并批准代码、文档两笔本地提交；独立后台与 Settings 单开关已交付，30 项测试、类型检查、构建、体积和 Manifest 核对通过；权限可静默授予，代理未独立实测浏览器，不推送。
