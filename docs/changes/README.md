@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [统一官网与扩展通用 UI 基础](./issues/2026-10-16-web-ui-consistency-issue.md) · [Commit 记录](./commits/2026-10-16-web-ui-consistency-commit.md)；用户验收通过并批准代码、规范与记录三笔本地提交；官方组件基础、Switch、现有视觉优先及跨应用规范已交付，扩展 30 项、官网 9 项测试及类型检查、构建等验证通过；代理未独立实测浏览器，不推送、不部署。
+
 - [添加启动与关闭时清理访问历史](./issues/2026-10-16-extension-history-cleaner-issue.md) · [Commit 记录](./commits/2026-10-16-extension-history-cleaner-commit.md) · [Spec](../superpowers/specs/2026-10-16-extension-history-cleaner-design.md) · [Plan](../superpowers/plans/2026-10-16-extension-history-cleaner.md)；用户确认验收并批准代码、文档两笔本地提交；独立后台与 Settings 单开关已交付，30 项测试、类型检查、构建、体积和 Manifest 核对通过；权限可静默授予，代理未独立实测浏览器，不推送。
 
 - [按应用整理三端功能文档](./issues/2026-10-16-repo-app-documentation-issue.md) · [Commit 记录](./commits/2026-10-16-repo-app-documentation-commit.md)；用户确认验收并批准一笔本地提交；三端索引、功能说明与 UI 规范迁移完成，260 项本地链接及规范正文核对通过，仅文档变更；历史清理尚未实现，不推送。
