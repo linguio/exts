@@ -44,9 +44,9 @@ export function DockToolMenu({ group, onOpenBookmark }: DockToolMenuProps) {
           <DropdownMenuTrigger asChild>
             <Button
               type="button"
-              variant="ghost"
-              size="icon"
-              className="bookmark-card entry-trigger bookmark-card--dock bookmark-dock__tool box-border h-16 w-16 flex-none cursor-pointer rounded-[var(--radius)] bg-transparent p-0 text-foreground hover:bg-transparent focus-visible:outline-none aria-expanded:bg-transparent"
+              variant="entry"
+              size="entry"
+              className="bookmark-card bookmark-card--dock bookmark-dock__tool"
               aria-label={`打开 ${group.name} 工具列表`}
               onPointerDown={() => setTooltipOpen(false)}
               onKeyDown={(event) => {

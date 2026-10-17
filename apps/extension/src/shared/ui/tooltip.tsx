@@ -1,18 +1,32 @@
-import * as React from 'react';
-import { Tooltip as TooltipPrimitive } from 'radix-ui';
-
-import { cn } from '../lib/utils';
+// 基于 shadcn/ui new-york-v4 官方 tooltip；固定来源与必要差异见 docs/web-ui-sources.md。
+import * as React from "react"
+import { cn } from "../lib/utils"
+import { Tooltip as TooltipPrimitive } from "radix-ui"
 
 function TooltipProvider({
   delayDuration = 400,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
-  // 统一延迟，避免 Dock 在指针快速经过时连续闪现多个提示。
-  return <TooltipPrimitive.Provider delayDuration={delayDuration} {...props} />;
+  return (
+    <TooltipPrimitive.Provider
+      data-slot="tooltip-provider"
+      delayDuration={delayDuration}
+      {...props}
+    />
+  )
 }
 
-const Tooltip = TooltipPrimitive.Root;
-const TooltipTrigger = TooltipPrimitive.Trigger;
+function Tooltip({
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Root>) {
+  return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
+}
+
+function TooltipTrigger({
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
+  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+}
 
 function TooltipContent({
   className,
@@ -21,20 +35,20 @@ function TooltipContent({
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Content>) {
   return (
-    // Tooltip 使用 Portal 脱离 Dock 的层叠和裁剪上下文，保证提示层可见。
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
+        data-slot="tooltip-content"
         sideOffset={sideOffset}
         className={cn(
-          'z-50 rounded-md border border-border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-[var(--shadow-floating)]',
-          className,
+          "z-50 w-fit rounded-md border border-border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-[var(--shadow-floating)]",
+          className
         )}
         {...props}
       >
         {children}
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
-  );
+  )
 }
 
-export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger };
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 
-import { Button } from '../../shared/ui/button';
-import { cn } from '../../shared/lib/utils';
+import { Switch } from '../../shared/ui/switch';
 import { getHistoryCleanerEnabled, HISTORY_CLEANER_ENABLED_KEY, setHistoryCleanerEnabled } from './settings';
 
 export function HistoryCleanerSettings() {
@@ -53,9 +52,8 @@ export function HistoryCleanerSettings() {
     };
   }, [refresh]);
 
-  async function toggle() {
+  async function toggle(next: boolean) {
     if (saving.current || loading) return;
-    const next = !enabled;
     saving.current = true;
     version.current++;
     setPending(true);
@@ -89,18 +87,13 @@ export function HistoryCleanerSettings() {
             Clears all browsing history when the browser starts and the last window closes. Cookies, cache, and downloads are kept.
           </p>
         </div>
-        <Button
-          type="button"
-          role="switch"
-          aria-checked={enabled}
+        <Switch
+          checked={enabled}
           aria-labelledby={`${id}-label`}
           aria-describedby={`${id}-description`}
           disabled={loading || pending}
-          onClick={() => { void toggle(); }}
-          className={cn('h-6 w-11 shrink-0 justify-start rounded-full p-1', enabled ? 'bg-primary' : 'bg-muted')}
-        >
-          <span aria-hidden="true" className={cn('size-4 rounded-full bg-background transition-transform duration-[var(--duration-fast)]', enabled && 'translate-x-5')} />
-        </Button>
+          onCheckedChange={(next) => { void toggle(next); }}
+        />
       </div>
       {error && <p role="alert" className="text-sm leading-6 text-foreground">{error}</p>}
     </section>

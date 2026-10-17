@@ -25,9 +25,9 @@ export function DockSettings() {
           <SheetTrigger asChild>
             <Button
               type="button"
-              variant="ghost"
-              size="icon"
-              className="bookmark-card entry-trigger bookmark-card--dock bookmark-dock__tool box-border h-16 w-16 flex-none cursor-pointer rounded-[var(--radius)] bg-transparent p-0 text-foreground hover:bg-transparent focus-visible:outline-none"
+              variant="entry"
+              size="entry"
+              className="bookmark-card bookmark-card--dock bookmark-dock__tool"
               aria-label="Open settings"
               onPointerMove={() => {
                 suppressRestoredFocusTooltip.current = false;
@@ -48,7 +48,7 @@ export function DockSettings() {
         </TooltipTrigger>
         <TooltipContent side="top" align="center" sideOffset={12}>Settings</TooltipContent>
       </Tooltip>
-      <SheetContent className="w-[560px]" onCloseAutoFocus={() => {
+      <SheetContent aria-describedby={undefined} className="w-[560px] sm:max-w-full" onCloseAutoFocus={() => {
         // 只抑制关闭后的焦点恢复提示；保留 Radix 默认焦点恢复和下次主动悬停。
         suppressRestoredFocusTooltip.current = true;
         setTooltipOpen(false);

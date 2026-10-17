@@ -1,12 +1,11 @@
-import * as React from 'react';
-import { Separator as SeparatorPrimitive } from 'radix-ui';
+// 基于 shadcn/ui new-york-v4 官方 separator；固定来源与必要差异见 docs/web-ui-sources.md。
+import * as React from "react"
+import { cn } from "../lib/utils"
+import { Separator as SeparatorPrimitive } from "radix-ui"
 
-import { cn } from '../lib/utils';
-
-// 这是 shadcn/ui 风格的薄封装：保留 Radix 的可访问性与方向语义，只统一主题类名。
 function Separator({
   className,
-  orientation = 'horizontal',
+  orientation = "horizontal",
   decorative = true,
   ...props
 }: React.ComponentProps<typeof SeparatorPrimitive.Root>) {
@@ -16,13 +15,12 @@ function Separator({
       decorative={decorative}
       orientation={orientation}
       className={cn(
-        'shrink-0 bg-border',
-        orientation === 'horizontal' ? 'h-px w-full' : 'h-full w-px',
-        className,
+        "shrink-0 bg-border data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",
+        className
       )}
       {...props}
     />
-  );
+  )
 }
 
-export { Separator };
+export { Separator }

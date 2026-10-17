@@ -1,36 +1,66 @@
-import * as React from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { Slot } from 'radix-ui';
-
-import { cn } from '../lib/utils';
+// 基于 shadcn/ui new-york-v4 官方 button；固定来源与必要差异见 docs/web-ui-sources.md。
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "../lib/utils"
+import { Slot } from "radix-ui"
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md text-sm font-medium outline-none transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:opacity-90',
-        ghost: 'bg-transparent text-foreground hover:bg-accent',
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive/20",
+        outline:
+          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost:
+          "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground",
+        entry: "entry-trigger box-border flex-none cursor-pointer rounded-[var(--radius)] bg-transparent p-0 text-foreground hover:bg-transparent focus-visible:outline-none aria-expanded:bg-transparent",
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: 'h-9 px-4 py-2',
-        icon: 'size-9 p-0',
+        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        icon: "size-9 p-0",
+        entry: "size-16 p-0",
+        "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm": "size-8",
+        "icon-lg": "size-10",
       },
     },
-    defaultVariants: { variant: 'default', size: 'default' },
-  },
-);
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
 
 function Button({
   className,
-  variant,
-  size,
+  variant = "default",
+  size = "default",
   asChild = false,
   ...props
-}: React.ComponentProps<'button'> & VariantProps<typeof buttonVariants> & { asChild?: boolean }) {
-  // asChild 通过 Radix Slot 将 Button 的样式和属性合并到唯一的真实交互元素上。
-  const Component = asChild ? Slot.Root : 'button';
-  return <Component data-slot="button" className={cn(buttonVariants({ variant, size }), className)} {...props} />;
+}: React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean
+  }) {
+  const Comp = asChild ? Slot.Root : "button"
+
+  return (
+    <Comp
+      data-slot="button"
+      data-variant={variant}
+      data-size={size}
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
 }
 
-export { Button, buttonVariants };
+export { Button, buttonVariants }

@@ -32,7 +32,7 @@ export function BookmarkDock({ favorites, components, devtools, onOpenBookmark }
           </Tooltip>
         ))}
       </div>
-      <Separator orientation="vertical" className="mx-2 h-16" aria-hidden="true" />
+      <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-16" aria-hidden="true" />
       <div className="bookmark-dock__tools flex flex-nowrap gap-2">
         {groups.map((group) => (
           <div key={group.id} className="bookmark-dock__group relative flex">

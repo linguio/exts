@@ -15,6 +15,11 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-input: var(--input);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
   --color-ring: var(--ring);
@@ -52,6 +57,11 @@
   --accent-foreground: oklch(0.205 0 0);
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
+  --secondary: var(--muted);
+  --secondary-foreground: var(--foreground);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --input: var(--muted);
   --border: oklch(0.922 0 0);
   --border-strong: oklch(0.708 0 0);
   --ring: oklch(0.205 0 0);
@@ -88,6 +98,8 @@
     --accent-foreground: oklch(0.97 0 0);
     --primary: oklch(0.922 0 0);
     --primary-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --destructive-foreground: oklch(0.145 0 0);
     --border: oklch(0.28 0 0);
     --border-strong: oklch(0.42 0 0);
     --ring: oklch(0.82 0 0);
@@ -173,7 +185,7 @@
   }
 }
 
-/* 集中定义书签页的颜色与动效。各组件自行声明尺寸、间距和圆角。 */
+/* 扩展主题与字体集中维护，业务组件只声明布局并引用圆角和状态 Token。 */
 html,
 body {
   background: var(--page-background);
