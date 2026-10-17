@@ -15,7 +15,9 @@
 
 ## 主题与 Token
 
-明暗主题由根 `prefers-color-scheme` 切换。组件引用语义颜色，Portal 也继承根 Token，不独立硬编码明暗配色。
+明暗主题由 `src/shared/theme/` 解析：默认 System，通过系统 `prefers-color-scheme` 跟随变化；选择 Light/Dark 后固定为对应主题。根 `data-theme` 持有实际明暗，组件与 Portal 继承原有语义 Token，不独立硬编码配色。Geist 字体、既有明暗色值、遮罩透明度与模糊不变。
+
+偏好以 `exts.theme` 保存于扩展页面同源 localStorage，不同步设备；浏览器 storage 事件同步其他已打开页面，本页事件通知当前设置。页面 head 通过 WXT 独立外部脚本 `theme-init.js` 在解析时读取偏好，使用与运行时相同的解析逻辑应用主题；不内联可执行脚本或放宽 CSP。主页面持续监听系统与跨页变化，面板关闭后仍生效。
 
 | 用途 | Token | 现行规则 |
 | --- | --- | --- |
@@ -56,11 +58,14 @@
 
 - 通用 `Button` 保留官方 variant 与常见状态；普通 ghost 反馈不变。Dock 工具按钮复用 `variant="entry" size="entry"` 透明外壳，实际反馈由内部 `entry-surface` 承担，不在调用方复制同套参数。
 - EDU 保留默认模糊和点击解除逻辑，Hover 背景不变、指针为手形；其 hover 背景引用同一个 `overlay` Token，覆盖 ghost 默认背景变化。
-- Settings 使用右侧 Sheet：宽 560px、最大不超过屏幕，Header 高 56px，标题及提示为 `Settings`，关闭按钮提示为 `Close`；正文由独立功能模块提供区域，目前包含 Browsing history。
+- Settings 使用右侧 Sheet：宽 560px、最大不超过屏幕，Header 高 56px，标题及提示为 `Settings`，关闭按钮提示为 `Close`；正文包含 General 和 Features 两区，中间使用现有 Separator，不叠加 Browsing history 标题。
+- General 的 Theme 行使用官方 ToggleGroup 单选组合，Light/Dark/System 分别用太阳、月亮、笔记本（LaptopMinimal）图标，默认 System；图标不带可见文字，使用可访问名称与现有 Tooltip 提示名称，始终保留一个选项。控件的主题状态不进入 shared/ui。
+- ToggleGroup 单选项以 `aria-checked` 显示激活状态，选中背景使用官方 accent、图标使用 accent-foreground，不增加高反差主色选中块。Tooltip 组合也使用 data-state，因此不得仅凭该属性表达单选反馈；选择判断仍由官方控件负责。
 - 共用 `Switch` 可操作时显示手形指针，禁用时显示禁止指针；在组件内统一维护，不在设置调用方重复指定。
 - 历史清理区域使用官方基础的 `Switch`，通过 `checked` / `onCheckedChange` 连接状态，保留可访问名称与说明；默认关闭，加载、授权和保存期间禁用重复操作，错误就地展示。配置和权限变更同步到已打开页面，不把业务状态放入通用组件或新增全局设置状态。
+- 历史清理开关标题旁的圆圈问号复用 Button/UiIcon/Tooltip，帮助提示完整保留原说明，最大宽度 280px、优先向上显示并支持换行；独立按钮不切换开关，读屏描述通过常驻隐藏文本保留。错误不放进 Tooltip。
 - Sheet 内容、边框与分隔线使用根主题；全屏遮罩使用 `blur-overlay`。打开/关闭动画为 200ms/160ms，减少动态效果时遵循全局规则。
-- Tooltip 只提供名称提示，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Sheet 打开时不显示 Tooltip，关闭恢复焦点不自动弹出提示，后续正常悬停仍可显示。
+- Tooltip 提供名称或简短帮助说明，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Sheet 打开时 Dock 的 Settings 入口不显示 Tooltip，关闭恢复焦点不自动弹出入口提示，后续正常悬停仍可显示；面板内部提示正常使用。
 - 品牌图标由 `BookmarkIcon` 负责；单色 adaptive 资源随主题转换，Exts 品牌 SVG 保持固定黑底白图。通用图标由 `UiIcon` 显式静态导入。
 - 字号、页面列数、具体宽高、位置与排版仍由现有组件负责；本次不建立全站布局框架或额外组件层。
 
@@ -69,3 +74,5 @@
 修改共用规则前检查所有使用方，更新本文和对应 Issue。只验证逻辑、配置、类型、构建与包体积，不增加源码形状断言、假 DOM 或视觉交互测试。
 
 视觉、悬停、焦点、Portal、明暗主题和窄视口由用户在 Chrome/Edge 加载实际产物验收；自动化通过不等于用户验收通过。未来扩展样式时按真实用途复用以上规则，不把官网的不同交互强制合并。
+
+Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Dock 调用方显式使用既有 12px，不随默认值改变。位置由 Radix 计算，不手写坐标。

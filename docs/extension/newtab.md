@@ -16,14 +16,17 @@ Components 和 DevTools 提供工具菜单；入口悬停或键盘聚焦时显�
 
 ## Settings
 
-Dock 右侧的 Settings 打开右侧设置面板，面板跟随当前明暗主题。Browsing history 区域提供默认关闭的 Clear history on startup and close 开关。
+Dock 右侧的 Settings 打开右侧设置面板，面板跟随当前明暗主题，分为两区：
+
+- General：Theme 提供太阳、月亮、笔记本（LaptopMinimal）三个图标，对应 Light、Dark、System。默认 System，手动选择立即应用并保存在本机，多个已打开页面同步；System 随系统变化，手动 Light/Dark 保持固定。
+- Features：Clear history on startup and close 默认关闭，旁边问号通过 Tooltip 展示原清理范围与触发说明；错误直接显示在区域内。
 
 [历史清理](./history-cleaner.md)模块独立持有配置与后台行为；Newtab 只展示设置区域，不需要保持页面打开。启用时申请浏览器清理权限，拒绝则保持关闭；开启操作本身不立即清理。
 
 ## 使用与限制
 
 - 面向 Chrome、Edge，不要求其他浏览器兼容。
-- 明暗主题跟随系统或浏览器的配色偏好，单色书签按现有规则改色。
+- 未配置主题时跟随系统或浏览器的配色偏好；手动选择后按所选主题显示，单色书签同步适配，品牌原色保持不变。首次加载、跨页与系统切换的实际效果由用户验收。
 - 开发时加载根 dist/dev/chrome-mv3-dev-stable，生产构建加载 dist/build/chrome-mv3；具体操作见[应用 README](../../apps/extension/README.md)。
 - 本模块不要求其他扩展功能依赖 Newtab 页面保持打开。
 

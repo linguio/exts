@@ -7,7 +7,7 @@
 - 核对日期：2026-10-16。
 - 仓库：[shadcn-ui/ui](https://github.com/shadcn-ui/ui)，MIT 许可。
 - 固定源码目录：[new-york-v4/ui](https://github.com/shadcn-ui/ui/tree/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/registry/new-york-v4/ui)。以下文件均可在这个固定目录逐项对照，不用随时变化的 main 作为版本依据。
-- 文件：`button.tsx`、`badge.tsx`、`switch.tsx`、`tooltip.tsx`、`dropdown-menu.tsx`、`separator.tsx`、`sheet.tsx`。
+- 文件：`button.tsx`、`badge.tsx`、`switch.tsx`、`tooltip.tsx`、`dropdown-menu.tsx`、`separator.tsx`、`sheet.tsx`；2026-10-17 按同一固定版本接入 `toggle.tsx`、`toggle-group.tsx`。
 - 使用现有精确版本的 React 19.3.0、Tailwind 4.3.3、radix-ui 1.6.7、CVA 0.7.1；未升级或新增依赖，未切换组件底层。
 - 两端都是 Vite 客户端应用，省略官方 `use client`；`cn` 使用各应用已有工具路径。不运行批量生成或覆盖命令。
 
@@ -19,12 +19,13 @@
 | 官网 Tooltip | Provider、Root、Trigger、Portal、Content 与 data-slot | 保留 400ms 延迟、8px 间距、现有主题配色/内边距/行高；无箭头，无新增动画 |
 | 扩展 Button | 官方 CVA、Slot、variant/size、数据属性、禁用与无效状态 | 沿用 Token 时长与 2px outline 焦点；ghost 保留透明底与前景色；入口外壳使用 entry variant/size，反馈由 entry-surface 提供；icon 保留零内边距；危险前景引用主题 Token |
 | 扩展 Switch | 官方 Root/Thumb、受控 checked、onCheckedChange、data-state/size、disabled | 保持默认 44×24px、4px 内边距、16px 滑块与20px位移；小尺寸跟随相同规则；使用 input 轨道、background 滑块与既有焦点轮廓，无新增阴影；按用户批准增加 cursor-pointer，禁用时保留 cursor-not-allowed |
-| 扩展 Tooltip | 官方 Provider、Root、Trigger、Portal、Content 与 data-slot | 保留 400ms、12px、popover 配色、边框、阴影和内边距；无箭头，无新增动画 |
+| 扩展 Tooltip | 官方 Provider、Root、Trigger、Portal、Content 与 data-slot | 保留 400ms、popover 配色、边框、阴影和内边距；按用户确认默认间距 4px，Dock 在调用方显式保留 12px；无箭头，无新增动画 |
 | 扩展 DropdownMenu | 官方 Root、Trigger、Portal、Content、Item；保留可用高度限制与纵向滚动、Item 通用状态 | 只导出当前需要的四项；保留 12px 间距、8px 碰撞边距、160px 最小宽、36px 菜单项、字重、highlighted 状态和浮层阴影；不加入未安装的动画工具类 |
 | 扩展 Separator | 官方 data-orientation、decorative 与颜色语义 | 无结构差异；Dock 调用方通过同一方向 variant 保持 64px 高度，避免普通 h-16 被方向选择器覆盖 |
 | 扩展 Sheet | 官方 Root、Trigger、Close、Portal、Overlay、Content、Header/Footer、Title/Description 组合及属性 | 保留主题模糊遮罩与层级、浮层阴影、无额外内容间距；关闭按钮复用 Button 和 UiIcon；现有右侧 CSS 动画 200/160ms。560px 宽度、可访问描述省略与焦点恢复提示抑制由 Settings 调用方指定 |
+| 扩展 Toggle/ToggleGroup | 官方 Toggle CVA、Radix Root/Item、上下文传递 variant/size/spacing 与单选接口 | 适配本地 cn/toggle 路径；移除 .dark 配色分支，采用既有主题 Token、2px outline 焦点、手形和 border 边框；单选激活通过 aria-checked 使用官方 accent/accent-foreground，避免 Tooltip 覆盖 data-state，不额外增加高反差背景或更改圆角。主题行指定 outline、sm、spacing=0、图标项宽 36px。空选忽略、主题保存与同步由业务/共用主题层处理 |
 
-扩展深色主题由系统媒体查询覆盖根 Token，不依赖 `.dark`。接入源码时移除依赖 `.dark` 的配色分支，以主题 Token 表达对应状态；减少动态效果继续由现有全局规则处理。仓库未安装动画工具类插件，因此不引入无法生效的动画类或新依赖。Sheet 当前仅使用右侧入口，其余方向保留官方定位接口，不增加未批准的新交互。
+扩展实际深色通过根 `data-theme` 覆盖原有 Token，System 模式才跟随系统媒体查询，不依赖 `.dark`。接入源码时移除依赖 `.dark` 的配色分支，以主题 Token 表达对应状态；减少动态效果继续由现有全局规则处理。仓库未安装动画工具类插件，因此不引入无法生效的动画类或新依赖。Sheet 当前仅使用右侧入口，其余方向保留官方定位接口，不增加未批准的新交互。
 
 ## 业务组合与扫描边界
 

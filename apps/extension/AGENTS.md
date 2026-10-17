@@ -18,8 +18,8 @@
 
 - 官网与扩展全部 Web UI 的选型、来源和风格维护原则遵循根 [AGENTS.md](../../AGENTS.md#web-ui-选型与风格)，不维护组件白名单。
 - `src/shared/ui/` 持有通用组件，不包含书签、Dock、Chrome API 或模块状态；各功能在自己的 `src/modules/<功能>/` 中组合，Newtab 也遵循此边界。
-- 扩展主题按系统 `prefers-color-scheme` 切换，Portal 继承根 Token；不直接依赖 `.dark` 类。官方源码接入和必要差异见 [Web UI 来源](../../docs/web-ui-sources.md)。
-- 应用根只创建一个 `TooltipProvider`。Tooltip 只提供简短 Hover/Focus 提示，不含可交互内容；菜单或 Sheet 打开时不得残留 Tooltip。
+- 扩展主题由 `src/shared/theme/` 解析 Light/Dark/System，默认跟随系统；实际明暗通过根 `data-theme` 应用，Portal 继承根 Token，不直接依赖 `.dark` 类。偏好保存、同步与首屏初始化不得放进通用 UI。官方源码接入和必要差异见 [Web UI 来源](../../docs/web-ui-sources.md)。
+- 应用根只创建一个 `TooltipProvider`。Tooltip 只提供简短名称或帮助说明，不含可交互内容；菜单或 Sheet 打开时其入口不得残留 Tooltip，Sheet 内的主题名称和帮助提示可正常显示。
 - Tooltip、菜单、Sheet、Button 与链接通过 `asChild` 等方式共享唯一真实交互元素，禁止嵌套交互控件。
 
 ## 图标职责
@@ -37,7 +37,7 @@
 - Dock 位于视口底部，DropdownMenu 默认从上方弹出并支持碰撞调整；由用户验证菜单在 `1280×720`、缩放后 CSS 视口 `640×360` 以及 100%、125%、150%、200% 缩放下不被裁剪或移出视口。
 - 用户验收 DropdownMenu 应覆盖 Enter、Space 或 ArrowDown 打开、方向键移动、Enter 激活、Esc 关闭并恢复触发器焦点、外部点击关闭等行为；Portal 必须正确继承明暗主题 Token 和层级。
 - 已废弃的自定义 Popover 不得重新引入；DropdownMenu 与 Tooltip 分别承担菜单和提示职责，不维护双轨实现。
-- Settings 已批准包含 Sheet 外壳及历史清理单开关；历史清理设置区域与后台业务由 `src/modules/history-cleaner/` 持有，Newtab 只组合区域。新增功能按本地 Issue 流程确认范围，不由本文件限制通用组件选型。
+- Settings 包含 General/Features：General 组合主题选择，Features 组合历史清理开关与帮助。主题偏好由共用主题模块持有；历史清理设置区域与后台业务仍由 `src/modules/history-cleaner/` 持有。Newtab 只组合入口，新增功能按本地 Issue 流程确认范围。
 
 ## 历史清理边界
 
