@@ -4,7 +4,7 @@ import { getNextCardHead, getVisibleCardIndices } from './card-pool';
 import './showcase.css';
 
 const cards = [
-  { id: 'tabs', label: 'Tabs：新标签页书签与 Dock 示意，点击置前', content: <TabsCard /> },
+  { id: 'tabs', label: 'Newtab：新标签页书签与 Dock 示意，点击置前', content: <TabsCard /> },
   { id: 'photos', label: 'Photos：iPhone 图片与视频选择下载示意，点击置前', content: <MediaCard /> },
 ];
 

@@ -13,14 +13,14 @@ import gmail from './assets/gmail.svg';
 const bookmarks = [x, bilibili, youtube, vercel, npm, linear, notion];
 const favorites = [chatgpt, github, gmail];
 
-export function WindowTop({ name }: { name: 'Tabs' | 'Photos' }) {
+export function WindowTop({ name }: { name: 'Newtab' | 'Photos' }) {
   return <div className="showcase-window-top" aria-hidden="true"><strong className="showcase-window-name">{name}</strong></div>;
 }
 
 export function TabsCard() {
   return (
     <>
-      <WindowTop name="Tabs" />
+      <WindowTop name="Newtab" />
       <div className="showcase-bookmarks" aria-hidden="true">
         {bookmarks.map((icon) => <span key={icon} className="showcase-bookmark"><img src={icon} alt="" /></span>)}
       </div>
