@@ -13,6 +13,7 @@ export function DockSettings() {
   const [open, setOpen] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const suppressRestoredFocusTooltip = useRef(false);
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   return (
     <Sheet open={open} onOpenChange={(nextOpen) => {
@@ -49,13 +50,17 @@ export function DockSettings() {
         </TooltipTrigger>
         <TooltipContent side="top" align="center" sideOffset={12}>Settings</TooltipContent>
       </Tooltip>
-      <SheetContent aria-describedby={undefined} className="w-[560px] sm:max-w-full" onCloseAutoFocus={() => {
+      <SheetContent aria-describedby={undefined} className="w-[560px] sm:max-w-full" onOpenAutoFocus={(event) => {
+        // 打开时先聚焦标题，避免自动聚焦主题按钮触发提示。
+        event.preventDefault();
+        titleRef.current?.focus();
+      }} onCloseAutoFocus={() => {
         // 只抑制关闭后的焦点恢复提示；保留 Radix 默认焦点恢复和下次主动悬停。
         suppressRestoredFocusTooltip.current = true;
         setTooltipOpen(false);
       }}>
         <header className="flex min-h-14 shrink-0 items-center px-6 pr-16">
-          <SheetTitle className="text-lg font-semibold">Settings</SheetTitle>
+          <SheetTitle ref={titleRef} tabIndex={-1} className="text-lg font-semibold">Settings</SheetTitle>
         </header>
         <Separator />
         <div className="min-h-0 overflow-y-auto">

@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [修复设置抽屉打开时自动显示主题提示](./issues/2026-10-17-extension-settings-initial-focus-issue.md) · [Commit 记录](./commits/2026-10-17-extension-settings-initial-focus-commit.md)；用户确认验收并批准本地提交，打开时初始焦点移至标题；34 项测试、类型检查、构建、包体积和 diff 检查通过，代理未独立实测浏览器，不推送、不部署。
+
 - [统一官网扩展功能命名与介绍](./issues/2026-10-17-website-extension-product-names-issue.md) · [Commit 记录](./commits/2026-10-17-website-extension-product-names-commit.md)；用户确认交付并批准本地提交，Newtab 展示名与 History Cleaner 中文介绍已更新；9 项纯逻辑测试通过，类型检查与构建受本地 TypeScript、Vite 依赖缺失阻塞；保留现有布局与卡片行为，不推送、不部署；代理未执行浏览器验收。
 
 - [更新官网发布日志](./issues/2026-10-17-website-changelog-update-issue.md) · [Commit 记录](./commits/2026-10-17-website-changelog-update-commit.md)；用户确认交付并批准三笔本地提交：根产品版本 1.1.0、扩展日志与版本链接、Extension 单数分类及标签；官网此前类型检查与构建通过，构建发布逻辑 17 项通过；扩展本次打包因依赖与网络不可用未完成，发布前须重新生成核实 1.1.0 ZIP，不推送、不部署。
