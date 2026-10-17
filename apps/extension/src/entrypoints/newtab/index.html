@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/theme-init.js"></script>
     <style>
       html,
       body {
@@ -12,12 +13,10 @@
         color: oklch(0.145 0 0);
       }
 
-      @media (prefers-color-scheme: dark) {
-        html,
-        body {
-          background: oklch(0.12 0 0);
-          color: oklch(0.97 0 0);
-        }
+      html[data-theme='dark'],
+      html[data-theme='dark'] body {
+        background: oklch(0.12 0 0);
+        color: oklch(0.97 0 0);
       }
     </style>
     <title>Exts — 将想法与能力延伸为实用工具</title>

@@ -4,6 +4,12 @@ import { createRoot } from 'react-dom/client';
 import { browser } from 'wxt/browser';
 
 import { App } from '../../app/NewtabApp';
+import { applyTheme, subscribeTheme } from '../../shared/theme/runtime';
+
+applyTheme();
+// 面板关闭时也继续跟随系统和其他页面的偏好更新。
+const stopThemeSync = subscribeTheme(() => {});
+if (import.meta.hot) import.meta.hot.dispose(stopThemeSync);
 
 // 覆盖页面显式使用完整扩展资源地址，避免浏览器内置页地址参与 favicon 解析。
 const favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');

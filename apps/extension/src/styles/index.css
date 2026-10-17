@@ -43,7 +43,7 @@
 
 :root {
   /* 这里是 shadcn/ui 兼容的基础 token；全局额外 token 也集中在此处维护。 */
-  color-scheme: light dark;
+  color-scheme: light;
   --font-geist-sans: "Geist Sans", "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --background: oklch(0.985 0 0);
   --foreground: oklch(0.145 0 0);
@@ -83,31 +83,30 @@
   --transition-duration: var(--duration-fast);
 }
 
-@media (prefers-color-scheme: dark) {
-  /* 深色模式只覆盖语义 token，组件结构和间距保持不变。 */
-  :root {
-    --background: oklch(0.12 0 0);
-    --foreground: oklch(0.97 0 0);
-    --card: oklch(0.17 0 0);
-    --card-foreground: oklch(0.97 0 0);
-    --popover: oklch(0.2 0 0);
-    --popover-foreground: oklch(0.97 0 0);
-    --muted: oklch(0.22 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.25 0 0);
-    --accent-foreground: oklch(0.97 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --destructive-foreground: oklch(0.145 0 0);
-    --border: oklch(0.28 0 0);
-    --border-strong: oklch(0.42 0 0);
-    --ring: oklch(0.82 0 0);
-    --surface-raised: oklch(0.19 0 0);
-    --overlay: oklch(0.12 0 0 / 62%);
-    --shadow-hover: 0 8px 18px rgb(0 0 0 / 28%);
-    --shadow-floating: 0 16px 36px rgb(0 0 0 / 36%);
-  }
+/* 实际主题由共用主题模块解析，手动选择不受系统媒体查询覆盖。 */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --background: oklch(0.12 0 0);
+  --foreground: oklch(0.97 0 0);
+  --card: oklch(0.17 0 0);
+  --card-foreground: oklch(0.97 0 0);
+  --popover: oklch(0.2 0 0);
+  --popover-foreground: oklch(0.97 0 0);
+  --muted: oklch(0.22 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.25 0 0);
+  --accent-foreground: oklch(0.97 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.145 0 0);
+  --border: oklch(0.28 0 0);
+  --border-strong: oklch(0.42 0 0);
+  --ring: oklch(0.82 0 0);
+  --surface-raised: oklch(0.19 0 0);
+  --overlay: oklch(0.12 0 0 / 62%);
+  --shadow-hover: 0 8px 18px rgb(0 0 0 / 28%);
+  --shadow-floating: 0 16px 36px rgb(0 0 0 / 36%);
 }
 
 /* 全局遮罩统一使用相同的主题透明色与模糊强度，供 Sheet、EDU 等场景复用。 */
@@ -198,8 +197,6 @@ body {
   filter: brightness(0);
 }
 
-@media (prefers-color-scheme: dark) {
-  .bookmark-icon--adaptive {
-    filter: brightness(0) invert(1);
-  }
+:root[data-theme='dark'] .bookmark-icon--adaptive {
+  filter: brightness(0) invert(1);
 }

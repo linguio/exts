@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../../../../share
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
 import { UiIcon } from '../../../../shared/ui/ui-icon';
 import { HistoryCleanerSettings } from '../../../history-cleaner/settings-section';
+import { GeneralSettings } from '../settings/general-settings';
 
 /** 设置页面组合独立功能的设置区域，后台逻辑由对应模块持有。 */
 export function DockSettings() {
@@ -58,6 +59,8 @@ export function DockSettings() {
         </header>
         <Separator />
         <div className="min-h-0 overflow-y-auto">
+          <GeneralSettings />
+          <Separator />
           <HistoryCleanerSettings />
         </div>
       </SheetContent>

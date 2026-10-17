@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 
 import { Switch } from '../../shared/ui/switch';
+import { Button } from '../../shared/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../shared/ui/tooltip';
+import { UiIcon } from '../../shared/ui/ui-icon';
 import { getHistoryCleanerEnabled, HISTORY_CLEANER_ENABLED_KEY, setHistoryCleanerEnabled } from './settings';
+
+const description = 'Clears all browsing history when the browser starts and the last window closes. Cookies, cache, and downloads are kept.';
 
 export function HistoryCleanerSettings() {
   const id = useId();
@@ -79,13 +84,18 @@ export function HistoryCleanerSettings() {
 
   return (
     <section aria-labelledby={`${id}-heading`} className="space-y-4 p-6">
-      <h3 id={`${id}-heading`} className="text-sm font-semibold">Browsing history</h3>
-      <div className="flex items-start justify-between gap-6">
-        <div className="min-w-0 space-y-2">
+      <h3 id={`${id}-heading`} className="text-sm font-semibold">Features</h3>
+      <div className="flex items-center justify-between gap-6">
+        <div className="flex min-w-0 items-center gap-1">
           <p id={`${id}-label`} className="text-sm font-medium">Clear history on startup and close</p>
-          <p id={`${id}-description`} className="text-sm leading-6 text-muted-foreground">
-            Clears all browsing history when the browser starts and the last window closes. Cookies, cache, and downloads are kept.
-          </p>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button type="button" variant="ghost" size="icon-sm" className="size-6 shrink-0 cursor-pointer text-muted-foreground" aria-label="About history cleanup">
+                <UiIcon name="circle-question-mark" className="size-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top" collisionPadding={8} className="max-w-[280px] text-left leading-5">{description}</TooltipContent>
+          </Tooltip>
         </div>
         <Switch
           checked={enabled}
@@ -95,6 +105,7 @@ export function HistoryCleanerSettings() {
           onCheckedChange={(next) => { void toggle(next); }}
         />
       </div>
+      <span id={`${id}-description`} className="sr-only">{description}</span>
       {error && <p role="alert" className="text-sm leading-6 text-foreground">{error}</p>}
     </section>
   );
