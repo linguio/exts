@@ -82,7 +82,7 @@ docs/
 
 ## Issue 队列
 
-无。
+- [统一官网扩展功能命名与介绍](./issues/2026-10-17-website-extension-product-names-issue.md) · [Commit 记录](./commits/2026-10-17-website-extension-product-names-commit.md)；范围与文案已批准，等待当前日志 Issue 最终提交后实施：统一 Newtab 展示名，补充 History Cleaner 中文介绍，保留现有布局与卡片行为。
 
 
 ## 待办
@@ -90,6 +90,8 @@ docs/
 无。
 
 ## 已完成
+
+- [更新官网发布日志](./issues/2026-10-17-website-changelog-update-issue.md) · [Commit 记录](./commits/2026-10-17-website-changelog-update-commit.md)；用户确认交付并批准三笔本地提交：根产品版本 1.1.0、扩展日志与版本链接、Extension 单数分类及标签；官网此前类型检查与构建通过，构建发布逻辑 17 项通过；扩展本次打包因依赖与网络不可用未完成，发布前须重新生成核实 1.1.0 ZIP，不推送、不部署。
 
 - [整理设置分区并添加主题切换与帮助提示](./issues/2026-10-17-extension-settings-theme-help-issue.md) · [Commit 记录](./commits/2026-10-17-extension-settings-theme-help-commit.md)；用户验收通过并批准代码、规范、工作记录三笔本地提交；设置分区、主题选择与同步、历史清理帮助已交付，保留官方选中效果与4px提示间距；34项测试及类型检查、构建、体积等验证通过，不推送、不部署。
 
