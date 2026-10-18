@@ -5,14 +5,13 @@ on:
   workflow_dispatch:
     inputs:
       target:
-        description: '选择部署目标；Desktop 暂未接入发布'
+        description: 'Website 部署官网；Release 生成扩展 ZIP 与 macOS DMG 草稿'
         required: true
         type: choice
         default: Website
         options:
           - Website
-          - Chrome
-          - Desktop
+          - Release
 
 permissions:
   contents: read
@@ -68,11 +67,13 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4.0.5
 
-  chrome-release:
-    name: Chrome · Draft Release
-    if: github.ref == 'refs/heads/main' && inputs.target == 'Chrome'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
+  release:
+    name: Release · ZIP & DMG
+    if: github.ref == 'refs/heads/main' && inputs.target == 'Release'
+    runs-on: xcode-27
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_27.0.0.app/Contents/Developer
     permissions:
       contents: write
     steps:
@@ -97,6 +98,7 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=v$version" >> "$GITHUB_OUTPUT"
           echo "zip=dist/release/exts-chrome.zip" >> "$GITHUB_OUTPUT"
+          echo "dmg=dist/release/exts-mac.dmg" >> "$GITHUB_OUTPUT"
       - name: Check tag and release conflicts
         shell: bash
         env:
@@ -125,18 +127,48 @@ jobs:
               exit 1
             fi
           fi
+      - name: Setup native build tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(xcodebuild -version | head -n 1)" = 'Xcode 27.0'
+          archive="$RUNNER_TEMP/xcodegen-2.46.0.zip"
+          curl --fail --location --silent --show-error \
+            https://github.com/yonaskolb/XcodeGen/releases/download/2.46.0/xcodegen.zip \
+            --output "$archive"
+          echo "4d9e34b62172d645eed6457cac13fc222569974098ef4ee9c3368bedf0196806  $archive" | shasum -a 256 -c -
+          unzip -q "$archive" -d "$RUNNER_TEMP/exts-native-tools"
+          tool_bin="$RUNNER_TEMP/exts-native-tools/xcodegen/bin"
+          test "$("$tool_bin/xcodegen" --version)" = 'Version: 2.46.0'
+          echo "$tool_bin" >> "$GITHUB_PATH"
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
       - name: Test release behavior
-        run: node --test tests/build-release.test.mjs tests/extension-release.test.mjs
+        run: node --test tests/build-release.test.mjs tests/extension-release.test.mjs apps/desktop/tests/scripts/desk.test.mjs
       - name: Test stable extension publication
         run: pnpm --filter @linguio/wxt-stable-output test
       - name: Test extension
         run: pnpm --filter @exts/extension test
       - name: Typecheck extension
         run: pnpm --filter @exts/extension typecheck
-      - name: Build and package Chrome extension
-        run: pnpm ext:release
+      - name: Typecheck website
+        run: pnpm --filter @exts/website typecheck
+      - name: Test Photos logic
+        working-directory: apps/desktop
+        env:
+          EXTS_BUILD_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          xcodegen generate
+          xcodebuild test -project exts.xcodeproj -scheme exts \
+            -destination 'platform=macOS' \
+            -derivedDataPath "$GITHUB_WORKSPACE/dist/.cache/desktop/DerivedData" \
+            -only-testing:extsTests/MediaGroupingTests \
+            -only-testing:extsTests/ThumbnailSchedulerTests \
+            -only-testing:extsTests/AppStoragePathsTests \
+            -only-testing:extsTests/DownloadCoordinatorTests \
+            "EXTS_BUILD_VERSION=$EXTS_BUILD_VERSION" CODE_SIGNING_ALLOWED=NO
+      - name: Build and package ZIP and DMG
+        run: pnpm release
       - name: Check bundle budget
         run: pnpm --filter @exts/extension check:bundle-size
       - name: Create tag and draft release
@@ -146,32 +178,25 @@ jobs:
           TAG: ${{ steps.version.outputs.tag }}
           VERSION: ${{ steps.version.outputs.version }}
           ZIP: ${{ steps.version.outputs.zip }}
+          DMG: ${{ steps.version.outputs.dmg }}
         run: |
           set -euo pipefail
+          test -s "$ZIP"
+          test -s "$DMG"
           if ! git show-ref --verify --quiet "refs/tags/$TAG"; then
             git tag "$TAG" "$GITHUB_SHA"
           fi
           git push origin "refs/tags/$TAG"
           cat > "$RUNNER_TEMP/exts-release-notes.md" <<'NOTES'
-          Exts 浏览器扩展：新标签页、书签、Dock 和标签组。
+          Exts 包含 Chrome／Edge 浏览器扩展和 macOS 27 桌面应用 Photos。
 
           下载 exts-chrome.zip 附件，解压后在 Chrome 扩展管理页开启开发者模式，选择“加载已解压的扩展程序”。经实际验收后也可在 Edge 中加载。
 
-          此版本只包含浏览器扩展。GitHub 自动生成的 Source code 压缩包是源码，不是扩展安装包。
+          下载 exts-mac.dmg，打开后将 exts.app 拖入 Applications，再从应用程序目录启动。桌面包仅用于本人在 macOS 27 上使用，未接入开发者分发签名或公证。
+
+          两个安装包使用相同产品版本；即使扩展没有功能更新，每次 Release 仍同时包含两包。GitHub 自动生成的 Source code 压缩包是源码，不是安装包。
           NOTES
-          gh release create "$TAG" "$ZIP" --verify-tag --draft \
+          gh release create "$TAG" "$ZIP" "$DMG" --verify-tag --draft \
             --title "Exts $VERSION" --notes-file "$RUNNER_TEMP/exts-release-notes.md"
           gh release view "$TAG" --json url,tagName,isDraft,assets >> "$GITHUB_STEP_SUMMARY"
-          echo '草稿已生成；浏览器验收并公开 Release 后才有公开下载入口。' >> "$GITHUB_STEP_SUMMARY"
-
-  desktop:
-    name: Desktop · Draft Release
-    if: github.ref == 'refs/heads/main' && inputs.target == 'Desktop'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 1
-    permissions: {}
-    steps:
-      - name: Explain Desktop availability
-        run: |
-          echo 'Desktop 发布尚未接入；本次仅展示提示，不构建、打包或上传桌面产物。'
-          echo 'Desktop 发布尚未接入；没有生成或发布桌面产物。' >> "$GITHUB_STEP_SUMMARY"
+          echo '双包草稿已生成；请分别下载 ZIP 与 DMG 验收。公开 Release 并设为 Latest 后，官网固定下载入口才指向本版本。' >> "$GITHUB_STEP_SUMMARY"

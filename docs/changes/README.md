@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [打通桌面首版与双包 Release](./issues/2026-10-19-repo-desktop-first-release-issue.md) · [Commit 记录](./commits/2026-10-19-repo-desktop-first-release-commit.md)；用户在查看交付和限制后确认验收并批准 Photos 修正、双包发布两笔本地提交；开发／正式构建与打包通过，发布阶段 71 项、浏览原生 8 项及下载原生 7 项逻辑测试通过；完整原生测试因历史 SQLite 问题中止，代理未独立验收界面、Finder、真机、安装或远程运行，不推送、不部署。
+
 - [修复设置抽屉打开时自动显示主题提示](./issues/2026-10-17-extension-settings-initial-focus-issue.md) · [Commit 记录](./commits/2026-10-17-extension-settings-initial-focus-commit.md)；用户确认验收并批准本地提交，打开时初始焦点移至标题；34 项测试、类型检查、构建、包体积和 diff 检查通过，代理未独立实测浏览器，不推送、不部署。
 
 - [统一官网扩展功能命名与介绍](./issues/2026-10-17-website-extension-product-names-issue.md) · [Commit 记录](./commits/2026-10-17-website-extension-product-names-commit.md)；用户确认交付并批准本地提交，Newtab 展示名与 History Cleaner 中文介绍已更新；9 项纯逻辑测试通过，类型检查与构建受本地 TypeScript、Vite 依赖缺失阻塞；保留现有布局与卡片行为，不推送、不部署；代理未执行浏览器验收。

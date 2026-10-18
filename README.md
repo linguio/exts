@@ -65,9 +65,9 @@ exts/
 
 根 `package.json` 的 `version` 是唯一产品版本源，初始 `1.0.0`，由用户手动维护；所有应用构建通过 `scripts/version.mjs` 读取和校验，不自动升级。桌面正式与开发身份、默认数据目录独立；正式已有数据不迁移。
 
-`pnpm release` 在 macOS 统一构建后生成根 `dist/release/` 的 ZIP 与 DMG；同版本包已存在时报错，不自动推送或发布。
+`pnpm release` 在 macOS 统一构建后生成根 `dist/release/` 的 `exts-chrome.zip` 与 `exts-mac.dmg`；本地成功校验后可替换旧包，失败保留旧包，不自动推送或发布。
 
-首版仅发布浏览器扩展：`pnpm ext:release` 独立构建并校验 `dist/release/exts-chrome-1.0.0.zip`，不构建网站或 desktop。手动 GitHub Actions 在验证通过后生成 `v1.0.0` Tag 与 Release 草稿，用户验收后公开；后续 Mac 附件使用 `exts-mac-<版本>.dmg`。
+Actions 的 `Exts Publish` 提供 Website／Release 两个手动目标：Website 部署官网，Release 生成同一产品版本的扩展 ZIP、macOS DMG 和一个草稿 Release，即使扩展没有功能更新仍同时生成两包。已有 Release 禁止覆盖，公开发布由用户验收后操作。桌面首版仅供本人在 macOS 27 上使用；本地调试用 `pnpm desk:dev` 直接构建并打开 `.app`，下载安装使用 DMG，不接入开发者分发签名或公证。
 
 构建缓存也统一放在根 `dist/.cache/`；应用内部不再生成 `dist` 或 `DerivedData`。完整命令、版本、目录与分发规则见 [构建与分发规范](docs/build-release.md)。
 

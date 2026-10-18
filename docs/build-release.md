@@ -1,6 +1,6 @@
 # 构建、版本与本地分发规范
 
-三端产品共用根版本，开发命令保持独立；最终产物及可配置的构建缓存统一生成在仓库根 dist。本文是命令、产物路径和版本消费规则的维护入口，当前固定附件与发布改造状态以 [Issue](changes/issues/2026-10-11-exts-fixed-release-assets-issue.md) 为准。
+三端产品共用根版本，开发命令保持独立；最终产物及可配置的构建缓存统一生成在仓库根 dist。本文是命令、产物路径和版本消费规则的维护入口，本次双包发布接入状态见 [Issue](changes/issues/2026-10-19-repo-desktop-first-release-issue.md)。
 
 ## 唯一产品版本
 
@@ -79,42 +79,43 @@ dist/
 | 文件 | exts-dev.app | exts.app |
 | 展示名 | Exts Dev | Exts |
 | Bundle Identifier | dev.linguio.exts.dev | dev.linguio.exts |
-| 默认下载目录 | ~/Downloads/Exts Dev | ~/Downloads/OhMy Photos |
+| 默认下载目录 | ~/Downloads/Exts Downloads/Photos | ~/Downloads/Exts Downloads/Photos |
 | 缩略图缓存目录 | ~/Library/Application Support/Exts Dev/Thumbnails | ~/Library/Application Support/OhMy Photos/Thumbnails |
 
-两种模式共用代码，Organization Identifier 为 dev.linguio。正式目录保留旧路径，不自动迁移、复制或删除用户数据；用户主动选择相同外部目录不保证隔离。当前未使用的数据库和凭据设施不预建，后续新增时须接入同样身份边界。
+两种模式共用代码，Organization Identifier 为 dev.linguio。默认下载使用用户批准的 Exts Downloads/<功能名> 规则，Photos 在开发和正式版共用目录，同名文件不覆盖；旧下载目录不自动迁移、复制或删除。配置和缩略图缓存保留各自身份及旧路径。当前未使用的数据库和凭据设施不预建，后续新增时须接入同样身份边界。
 
 project.yml 是原生配置入口，desk 命令先用 XcodeGen 生成工程再构建并传入根版本；不要依赖尚未重新生成的旧工程直接验证新身份。桌面 dev 构建后打开应用，不提供源码自动热更新。
 
-官网固定使用 https://github.com/linguio/exts/releases/latest/download/exts-chrome.zip 与 exts-mac.dmg 对应地址，不查询 API、不使用网站构建版本拼接。正式发布必须设置 Latest 并包含对应固定附件；缺少 macOS 包时该链接可不存在。发布新产品版本无需为下载地址重新构建官网。
+官网固定使用 https://github.com/linguio/exts/releases/latest/download/exts-chrome.zip 与 exts-mac.dmg 对应地址，不查询 API、不使用网站构建版本拼接。正式发布必须设置 Latest 并同时包含两个固定附件；历史仅含扩展的 Release 不补传或覆盖。发布新产品版本无需为下载地址重新构建官网。
 
 ## 分发包
 
-附件固定为 exts-chrome.zip、exts-mac.dmg，不上传带版本号副本；包内版本仍取根版本；Tag 使用 v<版本>，Release 标题使用 Exts <版本>。首版 1.0.0 只发布 Chrome 扩展，不构建或发布 desktop。
+附件固定为 exts-chrome.zip、exts-mac.dmg，不上传带版本号副本；包内版本仍取根版本；Tag 使用 v<版本>，Release 标题使用 Exts <版本>。历史 1.0.0 仅发布扩展；本次接入后每次新 Release 都从同一提交生成两包，即使扩展没有功能更新也不跳过 ZIP。
 
 pnpm ext:release 独立构建扩展，检查 Manifest 版本、新标签页入口及图标资源，生成 ZIP 并校验后发布到根 dist/release。本地允许再次打包，完成暂存生成与校验后替换固定文件，失败保留旧包。Windows 使用系统 PowerShell/.NET ZIP，Linux/macOS 使用 zip/unzip；此命令不构建网站或桌面，不创建 Tag 或上传。
 
-手动流程 .github/workflows/exts-deploy.yml 展示为 Exts Publish，仅允许 main，通过下拉选择 Website、Chrome 或 Desktop，不因推送自动运行。选择 Chrome 时执行冻结安装、发布脚本与稳定目录测试、扩展测试、类型检查、构建打包与体积检查。全部通过后创建指向本次构建提交的 v<版本> Tag 与 Release 草稿，只上传固定名 exts-chrome.zip。已有 Release 拒绝覆盖，已有 Tag 指向不同提交时失败；失败草稿需人工检查，不自动删除或覆盖。
+手动流程 .github/workflows/exts-deploy.yml 展示为 Exts Publish，仅允许 main，通过下拉选择 Website 或 Release，不因推送自动运行。Release 使用 xcode-27 arm64 runner，显式选择 Xcode 27.0.0 路径，下载并校验固定 XcodeGen 2.46.0，使用 Node.js 24.16.0、pnpm 12.4.2 冻结安装。执行发布与桌面入口逻辑测试、稳定工具和扩展测试、官网及扩展类型检查，以及 Photos 的 MediaGroupingTests、ThumbnailSchedulerTests、AppStoragePathsTests、DownloadCoordinatorTests 四组原生纯逻辑测试；调用现有 pnpm release 完整构建并校验两包，再检查扩展体积。全部通过后创建指向本次构建提交的 v<版本> Tag 与一个草稿 Release，同时附带固定名 ZIP、DMG。已有 Release 拒绝覆盖，已有 Tag 指向不同提交时失败；失败草稿需人工检查，不自动删除或覆盖。
 
-选择 Website 时只构建、校验官网并部署 dist/build/exts-web 到 GitHub Pages，保留 github-pages 环境。选择 Desktop 时只显示“发布尚未接入”，不检出源码、不构建或上传产物，不创建 Tag 或 Release。各目标使用独立并发组，只有官网部署 job 获得 Pages/OIDC 权限，只有 Chrome job 获得 Release 写权限，Desktop job 无仓库权限。
+选择 Website 时只构建、校验官网并部署 dist/build/exts-web 到 GitHub Pages，保留 github-pages 环境。Release 虽随完整构建生成官网产物，但不部署官网。两种目标各用独立并发组，只有官网部署 job 获得 Pages/OIDC 权限，只有 Release job 获得 Release 写权限；已移除 Chrome 单包入口及 Desktop 提示占位。
 
 GitHub Actions → Exts Publish → Run workflow，分支选择 main，在 target 下拉选择目标。NPM 工具包使用独立 NPM Publish 入口，暂存上传与网页批准规则见 [NPM 发布指导](./npm-release.md)。旧 Website Deploy 与 Release Deploy 文件已由统一入口替代。
 
-首次运行需先提交并推送 workflow 到 main，再从 Actions 手动运行。下载草稿 ZIP 后由用户解压并在 Chrome/Edge 扩展管理页加载验收；公开 Release 后核实附件下载地址。草稿和成功打包都不等于公开发布成功，GitHub 自动生成的 Source code ZIP 不是扩展安装包。
+首次运行需先提交并推送 workflow 到 main，再从 Actions 手动运行 Release；根版本若已对应已有 Release 或其他提交的 Tag，需先由用户批准提升根版本，不能直接重跑覆盖。用户从草稿下载 ZIP，解压后在 Chrome/Edge 扩展管理页加载；下载 DMG 后挂载，将 exts.app 拖入 Applications，从应用程序目录启动并验收 Photos。确认后由用户公开 Release 并设为 Latest，再核实官网两个下载入口。草稿和成功打包都不等于公开发布成功，GitHub 自动生成的 Source code ZIP 不是安装包。
 
 pnpm release 先检查版本、平台与工具，再调用统一 build；本地旧固定包不阻止构建。正式扩展 ZIP 根层直接包含 manifest.json；DMG 含正式 exts.app 和 Applications 安装入口，使用系统 zip、unzip、ditto、hdiutil 等工具生成和校验，不引入打包依赖。
 
 新包在 dist/release/.exts-staging-<随机值> 中生成并校验；两包全部校验后备份旧目标，再以同盘重命名替换固定文件。本地成功替换后清理暂存，生成/校验失败不改旧包；部分替换失败撤销新文件并恢复旧文件。恢复也失败时保留备份目录并给出可诊断路径，不报告成功或删除备份。不清空 release，不删除既有无关或历史文件；正式历史附件保存在各自 GitHub Release。
 
-.app 是可运行的应用，.dmg 是分发容器。当前 DMG 使用本机构建架构，未做 Apple 分发签名、公证、通用架构或自动更新；生成本地镜像不等同于具备完整公开分发条件。
+.app 是可运行的应用，.dmg 是分发容器。本轮仅供本人在 macOS 27 上使用：开发直接运行 pnpm desk:dev，无需安装 DMG 或配置分发证书；下载安装使用正式 DMG。包使用构建机架构，本地及 Actions 当前为 arm64，不做旧系统兼容、Apple 分发签名、公证、通用架构或自动更新。下载包首次启动若被 macOS 拦截，由用户核对来源后在系统设置的隐私与安全性中处理，流程不自动绕过系统保护。
 
 ## 验证与当前限制
 
-- 逻辑检查：node --test tests/build-release.test.mjs apps/desktop/tests/scripts/desk.test.mjs。
+- 逻辑检查：node --test tests/build-release.test.mjs tests/extension-release.test.mjs apps/desktop/tests/scripts/desk.test.mjs。
 - 稳定工具：pnpm --filter @linguio/wxt-stable-output test。
 - 扩展：pnpm --filter @exts/extension test、typecheck、check:bundle-size；先运行 ext:build 再检查体积。
 - Chrome/Edge 实际加载根稳定目录，成功→编译失败保留→恢复成功由用户验收；代理不执行视觉、布局或交互验收。
-- macOS 真实 XcodeGen/Xcode 构建、XCTest、双应用并存与数据隔离、真实 ZIP/DMG 生成及挂载尚未实测。用户已允许本次实现继续并记录这些限制；系统命令替代测试只验证调度和文件保护。
-- macOS 可用后运行 pnpm build、pnpm desk:dev、pnpm release，核对两 app 的身份、版本、数据路径及两包内容。原生测试需传入 EXTS_BUILD_VERSION 的根版本，既有 SQLite 分页失败仍不在本次修复范围。
+- 2026-10-19 已实际运行 pnpm desk:dev 与 pnpm release：开发及正式 Xcode 构建、官网与扩展生产构建、真实 ZIP/DMG 打包及镜像校验通过，版本为 1.1.0，桌面为 arm64；桌面入口已校验身份和版本并执行开发 app 打开命令。
+- Photos 验收修正后的开发构建和双包打包已重新通过；分组／队列针对性原生 XCTest 8 项通过。随后一次完整原生测试在既有 SQLite 压力用例复现 `FROM mediaORDER BY` 错误后停滞，已中止、不重试，不宣称全量通过。实际界面、设备、预览清晰度、双应用并存与数据隔离、DMG 挂载安装和远程 Actions 仍待用户验收；既有 SQLite 问题和 Swift 警告保留。
+- 下载结果提示与统一目录追加后，相关原生纯逻辑测试 7 项通过，开发 app 和正式双包重新构建、打包及校验通过；原生提示和 Finder 跳转待用户实测，不重跑已知中止的原生全量测试。
 
 相关入口：[根 README](../README.md)、[desktop](../apps/desktop/README.md)、[extension](../apps/extension/README.md)、[website](../apps/website/README.md)、[Issue](changes/issues/2026-10-10-repo-unify-build-release-issue.md)、[Commit 记录](changes/commits/2026-10-10-repo-unify-build-release-commit.md)。
