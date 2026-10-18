@@ -2,6 +2,23 @@ import XCTest
 @testable import exts
 
 final class ThumbnailSchedulerTests: XCTestCase {
+    func testLeavingViewportRemovesQueuedWorkButPreservesActiveSlots() {
+        let scheduler = ThumbnailScheduler(maxConcurrent: 1)
+        XCTAssertEqual(scheduler.enqueue(id: "active", priority: .visible)?.id, "active")
+        XCTAssertNil(scheduler.enqueue(id: "offscreen", priority: .visible))
+        XCTAssertNil(scheduler.enqueue(id: "visible", priority: .visible))
+
+        scheduler.removeQueued(id: "active")
+        scheduler.removeQueued(id: "offscreen")
+
+        XCTAssertEqual(scheduler.activeRequests.map(\.id), ["active"])
+        XCTAssertEqual(scheduler.complete(id: "active")?.id, "visible")
+        XCTAssertTrue(scheduler.queuedRequests.isEmpty)
+        XCTAssertNil(scheduler.complete(id: "visible"))
+
+        XCTAssertEqual(scheduler.enqueue(id: "offscreen", priority: .visible)?.id, "offscreen")
+    }
+
     func testVisibleRequestsUseFourSlotsBeforePrefetch() {
         let scheduler = ThumbnailScheduler(maxConcurrent: 4)
 

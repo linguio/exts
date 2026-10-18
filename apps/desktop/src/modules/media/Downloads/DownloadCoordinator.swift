@@ -14,6 +14,54 @@ struct DownloadTransferResult {
     static let success = DownloadTransferResult(sidecarErrorDescription: nil)
 }
 
+struct DownloadSummary: Identifiable {
+    let id = UUID()
+    let successCount: Int
+    let failureCount: Int
+    let directory: URL?
+    let title: String
+    let message: String
+
+    init(items: [MediaItem], results: [DownloadResult]) {
+        let resultsByID = Dictionary(results.map { ($0.itemID, $0) }, uniquingKeysWith: { first, _ in first })
+        var successfulURLs: [URL] = []
+        var details: [String] = []
+        for item in items {
+            if let result = resultsByID[item.id], result.succeeded, let url = result.url {
+                successfulURLs.append(url)
+                if let warning = result.sidecarErrorDescription {
+                    details.append("\(url.lastPathComponent) 附属文件：\(warning)")
+                }
+            } else {
+                let reason = resultsByID[item.id]?.errorDescription ?? "未返回下载结果"
+                details.append("\(item.name)：\(reason)")
+            }
+        }
+        successCount = successfulURLs.count
+        failureCount = items.count - successCount
+        directory = successfulURLs.first?.deletingLastPathComponent()
+        if successCount == 0 {
+            title = "下载失败"
+            message = Self.message("\(failureCount) 个文件下载失败", details: details)
+        } else if failureCount > 0 {
+            title = "部分下载失败"
+            message = Self.message("已下载 \(successCount) 个文件，\(failureCount) 个失败", details: details)
+        } else {
+            title = "下载完成"
+            message = Self.message("已下载 \(successCount) 个文件", details: details)
+        }
+    }
+
+    private static func message(_ summary: String, details: [String]) -> String {
+        guard !details.isEmpty else { return summary }
+        var lines = Array(details.prefix(5))
+        if details.count > 5 {
+            lines.append("另有 \(details.count - 5) 项未显示")
+        }
+        return summary + "\n\n" + lines.joined(separator: "\n")
+    }
+}
+
 final class DownloadCoordinator {
     let maxConcurrent = 2
 

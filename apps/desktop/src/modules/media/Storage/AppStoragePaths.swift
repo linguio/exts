@@ -16,13 +16,14 @@ struct AppStoragePaths {
     }
 
     init(bundleIdentifier: String, homeDirectory: URL, applicationSupportDirectory: URL) {
-        // 正式版继续使用旧路径；开发身份独立存储，不迁移用户文件。
+        // 缓存保留原有身份隔离，下载按用户批准的产品目录共用，不迁移旧文件。
         let directoryName = bundleIdentifier == "dev.linguio.exts.dev" ? "Exts Dev" : "OhMy Photos"
         thumbnailDirectory = applicationSupportDirectory
             .appendingPathComponent(directoryName, isDirectory: true)
             .appendingPathComponent("Thumbnails", isDirectory: true)
         downloadDirectory = homeDirectory
             .appendingPathComponent("Downloads", isDirectory: true)
-            .appendingPathComponent(directoryName, isDirectory: true)
+            .appendingPathComponent("Exts Downloads", isDirectory: true)
+            .appendingPathComponent("Photos", isDirectory: true)
     }
 }

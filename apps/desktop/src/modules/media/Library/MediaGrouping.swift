@@ -1,6 +1,20 @@
 import Foundation
 
+struct MediaMonthSection: Equatable, Identifiable {
+    let id: String
+    let items: [MediaItem]
+}
+
 enum MediaGrouping {
+    static func monthSections(_ items: [MediaItem]) -> [MediaMonthSection] {
+        let groups = Dictionary(grouping: stableSort(items)) { monthKey(for: $0) }
+        return groups.keys.sorted { left, right in
+            if left == "unknown" { return false }
+            if right == "unknown" { return true }
+            return left > right
+        }.map { MediaMonthSection(id: $0, items: groups[$0] ?? []) }
+    }
+
     static func monthKey(for item: MediaItem) -> String {
         guard let date = item.sortDate else { return "unknown" }
 

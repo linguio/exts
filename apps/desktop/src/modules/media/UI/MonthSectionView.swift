@@ -7,6 +7,7 @@ struct MonthSectionView: View {
     let images: [String: NSImage]
     let failedThumbnailIDs: Set<String>
     let requestThumbnail: (String) -> Void
+    let thumbnailVisibilityChanged: (String, Bool) -> Void
     let selectedIDs: Set<String>
     let selectionState: SelectionState
     let toggleItem: (String) -> Void
@@ -36,7 +37,8 @@ struct MonthSectionView: View {
                         thumbnailFailed: failedThumbnailIDs.contains(item.id),
                         isSelected: selectedIDs.contains(item.id),
                         toggle: { toggleItem(item.id) },
-                        requestThumbnail: { requestThumbnail(item.id) }
+                        requestThumbnail: { requestThumbnail(item.id) },
+                        visibilityChanged: { thumbnailVisibilityChanged(item.id, $0) }
                     )
                 }
             }

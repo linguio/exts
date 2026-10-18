@@ -63,6 +63,11 @@ final class ThumbnailScheduler {
         return next
     }
 
+    func removeQueued(id: String) {
+        // 已交给设备的请求继续占用并发槽位，离屏时只移除尚未启动的任务。
+        queuedRequests.removeAll { $0.id == id }
+    }
+
     func reset() {
         activeRequests.removeAll()
         queuedRequests.removeAll()

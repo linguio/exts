@@ -2,6 +2,32 @@ import XCTest
 @testable import exts
 
 final class MediaGroupingTests: XCTestCase {
+    func testMonthSectionsShowNewestMonthAndNewestDatesFirst() {
+        func item(_ id: String, _ date: String?, modified: String? = nil) -> MediaItem {
+            let formatter = ISO8601DateFormatter()
+            return MediaItem(
+                id: id, name: id, uti: nil, fileSize: 0, duration: 0,
+                creationDate: date.flatMap { formatter.date(from: $0) },
+                modificationDate: modified.flatMap { formatter.date(from: $0) },
+                fingerprint: nil
+            )
+        }
+        let sections = MediaGrouping.monthSections([
+            item("old", "2026-09-30T12:00:00Z"),
+            item("early", "2026-10-01T12:00:00Z"),
+            item("unknown", nil),
+            item("latest-b", "2026-10-19T12:00:00Z"),
+            item("fallback", nil, modified: "2026-10-10T12:00:00Z"),
+            item("latest-a", "2026-10-19T12:00:00Z")
+        ])
+
+        XCTAssertEqual(sections.map(\.id), ["2026-10", "2026-09", "unknown"])
+        XCTAssertEqual(sections[0].items.map(\.id), ["latest-a", "latest-b", "fallback", "early"])
+        XCTAssertEqual(sections[1].items.map(\.id), ["old"])
+        XCTAssertEqual(sections[2].items.map(\.id), ["unknown"])
+        XCTAssertTrue(MediaGrouping.monthSections([]).isEmpty)
+    }
+
     func testSortDatePrefersCreationThenModificationThenUnknown() {
         let modification = Date(timeIntervalSince1970: 1_000)
         let creation = Date(timeIntervalSince1970: 2_000)

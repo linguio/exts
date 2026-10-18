@@ -9,10 +9,11 @@ struct ExtsApp: App {
             Group {
                 if session.state == .available {
                     LibraryView(
-                        items: session.mediaItems,
+                        sections: session.mediaSections,
                         images: session.thumbnailImages,
                         failedThumbnailIDs: session.failedThumbnailIDs,
                         onRequestThumbnail: { session.requestThumbnail(for: $0) },
+                        onThumbnailVisibilityChange: { session.setThumbnailVisibility(for: $0, isVisible: $1) },
                         onDownload: { session.download(items: $0) }
                     )
                 } else {
