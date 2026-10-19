@@ -31,4 +31,4 @@
 
 应用图标为透明黑／白 PNG，系统配色偏好在新标签页挂载后同步到工具栏及 favicon。用户自行检查真实浏览器主题效果；扩展 ID 或加载目录变化不保证旧存储自动继承。
 
-`pnpm ext:release` 独立构建扩展并生成根 `dist/release/exts-chrome.zip`，不构建网站或桌面；再次打包在同目录暂存完成生成和校验后安全替换旧固定包，失败保留旧包；ZIP 解压后可在 Chrome 扩展管理页开启开发者模式并加载解压目录。根 `pnpm release` 仍用于后续完整 macOS 分发。首版通过手动 GitHub Actions 生成 `v1.0.0` Tag 和仅含 Chrome ZIP 的 Release 草稿，用户验收后公开。完整版本、产物和稳定目录规则见 [构建与分发规范](../../docs/build-release.md)。
+`pnpm ext:release` 独立构建扩展并生成根 `dist/release/exts-chrome.zip`，不构建网站或桌面；再次打包在同目录暂存完成生成和校验后安全替换旧固定包，失败保留旧包；ZIP 解压后可在 Chrome 扩展管理页开启开发者模式并加载解压目录。`pnpm ext:release` 仅供本地扩展验包。从产品 1.2.0 起，正式发布统一通过 Actions → Exts Publish → main／Release，在 macOS 上执行完整 `pnpm release`，生成包含扩展 ZIP 和桌面 DMG 的同版本草稿。每次新发布前提升根版本，两端即使没有改动也一起重新构建和更新版本，用户验收后统一公开。完整版本、产物和稳定目录规则见 [构建与分发规范](../../docs/build-release.md)。

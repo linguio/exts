@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [从 1.2.0 开始统一双端发布](./issues/2026-10-19-repo-unified-release-1-2-issue.md) · [Commit 记录](./commits/2026-10-19-repo-unified-release-1-2-commit.md)；用户验收并批准本地提交；根版本更新为 1.2.0，统一双端发布起点与说明；3 项版本测试通过，真实打包和远程发布未验证，不推送。
+
 - [打通桌面首版与双包 Release](./issues/2026-10-19-repo-desktop-first-release-issue.md) · [Commit 记录](./commits/2026-10-19-repo-desktop-first-release-commit.md)；用户在查看交付和限制后确认验收并批准 Photos 修正、双包发布两笔本地提交；开发／正式构建与打包通过，发布阶段 71 项、浏览原生 8 项及下载原生 7 项逻辑测试通过；完整原生测试因历史 SQLite 问题中止，代理未独立验收界面、Finder、真机、安装或远程运行，不推送、不部署。
 
 - [修复设置抽屉打开时自动显示主题提示](./issues/2026-10-17-extension-settings-initial-focus-issue.md) · [Commit 记录](./commits/2026-10-17-extension-settings-initial-focus-commit.md)；用户确认验收并批准本地提交，打开时初始焦点移至标题；34 项测试、类型检查、构建、包体积和 diff 检查通过，代理未独立实测浏览器，不推送、不部署。

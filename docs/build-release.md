@@ -8,6 +8,8 @@
 
 版本必须为三段数字，主版本范围 1–9999，次版本和修订版本范围 0–99；无前导零和预发布后缀。同一值用于扩展 Manifest、桌面营销版本、桌面构建编号及 Release Tag；ZIP/DMG 附件文件名固定，不包含版本。内部工具包和第三方依赖版本独立维护，不参与产品版本同步。
 
+从产品 1.2.0 起，extension 和 desktop 统一构建与发布。每次新产品发布前提升根 version；即使某端没有代码改动，两端仍一起重新构建、使用同一新版本并上传到同一份 Release。历史版本不补包、不覆盖；Website 部署和 NPM 发布保持独立。
+
 ```sh
 node scripts/version.mjs
 ```
@@ -90,7 +92,7 @@ project.yml 是原生配置入口，desk 命令先用 XcodeGen 生成工程再�
 
 ## 分发包
 
-附件固定为 exts-chrome.zip、exts-mac.dmg，不上传带版本号副本；包内版本仍取根版本；Tag 使用 v<版本>，Release 标题使用 Exts <版本>。历史 1.0.0 仅发布扩展；本次接入后每次新 Release 都从同一提交生成两包，即使扩展没有功能更新也不跳过 ZIP。
+附件固定为 exts-chrome.zip、exts-mac.dmg，不上传带版本号副本；包内版本仍取根版本；Tag 使用 v<版本>，Release 标题使用 Exts <版本>。从 1.2.0 起每次新 Release 都从同一提交生成两包，即使某端没有功能更新也不跳过该端。
 
 pnpm ext:release 独立构建扩展，检查 Manifest 版本、新标签页入口及图标资源，生成 ZIP 并校验后发布到根 dist/release。本地允许再次打包，完成暂存生成与校验后替换固定文件，失败保留旧包。Windows 使用系统 PowerShell/.NET ZIP，Linux/macOS 使用 zip/unzip；此命令不构建网站或桌面，不创建 Tag 或上传。
 
