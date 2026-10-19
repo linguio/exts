@@ -63,9 +63,8 @@ export function DockSettings() {
           <SheetTitle ref={titleRef} tabIndex={-1} className="text-lg font-semibold">Settings</SheetTitle>
         </header>
         <Separator />
-        <div className="min-h-0 overflow-y-auto">
+        <div className="min-h-0 space-y-6 overflow-y-auto p-6">
           <GeneralSettings />
-          <Separator />
           <HistoryCleanerSettings />
         </div>
       </SheetContent>

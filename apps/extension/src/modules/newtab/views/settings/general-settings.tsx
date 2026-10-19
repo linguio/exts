@@ -17,10 +17,10 @@ export function GeneralSettings() {
   const [error, setError] = useState<string | null>(null);
 
   return (
-    <section aria-labelledby={`${id}-heading`} className="space-y-4 p-6">
-      <h3 id={`${id}-heading`} className="text-sm font-semibold">General</h3>
+    <section aria-labelledby={`${id}-heading`} className="space-y-4">
+      <h3 id={`${id}-heading`} className="text-xs font-medium text-muted-foreground">General</h3>
       <div className="flex items-center justify-between gap-6">
-        <p id={`${id}-label`} className="text-sm font-medium">Theme</p>
+        <p id={`${id}-label`} className="text-sm font-normal">Theme</p>
         <ToggleGroup type="single" variant="outline" size="sm" spacing={0} value={theme} aria-labelledby={`${id}-label`} onValueChange={(value) => {
           // 单选主题不能取消成空值，保持最后一个有效选择。
           if (value !== 'light' && value !== 'dark' && value !== 'system') return;

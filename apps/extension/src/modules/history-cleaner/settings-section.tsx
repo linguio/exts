@@ -83,11 +83,11 @@ export function HistoryCleanerSettings() {
   }
 
   return (
-    <section aria-labelledby={`${id}-heading`} className="space-y-4 p-6">
-      <h3 id={`${id}-heading`} className="text-sm font-semibold">Features</h3>
+    <section aria-labelledby={`${id}-heading`} className="space-y-4">
+      <h3 id={`${id}-heading`} className="text-xs font-medium text-muted-foreground">Features</h3>
       <div className="flex items-center justify-between gap-6">
         <div className="flex min-w-0 items-center gap-1">
-          <p id={`${id}-label`} className="text-sm font-medium">Clear history on startup and close</p>
+          <p id={`${id}-label`} className="text-sm font-normal">Clear history on startup and close</p>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button type="button" variant="ghost" size="icon-sm" className="size-6 shrink-0 cursor-pointer text-muted-foreground" aria-label="About history cleanup">
