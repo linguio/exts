@@ -4,15 +4,25 @@ import * as bookmarkConfig from '../../../src/modules/newtab/constants/bookmarks
 
 const { BOOKMARK_GRID, DOCK_COMPONENTS, DOCK_DEVTOOLS, DOCK_FAVORITES } = bookmarkConfig;
 
-// 验证 Grid 书签配置包含 EDU 文件夹和文字 SVG 入口。
-test('Grid 书签配置提供 EDU 文件夹', () => {
+// 验证页面展示的文件夹内容与入口顺序。
+test('Grid 书签配置提供 EDU 和 AI 文件夹', () => {
   assert.deepEqual(BOOKMARK_GRID, [
+      {
+        type: 'folder',
+        id: 'ai',
+        name: 'AI',
+        items: [
+          { id: 'chatgpt', name: 'ChatGPT', url: 'https://chatgpt.com', icon: 'brand/chatgpt.svg', iconTone: 'adaptive' },
+          { id: 'grok', name: 'Grok', url: 'https://grok.com', icon: 'brand/grok.svg' },
+          { id: 'cursor', name: 'Cursor', url: 'https://cursor.com', icon: 'brand/cursor.svg', iconTone: 'adaptive' },
+        ],
+      },
       {
         type: 'folder',
         id: 'social-media',
         name: 'Social Media',
         items: [
-          { id: 'x', name: 'X', url: 'https://x.com', icon: 'brand/x.svg', iconTone: 'adaptive' },
+          { id: 'telegram', name: 'Telegram', url: 'https://web.telegram.org/', icon: 'brand/telegram.svg', iconTone: 'adaptive' },
           { id: 'bilibili', name: 'Bilibili', url: 'https://www.bilibili.com', icon: 'brand/bilibili.svg', iconTone: 'adaptive' },
           { id: 'youtube', name: 'YouTube', url: 'https://www.youtube.com', icon: 'brand/youtube.svg', iconTone: 'adaptive' },
         ],
@@ -48,15 +58,16 @@ test('Grid 书签配置提供 EDU 文件夹', () => {
           { id: 'chsi', name: '学信网', url: 'https://www.chsi.com.cn/', icon: 'brand/text-chsi.svg', iconTone: 'adaptive' },
         ],
       },
+
   ]);
 });
 
 test('Dock 收藏配置保持当前常用入口顺序', () => {
   assert.deepEqual(DOCK_FAVORITES, [
-    { type: 'bookmark', id: 'chatgpt', name: 'ChatGPT', url: 'https://chatgpt.com', icon: 'brand/chatgpt.svg', iconTone: 'adaptive' },
-    { type: 'bookmark', id: 'gmail', name: 'Gmail', url: 'https://mail.google.com', icon: 'brand/gmail.svg', iconTone: 'adaptive' },
+    { type: 'bookmark', id: 'x', name: 'X', url: 'https://x.com', icon: 'brand/x.svg', iconTone: 'adaptive' },
     { type: 'bookmark', id: 'github', name: 'GitHub', url: 'https://github.com', icon: 'brand/github.svg', iconTone: 'adaptive' },
     { type: 'bookmark', id: 'exts', name: 'Exts', url: 'https://exts.linguio.dev/', icon: 'brand/exts.svg' },
+    { type: 'bookmark', id: 'gmail', name: 'Gmail', url: 'https://mail.google.com', icon: 'brand/gmail.svg', iconTone: 'adaptive' },
   ]);
 });
 

@@ -5,10 +5,20 @@ import type { Bookmark, BookmarkGridItem, BookmarkGroup } from '../types/bookmar
 export const BOOKMARK_GRID: BookmarkGridItem[] = [
   {
     type: 'folder',
+    id: 'ai',
+    name: 'AI',
+    items: [
+      { id: 'chatgpt', name: 'ChatGPT', url: 'https://chatgpt.com', icon: 'brand/chatgpt.svg', iconTone: 'adaptive' },
+      { id: 'grok', name: 'Grok', url: 'https://grok.com', icon: 'brand/grok.svg' },
+      { id: 'cursor', name: 'Cursor', url: 'https://cursor.com', icon: 'brand/cursor.svg', iconTone: 'adaptive' },
+    ],
+  },
+  {
+    type: 'folder',
     id: 'social-media',
     name: 'Social Media',
     items: [
-      { id: 'x', name: 'X', url: 'https://x.com', icon: 'brand/x.svg', iconTone: 'adaptive' },
+      { id: 'telegram', name: 'Telegram', url: 'https://web.telegram.org/', icon: 'brand/telegram.svg', iconTone: 'adaptive' },
       { id: 'bilibili', name: 'Bilibili', url: 'https://www.bilibili.com', icon: 'brand/bilibili.svg', iconTone: 'adaptive' },
       { id: 'youtube', name: 'YouTube', url: 'https://www.youtube.com', icon: 'brand/youtube.svg', iconTone: 'adaptive' },
     ],
@@ -48,10 +58,10 @@ export const BOOKMARK_GRID: BookmarkGridItem[] = [
 
 // Dock 收藏区只保存直接可点击的常用书签。
 export const DOCK_FAVORITES: Bookmark[] = [
-  { type: 'bookmark', id: 'chatgpt', name: 'ChatGPT', url: 'https://chatgpt.com', icon: 'brand/chatgpt.svg', iconTone: 'adaptive' },
-  { type: 'bookmark', id: 'gmail', name: 'Gmail', url: 'https://mail.google.com', icon: 'brand/gmail.svg', iconTone: 'adaptive' },
+  { type: 'bookmark', id: 'x', name: 'X', url: 'https://x.com', icon: 'brand/x.svg', iconTone: 'adaptive' },
   { type: 'bookmark', id: 'github', name: 'GitHub', url: 'https://github.com', icon: 'brand/github.svg', iconTone: 'adaptive' },
   { type: 'bookmark', id: 'exts', name: 'Exts', url: 'https://exts.linguio.dev/', icon: 'brand/exts.svg' },
+  { type: 'bookmark', id: 'gmail', name: 'Gmail', url: 'https://mail.google.com', icon: 'brand/gmail.svg', iconTone: 'adaptive' },
 ];
 
 // Components 与 DevTools 都是 Dock 内的聚合入口，内部书签按各自名称加入标签组。
