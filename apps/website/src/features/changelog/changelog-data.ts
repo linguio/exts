@@ -1,4 +1,4 @@
-export type ChangelogPlatform = 'Website' | 'Extension' | 'macOS' | 'Packages';
+export type ChangelogPlatform = 'Website' | 'Extension' | 'Desktop' | 'Packages';
 
 type ChangelogEntry = {
   id: string;
@@ -11,31 +11,35 @@ type ChangelogEntry = {
   }[];
 };
 
-// 日期取实际发布或代码交付时间并转换为北京时间，不使用补录日期。
+// 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
+  {
+    id: 'photos-first-release',
+    date: '2026-10-19',
+    title: '推出 Photos 桌面应用',
+    groups: [
+      {
+        platform: 'Desktop',
+        changes: [
+          '支持预览 iPhone 中的照片和视频。',
+          '支持按月份分组选择，批量下载所选照片和视频。',
+        ],
+        links: [
+          { label: 'exts-mac.dmg · 1.2.0', href: 'https://github.com/linguio/exts/releases/download/v1.2.0/exts-mac.dmg' },
+        ],
+      },
+    ],
+  },
   {
     id: 'extension-settings',
     date: '2026-10-17',
-    title: '新增扩展设置',
+    title: '新增主题切换与历史清理',
     groups: [{
       platform: 'Extension',
       changes: [
         '新增主题切换，支持浅色、深色和跟随系统。',
-        '新增历史清理，支持在浏览器打开与关闭时清理访问历史，默认关闭。',
+        '新增历史清理，支持在浏览器打开与关闭时清理访问历史。',
         '优化界面样式，统一组件风格与交互反馈。',
-      ],
-    }],
-  },
-  {
-    id: 'extension-history-cleaner',
-    date: '2026-10-16',
-    title: '新增历史清理功能',
-    groups: [{
-      platform: 'Extension',
-      changes: [
-        '在浏览器打开与关闭时清理访问历史。',
-        '仅清理访问历史，保留 Cookie、缓存和下载记录。',
-        '默认关闭，可在 Settings 中手动开启。',
       ],
       links: [{ label: 'exts-chrome.zip · 1.1.0', href: 'https://github.com/linguio/exts/releases/tag/v1.1.0' }],
     }],
@@ -43,7 +47,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
   {
     id: 'website-content-layout',
     date: '2026-10-15',
-    title: '完善官网内容与布局',
+    title: '完善产品介绍与首页布局',
     groups: [{
       platform: 'Website',
       changes: [
@@ -56,12 +60,12 @@ export const changelogEntries: readonly ChangelogEntry[] = [
   {
     id: 'wxt-stable-output-first-release',
     date: '2026-10-14',
-    title: '发布 NPM 工具包 · WXT 稳定构建产物',
+    title: '推出 WXT 稳定构建工具包',
     groups: [{
       platform: 'Packages',
       changes: [
-        '转发 WXT 重载通知前，先同步最新构建产物到稳定加载目录。',
-        '校验或目录替换失败时，保留最后一次成功的产物，并提供错误信息供排查。',
+        '新增稳定开发目录，完成产物同步后再通知扩展重载。',
+        '新增产物校验，更新失败时保留上一份可用产物。',
       ],
       links: [{ label: '@linguio/wxt-stable-output · 1.0.0', href: 'https://www.npmjs.com/package/@linguio/wxt-stable-output/v/1.0.0' }],
     }],
@@ -69,7 +73,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
   {
     id: 'website-launch',
     date: '2026-10-12',
-    title: '产品官网上线',
+    title: '上线产品官网',
     groups: [{
       platform: 'Website',
       changes: [
@@ -82,13 +86,13 @@ export const changelogEntries: readonly ChangelogEntry[] = [
   {
     id: 'first-release',
     date: '2026-10-10',
-    title: '发布 Chrome 拓展 · 新标签页',
+    title: '推出新标签页扩展',
     groups: [{
       platform: 'Extension',
       changes: [
-      '新标签页：集中展示常用网站',
-      '标签组：按分组打开并组织网页',
-      '书签与 Dock：快速访问常用网站和工具',
+      '新增新标签页，集中展示常用网站。',
+      '新增标签组，按分组打开并组织网页。',
+      '新增书签与 Dock，快速访问常用网站和工具。',
       ],
       links: [{ label: 'exts-chrome.zip · 1.0.0', href: 'https://github.com/linguio/exts/releases/tag/v1.0.0' }],
     }],
