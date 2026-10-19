@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [整理 AI 入口与设置分区](./issues/2026-10-19-extension-newtab-ai-settings-issue.md) · [Commit 记录](./commits/2026-10-19-extension-newtab-ai-settings-commit.md)；用户确认书签与 Dock、Settings 样式、文档记录三笔本地提交；AI 第一且仅保留 ChatGPT/Grok/Cursor，Telegram 入 Social Media，Dock 顺序为 X/GitHub/Exts/Gmail；设置标题层级和 24px 间距已调整；34 项测试、类型、构建、体积及资源核对通过，未独立验收浏览器；Gemini SVG 保留未使用，不推送。
+
 - [统一更新日志标题与版本归属](./issues/2026-10-19-website-changelog-titles-issue.md) · [Commit 记录](./commits/2026-10-19-website-changelog-titles-commit.md)；用户确认最终文案并批准本地提交；合并 1.1.0、统一标题与 Desktop 标签、加入 Photos 两点说明和桌面下载直链；最终类型及内容核对通过，生产构建此前通过；下载暂时 404 可接受，未独立验收页面，不推送或部署。
 
 - [从 1.2.0 开始统一双端发布](./issues/2026-10-19-repo-unified-release-1-2-issue.md) · [Commit 记录](./commits/2026-10-19-repo-unified-release-1-2-commit.md)；用户验收并批准本地提交；根版本更新为 1.2.0，统一双端发布起点与说明；3 项版本测试通过，真实打包和远程发布未验证，不推送。

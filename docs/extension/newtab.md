@@ -5,18 +5,22 @@ Newtab 是 Exts 扩展的新标签页模块，源码位于 apps/extension/src/mo
 ## 书签与文件夹
 
 - 页面按文件夹组织网站书签；EDU 文件夹默认带模糊遮罩。
+- AI 文件夹位于主书签区域第一，依次收录 ChatGPT、Grok、Cursor，使用已有品牌 SVG，打开方式与其他文件夹一致。
+- Social Media 文件夹依次收录 Telegram、Bilibili、YouTube；Telegram 打开 Web 版，X 移至 Dock。
 - 普通书签提供网站名称和图标，链接打开目标网站；工具分组中的部分入口可批量创建标签组。
 - 当前书签来自模块配置，没有可用的用户编辑、拖拽或自定义书签设置。
 
 ## Dock
 
-底部收藏入口依次为 ChatGPT、Gmail、GitHub、Exts，直接打开对应网站。Exts 使用已有的完整正式圆角 Logo，保留黑底白色主体，不随页面主题反色。
+底部收藏入口依次为 X、GitHub、Exts、Gmail，直接打开对应网站；ChatGPT 位于 AI 文件夹。Exts 使用已有的完整正式圆角 Logo，保留黑底白色主体，不随页面主题反色。
 
 Components 和 DevTools 提供工具菜单；入口悬停或键盘聚焦时显示名称提示，点击工具入口打开菜单。
 
 ## Settings
 
 Dock 右侧的 Settings 打开右侧设置面板，面板跟随当前明暗主题，分为两区：
+
+General 与 Features 之间不使用分割线：分区标题为 12px、中等字重和较淡颜色，设置项正文为 14px、常规字重；正文外侧内边距和两区间距统一为 24px，不再叠加子分区内边距。顶部 Settings 标题区保留分割线。
 
 - General：Theme 提供太阳、月亮、笔记本（LaptopMinimal）三个图标，对应 Light、Dark、System。默认 System，手动选择立即应用并保存在本机，多个已打开页面同步；System 随系统变化，手动 Light/Dark 保持固定。
 - Features：Clear history on startup and close 默认关闭，旁边问号通过 Tooltip 展示原清理范围与触发说明；错误直接显示在区域内。
