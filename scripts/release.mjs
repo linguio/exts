@@ -143,8 +143,36 @@ export function releaseAll({
       if (actual?.trim() !== expected) throw new Error(`DMG 应用 ${key} 不一致`);
     }
     execute('校验 DMG 应用签名', '/usr/bin/codesign', ['--verify', '--deep', '--strict', '--verbose=2', appPath]);
-    execute('创建 Applications 入口', '/bin/ln', ['-s', '/Applications', join(imageDirectory, 'Applications')]);
-    execute('生成 DMG', '/usr/bin/hdiutil', ['create', '-volname', `Exts ${version}`, '-srcfolder', imageDirectory, '-format', 'UDZO', stagedDmg]);
+    execute('创建应用程序入口', '/bin/ln', ['-s', '/Applications', join(imageDirectory, '应用程序')]);
+    const backgroundDirectory = join(imageDirectory, '.background');
+    const moduleCache = join(repositoryDirectory, 'dist/.cache/desktop/dmg-swift');
+    mkdirSync(backgroundDirectory);
+    mkdirSync(moduleCache, { recursive: true });
+    execute('绘制安装背景', '/usr/bin/swift', [
+      '-module-cache-path', moduleCache,
+      join(repositoryDirectory, 'apps/desktop/scripts/dmg-background.swift'),
+      join(backgroundDirectory, 'installer.png'),
+    ], { timeout: 60000 });
+
+    const writableDmg = join(stagingDirectory, 'writable.dmg');
+    const mountDirectory = join(stagingDirectory, 'mount');
+    mkdirSync(mountDirectory);
+    execute('生成可写 DMG', '/usr/bin/hdiutil', ['create', '-volname', `Exts ${version}`, '-srcfolder', imageDirectory, '-format', 'UDRW', writableDmg]);
+    execute('挂载安装镜像', '/usr/bin/hdiutil', ['attach', '-readwrite', '-nobrowse', '-mountpoint', mountDirectory, writableDmg]);
+    try {
+      execute('配置安装窗口', '/usr/bin/osascript', [join(repositoryDirectory, 'apps/desktop/scripts/dmg-layout.applescript'), mountDirectory], { timeout: 30000 });
+      if (!existsSync(join(mountDirectory, '.DS_Store'))) throw new Error('安装窗口配置未保存，停止发布 DMG');
+    } finally {
+      try {
+        execute('推出安装镜像', '/usr/bin/hdiutil', ['detach', mountDirectory]);
+      } catch (error) {
+        // 推出失败时保留挂载点和暂存，避免递归清理仍挂载的镜像。
+        error.recoveryDirectory = stagingDirectory;
+        error.message += `，暂存与挂载点保留在：${stagingDirectory}`;
+        throw error;
+      }
+    }
+    execute('生成 DMG', '/usr/bin/hdiutil', ['convert', writableDmg, '-format', 'UDZO', '-o', stagedDmg]);
     execute('校验 DMG', '/usr/bin/hdiutil', ['verify', stagedDmg]);
     readProjectVersion(version);
 
