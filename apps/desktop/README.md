@@ -27,7 +27,7 @@ macOS 原生应用，正式 Bundle Identifier 为 `dev.linguio.exts`，开发为
 
 [当前 Issue](../../docs/changes/issues/2026-10-19-repo-desktop-first-release-issue.md)
 
-根 `pnpm release` 同时生成本地 `dist/release/exts-chrome.zip` 与 `dist/release/exts-mac.dmg`；开发只使用 `.app`，无需安装 DMG 或配置分发证书。Actions → Exts Publish → Release 从 main 手动生成双包草稿，用户下载 DMG，将 exts.app 拖入 Applications 后启动；公开 Release 仍由用户验收后操作。首版仅供本人在 macOS 27 上使用，当前为 arm64，不接入开发者分发签名、公证或旧系统兼容。完整版本、产物及数据隔离规则见 [构建与分发规范](../../docs/build-release.md)。
+根 `pnpm release` 同时生成本地 `dist/release/exts-chrome.zip` 与 `dist/release/exts-mac.dmg`；开发只使用 `.app`，无需安装 DMG 或配置分发证书。Actions → Exts Publish → Release 从 main 手动生成双包草稿，用户打开 DMG 后，将左侧 Exts 拖到右侧“应用程序”目标，复制完成后从应用程序目录启动。DMG 配置固定图标窗口、浅色背景和箭头说明，不使用 PKG 或自动安装。打包需要可用的 Finder 会话；窗口配置失败时不替换旧包。公开 Release 仍由用户验收后操作。首版仅供本人在 macOS 27 上使用，当前为 arm64，不接入开发者分发签名、公证或旧系统兼容，首次下载运行仍可能需要用户手动允许。完整版本、产物及数据隔离规则见 [构建与分发规范](../../docs/build-release.md)。
 
 ## 本轮验证限制
 

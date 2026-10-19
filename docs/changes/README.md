@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [配置 DMG 拖拽安装窗口](./issues/2026-10-20-desktop-dmg-installer-issue.md) · [Commit 记录](./commits/2026-10-20-desktop-dmg-installer-commit.md)；用户确认本地窗口效果并于 2026-10-20 批准实现、说明与记录两笔本地提交；29 项逻辑测试、真实打包、镜像结构和应用签名校验通过；版本 1.2.0 和固定附件名不变，远程 Actions、下载与安装启动待用户验证，不推送或发布。
+
 - [修复下载版桌面应用签名](./issues/2026-10-19-desktop-dmg-signature-issue.md) · [Commit 记录](./commits/2026-10-19-desktop-dmg-signature-commit.md)；用户于 2026-10-20 批准本地提交，完整应用签名和打包校验已修复，28 项测试、真实构建、DMG 及包内签名校验通过；保持 1.2.0，线上仍为草稿，重跑前需处理旧草稿和标签；GitHub 下载与安装待用户验收，不推送或发布。
 
 - [整理 AI 入口与设置分区](./issues/2026-10-19-extension-newtab-ai-settings-issue.md) · [Commit 记录](./commits/2026-10-19-extension-newtab-ai-settings-commit.md)；用户确认书签与 Dock、Settings 样式、文档记录三笔本地提交；AI 第一且仅保留 ChatGPT/Grok/Cursor，Telegram 入 Social Media，Dock 顺序为 X/GitHub/Exts/Gmail；设置标题层级和 24px 间距已调整；34 项测试、类型、构建、体积及资源核对通过，未独立验收浏览器；Gemini SVG 保留未使用，不推送。

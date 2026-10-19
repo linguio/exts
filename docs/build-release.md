@@ -102,13 +102,13 @@ pnpm ext:release 独立构建扩展，检查 Manifest 版本、新标签页入�
 
 GitHub Actions → Exts Publish → Run workflow，分支选择 main，在 target 下拉选择目标。NPM 工具包使用独立 NPM Publish 入口，暂存上传与网页批准规则见 [NPM 发布指导](./npm-release.md)。旧 Website Deploy 与 Release Deploy 文件已由统一入口替代。
 
-首次运行需先提交并推送 workflow 到 main，再从 Actions 手动运行 Release；根版本若已对应已有 Release 或其他提交的 Tag，需先由用户批准提升根版本，不能直接重跑覆盖。用户从草稿下载 ZIP，解压后在 Chrome/Edge 扩展管理页加载；下载 DMG 后挂载，将 exts.app 拖入 Applications，从应用程序目录启动并验收 Photos。确认后由用户公开 Release 并设为 Latest，再核实官网两个下载入口。草稿和成功打包都不等于公开发布成功，GitHub 自动生成的 Source code ZIP 不是安装包。
+首次运行需先提交并推送 workflow 到 main，再从 Actions 手动运行 Release；根版本若已对应已有 Release 或其他提交的 Tag，需先由用户批准提升根版本，不能直接重跑覆盖。用户从草稿下载 ZIP，解压后在 Chrome/Edge 扩展管理页加载；下载 DMG 后打开安装窗口，将左侧 Exts 拖到右侧“应用程序”目标，复制完成后从应用程序目录启动并验收 Photos；不需要打开目标文件夹，不使用 PKG 或自动执行安装。确认后由用户公开 Release 并设为 Latest，再核实官网两个下载入口。草稿和成功打包都不等于公开发布成功，GitHub 自动生成的 Source code ZIP 不是安装包。
 
-pnpm release 先检查版本、平台与工具，再调用统一 build；本地旧固定包不阻止构建。正式扩展 ZIP 根层直接包含 manifest.json；DMG 含正式 exts.app 和 Applications 安装入口，使用系统 zip、unzip、ditto、hdiutil 等工具生成和校验，不引入打包依赖。
+pnpm release 先检查版本、平台与工具，再调用统一 build；本地旧固定包不阻止构建。正式扩展 ZIP 根层直接包含 manifest.json；DMG 的可见内容是 exts.app 和指向 /Applications 的“应用程序”快捷入口。安装背景由 apps/desktop/scripts/dmg-background.swift 使用 AppKit 绘制，缓存位于根 dist/.cache/desktop/dmg-swift；dmg-layout.applescript 通过 Finder 设置固定窗口、图标视图、左右图标和背景，将配置写入镜像的 .DS_Store，再转换成最终只读压缩 DMG。背景位于隐藏 .background 目录，品牌图标不变。不引入第三方打包依赖。打包机需有可用的 Finder 会话并允许 osascript 配置 Finder；布局配置有 30 秒进程超时，失败或未保存 .DS_Store 时停止发布，旧分发包不变。挂载镜像无法推出时保留暂存与挂载点，不递归清理。远程 runner 的 Finder 能力需通过实际 Actions 验证。
 
 新包在 dist/release/.exts-staging-<随机值> 中生成并校验；两包全部校验后备份旧目标，再以同盘重命名替换固定文件。本地成功替换后清理暂存，生成/校验失败不改旧包；部分替换失败撤销新文件并恢复旧文件。恢复也失败时保留备份目录并给出可诊断路径，不报告成功或删除备份。不清空 release，不删除既有无关或历史文件；正式历史附件保存在各自 GitHub Release。
 
-.app 是可运行的应用，.dmg 是分发容器。本轮仅供本人在 macOS 27 上使用：开发直接运行 pnpm desk:dev，无需安装 DMG 或配置分发证书；下载安装使用正式 DMG。桌面构建在资源处理完成后对完整应用执行 ad-hoc 临时签名并进行严格校验，不依赖外部证书；打包时对复制进 DMG 源目录的应用再次校验签名，失败则保留旧包。包使用构建机架构，本地及 Actions 当前为 arm64，不做旧系统兼容、Apple 分发签名、公证、通用架构或自动更新。临时签名保证应用签名结构完整，不提供 Apple 的开发者身份或公证信任。下载包首次启动若被 macOS 拦截，由用户核对来源后在系统设置的隐私与安全性中处理，流程不自动绕过系统保护。
+.app 是可运行的应用，.dmg 是分发容器。本轮仅供本人在 macOS 27 上使用：开发直接运行 pnpm desk:dev，无需安装 DMG 或配置分发证书；下载安装使用正式 DMG。桌面构建在资源处理完成后对完整应用执行 ad-hoc 临时签名并进行严格校验，不依赖外部证书；打包时对复制进 DMG 源目录的应用再次校验签名，失败则保留旧包。包使用构建机架构，本地及 Actions 当前为 arm64，不做旧系统兼容、Apple 分发签名、公证、通用架构或自动更新。临时签名保证应用签名结构完整，不提供 Apple 的开发者身份或公证信任。下载包首次打开或应用启动若被 macOS 拦截，由用户核对来源后在系统设置的隐私与安全性中处理，流程不自动绕过系统保护。
 
 ## 验证与当前限制
 
