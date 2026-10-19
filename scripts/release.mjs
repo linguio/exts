@@ -142,6 +142,7 @@ export function releaseAll({
       const actual = execute(`读取应用 ${key}`, '/usr/libexec/PlistBuddy', ['-c', `Print ${key}`, plist], { stdio: 'pipe', encoding: 'utf8' });
       if (actual?.trim() !== expected) throw new Error(`DMG 应用 ${key} 不一致`);
     }
+    execute('校验 DMG 应用签名', '/usr/bin/codesign', ['--verify', '--deep', '--strict', '--verbose=2', appPath]);
     execute('创建 Applications 入口', '/bin/ln', ['-s', '/Applications', join(imageDirectory, 'Applications')]);
     execute('生成 DMG', '/usr/bin/hdiutil', ['create', '-volname', `Exts ${version}`, '-srcfolder', imageDirectory, '-format', 'UDZO', stagedDmg]);
     execute('校验 DMG', '/usr/bin/hdiutil', ['verify', stagedDmg]);

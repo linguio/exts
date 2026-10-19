@@ -171,6 +171,35 @@ test('ZIP 校验失败不发布残缺文件并清理本次暂存', async () => {
   }
 });
 
+test('应用签名失败时不生成 DMG，并保留旧的两包', async () => {
+  const { releaseAll } = await import(releaseModule);
+  const { readProjectVersion } = await import(versionModule);
+  const root = mkdtempSync(join(tmpdir(), 'exts-release-signature-'));
+  const version = readProjectVersion();
+  const values = { CFBundleIdentifier: 'dev.linguio.exts', CFBundleVersion: version, CFBundleShortVersionString: version };
+  try {
+    writeFileSync(join(root, 'exts-chrome.zip'), 'old-zip');
+    writeFileSync(join(root, 'exts-mac.dmg'), 'old-dmg');
+    assert.throws(() => releaseAll({
+      platform: 'darwin', releaseDirectory: root,
+      build() { return { version, extensionDir: root, desktopApp: join(root, 'exts.app') }; },
+      run(command, args) {
+        if (command.endsWith('/zip') && args[0] === '-qr') writeFileSync(args[1], 'new-zip');
+        if (command.endsWith('/unzip') && args[0] === '-p') return { status: 0, stdout: JSON.stringify({ manifest_version: 3, version }) };
+        if (command.endsWith('/PlistBuddy')) return { status: 0, stdout: values[args[1].slice(6)] };
+        if (command.endsWith('/codesign')) return { status: 1 };
+        if (command.endsWith('/hdiutil')) assert.notEqual(args[0], 'create', '无效应用不得生成 DMG');
+        return { status: 0 };
+      },
+    }), /校验.*签名.*失败/);
+    assert.equal(readFileSync(join(root, 'exts-chrome.zip'), 'utf8'), 'old-zip');
+    assert.equal(readFileSync(join(root, 'exts-mac.dmg'), 'utf8'), 'old-dmg');
+    assert.deepEqual(readdirSync(root).sort(), ['exts-chrome.zip', 'exts-mac.dmg']);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('release 成功时替换固定两包，DMG 校验失败保留旧包', async (context) => {
   const { releaseAll } = await import(releaseModule);
   const { readProjectVersion } = await import(versionModule);
@@ -206,7 +235,7 @@ test('release 成功时替换固定两包，DMG 校验失败保留旧包', async
               assert.deepEqual(readdirSync(args[args.indexOf('-srcfolder') + 1]).sort(), ['Applications', 'exts.app']);
               writeFileSync(args.at(-1), 'dmg-fixture');
             }
-            return { status: failVerify && args[0] === 'verify' ? 9 : 0 };
+            return { status: failVerify && command.endsWith('/hdiutil') && args[0] === 'verify' ? 9 : 0 };
           },
         };
         if (failVerify) {

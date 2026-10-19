@@ -55,6 +55,9 @@ test "$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' "$APP_PLIS
 test "$(/usr/libexec/PlistBuddy -c 'Print CFBundleVersion' "$APP_PLIST")" = "$VERSION"
 test "$(node "$REPOSITORY_DIR/scripts/version.mjs")" = "$VERSION"
 rm -f "$STAGING_DIR/$APP_NAME/Contents/Resources/AppIcon.icns"
+# 资源处理完成后签名整个应用，替换链接器仅覆盖可执行文件的临时签名。
+/usr/bin/codesign --force --sign - --timestamp=none "$STAGING_DIR/$APP_NAME"
+/usr/bin/codesign --verify --deep --strict --verbose=2 "$STAGING_DIR/$APP_NAME"
 if [[ -e "$OUTPUT_DIR/$APP_NAME" ]]; then
   mv "$OUTPUT_DIR/$APP_NAME" "$STAGING_DIR/previous.app"
 fi
