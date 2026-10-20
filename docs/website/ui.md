@@ -25,9 +25,9 @@
 | 页头分割线、时间线 | border | #e8e8e8 |
 | 键盘焦点 | ring | #737373，沿用组件焦点反馈 |
 
-平台标签以 Website、Chrome、macOS、Packages 文字分类，统一黑底白字，不使用平台彩色。最新记录节点为 primary，历史节点使用 border 与 background。
+日志标签以 Website、Extension、Desktop、Packages、Build 文字分类；Build 记录 GitHub Actions、构建和打包优化，安装窗口等用户可见的桌面变化归 Desktop。标签统一黑底白字，不使用平台彩色。最新记录节点为 primary，历史节点使用 border 与 background。
 
-同一事件共用日期和标题，平台标签紧跟标题同行排列，空间不足自然换行；正文仍按平台分组，组间距 24px，默认全部展开，不在列表上方重复标签。
+同一事件共用日期和标题，平台标签紧跟标题同行排列，空间不足自然换行；正文使用连续列表，条目间距统一 8px，不再按平台增加分组留白，不在列表上方重复标签。各平台链接汇总在同一事件正文下方，按平台顺序并排显示，窄屏自然换行。
 
 ## 字号与字重
 
@@ -124,8 +124,8 @@
 
 ## 验证与维护
 
-- 功能页沿用 Changelog 的 720px 阅读宽度、页面标题及正文排版；左侧四类为“浏览器拓展”“桌面应用”“工具包”“AI 工作流”，删除协同分类。ghost Button 包装原生 hash 链接，选中项 foreground、其他项 muted-foreground，aria-current 标记当前分类；URL 为分类选择事实来源，刷新、直接打开及前进/后退保留选择，空或无效 hash 回到浏览器扩展。
-- 功能页右侧每个模块为 20px 标题与 14px、24px 行高的一句话正文，工具包可附 npm 和源码链接；不增加截图、卡片、标签或详细安装说明。分类列保持 112px，正文列占剩余宽度，间距手机 16px、桌面 32px；窄屏正文正常换行，无嵌套滚动。
+- 功能页沿用 Changelog 的 720px 阅读宽度、页面标题及正文排版；左侧依次为 Quick Start、Extension、Desktop、Packages、Skills，正文继续中文。ghost Button 包装原生 hash 链接，选中项 foreground、其他项 muted-foreground，aria-current 标记当前内容；URL 为内容选择事实来源，刷新、直接打开及前进/后退保留选择，空或无效 hash 回到 Quick Start，快速开始地址为 #quick-start。首页仍只有四类产品入口，原分类 hash 保持有效。
+- 功能页右侧每个模块为 20px 标题与 14px、24px 行高的一句话正文，工具包可附 npm 和源码链接；不增加截图、卡片或标签。Quick Start 使用相同标题与正文排版，以有序列表介绍扩展 ZIP 解压和 Chrome 加载、DMG 拖拽安装及 macOS 首次打开授权，复用首页下载地址；授权说明使用“这是我个人开发的应用，未进行应用公证。首次打开时需要手动允许。”，不展示 Edge 地址、manifest.json 文件夹补充说明、应用损坏提示或 Apple 官方链接。分类列保持 112px，正文列占剩余宽度，间距手机 16px、桌面 32px；窄屏正文正常换行，无嵌套滚动。
 - 产品介绍入口使用 BookOpen，更新日志入口使用 FileClock，两个入口相邻，沿用共享导航尺寸和 aria-current 规则；页面标题、无障碍名称与提示统一中文。无公开 Skills 时显示“暂无公开 Skills”。
 - 两个入口共用 Tooltip，悬停或键盘聚焦显示“产品介绍”“更新日志”，不同时保留原生 title。提示位于入口下方、默认延迟 400ms，使用 Portal、z-50、小圆角、12px 文字及 primary／primary-foreground 颜色，不增加动画或依赖；实际指针、焦点和碰撞行为由用户验收。
 

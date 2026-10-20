@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [添加快速开始与英文产品分类](./issues/2026-10-20-website-quick-start-issue.md) · [Commit 记录](./commits/2026-10-20-website-quick-start-commit.md)；用户查看交付材料后批准快速开始、更新日志、规范记录三笔本地提交；Quick Start、双端安装指引、英文分类及 Website、Build、双端更新日志已交付，10 项逻辑测试、最终内容核对、类型检查及生产构建通过；代理未独立执行浏览器、下载和安装验收，不推送或部署。
+
 - [配置 DMG 拖拽安装窗口](./issues/2026-10-20-desktop-dmg-installer-issue.md) · [Commit 记录](./commits/2026-10-20-desktop-dmg-installer-commit.md)；用户确认本地窗口效果并于 2026-10-20 批准实现、说明与记录两笔本地提交；29 项逻辑测试、真实打包、镜像结构和应用签名校验通过；版本 1.2.0 和固定附件名不变，远程 Actions、下载与安装启动待用户验证，不推送或发布。
 
 - [修复下载版桌面应用签名](./issues/2026-10-19-desktop-dmg-signature-issue.md) · [Commit 记录](./commits/2026-10-19-desktop-dmg-signature-commit.md)；用户于 2026-10-20 批准本地提交，完整应用签名和打包校验已修复，28 项测试、真实构建、DMG 及包内签名校验通过；保持 1.2.0，线上仍为草稿，重跑前需处理旧草稿和标签；GitHub 下载与安装待用户验收，不推送或发布。
