@@ -42,24 +42,20 @@ export function ChangelogTimeline() {
                     <Badge key={group.platform} className="shrink-0 rounded-md px-2 py-0.5 text-xs leading-[18px]">{group.platform}</Badge>
                   ))}
                   </div>
-                  <div className="space-y-6">
-                    {entry.groups.map((group) => (
-                      <section key={group.platform} aria-label={`${group.platform} 更新`}>
-                        <ul className="list-disc space-y-2 pl-[18px] text-sm leading-6 text-foreground marker:text-muted-foreground">
-                          {group.changes.map((change) => <li key={change} className="pl-0.5">{change}</li>)}
-                        </ul>
-                        {group.links && (
-                          <div className="mt-3 flex flex-wrap gap-4 text-sm leading-6">
-                            {group.links.map((link) => (
-                              <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="site-resource-link">
-                                {link.label}<ArrowUpRight aria-hidden="true" className="size-3.5 shrink-0" />
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                      </section>
-                    ))}
-                  </div>
+                  <ul className="list-disc space-y-2 pl-[18px] text-sm leading-6 text-foreground marker:text-muted-foreground">
+                    {entry.groups.flatMap((group) => group.changes.map((change) => (
+                      <li key={`${group.platform}-${change}`} className="pl-0.5">{change}</li>
+                    )))}
+                  </ul>
+                  {entry.groups.some((group) => group.links?.length) && (
+                    <div className="mt-3 flex flex-wrap gap-4 text-sm leading-6">
+                      {entry.groups.flatMap((group) => group.links ?? []).map((link) => (
+                        <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="site-resource-link">
+                          {link.label}<ArrowUpRight aria-hidden="true" className="size-3.5 shrink-0" />
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </article>
               </li>
             ))}

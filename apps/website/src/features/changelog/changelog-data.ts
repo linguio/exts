@@ -1,4 +1,4 @@
-export type ChangelogPlatform = 'Website' | 'Extension' | 'Desktop' | 'Packages';
+export type ChangelogPlatform = 'Website' | 'Extension' | 'Desktop' | 'Packages' | 'Build';
 
 type ChangelogEntry = {
   id: string;
@@ -14,6 +14,17 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'website-quick-start',
+    date: '2026-10-20',
+    title: '新增快速开始',
+    groups: [{
+      platform: 'Website',
+      changes: [
+        '新增快速开始，介绍浏览器扩展与 macOS 应用的安装及首次打开授权。',
+      ],
+    }],
+  },
+  {
     id: 'photos-first-release',
     date: '2026-10-19',
     title: '推出 Photos 桌面应用',
@@ -23,12 +34,35 @@ export const changelogEntries: readonly ChangelogEntry[] = [
         changes: [
           '支持预览 iPhone 中的照片和视频。',
           '支持按月份分组选择，批量下载所选照片和视频。',
+          '新增 DMG 拖拽安装窗口，支持将 Exts 拖入应用程序。',
         ],
         links: [
           { label: 'exts-mac.dmg · 1.2.0', href: 'https://github.com/linguio/exts/releases/download/v1.2.0/exts-mac.dmg' },
         ],
       },
+      {
+        platform: 'Extension',
+        changes: [
+          '新增 Newtab 书签，调整常用入口。',
+          '优化 Newtab 与设置页面的样式布局。',
+        ],
+        links: [
+          { label: 'exts-chrome.zip · 1.2.0', href: 'https://github.com/linguio/exts/releases/download/v1.2.0/exts-chrome.zip' },
+        ],
+      },
     ],
+  },
+  {
+    id: 'build-packaging',
+    date: '2026-10-19',
+    title: '优化构建与打包流程',
+    groups: [{
+      platform: 'Build',
+      changes: [
+        '优化 GitHub Actions，统一生成浏览器扩展与 macOS 安装包。',
+        '完善 macOS 应用签名与打包校验。',
+      ],
+    }],
   },
   {
     id: 'extension-settings',
