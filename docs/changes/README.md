@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [接入项目本地开发 Skills](./issues/2026-10-21-repo-local-skills-issue.md) · [Commit 记录](./commits/2026-10-21-repo-local-skills-commit.md)；用户批准本地提交；两个相对链接与 8 个配套文件核对通过，workflow-change 已被会话发现并读取使用，Observer 经配套入口读取成功；Observer 用户侧发现、调用与长期行为限制保留，不推送。
+
 - [整理开发工作流与观察 Skill 并更新项目介绍](./issues/2026-10-20-repo-development-skills-readme-issue.md) · [Commit 记录](./commits/2026-10-20-repo-development-skills-readme-commit.md) · [设计](../superpowers/specs/2026-10-20-repo-development-skills-readme-design.md)；用户批准五笔本地提交，两份 Skill、Superpowers 衔接、项目日志、根 README 与官网介绍已交付；静态检查、场景走查和官网测试、类型及构建通过，本机链接接入且 workflow-change 已被会话发现；跨月及浏览器实测限制保留，不推送或部署。
 
 - [添加快速开始与英文产品分类](./issues/2026-10-20-website-quick-start-issue.md) · [Commit 记录](./commits/2026-10-20-website-quick-start-commit.md)；用户查看交付材料后批准快速开始、更新日志、规范记录三笔本地提交；Quick Start、双端安装指引、英文分类及 Website、Build、双端更新日志已交付，10 项逻辑测试、最终内容核对、类型检查及生产构建通过；代理未独立执行浏览器、下载和安装验收，不推送或部署。
