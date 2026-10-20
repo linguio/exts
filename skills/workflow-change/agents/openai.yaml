@@ -1,0 +1,7 @@
+interface:
+  display_name: "本地变更工作流"
+  short_description: "Manage repository-local changes, acceptance, and commits"
+  default_prompt: "Use $workflow-change to continue this approved development change under the repository's local work-item and delivery rules."
+
+policy:
+  allow_implicit_invocation: true
