@@ -47,7 +47,18 @@ export const productCategories: readonly ProductCategory[] = [
   {
     id: 'skills', name: 'Skills', label: 'Skills',
     description: '按自己的开发与 AI 使用习惯，编写和改造适合自己的 Skills。',
-    modules: [], emptyMessage: '暂无公开 Skills',
+    modules: [
+      {
+        name: 'workflow-change',
+        description: '管理开发任务的范围、交付记录、验收与本地提交，可与 Superpowers 配合使用。',
+        links: [{ label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/skills/workflow-change' }],
+      },
+      {
+        name: 'workflow-observer',
+        description: '记录开发协作中的事实与待考察线索，通过复盘判断是否需要调整工作流。',
+        links: [{ label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/skills/workflow-observer' }],
+      },
+    ],
   },
 ];
 
