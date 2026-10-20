@@ -1,74 +1,86 @@
-# exts
+# Exts
 
-## 1. 介绍
+将想法与能力延伸为实用工具。
 
-将想法与能力延伸为实用工具，汇集浏览器扩展、应用、AI Skills 与开发工具。
+Exts 是按个人习惯打造的工具集合，包含浏览器扩展、macOS 桌面应用、产品官网、开发工具包与 AI 开发 Skill。本仓库使用 Monorepo 组织源码，共用品牌资源和产品版本入口。
 
-本仓库使用 monorepo 逐步整合一个自用工具：官网记录使用与开发文档，桌面应用承载本机能力，浏览器扩展提供网页与新标签页入口。旧应用保留在归档中；extension 已迁入新标签页，desktop 已迁入设备媒体能力，后续功能按模块逐项整合。
+[产品官网](https://exts.linguio.dev/) · [产品介绍与快速开始](https://exts.linguio.dev/features/) · [更新日志](https://exts.linguio.dev/changelog/) · [GitHub Releases](https://github.com/linguio/exts/releases)
 
-## 2. 项目框架
+## 模块介绍
 
-三端功能文档分别维护在 [浏览器扩展](docs/extension/README.md)、[产品官网](docs/website/README.md)和[桌面应用](docs/desktop/README.md)。每个独立功能维护一份说明；应用 README 提供开发入口，源码模块不重复维护功能 README。
+| 模块 | 说明 | 文档 |
+| --- | --- | --- |
+| Extension | 面向 Chrome 和 Edge 的浏览器扩展，按模块集成日常浏览所需的工具。 | [模块文档](docs/extension/README.md) · [开发入口](apps/extension/README.md) |
+| Desktop | 基于 Swift 与 SwiftUI 的 macOS 原生应用，承载需要本机与设备能力的桌面工具。 | [模块文档](docs/desktop/README.md) · [开发入口](apps/desktop/README.md) |
+| Website | 对外展示 Exts 的产品官网，提供产品信息与相关资源入口。 | [模块文档](docs/website/README.md) · [开发入口](apps/website/README.md) |
+| Packages | 面向开发场景的可复用工具包，以及服务仓库的内部工具。 | [工具包文档](packages/wxt-stable-output/README.zh-CN.md) |
+| Skills | 可复用的 AI 开发流程与协作方法，配合代理和项目规范使用。 | [本地变更工作流](skills/workflow-change/SKILL.md) · [开发工作流观察](skills/workflow-observer/SKILL.md) |
 
-本仓库采用 Monorepo 组织方式，在同一个 Git 仓库中维护多个可以独立开发、构建和验证的子项目。
+桌面当前为 Apple Silicon（arm64），需要 macOS 27.0 或更新版本，未提供 Intel 或旧版 macOS 安装包。各模块的具体功能和使用方式见对应文档。
 
-- **Monorepo**：统一维护 website、desktop 和 extension；功能在应用内部按职责组织，不再分别维护独立产品入口。
-- **pnpm Workspace**：管理工作区依赖、项目包名和根目录统一命令；子项目可以单独执行，也可以从仓库根目录调用。
-- **Turborepo**：编排多个子项目的开发、构建和验证任务，并复用任务缓存。
-- **目录职责**：`apps/` 放当前应用，`archive/` 保存旧源码，`packages/` 放内部复用工具，`skills/` 放本地 Skill，`docs/` 放项目管理与技术文档。
+## 快速开始
 
-## 3. 本目录项目结构
+### 浏览器扩展
+
+1. [下载 exts-chrome.zip](https://github.com/linguio/exts/releases/latest/download/exts-chrome.zip)，解压到固定文件夹。
+2. 在 Chrome 地址栏输入 `chrome://extensions`，打开“开发者模式”。
+3. 点击“加载已解压的扩展程序”，选择解压后的文件夹，完成加载。
+
+安装后保留该文件夹并保持开发者模式开启。Edge 可在扩展管理页使用相同的开发者模式加载流程；这不是浏览器商店安装包。
+
+### macOS 应用
+
+1. [下载 exts-mac.dmg](https://github.com/linguio/exts/releases/latest/download/exts-mac.dmg)，双击打开。
+2. 将 Exts 拖入“应用程序”，复制完成后从应用程序目录启动。
+3. 应用未进行 Apple 公证。首次打开需要手动允许时，先尝试启动，再进入“系统设置 → 隐私与安全性”，按系统提示选择“仍要打开”。
+
+两个下载入口指向 GitHub 最新公开 Release 的同名附件；草稿不属于公开下载，缺少附件时入口可能不可用。
+
+### 开发 Skill
+
+Skill 源码位于 `skills/`，需要先接入所用代理的 Skill 发现目录，再通过 `$workflow-change` 或 `$workflow-observer` 调用。可将两个目录分别链接到本机用户的 `.agents/skills/`，保持仓库唯一源稿；克隆仓库本身不等于已安装或生效。适用范围与调用规则见各 Skill 文档。
+
+## 本地开发
+
+使用 Node.js **24.16.0** 和 pnpm **12.4.2**，在根目录安装依赖：
+
+```sh
+pnpm install --frozen-lockfile
+```
+
+| 应用 | 开发 | 构建 |
+| --- | --- | --- |
+| 官网 | `pnpm web:dev` | `pnpm web:build` |
+| 浏览器扩展 | `pnpm ext:dev` | `pnpm ext:build` |
+| macOS 桌面 | `pnpm desk:dev` | `pnpm desk:build` |
+
+桌面开发需要 macOS 27.0、Xcode 27.0.0 与 XcodeGen 2.46.0。Windows 可独立开发和构建官网、扩展；根 `pnpm build` 与 `pnpm release` 仅支持 macOS。
+
+- 扩展开发在浏览器中加载 `dist/dev/chrome-mv3-dev-stable/`，不要加载构建时会被清空的临时目录。
+- `pnpm desk:dev` 生成并打开 `dist/dev/exts-dev.app`；正式应用为 `dist/build/exts.app`。数据位置与开发环境隔离规则见[桌面开发文档](apps/desktop/README.md)。
+- 官网正式产物为 `dist/build/exts-web/`，扩展正式产物为 `dist/build/chrome-mv3/`，构建缓存集中到根 `dist/.cache/`。
+
+根 `pnpm build` 串行构建官网、扩展和桌面；`pnpm release` 构建并生成 `dist/release/exts-chrome.zip` 与 `dist/release/exts-mac.dmg`，不自动公开发布。扩展与桌面共用根 `package.json` 的产品版本，每次 Release 同时包含两个安装包。完整命令、产物、版本及 Actions 说明见[构建与分发规范](docs/build-release.md)。
+
+## 目录与文档
 
 ```text
 exts/
-├─ apps/
-│  ├─ desktop/                  # 统一桌面应用，含设备媒体模块
-│  ├─ extension/                # 统一浏览器扩展，含新标签页模块
-│  └─ website/                    # 官网与文档站点
-├─ archive/
-│  ├─ apps/                     # 旧扩展、Photos 和 Helper 源码
-│  └─ .github/workflows/        # 已退役的旧发布流程
-├─ packages/
-│  └─ wxt-stable-output/         # 稳定开发产物工具
-├─ skills/
-│  └─ local-issue-commit-workflow/ # 本地 Issue 与 Commit 工作流
-├─ docs/                          # 项目文档
-├─ scripts/                       # 唯一版本读取、统一构建与分发入口
-├─ dist/                          # 开发、正式构建与分发产物，不纳入 Git
-├─ AGENTS.md                      # 仓库协作规范
-├─ LICENSE                        # 开源许可证
-├─ package.json                   # 根目录命令
-├─ pnpm-workspace.yaml            # pnpm 工作区配置
-└─ turbo.json                     # Turborepo 配置
+├─ .github/                     # GitHub Actions 构建与发布流程
+├─ apps/                        # 应用源码
+│  ├─ extension/                # 浏览器扩展
+│  ├─ desktop/                  # macOS 原生应用
+│  └─ website/                  # 产品官网
+├─ packages/                    # 开发工具包与内部复用工具
+├─ skills/                      # AI 开发流程与协作技能
+├─ docs/                        # 功能、设计及开发文档
+├─ scripts/                     # 根版本、构建与打包入口
+├─ assets/                      # 共享品牌资源
+└─ dist/                        # 本地产物和缓存，不纳入 Git
 ```
 
-当前入口：
-
-- [Desktop](apps/desktop/README.md)
-- [Extension](apps/extension/README.md)
-- [Website](apps/website/README.md)
-- [旧应用归档与迁移说明](archive/README.md)
-
-## 4. 根目录命令
-
-| 应用 | 开发 | 构建 |
-|---|---|---|
-| 官网 | `pnpm web:dev` | `pnpm web:build` |
-| Chrome／Edge 扩展 | `pnpm ext:dev` | `pnpm ext:build` |
-| macOS 桌面 | `pnpm desk:dev` | `pnpm desk:build` |
-
-先运行 `pnpm i`。Node 24.16.0、pnpm 12.4.2；原生桌面需要 macOS 27、Xcode 27 和 xcodegen。
-
-`pnpm build` 在 macOS 串行构建三端，开始前检查桌面工具；Windows 明确退出，仍可单独运行官网与扩展命令。开发命令保持独立。
-
-扩展开发只加载根 `dist/dev/chrome-mv3-dev-stable/`；生产产物为 `dist/build/chrome-mv3/`。桌面开发为 `dist/dev/exts-dev.app`，正式为 `dist/build/exts.app`；官网构建为 `dist/build/exts-web/`，部署直接取该完整目录。每端仅更新自己的产物。
-
-根 `package.json` 的 `version` 是唯一产品版本源，初始 `1.0.0`，由用户手动维护；所有应用构建通过 `scripts/version.mjs` 读取和校验，不自动升级。桌面正式与开发身份、默认数据目录独立；正式已有数据不迁移。
-
-`pnpm release` 在 macOS 统一构建后生成根 `dist/release/` 的 `exts-chrome.zip` 与 `exts-mac.dmg`；本地成功校验后可替换旧包，失败保留旧包，不自动推送或发布。
-
-从产品 1.2.0 起，extension 和 desktop 统一构建与发布，每次使用同一新根版本，即使某端没有代码改动也一起更新。Actions 的 `Exts Publish` 提供 Website／Release 两个手动目标：Website 部署官网，Release 生成同一产品版本的扩展 ZIP、macOS DMG 和一个草稿 Release。已有 Release 禁止覆盖，公开发布由用户验收后操作。桌面首版仅供本人在 macOS 27 上使用；本地调试用 `pnpm desk:dev` 直接构建并打开 `.app`，下载安装使用 DMG，不接入开发者分发签名或公证。
-
-构建缓存也统一放在根 `dist/.cache/`；应用内部不再生成 `dist` 或 `DerivedData`。完整命令、版本、目录与分发规则见 [构建与分发规范](docs/build-release.md)。
-
-内部包统一使用 `@exts/*`。品牌源稿和分平台资源见 [assets/brand](assets/brand/README.md)。未迁入功能不建立空模块；归档与历史文档保留原名。
+- [扩展文档](docs/extension/README.md)、[桌面文档](docs/desktop/README.md)、[官网文档](docs/website/README.md)
+- [构建与分发](docs/build-release.md)
+- [品牌资源](assets/brand/README.md)
+- [历史归档](archive/README.md)
+- [MIT License](LICENSE)
