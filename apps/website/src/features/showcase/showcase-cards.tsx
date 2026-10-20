@@ -1,4 +1,4 @@
-import { Blocks, Film, Image as ImageIcon, Wrench } from 'lucide-react';
+import { Blocks, Film, Image as ImageIcon, Settings, Wrench } from 'lucide-react';
 import x from './assets/x.svg';
 import bilibili from './assets/bilibili.svg';
 import youtube from './assets/youtube.svg';
@@ -30,6 +30,7 @@ export function TabsCard() {
           <span className="showcase-dock-divider" />
           <span className="showcase-dock-icon"><Blocks /></span>
           <span className="showcase-dock-icon"><Wrench /></span>
+          <span className="showcase-dock-icon"><Settings /></span>
         </div>
       </div>
     </>

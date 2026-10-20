@@ -27,7 +27,7 @@ export function HomePage() {
           return (
             <a key={category.id} href={`/features/#${category.id}`} className="site-category-card flex min-w-0 flex-col rounded-lg px-5 py-6 text-foreground">
               <Icon aria-hidden="true" className="mb-3 size-8 shrink-0" />
-              <h2 className="text-base leading-6 font-semibold">{category.name} · {category.label}</h2>
+              <h2 className="text-base leading-6 font-semibold">{category.name}</h2>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">{category.description}</p>
             </a>
           );

@@ -55,7 +55,7 @@ export const productCategories: readonly ProductCategory[] = [
       },
       {
         name: 'workflow-observer',
-        description: '记录开发协作中的事实与待考察线索，通过复盘判断是否需要调整工作流。',
+        description: '观察并记录开发习惯，通过复盘总结改进方向，优化自己的工作流。',
         links: [{ label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/skills/workflow-observer' }],
       },
     ],

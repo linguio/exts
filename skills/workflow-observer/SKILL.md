@@ -5,7 +5,7 @@ description: Use only when explicitly requested within a project development tas
 
 # 开发工作流观察
 
-积累有依据的开发协作观察，帮助后续考察真实需求。观察不是结论，重复不是需求，复盘不要求产出补丁。
+观察并记录开发习惯，通过复盘总结改进方向，优化自己的工作流。观察不是结论，重复不是需求，复盘不要求产出补丁。
 
 ## 调用边界
 

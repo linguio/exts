@@ -1,4 +1,4 @@
-export type ChangelogPlatform = 'Website' | 'Extension' | 'Desktop' | 'Packages' | 'Build';
+export type ChangelogPlatform = 'Website' | 'Extension' | 'Desktop' | 'Packages' | 'Build' | 'Skills';
 
 type ChangelogEntry = {
   id: string;
@@ -15,12 +15,25 @@ type ChangelogEntry = {
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
     id: 'website-quick-start',
-    date: '2026-10-20',
+    date: '2026-10-21',
     title: '新增快速开始',
     groups: [{
       platform: 'Website',
       changes: [
         '新增快速开始，介绍浏览器扩展与 macOS 应用的安装及首次打开授权。',
+        '新增 Skills 产品说明分类，介绍开发工作流 Skill 的用途与源码入口。',
+      ],
+    }],
+  },
+  {
+    id: 'development-workflow-skills',
+    date: '2026-10-20',
+    title: '推出开发工作流 Skills',
+    groups: [{
+      platform: 'Skills',
+      changes: [
+        '新增 workflow-change，管理开发任务范围、交付记录、验收与本地提交。',
+        '新增 workflow-observer，观察并记录开发习惯，通过复盘总结改进方向，优化自己的工作流。',
       ],
     }],
   },

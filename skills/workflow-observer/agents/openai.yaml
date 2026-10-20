@@ -1,6 +1,6 @@
 interface:
   display_name: "开发工作流观察"
-  short_description: "Record and review evidence from skill-assisted development"
+  short_description: "观察并记录开发习惯，通过复盘总结改进方向，优化自己的工作流。"
   default_prompt: "Use $workflow-observer within this project development task to review authorized observations without treating them as confirmed habits or permission to update skills."
 
 policy:
