@@ -2,7 +2,10 @@ import { useSyncExternalStore } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { SiteDocumentLayout } from '@/components/layout/site-document-layout';
 import { Button } from '@/components/ui/button';
-import { productCategories, resolveCategoryId } from '@/features/products/categories';
+import { productCategories, resolveFeatureSectionId } from '@/features/products/categories';
+import { QuickStart } from './quick-start';
+
+const navigation = [{ id: 'quick-start', label: 'Quick Start' }, ...productCategories];
 
 function subscribeToCategory(onChange: () => void) {
   window.addEventListener('hashchange', onChange);
@@ -10,11 +13,11 @@ function subscribeToCategory(onChange: () => void) {
 }
 
 function getCategorySnapshot() {
-  return resolveCategoryId(window.location.hash);
+  return resolveFeatureSectionId(window.location.hash);
 }
 
 export function FeaturesPage() {
-  const selectedId = useSyncExternalStore(subscribeToCategory, getCategorySnapshot, () => 'extension');
+  const selectedId = useSyncExternalStore(subscribeToCategory, getCategorySnapshot, () => 'quick-start');
   const selected = productCategories.find((category) => category.id === selectedId) ?? productCategories[0];
 
   return (
@@ -24,7 +27,7 @@ export function FeaturesPage() {
       </p>
       <div className="grid grid-cols-[112px_minmax(0,1fr)] gap-4 sm:gap-8">
         <nav aria-label="功能分类" className="flex flex-col items-start gap-2">
-          {productCategories.map((category) => (
+          {navigation.map((category) => (
             <Button
               key={category.id}
               asChild
@@ -35,8 +38,8 @@ export function FeaturesPage() {
             </Button>
           ))}
         </nav>
-        <section id="feature-modules" aria-label={selected.label} aria-live="polite" className="min-w-0 space-y-8 pt-1">
-          {selected.modules.length > 0 ? selected.modules.map((module) => (
+        <section id="feature-modules" aria-label={selectedId === 'quick-start' ? 'Quick Start' : selected.label} aria-live="polite" className="min-w-0 space-y-8 pt-1">
+          {selectedId === 'quick-start' ? <QuickStart /> : selected.modules.length > 0 ? selected.modules.map((module) => (
             <article key={module.name}>
               <h2 className="site-section-title break-words">{module.name}</h2>
               <p className="text-sm leading-6 text-foreground">{module.description}</p>

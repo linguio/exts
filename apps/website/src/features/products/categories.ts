@@ -1,4 +1,5 @@
 export type CategoryId = 'extension' | 'desktop' | 'packages' | 'skills';
+export type FeatureSectionId = 'quick-start' | CategoryId;
 
 type ProductModule = {
   name: string;
@@ -18,7 +19,7 @@ type ProductCategory = {
 
 export const productCategories: readonly ProductCategory[] = [
   {
-    id: 'extension', name: 'Extension', label: '浏览器拓展',
+    id: 'extension', name: 'Extension', label: 'Extension',
     description: '按自己的使用习惯，为 Chrome 集成日常需要的浏览器拓展功能。',
     modules: [
       { name: 'Newtab', description: '在新标签页集中访问常用网站，整理分组标签。' },
@@ -26,12 +27,12 @@ export const productCategories: readonly ProductCategory[] = [
     ],
   },
   {
-    id: 'desktop', name: 'Desktop', label: '桌面应用',
+    id: 'desktop', name: 'Desktop', label: 'Desktop',
     description: '为 macOS 打造桌面工具，满足自己的工作、生活与兴趣需要。',
     modules: [{ name: 'Photos', description: '按月份浏览 iPhone 照片与视频，批量下载到本地。' }],
   },
   {
-    id: 'packages', name: 'Packages', label: '工具包',
+    id: 'packages', name: 'Packages', label: 'Packages',
     description: '针对开发中遇到的痛点，打造符合自己需要的工具包与脚手架。',
     modules: [{
       name: 'WXT 稳定构建产物工具',
@@ -44,13 +45,13 @@ export const productCategories: readonly ProductCategory[] = [
     }],
   },
   {
-    id: 'skills', name: 'Skills', label: 'AI 工作流',
+    id: 'skills', name: 'Skills', label: 'Skills',
     description: '按自己的开发与 AI 使用习惯，编写和改造适合自己的 Skills。',
     modules: [], emptyMessage: '暂无公开 Skills',
   },
 ];
 
-// URL 是分类选择的事实来源，未知或旧分类统一回到浏览器扩展。
-export function resolveCategoryId(hash: string): CategoryId {
-  return productCategories.find((category) => `#${category.id}` === hash)?.id ?? 'extension';
+// URL 是内容选择的事实来源，空地址、未知或旧分类统一回到快速开始。
+export function resolveFeatureSectionId(hash: string): FeatureSectionId {
+  return productCategories.find((category) => `#${category.id}` === hash)?.id ?? 'quick-start';
 }
