@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [迁入 Telegram Web 下载与统一记录](./issues/2026-10-21-extension-telegram-download-issue.md) · [Commit 记录](./commits/2026-10-21-extension-telegram-download-commit.md)；用户明确要求先保存并本地提交；71 项测试、类型检查和生产构建通过，旧体积门禁失败及浏览器未实测限制保留；后续体积规则与 Skill 独立排队，不推送。
+
 - [添加 Skills 日志并去重首页分类标题](./issues/2026-10-21-website-skills-changelog-issue.md) · [Commit 记录](./commits/2026-10-21-website-skills-changelog-commit.md)；用户查看最终交付后批准本地提交；Skills 日志归 2026-10-20、快速开始归 2026-10-21 并补充 Skills 产品说明描述，首页分类标题去重、Newtab 展示 Dock 增加 Settings、Observer 四处简介统一；10 项逻辑测试及最终内容核对、类型检查、生产构建、diff 检查通过；代理未独立执行浏览器或线上验收，不推送或部署。
 
 - [接入项目本地开发 Skills](./issues/2026-10-21-repo-local-skills-issue.md) · [Commit 记录](./commits/2026-10-21-repo-local-skills-commit.md)；用户批准本地提交；两个相对链接与 8 个配套文件核对通过，workflow-change 已被会话发现并读取使用，Observer 经配套入口读取成功；Observer 用户侧发现、调用与长期行为限制保留，不推送。

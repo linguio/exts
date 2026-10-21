@@ -30,6 +30,7 @@
 ## 业务组合与扫描边界
 
 - 历史清理设置视图与权限/存储逻辑继续由 `modules/history-cleaner` 持有；Newtab 的 DockSettings 只组合设置区域和外壳。通用 Switch 不调用 Chrome API，不持有配置或错误状态。
+- Telegram Download 复用现有 DropdownMenu；Content 增加可选 `portalContainer`，仅将 Portal 挂入网页 Shadow DOM，未指定时保持官方默认挂载方式。Shadow DOM 的事件重定向处理在业务菜单中完成，保留官方选择、禁用和关闭行为；不迁入旧自定义菜单的配色或状态管理。Popup 无操作按钮，进度使用浏览器原生 progress 元素，未新建通用控件。
 - Sheet 关闭后的 Tooltip 抑制、菜单与 Tooltip 互斥、指针外部关闭处理继续位于业务组合处；不放入共享控件。
 - 官网叠放窗口保留原生 button 与现有卡片池。专用展示的尺寸、网格、窗口内容与轮换不适合套用默认 Button 或标准 Carousel。
 - 书签卡片、EDU 遮罩、品牌图标与网站分类布局按需求组合；未发现需要为本次目标迁入通用 UI 的业务逻辑，不创建跨应用组件包。

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./reset.css";
+@import "./theme.css";
 
 /* Tailwind 工具类只引用语义 token，组件不直接绑定明暗主题的具体色值。 */
 @theme inline {
@@ -39,74 +40,6 @@
   font-style: normal;
   font-weight: 400 600;
   font-display: swap;
-}
-
-:root {
-  /* 这里是 shadcn/ui 兼容的基础 token；全局额外 token 也集中在此处维护。 */
-  color-scheme: light;
-  --font-geist-sans: "Geist Sans", "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-  --background: oklch(0.985 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: var(--muted);
-  --secondary-foreground: var(--foreground);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --input: var(--muted);
-  --border: oklch(0.922 0 0);
-  --border-strong: oklch(0.708 0 0);
-  --ring: oklch(0.205 0 0);
-  --surface-raised: oklch(1 0 0);
-  --overlay: oklch(1 0 0 / 42%);
-  --radius: 1rem;
-  --duration-fast: 160ms;
-  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --shadow-hover: 0 8px 18px rgb(24 24 27 / 12%);
-  --shadow-floating: 0 12px 28px rgb(24 24 27 / 12%);
-  --size-icon-tile: 4rem;
-  --size-icon-glyph: 2rem;
-  --overlay-blur: 8px;
-  --entry-hover-scale: 1.06;
-  --entry-hover-lift: -2px;
-  --page-background: var(--background);
-  --text-color: var(--foreground);
-  --focus-color: var(--ring);
-  --transition-duration: var(--duration-fast);
-}
-
-/* 实际主题由共用主题模块解析，手动选择不受系统媒体查询覆盖。 */
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --background: oklch(0.12 0 0);
-  --foreground: oklch(0.97 0 0);
-  --card: oklch(0.17 0 0);
-  --card-foreground: oklch(0.97 0 0);
-  --popover: oklch(0.2 0 0);
-  --popover-foreground: oklch(0.97 0 0);
-  --muted: oklch(0.22 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.25 0 0);
-  --accent-foreground: oklch(0.97 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.145 0 0);
-  --border: oklch(0.28 0 0);
-  --border-strong: oklch(0.42 0 0);
-  --ring: oklch(0.82 0 0);
-  --surface-raised: oklch(0.19 0 0);
-  --overlay: oklch(0.12 0 0 / 62%);
-  --shadow-hover: 0 8px 18px rgb(0 0 0 / 28%);
-  --shadow-floating: 0 16px 36px rgb(0 0 0 / 36%);
 }
 
 /* 全局遮罩统一使用相同的主题透明色与模糊强度，供 Sheet、EDU 等场景复用。 */

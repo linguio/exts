@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../../../../share
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
 import { UiIcon } from '../../../../shared/ui/ui-icon';
 import { HistoryCleanerSettings } from '../../../history-cleaner/settings-section';
+import { TelegramDownloadSettings } from '../../../telegram-download/settings-section';
 import { GeneralSettings } from '../settings/general-settings';
 
 /** 设置页面组合独立功能的设置区域，后台逻辑由对应模块持有。 */
@@ -65,7 +66,11 @@ export function DockSettings() {
         <Separator />
         <div className="min-h-0 space-y-6 overflow-y-auto p-6">
           <GeneralSettings />
-          <HistoryCleanerSettings />
+          <section aria-labelledby="features-heading" className="space-y-4">
+            <h3 id="features-heading" className="text-xs font-medium text-muted-foreground">Features</h3>
+            <HistoryCleanerSettings />
+            <TelegramDownloadSettings />
+          </section>
         </div>
       </SheetContent>
     </Sheet>

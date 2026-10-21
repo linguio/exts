@@ -1,0 +1,7 @@
+/* Popup 只约束窗口尺寸，所有视觉值继承扩展全局主题。 */
+html,
+body {
+  width: 360px;
+  min-height: 0;
+  max-height: 560px;
+}

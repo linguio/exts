@@ -7,6 +7,7 @@
 - [扩展功能索引](../../docs/extension/README.md)：功能状态与说明入口。
 - [Newtab](../../docs/extension/newtab.md)：书签、Dock、工具入口与 Settings。
 - [历史清理](../../docs/extension/history-cleaner.md)：启动与关闭时清空访问历史的配置、权限与能力边界。
+- [Telegram Download](../../docs/extension/telegram-download.md)：Telegram Web 下载、即时开关、只读记录与保存位置限制（待用户验收）。
 - [界面规范](../../docs/extension/ui.md)：共用主题、样式和组件规则。
 
 ## 目录职责
@@ -14,6 +15,9 @@
 - `src/entrypoints/`：WXT 入口；`src/app/`：应用组合和图标配色适配。
 - `src/modules/newtab/`：书签数据、类型、业务组件、视图、标签组逻辑及品牌／工具资源。
 - `src/modules/history-cleaner/`：本机配置、可选权限、后台清理与设置区域；`src/entrypoints/background.ts` 注册独立后台功能。
+- `src/modules/telegram-download/`：Telegram Web 媒体识别、另存为、流式保存、开关与页面状态桥接。
+- `src/modules/downloads/`：按来源管理本机任务记录、终态保留与中断处理，以及只读 Popup。
+- `src/shared/settings/`：类型化布尔配置读写和变更订阅；具体默认值与生效方式仍由业务模块持有。
 - `src/shared/ui/`：通用 UI 原语；`src/shared/lib/`：共用工具；`src/shared/browser/`：扩展资源地址工具。
 - `src/assets/`：应用图标与公共字体；`src/styles/`：全局样式。
 - `tests/modules/newtab/`：数据与标签组行为；`tests/config/`：图标分派、配置资源与体积边界。

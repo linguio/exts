@@ -4,7 +4,8 @@
 
 ## 维护位置与职责
 
-- `apps/extension/src/styles/index.css`：主题 Token、共用语义样式、减少动态效果规则的唯一实现位置。
+- `apps/extension/src/styles/theme.css`：整个 extension 的主题 Token 唯一实现位置，Newtab、Popup 与网页注入界面共同引用。
+- `apps/extension/src/styles/index.css`：导入主题 Token，集中维护字体、共用语义样式和减少动态效果规则。
 - `apps/extension/src/shared/ui/`：以 shadcn 官方源码为基础的通用组件，不包含书签或 Chrome API 业务逻辑。
 - `apps/extension/src/modules/<功能>/`：持有对应功能的布局、内容、状态和操作；history-cleaner 持有设置区域与业务，Newtab 只组合设置区域。
 - 本文维护用途、参数与组合约定；不在模块 README 再维护一份样式规则。
@@ -18,6 +19,8 @@
 明暗主题由 `src/shared/theme/` 解析：默认 System，通过系统 `prefers-color-scheme` 跟随变化；选择 Light/Dark 后固定为对应主题。根 `data-theme` 持有实际明暗，组件与 Portal 继承原有语义 Token，不独立硬编码配色。Geist 字体、既有明暗色值、遮罩透明度与模糊不变。
 
 偏好以 `exts.theme` 保存于扩展页面同源 localStorage，不同步设备；浏览器 storage 事件同步其他已打开页面，本页事件通知当前设置。页面 head 通过 WXT 独立外部脚本 `theme-init.js` 在解析时读取偏好，使用与运行时相同的解析逻辑应用主题；不内联可执行脚本或放宽 CSP。主页面持续监听系统与跨页变化，面板关闭后仍生效。
+
+上述规范属于整个 extension，并非 Newtab 专属。Downloads Popup 使用同一运行时、字体和 Token。运行时将偏好发布到扩展 storage.local 的 `exts.theme` 副本，供无法访问扩展同源 localStorage 的网页内容脚本订阅；配置入口及主事实来源仍是既有扩展页面偏好。网页菜单在 Shadow DOM 中通过 `:host` 引用同一 Token，不将样式污染到 Telegram 页面。
 
 | 用途 | Token | 现行规则 |
 | --- | --- | --- |

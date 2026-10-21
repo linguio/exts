@@ -22,7 +22,7 @@ test('统一扩展保留标签组权限并提供完整图标', async () => {
 
 test('构建配置扫描源码入口并声明全部实际发布资源', async () => {
   const vite = await wxtConfig.vite();
-  assert.deepEqual(vite.optimizeDeps.entries, ['src/entrypoints/newtab/index.html']);
+  assert.deepEqual(vite.optimizeDeps.entries, ['src/entrypoints/newtab/index.html', 'src/entrypoints/popup/index.html']);
   const files = [];
   wxtConfig.hooks['build:publicAssets'](undefined, files);
   for (const file of files) await access(file.absoluteSrc);

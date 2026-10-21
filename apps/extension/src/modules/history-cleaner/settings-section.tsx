@@ -83,8 +83,7 @@ export function HistoryCleanerSettings() {
   }
 
   return (
-    <section aria-labelledby={`${id}-heading`} className="space-y-4">
-      <h3 id={`${id}-heading`} className="text-xs font-medium text-muted-foreground">Features</h3>
+    <div className="space-y-2">
       <div className="flex items-center justify-between gap-6">
         <div className="flex min-w-0 items-center gap-1">
           <p id={`${id}-label`} className="text-sm font-normal">Clear history on startup and close</p>
@@ -107,6 +106,6 @@ export function HistoryCleanerSettings() {
       </div>
       <span id={`${id}-description`} className="sr-only">{description}</span>
       {error && <p role="alert" className="text-sm leading-6 text-foreground">{error}</p>}
-    </section>
+    </div>
   );
 }

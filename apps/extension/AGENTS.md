@@ -37,7 +37,13 @@
 - Dock 位于视口底部，DropdownMenu 默认从上方弹出并支持碰撞调整；由用户验证菜单在 `1280×720`、缩放后 CSS 视口 `640×360` 以及 100%、125%、150%、200% 缩放下不被裁剪或移出视口。
 - 用户验收 DropdownMenu 应覆盖 Enter、Space 或 ArrowDown 打开、方向键移动、Enter 激活、Esc 关闭并恢复触发器焦点、外部点击关闭等行为；Portal 必须正确继承明暗主题 Token 和层级。
 - 已废弃的自定义 Popover 不得重新引入；DropdownMenu 与 Tooltip 分别承担菜单和提示职责，不维护双轨实现。
-- Settings 包含 General/Features：General 组合主题选择，Features 组合历史清理开关与帮助。主题偏好由共用主题模块持有；历史清理设置区域与后台业务仍由 `src/modules/history-cleaner/` 持有。Newtab 只组合入口，新增功能按本地 Issue 流程确认范围。
+- Settings 包含 General/Features：General 组合主题选择，Features 组合历史清理与 Telegram Download 的开关和帮助。主题偏好由共用主题模块持有；各功能持有自己的配置和业务。Newtab 只组合入口，新增功能按本地 Issue 流程确认范围。
+
+## Telegram Download 与记录边界
+
+- `src/modules/telegram-download/` 只处理 Telegram Web 下载，默认开启；配置关闭立即禁止新下载，正在写入的任务继续。
+- `src/modules/downloads/` 统一保存任务记录；Popup 只读，最近 200 条终态记录自动保留，活动任务不淘汰。当前视频有记录，图片维持已有下载行为；不提供清理、取消、重试或打开目录按钮。
+- 保留 MAIN world 页面取流及用户手势内的系统另存为，不把媒体流交给 desktop。统一主题 Token 位于 `src/styles/theme.css`，网页菜单与扩展页面共用。
 
 ## 历史清理边界
 
