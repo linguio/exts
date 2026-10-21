@@ -4,7 +4,7 @@
 
 ## 维护位置与职责
 
-- `apps/extension/src/styles/theme.css`：整个 extension 的主题 Token 唯一实现位置，Newtab、Popup 与网页注入界面共同引用。
+- `apps/extension/src/styles/theme.css`：整个 extension 的主题 Token 唯一实现位置，Newtab 与网页注入界面共同引用。
 - `apps/extension/src/styles/index.css`：导入主题 Token，集中维护字体、共用语义样式和减少动态效果规则。
 - `apps/extension/src/shared/ui/`：以 shadcn 官方源码为基础的通用组件，不包含书签或 Chrome API 业务逻辑。
 - `apps/extension/src/modules/<功能>/`：持有对应功能的布局、内容、状态和操作；history-cleaner 持有设置区域与业务，Newtab 只组合设置区域。
@@ -20,7 +20,7 @@
 
 偏好以 `exts.theme` 保存于扩展页面同源 localStorage，不同步设备；浏览器 storage 事件同步其他已打开页面，本页事件通知当前设置。页面 head 通过 WXT 独立外部脚本 `theme-init.js` 在解析时读取偏好，使用与运行时相同的解析逻辑应用主题；不内联可执行脚本或放宽 CSP。主页面持续监听系统与跨页变化，面板关闭后仍生效。
 
-上述规范属于整个 extension，并非 Newtab 专属。Downloads Popup 使用同一运行时、字体和 Token。运行时将偏好发布到扩展 storage.local 的 `exts.theme` 副本，供无法访问扩展同源 localStorage 的网页内容脚本订阅；配置入口及主事实来源仍是既有扩展页面偏好。网页菜单在 Shadow DOM 中通过 `:host` 引用同一 Token，不将样式污染到 Telegram 页面。
+上述规范属于整个 extension，并非 Newtab 专属。运行时将偏好发布到扩展 storage.local 的 `exts.theme` 副本，供无法访问扩展同源 localStorage 的网页内容脚本订阅；配置入口及主事实来源仍是既有扩展页面偏好。网页菜单在 Shadow DOM 中通过 `:host` 和 `:host(...)` 引用同一 Token。官方 Sonner 样式同时导入该 Shadow DOM，以支持提示的默认交互。
 
 | 用途 | Token | 现行规则 |
 | --- | --- | --- |
@@ -79,3 +79,9 @@
 视觉、悬停、焦点、Portal、明暗主题和窄视口由用户在 Chrome/Edge 加载实际产物验收；自动化通过不等于用户验收通过。未来扩展样式时按真实用途复用以上规则，不把官网的不同交互强制合并。
 
 Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Dock 调用方显式使用既有 12px，不随默认值改变。位置由 Radix 计算，不手写坐标。
+
+## 临时 Toast 提示
+
+扩展各模块复用 src/shared/ui/sonner.tsx 的官方展示组件和主题，不分别手写提示框、关闭定时器或折叠逻辑。挂载位置由使用方对应的页面/Shadow DOM 决定；业务模块持有文案、完成条件等状态，不在共用 UI 中加入 Chrome API、下载记录或跨页面通知管理。多条提示沿用 Sonner 默认折叠堆叠与关闭行为。
+
+TG 下载仅在文件流关闭成功后调用完成提示，标题“下载完成”，描述为实际保存文件名；开始、进行中、取消和失败不显示 Toast。

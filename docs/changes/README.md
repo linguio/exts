@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [整理 TG 下载入口与完成提示](./issues/2026-10-21-extension-telegram-menu-lifecycle-issue.md) · [Commit 记录](./commits/2026-10-21-extension-telegram-menu-lifecycle-commit.md)；用户于 2026-10-22 确认无问题并批准代码、规范记录两笔本地提交；tg-download 职责分目录、Popup/记录层移除、官方完成 Toast、内容宽度按钮及桌面建议位置已交付；45 项逻辑测试、类型检查和构建此前通过，提交时未重复验证；浏览器实测以用户反馈为准，代理未独立执行，不推送。
+
 - [明确建档展示与提交收尾规则](./issues/2026-10-21-repo-workflow-issue-preview-issue.md) · [Commit 记录](./commits/2026-10-21-repo-workflow-issue-preview-commit.md)；建档展示、复用已有验证、避免重复确认及拆分提交的远端同步边界已写入 workflow-change；用户要求直接完结，本轮未执行验证或模拟场景，仅本地提交，不推送。
 
 - [删除扩展体积统计与门禁](./issues/2026-10-21-extension-bundle-report-issue.md) · [Commit 记录](./commits/2026-10-21-extension-bundle-report-commit.md)；体积工具、专用测试、开发与 CI 调用及活动规范已删除；既有类型检查、生产构建和配置检查通过，用户要求直接完结、不重复验证；浏览器和远程 Actions 未实测，仅本地提交，不推送。

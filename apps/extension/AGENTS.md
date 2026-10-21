@@ -41,8 +41,8 @@
 
 ## Telegram Download 与记录边界
 
-- `src/modules/telegram-download/` 只处理 Telegram Web 下载，默认开启；配置关闭立即禁止新下载，正在写入的任务继续。
-- `src/modules/downloads/` 统一保存任务记录；Popup 只读，最近 200 条终态记录自动保留，活动任务不淘汰。当前视频有记录，图片维持已有下载行为；不提供清理、取消、重试或打开目录按钮。
+- `src/modules/tg-download/` 只处理 Telegram Web 下载，默认开启；内部按业务组件、设置视图、download-core 和页面接入划分职责。配置关闭立即禁止新下载，正在写入的任务继续。
+- 不提供 Popup 或公共下载记录层；完成 Toast 使用 shared/ui 中的官方 Sonner 样式组件，文案与触发由 TG 模块负责。只在文件关闭成功后显示“下载完成”和文件名；不提示开始、进度、失败或取消，不修改现有文件名生成规则。
 - 保留 MAIN world 页面取流及用户手势内的系统另存为，不把媒体流交给 desktop。统一主题 Token 位于 `src/styles/theme.css`，网页菜单与扩展页面共用。
 
 ## 历史清理边界

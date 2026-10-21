@@ -13,6 +13,8 @@
 
 ## 逐项差异
 
+Telegram 下载菜单的下载项使用现有 DropdownMenuItem asChild 与 Button ghost 组合，保留菜单语义、按钮 hover 与禁用反馈；按用户要求仅在该下载按钮增加 cursor-pointer，不改变共用组件默认指针或状态。Shadow DOM 内的共用主题属性使用 :host(...) 选择器，不另建菜单配色。
+
 | 应用与组件 | 保留的官方基础 | 项目必要差异 |
 | --- | --- | --- |
 | 官网 Button、Badge | 官方 CVA、Slot、variant、size、状态及数据属性 | 已有实现与固定基线仅注释、空白及 cn 路径不同，本次不改 |
@@ -30,7 +32,7 @@
 ## 业务组合与扫描边界
 
 - 历史清理设置视图与权限/存储逻辑继续由 `modules/history-cleaner` 持有；Newtab 的 DockSettings 只组合设置区域和外壳。通用 Switch 不调用 Chrome API，不持有配置或错误状态。
-- Telegram Download 复用现有 DropdownMenu；Content 增加可选 `portalContainer`，仅将 Portal 挂入网页 Shadow DOM，未指定时保持官方默认挂载方式。Shadow DOM 的事件重定向处理在业务菜单中完成，保留官方选择、禁用和关闭行为；不迁入旧自定义菜单的配色或状态管理。Popup 无操作按钮，进度使用浏览器原生 progress 元素，未新建通用控件。
+- Telegram Download 复用现有 DropdownMenu；Content 增加可选 `portalContainer`，仅将 Portal 挂入网页 Shadow DOM，未指定时保持官方默认挂载方式。Shadow DOM 的事件重定向处理在业务菜单中完成，保留官方选择、禁用和关闭行为；不迁入旧自定义菜单的配色或状态管理。本次移除 Popup 与下载记录层，不新增公共下载业务。
 - Sheet 关闭后的 Tooltip 抑制、菜单与 Tooltip 互斥、指针外部关闭处理继续位于业务组合处；不放入共享控件。
 - 官网叠放窗口保留原生 button 与现有卡片池。专用展示的尺寸、网格、窗口内容与轮换不适合套用默认 Button 或标准 Carousel。
 - 书签卡片、EDU 遮罩、品牌图标与网站分类布局按需求组合；未发现需要为本次目标迁入通用 UI 的业务逻辑，不创建跨应用组件包。
@@ -56,3 +58,10 @@
 | 官网 Button/Badge 与特殊展示 | 本轮未修改这些实现 | 保留，避免扩大视觉变更 |
 
 以上是源码与配置核对结论，不证明最终渲染、焦点、菜单碰撞或真实权限交互已通过。验收发现明显差异时，以原有已确认效果修正，不能要求用户接受官方默认外观。
+
+## 扩展 Sonner（2026-10-21）
+
+- 官方源码沿用本文固定 commit 的 new-york-v4/ui/sonner.tsx；运行时依赖精确固定为 sonner 2.0.8，锁文件同步，仅新增该包。
+- 本地 src/shared/ui/sonner.tsx 保留官方图标、主题 Token 与 props 透传；Vite 客户端去除 use client 和 Next.js 专属 next-themes，主题改由调用方使用现有主题解析结果传入，不新增主题系统。
+- TG 在自身 Shadow DOM 中挂载 Toaster，并导入 sonner/dist/styles.css；原页面中的官方默认 CSS 注入行为不修改。堆叠、折叠、关闭时长和交互沿用 Sonner 默认。TG 使用默认 success 类型和文件名描述，不自写关闭计时或通知队列。
+- 共用组件只负责展示；实际完成判断、文案、文件名和调用时机仍在 TG 模块中。
