@@ -1,11 +1,11 @@
 import { useEffect, useId, useState } from 'react';
-import { Button } from '../../shared/ui/button';
-import { Switch } from '../../shared/ui/switch';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../../shared/ui/tooltip';
-import { UiIcon } from '../../shared/ui/ui-icon';
-import { telegramDownloadSetting } from './settings';
+import { Button } from '../../../../shared/ui/button';
+import { Switch } from '../../../../shared/ui/switch';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
+import { UiIcon } from '../../../../shared/ui/ui-icon';
+import { telegramDownloadSetting } from '../../settings';
 
-const description = 'Download photos and videos from Telegram Web. Turning this off blocks new downloads immediately; downloads already started continue.';
+const description = 'Download photos and videos from Telegram Web.';
 
 export function TelegramDownloadSettings() {
   const id = useId();

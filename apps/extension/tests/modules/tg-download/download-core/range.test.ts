@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseContentRange, writeResponse } from '../../../src/modules/telegram-download/range';
+import { parseContentRange, writeResponse } from '../../../../src/modules/tg-download/download-core/range';
 
 describe('媒体响应范围', () => {
   it('解析后续 Range 请求需要的总字节数', () => {
@@ -31,5 +31,17 @@ describe('媒体响应范围', () => {
     expect(writes).toEqual([[1, 2], [3]]);
     expect(progress).toEqual([[2, 3], [3, 3]]);
     expect(loaded).toBe(3);
+    expect(response.body?.locked).toBe(false);
+  });
+
+  it('写入失败时取消响应流并释放读取锁', async () => {
+    let cancelled = false;
+    const response = new Response(new ReadableStream({
+      start(controller) { controller.enqueue(new Uint8Array([1])); },
+      cancel() { cancelled = true; },
+    }));
+    await expect(writeResponse(response, { write() { throw new Error('写入失败'); } }, () => {})).rejects.toThrow('写入失败');
+    expect(cancelled).toBe(true);
+    expect(response.body?.locked).toBe(false);
   });
 });

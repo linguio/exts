@@ -1,13 +1,16 @@
 @import "tailwindcss";
-@import "../../styles/theme.css";
+@import "sonner/dist/styles.css";
+@import "../../../../styles/theme.css";
 
 /* 网页注入界面引用同一组 Token，不把扩展页面的字体二进制内联进内容脚本。 */
 @theme inline {
+  --color-foreground: var(--foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-border: var(--border);
+  --color-ring: var(--ring);
   --color-destructive: var(--destructive);
   --color-muted-foreground: var(--muted-foreground);
   --font-sans: var(--font-geist-sans);

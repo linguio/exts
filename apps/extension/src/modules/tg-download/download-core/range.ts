@@ -28,13 +28,20 @@ export async function writeResponse(
   if (!reader) return start;
 
   let loaded = start;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
 
-    await writable.write(value);
-    loaded += value.byteLength;
-    onProgress(loaded, total);
+      await writable.write(value);
+      loaded += value.byteLength;
+      onProgress(loaded, total);
+    }
+  } catch (error) {
+    try { await reader.cancel(); } catch { /* 保留原始读取或写入错误。 */ }
+    throw error;
+  } finally {
+    reader.releaseLock();
   }
 
   return loaded;

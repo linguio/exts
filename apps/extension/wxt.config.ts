@@ -68,7 +68,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
     // 只扫描源码入口，避免 WXT 重建临时目录时与 Vite 的 HTML 扫描发生竞态。
     optimizeDeps: {
-      entries: ['src/entrypoints/newtab/index.html', 'src/entrypoints/popup/index.html'],
+      entries: ['src/entrypoints/newtab/index.html'],
     },
   }),
   hooks: {

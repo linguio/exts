@@ -1,5 +1,5 @@
 import { defineContentScript } from 'wxt/utils/define-content-script';
-import { registerTelegramDownloadBridge } from '../modules/telegram-download/content-bridge';
+import { registerTelegramDownloadBridge } from '../modules/tg-download/page/content-bridge';
 
 export default defineContentScript({
   matches: ['https://web.telegram.org/*'],
