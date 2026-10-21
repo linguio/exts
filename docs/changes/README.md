@@ -82,7 +82,7 @@ docs/
 
 ## Issue 队列
 
-1. [明确建档后先展示实施范围](./issues/2026-10-21-repo-workflow-issue-preview-issue.md) · 已排队，文案方向已批准 · [Commit 记录](./commits/2026-10-21-repo-workflow-issue-preview-commit.md)
+无。
 
 
 ## 待办
@@ -90,6 +90,8 @@ docs/
 无。
 
 ## 已完成
+
+- [明确建档展示与提交收尾规则](./issues/2026-10-21-repo-workflow-issue-preview-issue.md) · [Commit 记录](./commits/2026-10-21-repo-workflow-issue-preview-commit.md)；建档展示、复用已有验证、避免重复确认及拆分提交的远端同步边界已写入 workflow-change；用户要求直接完结，本轮未执行验证或模拟场景，仅本地提交，不推送。
 
 - [删除扩展体积统计与门禁](./issues/2026-10-21-extension-bundle-report-issue.md) · [Commit 记录](./commits/2026-10-21-extension-bundle-report-commit.md)；体积工具、专用测试、开发与 CI 调用及活动规范已删除；既有类型检查、生产构建和配置检查通过，用户要求直接完结、不重复验证；浏览器和远程 Actions 未实测，仅本地提交，不推送。
 
