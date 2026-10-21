@@ -11,6 +11,7 @@
 官网尚未介绍 TG 下载，也未记录本次工作流 Skill 更新。按用户确认的文字补齐产品介绍和两条日志，不重写已有内容。
 
 ## 范围
+- 交付后补充：用户指出 TG 日志遗漏下载链接，新增 exts-chrome.zip · 1.3.0，指向 v1.3.0 的固定扩展附件；不改已确认正文或历史日志。
 - Extension 产品说明增加 Telegram Web Download，简介仅为“Telegram Web 图片、视频右键另存为。”。
 - Changelog 在 2026-10-22 按确认顺序新增“完善开发工作流”（Skills）、“新增 Telegram Web Download”（Extension）。
 - Skills 三点：实施前展示 Issue、任务范围与下一步；本地提交即完结并同步记录；精简提交收尾。
@@ -40,4 +41,4 @@
 - [交付记录](../commits/2026-10-22-website-tg-skills-changelog-commit.md)
 
 ## 唯一下一步
-按用户批准完成版本号与官网内容两笔本地提交，本项完结，不推送或部署。
+用户已明确批准本次下载链接补充提交到本地，随提交同步完成状态，本项完结，不推送或部署。

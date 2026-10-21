@@ -91,7 +91,7 @@ docs/
 
 ## 已完成
 
-- [补充 TG 产品介绍与开发工作流日志](./issues/2026-10-22-website-tg-skills-changelog-issue.md) · [Commit 记录](./commits/2026-10-22-website-tg-skills-changelog-commit.md)；用户批准根产品版本更新为 1.3.0，并将版本号与官网内容分两笔本地提交；TG 一句话介绍及两条 2026-10-22 日志按确认文案交付；官网 10 项测试、类型、构建及内容核对此前通过，版本更新与提交阶段未追加验证，浏览器和线上未独立验收，不推送或部署。
+- [补充 TG 产品介绍与开发工作流日志](./issues/2026-10-22-website-tg-skills-changelog-issue.md) · [Commit 记录](./commits/2026-10-22-website-tg-skills-changelog-commit.md)；产品版本 1.3.0、TG 一句话介绍与两条日志已本地提交；遗漏的 1.3.0 扩展下载入口随后补齐并获本地提交批准；官网 10 项测试、类型、构建和内容核对此前通过，链接补充与提交时未追加验证，浏览器及远端附件未独立核对，不推送或部署。
 
 - [整理 TG 下载入口与完成提示](./issues/2026-10-21-extension-telegram-menu-lifecycle-issue.md) · [Commit 记录](./commits/2026-10-21-extension-telegram-menu-lifecycle-commit.md)；用户于 2026-10-22 确认无问题并批准代码、规范记录两笔本地提交；tg-download 职责分目录、Popup/记录层移除、官方完成 Toast、内容宽度按钮及桌面建议位置已交付；45 项逻辑测试、类型检查和构建此前通过，提交时未重复验证；浏览器实测以用户反馈为准，代理未独立执行，不推送。
 

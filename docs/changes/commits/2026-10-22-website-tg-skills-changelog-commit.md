@@ -3,12 +3,13 @@
 - Issue：[补充 TG 产品介绍与开发工作流日志](../issues/2026-10-22-website-tg-skills-changelog-issue.md)
 - 状态：已完成
 - 用户验收：用户明确要求更新为 1.3.0 并提交到本地，按规则完结
-- 最终提交批准：已批准，仅本地，不推送或部署
+- 最终提交批准：前次版本与官网提交已完成；本次链接补充已获明确批准，仅本地
 
 ## 预期交付边界
 补充官网 TG 一句话产品介绍、Skills 与 Extension 两条更新日志，使用用户最终确认文案；按用户最新要求将根产品版本改为 1.3.0，分两笔本地提交。
 
 ## 实际交付
+- 前次提交后补充 TG 日志下载入口 exts-chrome.zip · 1.3.0，指向 https://github.com/linguio/exts/releases/download/v1.3.0/exts-chrome.zip；本次按用户要求本地提交，未运行测试或构建，未核对远端附件是否发布。
 - Extension 产品说明新增 Telegram Web Download，简介严格使用“Telegram Web 图片、视频右键另存为。”。
 - 新增 2026-10-22“完善开发工作流”（Skills）和“新增 Telegram Web Download”（Extension）两条日志，保持用户确认的顺序和三点完整文案，不增加完成提示条目。
 - 官网内容仅修改 categories.ts、changelog-data.ts；另外将根 package.json 产品版本从 1.2.0 改为 1.3.0。没有修改已有日志、历史链接、样式或布局。
@@ -22,6 +23,15 @@
 - 本地提交仅同步本 Issue、交付记录及工作台为已完成，不重复验证。
 
 ## 最终 Commit message
+本次链接补充已获用户本地提交批准：
+
+```text
+fix(website): 补充 TG 日志的扩展下载链接
+
+- 增加 1.3.0 扩展安装包入口
+```
+
+以下为前次已完成提交：
 已展示并获用户本地提交批准；版本号与官网内容分两笔：
 
 ```text

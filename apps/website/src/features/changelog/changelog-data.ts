@@ -37,6 +37,9 @@ export const changelogEntries: readonly ChangelogEntry[] = [
         'Newtab Settings 中提供开关，默认开启。',
         '统一全局 Toast 规范，支持主题同步与多条提示折叠。',
       ],
+      links: [
+        { label: 'exts-chrome.zip · 1.3.0', href: 'https://github.com/linguio/exts/releases/download/v1.3.0/exts-chrome.zip' },
+      ],
     }],
   },
   {
