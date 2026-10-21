@@ -82,8 +82,7 @@ docs/
 
 ## Issue 队列
 
-1. [收敛 Exts 扩展体积检查](./issues/2026-10-21-extension-bundle-report-issue.md) · 已排队，具体门禁方案待批准 · [Commit 记录](./commits/2026-10-21-extension-bundle-report-commit.md)
-2. [明确建档后先展示实施范围](./issues/2026-10-21-repo-workflow-issue-preview-issue.md) · 已排队，文案方向已批准 · [Commit 记录](./commits/2026-10-21-repo-workflow-issue-preview-commit.md)
+1. [明确建档后先展示实施范围](./issues/2026-10-21-repo-workflow-issue-preview-issue.md) · 已排队，文案方向已批准 · [Commit 记录](./commits/2026-10-21-repo-workflow-issue-preview-commit.md)
 
 
 ## 待办
@@ -91,6 +90,8 @@ docs/
 无。
 
 ## 已完成
+
+- [删除扩展体积统计与门禁](./issues/2026-10-21-extension-bundle-report-issue.md) · [Commit 记录](./commits/2026-10-21-extension-bundle-report-commit.md)；体积工具、专用测试、开发与 CI 调用及活动规范已删除；既有类型检查、生产构建和配置检查通过，用户要求直接完结、不重复验证；浏览器和远程 Actions 未实测，仅本地提交，不推送。
 
 - [迁入 Telegram Web 下载与统一记录](./issues/2026-10-21-extension-telegram-download-issue.md) · [Commit 记录](./commits/2026-10-21-extension-telegram-download-commit.md)；用户明确要求先保存并本地提交；71 项测试、类型检查和生产构建通过，旧体积门禁失败及浏览器未实测限制保留；后续体积规则与 Skill 独立排队，不推送。
 

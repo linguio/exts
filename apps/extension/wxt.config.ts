@@ -5,7 +5,6 @@ import tailwindcss from '@tailwindcss/vite';
 import { createStableDevelopmentHooks } from '@linguio/wxt-stable-output';
 import { defineConfig } from 'wxt';
 
-import { createBundleSizeWarningHook } from './scripts/bundle-size.mjs';
 import { readProjectVersion } from '../../scripts/version.mjs';
 
 const assetFiles = [
@@ -60,7 +59,6 @@ const applicationDirectory = fileURLToPath(new URL('.', import.meta.url));
 const stableDevelopmentHooks = createStableDevelopmentHooks({
   targetDir: resolve(applicationDirectory, '../../dist/dev/chrome-mv3-dev-stable'),
 });
-const bundleSizeWarningHook = createBundleSizeWarningHook();
 
 export default defineConfig({
   srcDir: 'src',
@@ -81,11 +79,6 @@ export default defineConfig({
       const outputName = basename(wxt.config.outDir);
       // 基础目录只含扩展缓存，避免 WXT clean 清理其他应用的产物。
       wxt.config.outDir = resolve(applicationDirectory, '../../dist/build', outputName);
-    },
-    // 稳定目录发布成功后再测量开发产物，预警失败不能阻断 WXT dev 的持续重建。
-    'build:done': async (wxt, output) => {
-      await stableDevelopmentHooks['build:done'](wxt, output);
-      await bundleSizeWarningHook(wxt, output);
     },
     'prepare:publicPaths': (_, paths) => {
       paths.push(...outputAssetPaths);

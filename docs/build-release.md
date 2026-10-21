@@ -114,7 +114,7 @@ pnpm release 先检查版本、平台与工具，再调用统一 build；本地�
 
 - 逻辑检查：node --test tests/build-release.test.mjs tests/extension-release.test.mjs apps/desktop/tests/scripts/desk.test.mjs。
 - 稳定工具：pnpm --filter @linguio/wxt-stable-output test。
-- 扩展：pnpm --filter @exts/extension test、typecheck、check:bundle-size；先运行 ext:build 再检查体积。
+- 扩展：pnpm --filter @exts/extension test、typecheck；生产构建运行 pnpm ext:build。
 - Chrome/Edge 实际加载根稳定目录，成功→编译失败保留→恢复成功由用户验收；代理不执行视觉、布局或交互验收。
 - 2026-10-19 已实际运行 pnpm desk:dev 与 pnpm release：开发及正式 Xcode 构建、官网与扩展生产构建、真实 ZIP/DMG 打包及镜像校验通过，版本为 1.1.0，桌面为 arm64；桌面入口已校验身份和版本并执行开发 app 打开命令。
 - Photos 验收修正后的开发构建和双包打包已重新通过；分组／队列针对性原生 XCTest 8 项通过。随后一次完整原生测试在既有 SQLite 压力用例复现 `FROM mediaORDER BY` 错误后停滞，已中止、不重试，不宣称全量通过。实际界面、设备、预览清晰度、双应用并存与数据隔离、DMG 挂载安装和远程 Actions 仍待用户验收；既有 SQLite 问题和 Swift 警告保留。

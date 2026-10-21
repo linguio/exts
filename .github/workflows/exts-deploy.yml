@@ -169,8 +169,6 @@ jobs:
             "EXTS_BUILD_VERSION=$EXTS_BUILD_VERSION" CODE_SIGNING_ALLOWED=NO
       - name: Build and package ZIP and DMG
         run: pnpm release
-      - name: Check bundle budget
-        run: pnpm --filter @exts/extension check:bundle-size
       - name: Create tag and draft release
         shell: bash
         env:
