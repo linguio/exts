@@ -83,6 +83,7 @@ docs/
 ## Issue 队列
 
 1. [收敛 Exts 扩展体积检查](./issues/2026-10-21-extension-bundle-report-issue.md) · 已排队，具体门禁方案待批准 · [Commit 记录](./commits/2026-10-21-extension-bundle-report-commit.md)
+2. [明确建档后先展示实施范围](./issues/2026-10-21-repo-workflow-issue-preview-issue.md) · 已排队，文案方向已批准 · [Commit 记录](./commits/2026-10-21-repo-workflow-issue-preview-commit.md)
 
 
 ## 待办
