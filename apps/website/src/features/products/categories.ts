@@ -24,6 +24,7 @@ export const productCategories: readonly ProductCategory[] = [
     modules: [
       { name: 'Newtab', description: '在新标签页集中访问常用网站，整理分组标签。' },
       { name: 'History Cleaner', description: '在浏览器打开与关闭时清理访问历史，保留 Cookie、缓存和下载记录。' },
+      { name: 'Telegram Web Download', description: 'Telegram Web 图片、视频右键另存为。' },
     ],
   },
   {

@@ -14,6 +14,32 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'development-workflow-improvements',
+    date: '2026-10-22',
+    title: '完善开发工作流',
+    groups: [{
+      platform: 'Skills',
+      changes: [
+        '实施前展示 Issue、任务范围与下一步。',
+        '明确本地提交即完结任务，同步更新 Issue、交付记录与工作台。',
+        '精简提交收尾，避免重复验证、调查和确认。',
+      ],
+    }],
+  },
+  {
+    id: 'telegram-web-download',
+    date: '2026-10-22',
+    title: '新增 Telegram Web Download',
+    groups: [{
+      platform: 'Extension',
+      changes: [
+        '支持 Telegram Web 图片、视频右键另存为。',
+        'Newtab Settings 中提供开关，默认开启。',
+        '统一全局 Toast 规范，支持主题同步与多条提示折叠。',
+      ],
+    }],
+  },
+  {
     id: 'website-quick-start',
     date: '2026-10-21',
     title: '新增快速开始',
