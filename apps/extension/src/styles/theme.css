@@ -30,6 +30,8 @@
   --shadow-hover: 0 8px 18px rgb(24 24 27 / 12%);
   --shadow-floating: 0 12px 28px rgb(24 24 27 / 12%);
   --size-icon-tile: 4rem;
+  /* 文件夹外框为两枚图标、内部间距、两侧内边距及边框之和。 */
+  --size-bookmark-folder: calc(2 * var(--size-icon-tile) + 3rem + 2px);
   --size-icon-glyph: 2rem;
   --overlay-blur: 8px;
   --entry-hover-scale: 1.06;

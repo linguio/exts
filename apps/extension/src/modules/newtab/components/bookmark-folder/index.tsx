@@ -31,7 +31,7 @@ export function BookmarkFolder({ folder, onOpenBookmark }: BookmarkFolderProps) 
       )}
       aria-label={folder.name}
     >
-      <div className="bookmark-folder__preview relative grid grid-cols-[repeat(2,4rem)] gap-4 box-border rounded-[var(--radius)] border border-border bg-card p-4">
+      <div className="bookmark-folder__preview relative grid w-[var(--size-bookmark-folder)] grid-cols-[repeat(2,var(--size-icon-tile))] gap-4 box-border rounded-[var(--radius)] border border-border bg-card p-4">
         {folder.items.map((bookmark, index) => (
           <BookmarkCard
             key={bookmark.id ?? `${folder.name}-${bookmark.name}`}

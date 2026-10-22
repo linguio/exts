@@ -1,0 +1,32 @@
+/* 页面分区只约束各区域的可用空间，不承担卡片业务。 */
+.newtab-page {
+  --newtab-gap: 1.5rem;
+  --newtab-cards-width: calc(2 * var(--size-bookmark-folder) + var(--newtab-gap));
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: var(--newtab-gap);
+  box-sizing: border-box;
+  height: 100dvh;
+  overflow: hidden;
+  padding: 1.5rem;
+}
+
+.newtab-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--newtab-cards-width);
+  gap: var(--newtab-gap);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* 保留原生滚动，仅隐藏滚动条；溢出不能传递到页面或相邻区域。 */
+.newtab-scroll-area {
+  min-width: 0;
+  min-height: 0;
+  scrollbar-width: none;
+}
+
+.newtab-scroll-area::-webkit-scrollbar {
+  display: none;
+}
