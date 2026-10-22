@@ -24,9 +24,15 @@ Components 和 DevTools 提供工具菜单；入口悬停或键盘聚焦时显�
 
 ## 右侧卡片
 
-右侧首张卡片是打卡功能的空外框，顶部与首排文件夹预览外框对齐，高度等于文件夹预览外框（默认约 178px，不含名称），宽度占满右侧列。目前没有打卡、编辑、数据存储或 GitHub 接入。
+右侧首张卡片为 `Daily check-in`，顶部与首排文件夹预览外框对齐，高度等于文件夹预览外框（默认约 178px，不含名称），宽度占满右侧列。首行右侧使用 Settings 同款 ToggleGroup，只有固定选中的 `JLPT` 项；不提供 GitHub 入口、计时或编辑功能。
 
-`views/cards/index.tsx` 组合右侧卡片；首张卡片由 `views/cards/check-in/` 独立目录持有，后续内容、状态与操作按需在目录内拆分。其他卡片后续各用独立目录，不将业务堆入页面入口。`views/bookmarks/` 负责左侧书签，`views/dock/` 负责 Dock、工具菜单及设置入口，`views/settings/` 保留通用设置视图。
+日历按本地日期显示当前周和之前 23 周，每列为周日到周六，最右列是当前周。每格 12px、间距 2px，24×7 格区域为 334×96px，水平居中。未来日期留空，缺失日期按 0 分钟展示；跨本地午夜或切回标签页时重新计算日期。
+
+数据独立保存在 `apps/extension/src/modules/newtab/views/cards/check-in/data/jlpt.json`，日期键为 `YYYY-MM-DD`，值为当天累计整数分钟数。本次提供 2026-09-23 至 2026-10-22 共 30 天模拟记录，只含 0、30、60、90，不代表真实学习数据，运行时不会重新随机。需要更换记录时编辑该 JSON 并重新构建。
+
+四档灰度分别对应 0、1–30、31–60、>60 分钟，随明暗主题切换。只有正分钟数格子显示共用 Tooltip：首行为 `10-22 · 星期四`，第二行为 `学习时长：30分钟`、`学习时长：1小时` 或 `学习时长：1小时30分钟`；0 分钟与未来日期没有 Tooltip。
+
+`views/cards/index.tsx` 组合右侧卡片；首张卡片由 `views/cards/check-in/` 独立目录持有，其中入口组合标题与日历，`calendar-grid.tsx` 展示格子和 Tooltip，`calendar.ts` 处理本地日期、等级与文案，`use-local-date.ts` 维护当前本地日期，`data/` 保存 JSON。其他卡片后续各用独立目录，不将业务堆入页面入口。`views/bookmarks/` 负责左侧书签，`views/dock/` 负责 Dock、工具菜单及设置入口，`views/settings/` 保留通用设置视图。
 
 ## Settings
 

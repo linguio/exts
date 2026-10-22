@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [展示本地 JLPT 学习日历](./issues/2026-10-22-extension-jlpt-check-in-issue.md) · [Commit 记录](./commits/2026-10-22-extension-jlpt-check-in-commit.md)；用户批准按历史清理文案、JLPT 日历两笔本地提交；独立模拟 JSON、24 周本地日历、固定 JLPT 项、主题灰阶及共用 Tooltip 已交付；49 项完整测试、类型和最新生产构建此前通过，代理未独立执行浏览器验收，提交时不追加验证、不推送。
+
 - [划分 Newtab 三区布局并添加右侧卡片](./issues/2026-10-22-extension-newtab-regions-issue.md) · [Commit 记录](./commits/2026-10-22-extension-newtab-regions-commit.md)；用户确认验证通过并批准本地提交；三区布局、独立滚动、Dock 溢出处理及卡片独立目录已交付，45 项测试、类型与生产构建此前通过，提交时不追加验证，不推送。
 
 - [补充 TG 产品介绍与开发工作流日志](./issues/2026-10-22-website-tg-skills-changelog-issue.md) · [Commit 记录](./commits/2026-10-22-website-tg-skills-changelog-commit.md)；产品版本 1.3.0、TG 一句话介绍与两条日志已本地提交；遗漏的 1.3.0 扩展下载入口随后补齐并获本地提交批准；官网 10 项测试、类型、构建和内容核对此前通过，链接补充与提交时未追加验证，浏览器及远端附件未独立核对，不推送或部署。
