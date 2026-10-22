@@ -2,17 +2,19 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../../shared/u
 import { formatStudyDuration, type StudyDay } from './calendar';
 
 /** 只展示每日分钟与等级，零记录和未来日期不创建 Tooltip。 */
-export function StudyCalendar({ days }: { days: StudyDay[] }) {
+export function StudyCalendar({ days, activity }: { days: StudyDay[]; activity: 'jlpt' | 'workout' }) {
+  const activityLabel = activity === 'jlpt' ? 'JLPT 学习' : 'Workout 运动';
+  const durationLabel = activity === 'jlpt' ? '学习时长' : '运动时长';
   return (
     <div
       role="group"
-      aria-label="最近24周 JLPT 学习日历，每列从周日到周六"
+      aria-label={`最近24周 ${activityLabel}日历，每列从周日到周六`}
       className="mx-auto grid w-fit grid-flow-col grid-cols-[repeat(24,12px)] grid-rows-[repeat(7,12px)] gap-0.5"
     >
       {days.map((day) => {
         if (day.isFuture) return <span key={day.date} aria-hidden="true" />;
 
-        const description = `${day.label}，学习时长：${formatStudyDuration(day.minutes)}`;
+        const description = `${day.label}，${durationLabel}：${formatStudyDuration(day.minutes)}`;
         const cell = (
           <span
             key={day.date}
@@ -31,7 +33,7 @@ export function StudyCalendar({ days }: { days: StudyDay[] }) {
             <TooltipTrigger asChild>{cell}</TooltipTrigger>
             <TooltipContent side="top">
               <p>{day.label}</p>
-              <p>学习时长：{formatStudyDuration(day.minutes)}</p>
+              <p>{durationLabel}：{formatStudyDuration(day.minutes)}</p>
             </TooltipContent>
           </Tooltip>
         );

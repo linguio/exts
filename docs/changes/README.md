@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [增加 Workout 打卡切换](./issues/2026-10-22-extension-workout-check-in-issue.md) · [Commit 记录](./commits/2026-10-22-extension-workout-check-in-commit.md)；用户明确批准本地提交并完结；双类型切换与独立模拟数据已实现，Workout 分钟数按最新批准打散，48 项测试、类型检查和生产构建通过，代理未执行浏览器视觉与交互验收，提交时不追加验证，不推送。
+
 - [更新官网 Extension 内容并设置 1.4.0 版本](./issues/2026-10-22-website-extension-1-4-0-issue.md) · [Commit 记录](./commits/2026-10-22-website-extension-1-4-0-commit.md)；用户批准本地提交；官网内容、首页卡片 Dock、历史日期、日志链接规则与根版本已更新，官网逻辑测试、类型检查及构建此前通过；1.4.0 扩展附件需后续 Release 发布，不推送或部署。
 
 - [替换 Dock 下载入口与 EDU 锁图标](./issues/2026-10-22-extension-dock-download-edu-lock-issue.md) · [Commit 记录](./commits/2026-10-22-extension-dock-download-edu-lock-commit.md)；用户已验收通过并批准按 EDU 锁图标、Dock Download 抽屉两笔本地提交；扩展 48 项测试、类型检查与生产构建通过，代理未自行执行浏览器验证，不推送。
