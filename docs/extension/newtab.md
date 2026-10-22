@@ -20,7 +20,7 @@ Dock 按内容宽度在底部居中，最大不超过底部可用宽度；撑满
 
 底部收藏入口依次为 X、GitHub、Exts、Gmail，直接打开对应网站；ChatGPT 位于 AI 文件夹。Exts 使用已有的完整正式圆角 Logo，保留黑底白色主体，不随页面主题反色。
 
-Components 和 DevTools 提供工具菜单；入口悬停或键盘聚焦时显示名称提示，点击工具入口打开菜单。
+Components 提供工具菜单；原 DevTools 位置为 Download，点击后打开正文为空的右侧抽屉。Download 与 Settings 抽屉的标题区均为对应图标加标题；入口悬停或键盘聚焦时显示名称提示，抽屉打开时提示收起。
 
 ## 右侧卡片
 
@@ -36,7 +36,7 @@ Components 和 DevTools 提供工具菜单；入口悬停或键盘聚焦时显�
 
 ## Settings
 
-Dock 右侧的 Settings 打开右侧设置面板，面板跟随当前明暗主题，分为两区：
+Dock 右侧的 Settings 打开右侧设置面板，面板跟随当前明暗主题，分为两区。Download 与 Settings 的入口提示及抽屉关闭焦点处理共用 Dock 局部 hook：
 
 General 与 Features 之间不使用分割线：分区标题为 12px、中等字重和较淡颜色，设置项正文为 14px、常规字重；正文外侧内边距和两区间距统一为 24px，不再叠加子分区内边距。顶部 Settings 标题区保留分割线。
 

@@ -64,7 +64,7 @@ export const DOCK_FAVORITES: Bookmark[] = [
   { type: 'bookmark', id: 'gmail', name: 'Gmail', url: 'https://mail.google.com', icon: 'brand/gmail.svg', iconTone: 'adaptive' },
 ];
 
-// Components 与 DevTools 都是 Dock 内的聚合入口，内部书签按各自名称加入标签组。
+// Components 是 Dock 内的聚合入口，内部书签按名称加入标签组。
 export const DOCK_COMPONENTS: BookmarkGroup = {
   type: 'bookmark-group',
   id: 'components',
@@ -77,22 +77,5 @@ export const DOCK_COMPONENTS: BookmarkGroup = {
     { type: 'bookmark', id: 'element-ui', name: 'Element UI', url: 'https://element.eleme.io', icon: 'tools/element-ui.svg' },
     { type: 'bookmark', id: 'element-plus', name: 'Element Plus', url: 'https://element-plus.org', icon: 'tools/element-plus.svg' },
     { type: 'bookmark', id: 'simpleicons', name: 'Simple Icons', url: 'https://simpleicons.org/', icon: 'brand/simpleicons.svg', iconTone: 'adaptive' },
-  ],
-};
-
-// DevTools 入口与菜单项共用同一配置，避免 Dock 维护第二套书签数据。
-export const DOCK_DEVTOOLS: BookmarkGroup = {
-  type: 'bookmark-group',
-  id: 'devtools',
-  name: 'DevTools',
-  icon: { kind: 'ui', name: 'wrench' },
-  bookmarks: [
-    {
-      type: 'bookmark',
-      id: 'google-translate',
-      name: 'Google Translate',
-      url: 'https://translate.google.com/?hl=zh-cn&sl=en&tl=zh-CN&op=translate',
-      icon: 'tools/google-translate.png',
-    },
   ],
 };

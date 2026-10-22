@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [替换 Dock 下载入口与 EDU 锁图标](./issues/2026-10-22-extension-dock-download-edu-lock-issue.md) · [Commit 记录](./commits/2026-10-22-extension-dock-download-edu-lock-commit.md)；用户已验收通过并批准按 EDU 锁图标、Dock Download 抽屉两笔本地提交；扩展 48 项测试、类型检查与生产构建通过，代理未自行执行浏览器验证，不推送。
+
 - [展示本地 JLPT 学习日历](./issues/2026-10-22-extension-jlpt-check-in-issue.md) · [Commit 记录](./commits/2026-10-22-extension-jlpt-check-in-commit.md)；用户批准按历史清理文案、JLPT 日历两笔本地提交；独立模拟 JSON、24 周本地日历、固定 JLPT 项、主题灰阶及共用 Tooltip 已交付；49 项完整测试、类型和最新生产构建此前通过，代理未独立执行浏览器验收，提交时不追加验证、不推送。
 
 - [划分 Newtab 三区布局并添加右侧卡片](./issues/2026-10-22-extension-newtab-regions-issue.md) · [Commit 记录](./commits/2026-10-22-extension-newtab-regions-commit.md)；用户确认验证通过并批准本地提交；三区布局、独立滚动、Dock 溢出处理及卡片独立目录已交付，45 项测试、类型与生产构建此前通过，提交时不追加验证，不推送。

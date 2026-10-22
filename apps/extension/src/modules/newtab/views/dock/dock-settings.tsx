@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 import { Button } from '../../../../shared/ui/button';
 import { Separator } from '../../../../shared/ui/separator';
@@ -8,22 +8,16 @@ import { UiIcon } from '../../../../shared/ui/ui-icon';
 import { HistoryCleanerSettings } from '../../../history-cleaner/settings-section';
 import { TelegramDownloadSettings } from '../../../tg-download/views/settings/index';
 import { GeneralSettings } from '../settings/general-settings';
+import { useDockSheetTooltip } from './use-dock-sheet-tooltip';
 
 /** 设置页面组合独立功能的设置区域，后台逻辑由对应模块持有。 */
 export function DockSettings() {
-  const [open, setOpen] = useState(false);
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const suppressRestoredFocusTooltip = useRef(false);
+  const sheetTooltip = useDockSheetTooltip();
   const titleRef = useRef<HTMLHeadingElement>(null);
 
   return (
-    <Sheet open={open} onOpenChange={(nextOpen) => {
-      setOpen(nextOpen);
-      setTooltipOpen(false);
-    }}>
-      <Tooltip open={tooltipOpen && !open} onOpenChange={(nextOpen) => {
-        if (!open && !suppressRestoredFocusTooltip.current) setTooltipOpen(nextOpen);
-      }}>
+    <Sheet {...sheetTooltip.sheetProps}>
+      <Tooltip {...sheetTooltip.tooltipProps}>
         <TooltipTrigger asChild>
           <SheetTrigger asChild>
             <Button
@@ -32,16 +26,7 @@ export function DockSettings() {
               size="entry"
               className="bookmark-card bookmark-card--dock bookmark-dock__tool"
               aria-label="Open settings"
-              onPointerMove={() => {
-                suppressRestoredFocusTooltip.current = false;
-              }}
-              onBlur={() => {
-                suppressRestoredFocusTooltip.current = false;
-              }}
-              onPointerDown={() => setTooltipOpen(false)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') setTooltipOpen(false);
-              }}
+              {...sheetTooltip.triggerProps}
             >
               <span className="bookmark-card__icon entry-surface">
                 <UiIcon name="settings" className="entry-glyph" />
@@ -55,12 +40,9 @@ export function DockSettings() {
         // 打开时先聚焦标题，避免自动聚焦主题按钮触发提示。
         event.preventDefault();
         titleRef.current?.focus();
-      }} onCloseAutoFocus={() => {
-        // 只抑制关闭后的焦点恢复提示；保留 Radix 默认焦点恢复和下次主动悬停。
-        suppressRestoredFocusTooltip.current = true;
-        setTooltipOpen(false);
-      }}>
+      }} onCloseAutoFocus={sheetTooltip.onCloseAutoFocus}>
         <header className="flex min-h-14 shrink-0 items-center px-6 pr-16">
+          <UiIcon name="settings" className="mr-3 size-5 shrink-0" />
           <SheetTitle ref={titleRef} tabIndex={-1} className="text-lg font-semibold">Settings</SheetTitle>
         </header>
         <Separator />

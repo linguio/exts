@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import * as bookmarkConfig from '../../../src/modules/newtab/constants/bookmarks.ts';
 
-const { BOOKMARK_GRID, DOCK_COMPONENTS, DOCK_DEVTOOLS, DOCK_FAVORITES } = bookmarkConfig;
+const { BOOKMARK_GRID, DOCK_COMPONENTS, DOCK_FAVORITES } = bookmarkConfig;
 
 // 验证页面展示的文件夹内容与入口顺序。
 test('Grid 书签配置提供 EDU 和 AI 文件夹', () => {
@@ -84,24 +84,6 @@ test('Components 聚合入口保持当前组件工具顺序', () => {
       { type: 'bookmark', id: 'element-ui', name: 'Element UI', url: 'https://element.eleme.io', icon: 'tools/element-ui.svg' },
       { type: 'bookmark', id: 'element-plus', name: 'Element Plus', url: 'https://element-plus.org', icon: 'tools/element-plus.svg' },
       { type: 'bookmark', id: 'simpleicons', name: 'Simple Icons', url: 'https://simpleicons.org/', icon: 'brand/simpleicons.svg', iconTone: 'adaptive' },
-    ],
-  });
-});
-
-test('DevTools 聚合入口提供翻译工具', () => {
-  assert.deepEqual(DOCK_DEVTOOLS, {
-    type: 'bookmark-group',
-    id: 'devtools',
-    name: 'DevTools',
-    icon: { kind: 'ui', name: 'wrench' },
-    bookmarks: [
-      {
-        type: 'bookmark',
-        id: 'google-translate',
-        name: 'Google Translate',
-        url: 'https://translate.google.com/?hl=zh-cn&sl=en&tl=zh-CN&op=translate',
-        icon: 'tools/google-translate.png',
-      },
     ],
   });
 });

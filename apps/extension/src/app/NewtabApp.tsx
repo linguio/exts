@@ -1,4 +1,4 @@
-import { BOOKMARK_GRID, DOCK_COMPONENTS, DOCK_DEVTOOLS, DOCK_FAVORITES } from '../modules/newtab/constants/bookmarks';
+import { BOOKMARK_GRID, DOCK_COMPONENTS, DOCK_FAVORITES } from '../modules/newtab/constants/bookmarks';
 import { BookmarkDock } from '../modules/newtab/views/dock/bookmark-dock';
 import { BookmarkGrid } from '../modules/newtab/views/bookmarks/bookmark-grid';
 import { NewtabCards } from '../modules/newtab/views/cards/index';
@@ -31,7 +31,6 @@ export function App() {
           <BookmarkDock
             favorites={DOCK_FAVORITES}
             components={DOCK_COMPONENTS}
-            devtools={DOCK_DEVTOOLS}
             onOpenBookmark={onOpenBookmark}
           />
         </div>
