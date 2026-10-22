@@ -14,8 +14,24 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
-    id: 'development-workflow-improvements',
+    id: 'newtab-check-in-layout',
     date: '2026-10-22',
+    title: '完善 Newtab 布局与学习日历',
+    groups: [{
+      platform: 'Extension',
+      changes: [
+        '重排书签、卡片与底部 Dock，各区域内容独立滚动。',
+        '新增打卡记录日历，按本地日期展示内置示例的每日学习分钟数。',
+        'Dock 新增 Download 空抽屉入口，EDU 文件夹悬停时切换锁图标。',
+      ],
+      links: [
+        { label: 'exts-chrome.zip · 1.4.0', href: 'https://github.com/linguio/exts/releases/download/v1.4.0/exts-chrome.zip' },
+      ],
+    }],
+  },
+  {
+    id: 'development-workflow-improvements',
+    date: '2026-10-21',
     title: '完善开发工作流',
     groups: [{
       platform: 'Skills',
@@ -28,7 +44,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
   },
   {
     id: 'telegram-web-download',
-    date: '2026-10-22',
+    date: '2026-10-21',
     title: '新增 Telegram Web Download',
     groups: [{
       platform: 'Extension',
@@ -44,7 +60,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
   },
   {
     id: 'website-quick-start',
-    date: '2026-10-21',
+    date: '2026-10-20',
     title: '新增快速开始',
     groups: [{
       platform: 'Website',
@@ -63,6 +79,10 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       changes: [
         '新增 workflow-change，管理开发任务范围、交付记录、验收与本地提交。',
         '新增 workflow-observer，观察并记录开发习惯，通过复盘总结改进方向，优化自己的工作流。',
+      ],
+      links: [
+        { label: 'workflow-change · 查看源码', href: 'https://github.com/linguio/exts/tree/main/skills/workflow-change' },
+        { label: 'workflow-observer · 查看源码', href: 'https://github.com/linguio/exts/tree/main/skills/workflow-observer' },
       ],
     }],
   },
@@ -117,7 +137,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
         '新增历史清理，支持在浏览器打开与关闭时清理访问历史。',
         '优化界面样式，统一组件风格与交互反馈。',
       ],
-      links: [{ label: 'exts-chrome.zip · 1.1.0', href: 'https://github.com/linguio/exts/releases/tag/v1.1.0' }],
+      links: [{ label: 'exts-chrome.zip · 1.1.0', href: 'https://github.com/linguio/exts/releases/download/v1.1.0/exts-chrome.zip' }],
     }],
   },
   {
@@ -170,7 +190,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       '新增标签组，按分组打开并组织网页。',
       '新增书签与 Dock，快速访问常用网站和工具。',
       ],
-      links: [{ label: 'exts-chrome.zip · 1.0.0', href: 'https://github.com/linguio/exts/releases/tag/v1.0.0' }],
+      links: [{ label: 'exts-chrome.zip · 1.0.0', href: 'https://github.com/linguio/exts/releases/download/v1.0.0/exts-chrome.zip' }],
     }],
   },
 ];

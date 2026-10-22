@@ -1,4 +1,4 @@
-import { Blocks, Film, Image as ImageIcon, Settings, Wrench } from 'lucide-react';
+import { Blocks, Download, Film, Image as ImageIcon, Settings } from 'lucide-react';
 import x from './assets/x.svg';
 import bilibili from './assets/bilibili.svg';
 import youtube from './assets/youtube.svg';
@@ -6,12 +6,11 @@ import vercel from './assets/vercel.svg';
 import npm from './assets/npm.svg';
 import linear from './assets/linear.svg';
 import notion from './assets/notion.svg';
-import chatgpt from './assets/chatgpt.svg';
 import github from './assets/github.svg';
 import gmail from './assets/gmail.svg';
 
 const bookmarks = [x, bilibili, youtube, vercel, npm, linear, notion];
-const favorites = [chatgpt, github, gmail];
+const favorites = [x, github, '/exts.svg', gmail];
 
 export function WindowTop({ name }: { name: 'Newtab' | 'Photos' }) {
   return <div className="showcase-window-top" aria-hidden="true"><strong className="showcase-window-name">{name}</strong></div>;
@@ -29,7 +28,7 @@ export function TabsCard() {
           {favorites.map((icon) => <span key={icon} className="showcase-dock-icon"><img src={icon} alt="" /></span>)}
           <span className="showcase-dock-divider" />
           <span className="showcase-dock-icon"><Blocks /></span>
-          <span className="showcase-dock-icon"><Wrench /></span>
+          <span className="showcase-dock-icon"><Download /></span>
           <span className="showcase-dock-icon"><Settings /></span>
         </div>
       </div>

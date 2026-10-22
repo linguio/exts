@@ -22,7 +22,7 @@ export const productCategories: readonly ProductCategory[] = [
     id: 'extension', name: 'Extension', label: 'Extension',
     description: '按自己的使用习惯，为 Chrome 集成日常需要的浏览器拓展功能。',
     modules: [
-      { name: 'Newtab', description: '在新标签页集中访问常用网站，整理分组标签。' },
+      { name: 'Newtab', description: '以新标签页为工作台，集中访问常用网站与工具。' },
       { name: 'History Cleaner', description: '在浏览器打开与关闭时清理访问历史，保留 Cookie、缓存和下载记录。' },
       { name: 'Telegram Web Download', description: 'Telegram Web 图片、视频右键另存为。' },
     ],
