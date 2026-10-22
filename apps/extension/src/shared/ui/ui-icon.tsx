@@ -1,4 +1,4 @@
-import { Blocks, BrushCleaning, CircleQuestionMark, LaptopMinimal, Moon, Settings, Sun, Wrench, X, type LucideIcon } from 'lucide-react';
+import { Blocks, CircleQuestionMark, LaptopMinimal, Lock, LockOpen, Moon, Settings, Sun, Wrench, X, type LucideIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
 
 import type { UiIconName } from './types';
@@ -6,8 +6,9 @@ import { cn } from '../lib/utils';
 
 const uiIconMap: Record<UiIconName, LucideIcon> = {
   blocks: Blocks,
-  'brush-cleaning': BrushCleaning,
   wrench: Wrench,
+  lock: Lock,
+  'lock-open': LockOpen,
   settings: Settings,
   x: X,
   'circle-question-mark': CircleQuestionMark,

@@ -48,10 +48,10 @@
 | `blur-overlay` | 共用主题透明色和背景模糊；Sheet 全屏遮罩与 EDU 局部遮罩都引用它，位置、尺寸由组件决定 |
 | `entry-trigger` | 标记实际链接或按钮，作为 Hover/Focus 的统一触发范围 |
 | `entry-surface` | 入口图块：尺寸、圆角、边框、背景、焦点轮廓及上移阴影反馈 |
-| `entry-glyph` | 入口图形：统一过渡属性和缩放；用于书签品牌图、工具图标、Settings 和扫帚 |
-| `entry-glyph--lift` | 无图块入口的图形上移变体；用于扫帚，让透明遮罩保持不动 |
+| `entry-glyph` | 入口图形：统一过渡属性和缩放；用于书签品牌图、Dock 工具图标和 EDU 锁图标 |
+| `entry-glyph--lift` | 无图块入口的图形上移变体；用于 EDU 锁图标，让透明遮罩保持不动 |
 
-书签和工具按钮使用 `entry-trigger` → `entry-surface` → `entry-glyph`。EDU 遮罩按钮使用 `blur-overlay entry-trigger`，扫帚使用 `entry-glyph entry-glyph--lift`，不额外添加卡片阴影或改变遮罩背景。
+书签和工具按钮使用 `entry-trigger` → `entry-surface` → `entry-glyph`。EDU 遮罩按钮使用 `blur-overlay entry-trigger`，Lock 在 Hover 时切换为 LockOpen，两者使用 `entry-glyph entry-glyph--lift`，不额外添加卡片阴影或改变遮罩背景。
 
 入口 Hover 与键盘 Focus 共用规则。保持当前即时缩放与上移效果：过渡属性只包含 `filter`、`transform`，图块另外包含边框和阴影；CSS 独立 `scale` / `translate` 不单独补充平滑过渡。若后续调整动效，修改这里的共用规则，不在某个组件单独添加 `transition-transform`。
 

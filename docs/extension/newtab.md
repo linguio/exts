@@ -4,7 +4,7 @@ Newtab 是 Exts 扩展的新标签页模块，源码位于 apps/extension/src/mo
 
 ## 书签与文件夹
 
-- 页面按文件夹组织网站书签；EDU 文件夹默认带模糊遮罩。
+- 页面按文件夹组织网站书签；EDU 文件夹默认带模糊遮罩，锁图标在悬停时变为开锁，点击后显示书签。
 - AI 文件夹位于主书签区域第一，依次收录 ChatGPT、Grok、Cursor，使用已有品牌 SVG，打开方式与其他文件夹一致。
 - Social Media 文件夹依次收录 Telegram、Bilibili、YouTube；Telegram 打开 Web 版，X 移至 Dock。
 - 普通书签提供网站名称和图标，链接打开目标网站；工具分组中的部分入口可批量创建标签组。

@@ -57,15 +57,19 @@ export function BookmarkFolder({ folder, onOpenBookmark }: BookmarkFolderProps) 
             type="button"
             variant="ghost"
             className={cn(
-              'bookmark-folder__blur blur-overlay entry-trigger absolute inset-0 z-[1] grid h-auto w-auto cursor-pointer place-items-center rounded-[var(--radius)] border-0 p-0 text-inherit hover:bg-overlay focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2',
+              'bookmark-folder__blur blur-overlay entry-trigger group absolute inset-0 z-[1] grid h-auto w-auto cursor-pointer place-items-center rounded-[var(--radius)] border-0 p-0 text-inherit hover:bg-overlay focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2',
               !isBlurred && 'bookmark-folder__blur--hidden hidden',
             )}
             aria-label={`点击显示 ${folder.name} 书签`}
             onClick={reveal}
           >
             <UiIcon
-              name="brush-cleaning"
-              className="h-7 w-7 entry-glyph entry-glyph--lift"
+              name="lock"
+              className="h-7 w-7 entry-glyph entry-glyph--lift group-hover:hidden"
+            />
+            <UiIcon
+              name="lock-open"
+              className="hidden h-7 w-7 entry-glyph entry-glyph--lift group-hover:block"
             />
           </Button>
         ) : null}
