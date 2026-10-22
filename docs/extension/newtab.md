@@ -35,7 +35,7 @@ Dock 右侧的 Settings 打开右侧设置面板，面板跟随当前明暗主�
 General 与 Features 之间不使用分割线：分区标题为 12px、中等字重和较淡颜色，设置项正文为 14px、常规字重；正文外侧内边距和两区间距统一为 24px，不再叠加子分区内边距。顶部 Settings 标题区保留分割线。
 
 - General：Theme 提供太阳、月亮、笔记本（LaptopMinimal）三个图标，对应 Light、Dark、System。默认 System，手动选择立即应用并保存在本机，多个已打开页面同步；System 随系统变化，手动 Light/Dark 保持固定。
-- Features：Clear history on startup and close 默认关闭，旁边问号通过 Tooltip 展示原清理范围与触发说明；错误直接显示在区域内。
+- Features：Clear History 默认关闭，旁边问号通过 Tooltip 展示原清理范围与触发说明；错误直接显示在区域内。
 
 [历史清理](./history-cleaner.md)模块独立持有配置与后台行为；Newtab 只展示设置区域，不需要保持页面打开。启用时申请浏览器清理权限，拒绝则保持关闭；开启操作本身不立即清理。
 

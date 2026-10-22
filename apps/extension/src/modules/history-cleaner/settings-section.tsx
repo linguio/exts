@@ -86,7 +86,7 @@ export function HistoryCleanerSettings() {
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-6">
         <div className="flex min-w-0 items-center gap-1">
-          <p id={`${id}-label`} className="text-sm font-normal">Clear history on startup and close</p>
+          <p id={`${id}-label`} className="text-sm font-normal">Clear History</p>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button type="button" variant="ghost" size="icon-sm" className="size-6 shrink-0 cursor-pointer text-muted-foreground" aria-label="About history cleanup">
