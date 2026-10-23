@@ -62,6 +62,26 @@ describe('媒体保存', () => {
     expect(menu.completed).toHaveBeenCalledExactlyOnceWith('saved.mp4');
   });
 
+  it('目录目标沿用流写入，使用实际避重文件名且不弹另存为', async () => {
+    const { menu, writable, dependencies } = setup();
+    const selectFile = vi.fn(async () => ({ name: 'TG_IMG (1).jpg', createWritable: async () => writable }));
+    await saveMedia(image, menu, { ...dependencies, selectFile });
+    expect(selectFile).toHaveBeenCalledWith(expect.stringMatching(/^TG_IMG_\d{8}_\d{6}\.jpg$/));
+    expect(dependencies.showSaveFilePicker).not.toHaveBeenCalled();
+    expect(menu.completed).toHaveBeenCalledExactlyOnceWith('TG_IMG (1).jpg');
+  });
+
+  it('目录授权失效时不请求媒体或自动弹另存为，并交给菜单恢复', async () => {
+    const { menu, dependencies } = setup();
+    const error = new DOMException('需要重新授权', 'NotAllowedError');
+    const onError = vi.fn();
+    await saveMedia(image, menu, { ...dependencies, selectFile: async () => { throw error; }, onError });
+    expect(dependencies.fetch).not.toHaveBeenCalled();
+    expect(dependencies.showSaveFilePicker).not.toHaveBeenCalled();
+    expect(menu.completed).not.toHaveBeenCalled();
+    expect(onError).toHaveBeenCalledExactlyOnceWith(error);
+  });
+
   it('分段响应按实际写入字节继续 Range 请求', async () => {
     const responses = [
       new Response(new Uint8Array([1, 2]), { status: 206, headers: { 'Content-Range': 'bytes 0-1/3' } }),

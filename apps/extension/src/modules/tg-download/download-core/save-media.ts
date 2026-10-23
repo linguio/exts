@@ -20,6 +20,8 @@ export interface SaveFileHandle {
 export interface SaveMediaDependencies {
   fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
   logger: Pick<Console, 'error'>;
+  selectFile?(suggestedName: string): Promise<SaveFileHandle>;
+  onError?(error: unknown): void;
   showSaveFilePicker?(options: { id: string; startIn: string; suggestedName: string }): Promise<SaveFileHandle>;
 }
 
@@ -38,18 +40,19 @@ function defaultDependencies(): SaveMediaDependencies {
   };
 }
 
-export async function saveMedia(media: DownloadableMedia, menu: DownloadMenuController, dependencies = defaultDependencies()): Promise<void> {
+export async function saveMedia(media: DownloadableMedia, menu: DownloadMenuController, overrides: Partial<SaveMediaDependencies> = {}): Promise<void> {
+  const dependencies = { ...defaultDependencies(), ...overrides };
   const src = media.currentSrc || media.src;
-  if (!src || !dependencies.showSaveFilePicker) { menu.close(); return; }
+  if (!src || (!dependencies.selectFile && !dependencies.showSaveFilePicker)) { menu.close(); return; }
 
   let writable: MediaWritable | undefined;
   let choosing = true;
   const suggestedName = createDownloadFilename(media.tagName);
   try {
-    // 文件选择器必须在当前用户手势内直接调用，确认路径后再取流。
-    const handle = await dependencies.showSaveFilePicker({
-      id: 'telegram-download', startIn: 'desktop', suggestedName,
-    });
+    // picker 或目录权限请求必须在当前用户手势内直接调用，确认目标后再取流。
+    const handle = await (dependencies.selectFile
+      ? dependencies.selectFile(suggestedName)
+      : dependencies.showSaveFilePicker!({ id: 'telegram-download', startIn: 'desktop', suggestedName }));
     menu.close();
     choosing = false;
     writable = await handle.createWritable();
@@ -71,5 +74,6 @@ export async function saveMedia(media: DownloadableMedia, menu: DownloadMenuCont
     catch (abortError) { dependencies.logger.error('TG Download 中止文件写入失败', abortError); }
     if (choosing && error && typeof error === 'object' && 'name' in error && error.name === 'AbortError') return;
     dependencies.logger.error('TG Download 下载失败', error);
+    dependencies.onError?.(error);
   }
 }

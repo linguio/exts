@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import { flushSync } from 'react-dom';
-import { Download } from 'lucide-react';
+import { Download, FolderOpen } from 'lucide-react';
 import { toast } from 'sonner';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../../../shared/ui/dropdown-menu';
 import { Button } from '../../../../shared/ui/button';
@@ -10,7 +10,11 @@ import type { DownloadMenuController } from '../../download-core/save-media';
 import { resolveTheme, type ThemePreference } from '../../../../shared/theme/preference';
 
 /** 菜单和完成提示隔离在同一 Shadow DOM，业务提示只在保存成功后触发。 */
-export function createDownloadMenu(document: Document, onSave: () => void) {
+export function createDownloadMenu(document: Document, actions: {
+  save(): void;
+  chooseDirectory(): void;
+  directoryAvailable: boolean;
+}) {
   const host = document.createElement('exts-telegram-download');
   host.style.cssText = 'all:initial;position:fixed;inset:0;pointer-events:none;z-index:2147483647';
   const shadow = host.attachShadow({ mode: 'open' });
@@ -23,6 +27,8 @@ export function createDownloadMenu(document: Document, onSave: () => void) {
   let busy = false;
   let x = 0;
   let y = 0;
+  let directoryReady = false;
+  let message = '';
   let preference: ThemePreference = 'system';
   const media = window.matchMedia('(prefers-color-scheme: dark)');
   const applyTheme = () => { host.dataset.theme = resolveTheme(preference, media.matches); };
@@ -34,9 +40,22 @@ export function createDownloadMenu(document: Document, onSave: () => void) {
       <DropdownMenuContent portalContainer={mount} sideOffset={0} align="start" className="pointer-events-auto w-max min-w-0" onCloseAutoFocus={event => event.preventDefault()}
         onPointerDownOutside={event => { if (event.detail.originalEvent.composedPath().includes(host)) event.preventDefault(); }}
         onFocusOutside={event => { if (event.detail.originalEvent.composedPath().includes(host)) event.preventDefault(); }}>
-        <DropdownMenuItem asChild disabled={busy} onSelect={event => { event.preventDefault(); if (busy) return; busy = true; render(); onSave(); }}>
-          <Button type="button" variant="ghost" disabled={busy} className="w-fit cursor-pointer justify-start"><Download className="size-4" />下载资源</Button>
-        </DropdownMenuItem>
+        {message && <div role="status" className="max-w-72 px-2 py-1.5 text-xs break-words text-muted-foreground">{message}</div>}
+        {[
+          { key: 'save', label: '下载资源', icon: Download, run: actions.save, disabled: !directoryReady },
+          { key: 'directory', label: '选择文件夹', icon: FolderOpen, run: actions.chooseDirectory, disabled: !directoryReady || !actions.directoryAvailable },
+        ].map(({ key, label, icon: Icon, run, disabled }) => (
+          <DropdownMenuItem key={key} asChild disabled={busy || disabled} onSelect={event => {
+            event.preventDefault();
+            if (busy || disabled) return;
+            busy = true;
+            message = '';
+            render();
+            run();
+          }}>
+            <Button type="button" variant="ghost" disabled={busy || disabled} className="w-full cursor-pointer justify-start"><Icon className="size-4" />{label}</Button>
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
     <Toaster id="tg-download" theme={resolveTheme(preference, media.matches)} position="top-right" className="toaster group pointer-events-auto" />
@@ -50,12 +69,16 @@ export function createDownloadMenu(document: Document, onSave: () => void) {
     busy(): boolean;
     disable(): void;
     theme(value: ThemePreference): void;
+    ready(warning?: string): void;
+    problem(message: string): void;
   } = {
     open(point) { x = point.x; y = point.y; open = true; render(); },
     close,
     busy: () => busy,
     disable: close,
     theme(value) { preference = value; applyTheme(); render(); },
+    ready(warning = '') { directoryReady = true; message = warning; render(); },
+    problem(value) { message = value; busy = false; open = true; render(); },
     completed(filename) { toast.success('下载完成', { description: filename, toasterId: 'tg-download' }); },
   };
   return controller;

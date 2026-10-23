@@ -13,7 +13,7 @@
 
 ## 逐项差异
 
-Telegram 下载菜单的下载项使用现有 DropdownMenuItem asChild 与 Button ghost 组合，保留菜单语义、按钮 hover 与禁用反馈；按用户要求仅在该下载按钮增加 cursor-pointer，不改变共用组件默认指针或状态。Shadow DOM 内的共用主题属性使用 :host(...) 选择器，不另建菜单配色。
+Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMenuItem asChild 与 Button ghost 组合，保留菜单语义、按钮 hover 与禁用反馈；各操作按钮沿用已有 cursor-pointer，不改变共用组件默认指针或状态。Shadow DOM 内的共用主题属性使用 :host(...) 选择器，不另建菜单配色。
 
 | 应用与组件 | 保留的官方基础 | 项目必要差异 |
 | --- | --- | --- |

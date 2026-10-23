@@ -8,7 +8,7 @@ Exts 是面向 Chrome 和 Edge 的浏览器扩展，按独立功能组织模块�
 | --- | --- | --- |
 | [Newtab](./newtab.md) | 已实现 | 新标签页书签、文件夹、Dock、工具入口与 Settings 面板 |
 | [历史清理](./history-cleaner.md) | 已实现 | 默认关闭，在 Settings 开启后于启动和最后窗口关闭时清空访问历史 |
-| [Telegram Download](./telegram-download.md) | 已实现 | 默认开启的 Telegram Web 图片/视频另存为下载，仅完成时显示折叠 Toast |
+| [Telegram Download](./telegram-download.md) | 已实现 | 默认开启的 Telegram Web 图片/视频下载，支持快速保存和选择文件夹，仅完成时显示折叠 Toast |
 
 ## 文档入口
 
