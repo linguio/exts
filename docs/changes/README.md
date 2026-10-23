@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [动态居中 Newtab 上半区并统一文件夹行距](./issues/2026-10-23-extension-newtab-content-centering-issue.md) · [Commit 记录](./commits/2026-10-23-extension-newtab-content-centering-commit.md)；用户明确批准本地 commit 并完结；动态宽度与整体居中、名称上下各 8px 和单行行高 16px（预览框间总共 32px）、48px Dock 分割线及说明已实现；48 项测试与类型检查此前通过，最终样式已重新构建通过，代理未独立执行浏览器验收，提交时不追加验证，不推送。
+
 - [增加 Workout 打卡切换](./issues/2026-10-22-extension-workout-check-in-issue.md) · [Commit 记录](./commits/2026-10-22-extension-workout-check-in-commit.md)；用户明确批准本地提交并完结；双类型切换与独立模拟数据已实现，Workout 分钟数按最新批准打散，48 项测试、类型检查和生产构建通过，代理未执行浏览器视觉与交互验收，提交时不追加验证，不推送。
 
 - [更新官网 Extension 内容并设置 1.4.0 版本](./issues/2026-10-22-website-extension-1-4-0-issue.md) · [Commit 记录](./commits/2026-10-22-website-extension-1-4-0-commit.md)；用户批准本地提交；官网内容、首页卡片 Dock、历史日期、日志链接规则与根版本已更新，官网逻辑测试、类型检查及构建此前通过；1.4.0 扩展附件需后续 Release 发布，不推送或部署。

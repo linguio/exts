@@ -30,7 +30,7 @@ export function BookmarkDock({ favorites, components, onOpenBookmark }: Bookmark
             </Tooltip>
           ))}
         </div>
-        <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-16" aria-hidden="true" />
+        <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-12" aria-hidden="true" />
         <div className="bookmark-dock__tools flex shrink-0 flex-nowrap gap-2">
           <div className="bookmark-dock__group relative flex">
             <DockToolMenu group={components} onOpenBookmark={onOpenBookmark} />

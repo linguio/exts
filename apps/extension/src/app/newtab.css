@@ -11,13 +11,43 @@
   padding: 1.5rem;
 }
 
+.newtab-content-viewport {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .newtab-content {
   display: grid;
+  justify-self: center;
+  width: 100%;
   grid-template-columns: minmax(0, 1fr) var(--newtab-cards-width);
   gap: var(--newtab-gap);
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+}
+
+.newtab-bookmarks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  column-gap: var(--newtab-gap);
+  row-gap: 8px;
+}
+
+/* 预览框之间共 32px：名称前 8px、单行 16px、下一行前 8px。 */
+.newtab-bookmarks > .bookmark-folder {
+  flex: none;
+  width: var(--size-bookmark-folder);
+  gap: 8px;
+}
+
+.newtab-bookmarks > .bookmark-folder > .bookmark-folder__name {
+  height: 16px;
+  line-height: 16px;
 }
 
 /* 保留原生滚动，仅隐藏滚动条；溢出不能传递到页面或相邻区域。 */
