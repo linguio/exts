@@ -73,3 +73,4 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 - 本地 src/shared/ui/sonner.tsx 保留官方图标、主题 Token 与 props 透传；Vite 客户端去除 use client 和 Next.js 专属 next-themes，主题改由调用方使用现有主题解析结果传入，不新增主题系统。
 - TG 在自身 Shadow DOM 中挂载 Toaster，并导入 sonner/dist/styles.css；原页面中的官方默认 CSS 注入行为不修改。堆叠、折叠、关闭时长和交互沿用 Sonner 默认。TG 使用默认 success 类型和文件名描述，不自写关闭计时或通知队列。
 - 共用组件只负责展示；实际完成判断、文案、文件名和调用时机仍在 TG 模块中。
+- 2026-10-24 按用户反馈在共用 Toaster 显式设置默认 bottom-right，TG 去除 top-right 覆盖，与 Newtab 提示共用位置规则；不同页面分别挂载，不增加跨页提示中心或业务管理层。

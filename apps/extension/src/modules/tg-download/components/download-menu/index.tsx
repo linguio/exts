@@ -58,7 +58,7 @@ export function createDownloadMenu(document: Document, actions: {
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-    <Toaster id="tg-download" theme={resolveTheme(preference, media.matches)} position="top-right" className="toaster group pointer-events-auto" />
+    <Toaster id="tg-download" theme={resolveTheme(preference, media.matches)} className="toaster group pointer-events-auto" />
   </>));
   const close = () => { open = false; busy = false; render(); };
   applyTheme();
