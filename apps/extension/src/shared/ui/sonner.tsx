@@ -38,3 +38,4 @@ const Toaster = ({ theme = "system", ...props }: ToasterProps) => {
 }
 
 export { Toaster }
+export { toast } from "sonner"

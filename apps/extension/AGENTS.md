@@ -19,6 +19,8 @@
 - 官网与扩展全部 Web UI 的选型、来源和风格维护原则遵循根 [AGENTS.md](../../AGENTS.md#web-ui-选型与风格)，不维护组件白名单。
 - `src/shared/ui/` 持有通用组件，不包含书签、Dock、Chrome API 或模块状态；各功能在自己的 `src/modules/<功能>/` 中组合，Newtab 也遵循此边界。
 - 扩展主题由 `src/shared/theme/` 解析 Light/Dark/System，默认跟随系统；实际明暗通过根 `data-theme` 应用，Portal 继承根 Token，不直接依赖 `.dark` 类。偏好保存、同步与首屏初始化不得放进通用 UI。官方源码接入和必要差异见 [Web UI 来源](../../docs/web-ui-sources.md)。
+- 临时提示统一从 `src/shared/ui/sonner.tsx` 导入 Toaster 与 toast，复用 shadcn Sonner 和 Lucide 成功/信息/警告/错误图标，使用图标加提示语、各自页面右下角位置和统一主题；不增加文件名副标题、模块独立配色或位置覆盖。TG 与后续 X 均遵守，业务只负责等级、文案与触发，不建立跨页面通知管理。等级规则见扩展 UI 规范。
+- Download 与 Settings 复用共用 Sheet 的右侧默认 420px 宽度，最大不超过视口；调用方不重复维护同用途宽度，其余方向保持既有布局。
 - 应用根只创建一个 `TooltipProvider`。Tooltip 只提供简短名称或帮助说明，不含可交互内容；菜单或 Sheet 打开时其入口不得残留 Tooltip，Sheet 内的主题名称和帮助提示可正常显示。
 - Tooltip、菜单、Sheet、Button 与链接通过 `asChild` 等方式共享唯一真实交互元素，禁止嵌套交互控件。
 
@@ -42,7 +44,7 @@
 ## Telegram Download 与记录边界
 
 - `src/modules/tg-download/` 只处理 Telegram Web 下载，默认开启；内部按业务组件、设置视图、download-core 和页面接入划分职责。配置关闭立即禁止新下载，正在写入的任务继续。
-- 不提供 Popup；完成 Toast 使用 shared/ui 中的官方 Sonner 样式组件，文案与触发由 TG 模块负责。只在文件关闭成功后显示“下载完成”和文件名；不提示开始、进度、失败或取消，不修改现有文件名生成规则。
+- 不提供 Popup；完成 Toast 使用 shared/ui 中的官方 Sonner 样式组件，文案与触发由 TG 模块负责。只在文件关闭成功后显示成功图标与“下载完成”，不附加文件名描述；实际文件名保留在下载记录。不提示开始、进度、失败或取消，不修改现有文件名生成规则。
 - 文件关闭成功后，TG 页面仅把实际文件名和字节数通过隔离脚本交给独立 modules/downloads 后台模块；记录模块复用 shared/storage，持有 downloads 顶层对象、来源校验和按筛选清空，Newtab 只读取与展示。记录错误不改变已保存文件或成功 Toast，不传媒体流、目录句柄或真实磁盘路径。X 下载与 Desktop 通信尚未接入，文件夹入口仅提示未接入。
 - 保留 MAIN world 页面取流；目录选择与权限请求在用户手势内直接调用。菜单仅提供“下载资源”和“选择文件夹”：首次下载选择并记住目录后继续保存，后续直接保存；第二项只更换目录。不限定目录名称、不创建固定子目录。句柄留在 Telegram 同来源 IndexedDB，同名递增避重；目录 API 不可用时快速保存降级为系统另存为。不把媒体流交给 desktop。统一主题 Token 位于 `src/styles/theme.css`，网页菜单与扩展页面共用。
 

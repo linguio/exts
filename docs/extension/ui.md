@@ -61,7 +61,7 @@
 
 - 通用 `Button` 保留官方 variant 与常见状态；普通 ghost 反馈不变。Dock 工具按钮复用 `variant="entry" size="entry"` 透明外壳，实际反馈由内部 `entry-surface` 承担，不在调用方复制同套参数。
 - EDU 保留默认模糊和点击解除逻辑，Hover 背景不变、指针为手形；其 hover 背景引用同一个 `overlay` Token，覆盖 ghost 默认背景变化。
-- Settings 与 Download 使用右侧 Sheet：宽 560px、最大不超过屏幕，Header 高 56px，均显示对应 Lucide 图标与标题，关闭按钮提示为 `Close`。Download 正文留空；Settings 正文包含 General 和 Features 两区，分区标题为 12px／font-medium／text-muted-foreground，设置项正文为 14px／font-normal。Settings 正文父容器统一设置 24px 内边距及 24px 分区间距，子分区不叠加外侧内边距；两区之间不用 Separator，不叠加 Browsing history 标题；两个 Header 下方均保留分割线。
+- Settings 与 Download 使用右侧 Sheet：共用组件统一维护默认宽 420px、最大不超过屏幕，调用方不重复写宽度。Header 高 56px，均显示对应 Lucide 图标与标题，关闭按钮提示为 `Close`。Download 正文展示下载记录；Settings 正文包含 General 和 Features 两区，分区标题为 12px／font-medium／text-muted-foreground，设置项正文为 14px／font-normal。Settings 正文父容器统一设置 24px 内边距及 24px 分区间距，子分区不叠加外侧内边距；两区之间不用 Separator，不叠加 Browsing history 标题；两个 Header 下方均保留分割线。
 - General 的 Theme 行使用官方 ToggleGroup 单选组合，Light/Dark/System 分别用太阳、月亮、笔记本（LaptopMinimal）图标，默认 System；图标不带可见文字，使用可访问名称与现有 Tooltip 提示名称，始终保留一个选项。控件的主题状态不进入 shared/ui。
 - ToggleGroup 单选项以 `aria-checked` 显示激活状态，选中背景使用官方 accent、图标使用 accent-foreground，不增加高反差主色选中块。Tooltip 组合也使用 data-state，因此不得仅凭该属性表达单选反馈；选择判断仍由官方控件负责。
 - 共用 `Switch` 可操作时显示手形指针，禁用时显示禁止指针；在组件内统一维护，不在设置调用方重复指定。
@@ -97,6 +97,17 @@ Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Do
 
 ## 临时 Toast 提示
 
-扩展各模块复用 src/shared/ui/sonner.tsx 的官方展示组件和主题，不分别手写提示框、关闭定时器或折叠逻辑。挂载位置由使用方对应的页面/Shadow DOM 决定；业务模块持有文案、完成条件等状态，不在共用 UI 中加入 Chrome API、下载记录或跨页面通知管理。多条提示沿用 Sonner 默认折叠堆叠与关闭行为。
+扩展各模块统一从 src/shared/ui/sonner.tsx 导入 Toaster 和原生 toast API，复用 shadcn 官方 Sonner 展示组件、Lucide 图标和现有主题。通用组件维护各自页面视口右下角位置、图标映射和外观；业务不覆盖位置、图标或品牌配色，不分别手写提示框、关闭定时器或折叠逻辑。TG、Newtab 和后续 X 使用同一套规则。
 
-TG 下载仅在文件流关闭成功后调用完成提示，标题“下载完成”，描述为实际保存文件名；开始、进行中、取消和失败不显示 Toast。
+提示采用“等级图标 + 提示语”，不增加第二层 description。内容使用现有主题文字与背景，通过图标区分等级，不启用彩色 richColors。长文案可自然换行，不为单行展示裁掉重要反馈。
+
+| 类型 | 调用方式 | Lucide 图标 | 适用场景 |
+| --- | --- | --- | --- |
+| 成功 | toast.success | CircleCheck | 操作已成功完成，例如下载完成 |
+| 信息 | toast.info | Info | 普通状态说明，例如尚未接入 Desktop |
+| 警告 | toast.warning | TriangleAlert | 需要用户留意或处理的状态；不因此新增当前模块的触发条件 |
+| 错误 | toast.error | OctagonX | 已触发操作失败，例如下载记录清空失败 |
+
+业务模块持有文案、等级、完成条件等状态；不在共用 UI 中加入 Chrome API、下载记录、跨页面通知管理或重复消息包装器。不同页面/Shadow DOM 各自挂载 Toaster，多条提示沿用 Sonner 默认折叠堆叠与关闭行为，互不转发。
+
+TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标和“下载完成”，不再描述文件名；文件名保留在 Download 记录。开始、进行中、取消和失败不显示 Toast。后续 X 必须复用同一组件和位置，实际触发条件由其独立 Issue 决定，不代表本次已接入。

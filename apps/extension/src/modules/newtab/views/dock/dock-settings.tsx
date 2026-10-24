@@ -36,7 +36,7 @@ export function DockSettings() {
         </TooltipTrigger>
         <TooltipContent side="top" align="center" sideOffset={12}>Settings</TooltipContent>
       </Tooltip>
-      <SheetContent aria-describedby={undefined} className="w-[560px] sm:max-w-full" onOpenAutoFocus={(event) => {
+      <SheetContent aria-describedby={undefined} onOpenAutoFocus={(event) => {
         // 打开时先聚焦标题，避免自动聚焦主题按钮触发提示。
         event.preventDefault();
         titleRef.current?.focus();

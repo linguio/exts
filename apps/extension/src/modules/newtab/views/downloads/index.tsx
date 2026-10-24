@@ -1,5 +1,4 @@
 import { useEffect, useState, useSyncExternalStore, type ReactElement } from 'react';
-import { toast } from 'sonner';
 import 'sonner/dist/styles.css';
 
 import { clearDownloads, getDownloads, subscribeDownloads } from '../../../downloads';
@@ -9,7 +8,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Button } from '../../../../shared/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '../../../../shared/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
-import { Toaster } from '../../../../shared/ui/sonner';
+import { Toaster, toast } from '../../../../shared/ui/sonner';
 import { UiIcon } from '../../../../shared/ui/ui-icon';
 import { BookmarkIcon } from '../../components/bookmark-icon';
 import { DownloadRecordRow } from './download-record';
@@ -84,7 +83,7 @@ export function DownloadsPanel() {
         </ToggleGroup>
         <div className="flex items-center gap-1">
           <NamedTooltip label={`打开 ${folders[filter]} 文件夹`} suppressed={confirmOpen}>
-            <Button type="button" variant="ghost" size="icon-sm" aria-label={`打开 ${folders[filter]} 文件夹`} onClick={() => toast('暂无法打开文件夹，尚未接入 Exts Desktop')}>
+            <Button type="button" variant="ghost" size="icon-sm" aria-label={`打开 ${folders[filter]} 文件夹`} onClick={() => toast.info('暂无法打开文件夹，尚未接入 Exts Desktop')}>
               <UiIcon name="folder-open" className="size-4" />
             </Button>
           </NamedTooltip>

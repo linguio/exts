@@ -24,7 +24,7 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 | 扩展 Tooltip | 官方 Provider、Root、Trigger、Portal、Content 与 data-slot | 保留 400ms、popover 配色、边框、阴影和内边距；按用户确认默认间距 4px，Dock 在调用方显式保留 12px；无箭头，无新增动画 |
 | 扩展 DropdownMenu | 官方 Root、Trigger、Portal、Content、Item；保留可用高度限制与纵向滚动、Item 通用状态 | 只导出当前需要的四项；保留 12px 间距、8px 碰撞边距、160px 最小宽、36px 菜单项、字重、highlighted 状态和浮层阴影；不加入未安装的动画工具类 |
 | 扩展 Separator | 官方 data-orientation、decorative 与颜色语义 | 无结构差异；Dock 调用方通过同一方向 variant 保持 64px 高度，避免普通 h-16 被方向选择器覆盖 |
-| 扩展 Sheet | 官方 Root、Trigger、Close、Portal、Overlay、Content、Header/Footer、Title/Description 组合及属性 | 保留主题模糊遮罩与层级、浮层阴影、无额外内容间距；关闭按钮复用 Button 和 UiIcon；现有右侧 CSS 动画 200/160ms。560px 宽度、可访问描述省略与焦点恢复提示抑制由 Settings 调用方指定 |
+| 扩展 Sheet | 官方 Root、Trigger、Close、Portal、Overlay、Content、Header/Footer、Title/Description 组合及属性 | 保留主题模糊遮罩与层级、浮层阴影、无额外内容间距；关闭按钮复用 Button 和 UiIcon；现有右侧 CSS 动画 200/160ms。2026-10-24 按用户批准在共用组件维护右侧默认 420px、最大视口宽度；Download/Settings 不再覆盖宽度，可访问描述省略与焦点恢复提示抑制仍由调用方持有 |
 | 扩展 Toggle/ToggleGroup | 官方 Toggle CVA、Radix Root/Item、上下文传递 variant/size/spacing 与单选接口 | 适配本地 cn/toggle 路径；移除 .dark 配色分支，采用既有主题 Token、2px outline 焦点、手形和 border 边框；单选激活通过 aria-checked 使用官方 accent/accent-foreground，避免 Tooltip 覆盖 data-state，不额外增加高反差背景或更改圆角。主题行指定 outline、sm、spacing=0、图标项宽 36px。空选忽略、主题保存与同步由业务/共用主题层处理 |
 
 扩展实际深色通过根 `data-theme` 覆盖原有 Token，System 模式才跟随系统媒体查询，不依赖 `.dark`。接入源码时移除依赖 `.dark` 的配色分支，以主题 Token 表达对应状态；减少动态效果继续由现有全局规则处理。仓库未安装动画工具类插件，因此不引入无法生效的动画类或新依赖。Sheet 当前仅使用右侧入口，其余方向保留官方定位接口，不增加未批准的新交互。
@@ -71,9 +71,10 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 
 - 官方源码沿用本文固定 commit 的 new-york-v4/ui/sonner.tsx；运行时依赖精确固定为 sonner 2.0.8，锁文件同步，仅新增该包。
 - 本地 src/shared/ui/sonner.tsx 保留官方图标、主题 Token 与 props 透传；Vite 客户端去除 use client 和 Next.js 专属 next-themes，主题改由调用方使用现有主题解析结果传入，不新增主题系统。
-- TG 在自身 Shadow DOM 中挂载 Toaster，并导入 sonner/dist/styles.css；原页面中的官方默认 CSS 注入行为不修改。堆叠、折叠、关闭时长和交互沿用 Sonner 默认。TG 使用默认 success 类型和文件名描述，不自写关闭计时或通知队列。
+- TG 在自身 Shadow DOM 中挂载 Toaster，并导入 sonner/dist/styles.css；原页面中的官方默认 CSS 注入行为不修改。堆叠、折叠、关闭时长和交互沿用 Sonner 默认。TG 使用默认 success 类型，不自写关闭计时或通知队列；2026-10-24 按用户确认移除文件名 description，仅保留等级图标及“下载完成”。
 - 共用组件只负责展示；实际完成判断、文案、文件名和调用时机仍在 TG 模块中。
 - 2026-10-24 按用户反馈在共用 Toaster 显式设置默认 bottom-right，TG 去除 top-right 覆盖，与 Newtab 提示共用位置规则；不同页面分别挂载，不增加跨页提示中心或业务管理层。
+- 2026-10-24 统一通过 shared/ui/sonner.tsx 导出既有 toast API，TG 与 Download 均从该入口导入；沿用官方 success/info/warning/error 和现有 Lucide 映射，不添加消息管理封装或彩色状态覆盖。业务仅选择等级与提示语；当前文件夹提示改用 info，以展示既有信息图标。后续 X 遵守同一规则，不在本期接入。
 
 ## 扩展 Alert Dialog 与 Download（2026-10-24）
 

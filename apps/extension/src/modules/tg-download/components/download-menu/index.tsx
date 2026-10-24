@@ -1,10 +1,9 @@
 import { createRoot } from 'react-dom/client';
 import { flushSync } from 'react-dom';
 import { Download, FolderOpen } from 'lucide-react';
-import { toast } from 'sonner';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../../../shared/ui/dropdown-menu';
 import { Button } from '../../../../shared/ui/button';
-import { Toaster } from '../../../../shared/ui/sonner';
+import { Toaster, toast } from '../../../../shared/ui/sonner';
 import styles from './style.css?inline';
 import type { DownloadMenuController } from '../../download-core/save-media';
 import { resolveTheme, type ThemePreference } from '../../../../shared/theme/preference';
@@ -79,7 +78,7 @@ export function createDownloadMenu(document: Document, actions: {
     theme(value) { preference = value; applyTheme(); render(); },
     ready(warning = '') { directoryReady = true; message = warning; render(); },
     problem(value) { message = value; busy = false; open = true; render(); },
-    completed(filename) { toast.success('下载完成', { description: filename, toasterId: 'tg-download' }); },
+    completed() { toast.success('下载完成', { toasterId: 'tg-download' }); },
   };
   return controller;
 }

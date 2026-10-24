@@ -61,7 +61,7 @@ function SheetContent({
         className={cn(
           "fixed z-50 flex max-w-full flex-col border-border bg-background text-foreground shadow-[var(--shadow-floating)] outline-none",
           side === "right" &&
-            "sheet-content inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm",
+            "sheet-content inset-y-0 right-0 h-full w-[420px] border-l",
           side === "left" &&
             "inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm",
           side === "top" &&

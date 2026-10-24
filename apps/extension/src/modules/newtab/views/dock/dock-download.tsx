@@ -34,7 +34,7 @@ export function DockDownload() {
         </TooltipTrigger>
         <TooltipContent side="top" align="center" sideOffset={12}>Download</TooltipContent>
       </Tooltip>
-      <SheetContent aria-describedby={undefined} className="w-[560px] sm:max-w-full" onOpenAutoFocus={(event) => {
+      <SheetContent aria-describedby={undefined} onOpenAutoFocus={(event) => {
         event.preventDefault();
         titleRef.current?.focus();
       }} onCloseAutoFocus={sheetTooltip.onCloseAutoFocus}>
