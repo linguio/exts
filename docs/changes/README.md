@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [添加 shadcn 网站书签](./issues/2026-10-24-extension-shadcn-bookmarks-issue.md) · [Commit 记录](./commits/2026-10-24-extension-shadcn-bookmarks-commit.md)；用户明确批准本地提交并完结；DevOps 首位添加 shadcn/ui、Components 第二位添加 shadcn.io，接入用户提供的 SVG；74 项测试、类型检查与生产构建此前通过，浏览器效果未验证，提交时不追加验证，不推送。
+
 - [统一提示组件与抽屉宽度](./issues/2026-10-24-extension-shared-feedback-sheet-issue.md) · [Commit 记录](./commits/2026-10-24-extension-shared-feedback-sheet-commit.md)；用户明确批准本地提交并完结；共用 Sonner 入口与四级图标规范、TG 简化提示及共用 Sheet 420px 宽度已交付；74 项测试、类型检查此前通过，最终宽度生产构建通过，浏览器视觉与交互未由代理验收，提交时不追加验证，不推送。
 
 - [展示 Download 下载记录](./issues/2026-10-24-extension-download-panel-design-issue.md) · [Commit 记录](./commits/2026-10-24-extension-download-panel-design-commit.md)；用户明确批准按提示位置、Download 功能两笔本地提交完结；TG 成功记录、紧凑列表、图标筛选与清空确认已实现，提示统一右下角、空状态居中；文件夹仅提示未接入，Desktop/X 下载未接入；74 项测试、类型检查和生产构建此前通过，代理未执行浏览器与真实文件验收，提交时不追加验证，不推送。

@@ -32,6 +32,7 @@ test('Grid 书签配置提供 EDU 和 AI 文件夹', () => {
         id: 'devops',
         name: 'DevOps',
         items: [
+          { id: 'shadcnui', name: 'shadcn/ui', url: 'https://ui.shadcn.com/', icon: 'brand/shadcnui.svg', iconTone: 'adaptive' },
           { id: 'namecheap', name: 'Namecheap', url: 'https://www.namecheap.com', icon: 'brand/namecheap.svg', iconTone: 'adaptive' },
           { id: 'vercel', name: 'Vercel', url: 'https://vercel.com', icon: 'brand/vercel.svg', iconTone: 'adaptive' },
           { id: 'npm', name: 'npm', url: 'https://www.npmjs.com/', icon: 'brand/npm.svg', iconTone: 'adaptive' },
@@ -79,6 +80,7 @@ test('Components 聚合入口保持当前组件工具顺序', () => {
     icon: { kind: 'ui', name: 'blocks' },
     bookmarks: [
       { type: 'bookmark', id: 'lucide', name: 'Lucide', url: 'https://lucide.dev', icon: 'tools/lucide.svg' },
+      { type: 'bookmark', id: 'shadcnio', name: 'shadcn.io', url: 'https://www.shadcn.io/', icon: 'brand/shadcnio.svg' },
       { type: 'bookmark', id: 'iconfont', name: 'Iconfont', url: 'https://www.iconfont.cn', icon: 'tools/iconfont.svg' },
       { type: 'bookmark', id: 'antd', name: 'Ant Design', url: 'https://ant.design', icon: 'tools/antd.svg' },
       { type: 'bookmark', id: 'element-ui', name: 'Element UI', url: 'https://element.eleme.io', icon: 'tools/element-ui.svg' },
