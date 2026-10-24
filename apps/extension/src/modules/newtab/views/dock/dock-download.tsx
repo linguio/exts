@@ -6,8 +6,9 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../../../../share
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
 import { UiIcon } from '../../../../shared/ui/ui-icon';
 import { useDockSheetTooltip } from './use-dock-sheet-tooltip';
+import { DownloadsPanel } from '../downloads';
 
-/** Dock 下载入口与空抽屉。 */
+/** Dock 仅组合下载入口、抽屉外壳和独立记录视图。 */
 export function DockDownload() {
   const sheetTooltip = useDockSheetTooltip();
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -42,6 +43,7 @@ export function DockDownload() {
           <SheetTitle ref={titleRef} tabIndex={-1} className="text-lg font-semibold">Download</SheetTitle>
         </header>
         <Separator />
+        <DownloadsPanel />
       </SheetContent>
     </Sheet>
   );

@@ -6,7 +6,7 @@ Telegram Web 图片、视频右键下载，模块位于 apps/extension/src/modul
 
 - components/download-menu：复用官方 DropdownMenuItem asChild 与 Button ghost，菜单只有“下载资源”和“选择文件夹”，无常驻目录或帮助说明；必要错误时显示恢复文字。
 - download-core：媒体保存、Range 写入、文件名、目录目标与 IndexedDB 句柄存储。平台下载逻辑与文件选择都留在 TG 模块。
-- page：媒体识别、页面注册、开关/主题接入；没有下载记录或后台任务上报。
+- page：媒体识别、页面注册、开关/主题接入；文件关闭成功后上报实际文件名和写入字节数，由隔离脚本校验后交给独立 downloads 后台，不上报进行中任务。
 - views/settings 与 settings.ts：默认开启，配置保存在 storage.local 的 `settings.telegramDownload.enabled`。关闭立即阻止新下载，正在写入的任务继续；Newtab 只组合功能开关。
 
 仅注入 https://web.telegram.org/*，保留 Telegram Web K 的 .media-viewer-mover 识别边界。开关与主题由隔离环境发布，扩展重载后旧页面入口停用，刷新恢复；不承诺关闭 Telegram 页面后下载继续。
@@ -26,7 +26,7 @@ Telegram Web 图片、视频右键下载，模块位于 apps/extension/src/modul
 
 图片/视频按响应流写入，分段响应继续 Range 请求。只有 writable.close() 成功后显示“下载完成”与实际文件名；开始、进度、失败、取消不弹 Toast。失败时中止写入并记录日志，目录错误只通过菜单提供恢复说明。
 
-完成提示复用 shared/ui/sonner 的共用右下角默认位置，TG 不单独覆盖；多个提示沿用官方折叠行为，不维护全局通知或下载记录层。Popup、公共 downloads 与历史消息不在当前功能范围，不清理旧记录存储。
+完成提示复用 shared/ui/sonner 的共用右下角默认位置，TG 不单独覆盖；多个提示沿用官方折叠行为，不维护全局通知管理。成功记录由独立 modules/downloads 管理，使用 storage.local.downloads.tg.records，并在 Newtab Download 展示；失败或取消不写成功记录。桥接和记录失败只记录错误，不把已成功保存的文件误报为下载失败，不重复弹 Newtab 成功提示。没有 Popup，也不接入 Desktop 或 X 下载。
 
 ## 用户验收
 

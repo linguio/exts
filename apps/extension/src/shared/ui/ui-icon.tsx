@@ -1,4 +1,4 @@
-import { Blocks, CircleQuestionMark, Download, LaptopMinimal, Lock, LockOpen, Moon, Settings, Sun, X, type LucideIcon } from 'lucide-react';
+import { Blocks, CircleQuestionMark, Download, FolderOpen, LaptopMinimal, List, Lock, LockOpen, Moon, Settings, Sun, Trash2, X, type LucideIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
 
 import type { UiIconName } from './types';
@@ -15,6 +15,9 @@ const uiIconMap: Record<UiIconName, LucideIcon> = {
   sun: Sun,
   moon: Moon,
   'laptop-minimal': LaptopMinimal,
+  list: List,
+  'folder-open': FolderOpen,
+  'trash-2': Trash2,
 };
 
 interface UiIconProps extends Omit<ComponentProps<'svg'>, 'name'> {

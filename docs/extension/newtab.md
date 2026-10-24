@@ -22,7 +22,19 @@ Dock 按内容宽度在底部居中，最大不超过底部可用宽度；撑满
 
 底部收藏入口依次为 X、GitHub、Exts、Gmail，直接打开对应网站；ChatGPT 位于 AI 文件夹。Exts 使用已有的完整正式圆角 Logo，保留黑底白色主体，不随页面主题反色。
 
-Components 提供工具菜单；原 DevTools 位置为 Download，点击后打开正文为空的右侧抽屉。Download 与 Settings 抽屉的标题区均为对应图标加标题；入口悬停或键盘聚焦时显示名称提示，抽屉打开时提示收起。
+Components 提供工具菜单；原 DevTools 位置为 Download，点击后打开下载记录右侧抽屉。Download 与 Settings 抽屉的标题区均为对应图标加标题；入口悬停或键盘聚焦时显示名称提示，抽屉打开时提示收起。
+
+## Download 记录
+
+- 抽屉保留 560px 宽度。左侧为全部列表图标、TG/X 品牌图标单选筛选，默认全部，按完成时间倒序；右侧依次为文件夹、清空图标，按钮 32px、图标 16px、间距 4px。图标名称使用现有 Tooltip。
+- 记录行高 40px，左侧为实际保存文件名，右侧大小，不展示角标、缩略图、重复时间或单条删除。TG 默认文件名已有 TG_ 前缀；X_ 是后续 X 下载的命名约定，不伪造尚未接入的记录。
+- 长名称单行省略并保留来源前缀与扩展名，仅省略时通过 Tooltip 展示完整名称。大小缺失显示 0 MB。空列表在工具栏下方可用区域水平、垂直居中显示“暂无下载记录”；空筛选禁用清空，文件夹保持可用。临时提示沿用共用 Toaster 的视口右下角位置。
+- 清空跟随当前全部/TG/X 筛选。官方 Alert Dialog 在整个页面居中，说明仅清记录、不删文件；取消或清空后保留 Download 抽屉，保存失败保留记录并由 Sonner 报错。
+- 文件夹入口按筛选对应 Exts Downloads、Telegram、X 预设目录；当前尚未接入 Desktop，点击通过 Sonner 提示“暂无法打开文件夹，尚未接入 Exts Desktop”，不检查目录、不打开 Finder、不创建目录。
+- modules/downloads 复用公共 storage 工具，数据位于 storage.local.downloads 的 tg.records、x.records。后台串行写入，Newtab 订阅变化，关闭 Newtab 不影响 TG 保存记录。尚未设置自动淘汰上限；存储失败不会改动原记录或已下载文件。
+- 首轮只接 TG 文件关闭成功后的记录，失败和取消不记成功；成功 Toast 继续显示在 Telegram 页面，Newtab 不重复提示。X 筛选保留但下载尚未接入。
+
+用户验收：重新加载 dist/build/chrome-mv3，刷新 Telegram Web 后成功保存图片或视频，打开 Download 检查实际名称、大小、倒序和刷新持久化；在另一个 Newtab 同时观察记录更新。分别切换全部/TG/X，检查 X 空状态、取消清空保持记录、确认清空只影响筛选范围且本地文件仍在。取消或使文件保存失败不得新增成功记录。检查截断 Tooltip、明暗主题和页面居中确认框；文件夹在有无记录时均显示未接入提示。
 
 ## 右侧卡片
 

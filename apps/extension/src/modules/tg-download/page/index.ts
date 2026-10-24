@@ -1,7 +1,7 @@
 import { createDownloadMenu } from '../components/download-menu/index';
 import { findMediaAt, canOpenDownloadMenu } from './media-target';
 import { saveMedia, type DownloadableMedia } from '../download-core/save-media';
-import { TELEGRAM_CONFIG_EVENT, TELEGRAM_READY_EVENT } from './events';
+import { TELEGRAM_CONFIG_EVENT, TELEGRAM_READY_EVENT, TELEGRAM_SAVED_EVENT } from './events';
 import { createDirectoryTarget } from '../download-core/directory-target';
 import { normalizeTheme } from '../../../shared/theme/preference';
 
@@ -13,7 +13,9 @@ export function registerTelegramDownloadPage() {
     if (!enabled || !selected) { menu.close(); return; }
     const media = selected;
     // 直接进入 picker 或缓存句柄的权限请求，不先等待 IndexedDB。
-    void saveMedia(media, menu, directory.available ? {
+    void saveMedia(media, menu, {
+      onSaved: record => window.dispatchEvent(new CustomEvent(TELEGRAM_SAVED_EVENT, { detail: JSON.stringify(record) })),
+      ...(directory.available ? {
       selectFile: filename => directory.openFile(filename),
       onError(error) {
         if (!enabled || selected !== media) return;
@@ -25,7 +27,8 @@ export function registerTelegramDownloadPage() {
             : '保存失败，请检查文件夹和磁盘空间，或重新选择文件夹。';
         menu.problem(message);
       },
-    } : {});
+      } : {}),
+    });
   };
   const menu = createDownloadMenu(document, {
     directoryAvailable: directory.available,

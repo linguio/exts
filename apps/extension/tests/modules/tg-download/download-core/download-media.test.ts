@@ -16,6 +16,23 @@ const image = { tagName: 'IMG', currentSrc: '', src: 'blob:test' };
 const video = { tagName: 'VIDEO', currentSrc: '', src: 'https://web.telegram.org/stream/test' };
 
 describe('媒体保存', () => {
+  it('文件关闭成功后上报实际名称与写入字节数，记录错误不影响成功提示', async () => {
+    const onSaved = vi.fn(() => { throw new Error('记录失败'); });
+    const { menu, dependencies } = setup();
+    await saveMedia(image, menu, { ...dependencies, onSaved });
+    expect(onSaved).toHaveBeenCalledExactlyOnceWith({ filename: 'saved.mp4', sizeBytes: 2 });
+    expect(menu.completed).toHaveBeenCalledExactlyOnceWith('saved.mp4');
+  });
+
+  it('文件关闭失败不报告成功记录', async () => {
+    const onSaved = vi.fn();
+    const { writable, dependencies, menu } = setup();
+    writable.close.mockRejectedValueOnce(new Error('磁盘失败'));
+    await saveMedia(image, menu, { ...dependencies, onSaved });
+    expect(onSaved).not.toHaveBeenCalled();
+    expect(menu.completed).not.toHaveBeenCalled();
+  });
+
   it('保留 picker id 并建议系统桌面，不改变文件名规则', async () => {
     const { menu, dependencies } = setup();
     await saveMedia(image, menu, dependencies);
@@ -25,8 +42,10 @@ describe('媒体保存', () => {
   });
 
   it('取消另存为不请求媒体也不发送完成提示', async () => {
+    const onSaved = vi.fn();
     const { menu, dependencies } = setup({ showSaveFilePicker: async () => { throw { name: 'AbortError' }; } });
-    await saveMedia(image, menu, dependencies);
+    await saveMedia(image, menu, { ...dependencies, onSaved });
+    expect(onSaved).not.toHaveBeenCalled();
     expect(dependencies.fetch).not.toHaveBeenCalled();
     expect(menu.close).toHaveBeenCalledOnce();
     expect(menu.completed).not.toHaveBeenCalled();

@@ -91,9 +91,9 @@ docs/
 
 ## 已完成
 
-- [简化打卡卡片顶部布局](./issues/2026-10-24-extension-check-in-header-issue.md) · [Commit 记录](./commits/2026-10-24-extension-check-in-header-commit.md)；用户明确批准本地提交并完结；移除标题、切换靠左且右侧留空；68 项测试、类型检查和生产构建此前通过，浏览器视觉与交互未由代理验收，提交时不追加验证，不推送。
+- [展示 Download 下载记录](./issues/2026-10-24-extension-download-panel-design-issue.md) · [Commit 记录](./commits/2026-10-24-extension-download-panel-design-commit.md)；用户明确批准按提示位置、Download 功能两笔本地提交完结；TG 成功记录、紧凑列表、图标筛选与清空确认已实现，提示统一右下角、空状态居中；文件夹仅提示未接入，Desktop/X 下载未接入；74 项测试、类型检查和生产构建此前通过，代理未执行浏览器与真实文件验收，提交时不追加验证，不推送。
 
-- [记录 Download 历史与文件夹入口方案](./issues/2026-10-24-extension-download-panel-design-issue.md) · [Commit 记录](./commits/2026-10-24-extension-download-panel-design-commit.md)；用户批准先将方案文档本地提交；筛选、目录映射、Desktop 预建及 TG 保持现状的边界已记录，功能未实施，不推送。
+- [简化打卡卡片顶部布局](./issues/2026-10-24-extension-check-in-header-issue.md) · [Commit 记录](./commits/2026-10-24-extension-check-in-header-commit.md)；用户明确批准本地提交并完结；移除标题、切换靠左且右侧留空；68 项测试、类型检查和生产构建此前通过，浏览器视觉与交互未由代理验收，提交时不追加验证，不推送。
 
 - [统一 Settings 本地配置与公共读写](./issues/2026-10-24-extension-settings-storage-issue.md) · [Commit 记录](./commits/2026-10-24-extension-settings-storage-commit.md)；用户于 2026-10-24 明确批准本地提交并完结；68 项测试、类型检查与构建此前通过，浏览器验收未由代理执行，不推送。
 

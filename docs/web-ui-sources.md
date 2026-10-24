@@ -32,7 +32,7 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 ## 业务组合与扫描边界
 
 - 历史清理设置视图与权限/存储逻辑继续由 `modules/history-cleaner` 持有；Newtab 的 DockSettings 只组合设置区域和外壳。通用 Switch 不调用 Chrome API，不持有配置或错误状态。
-- Telegram Download 复用现有 DropdownMenu；Content 增加可选 `portalContainer`，仅将 Portal 挂入网页 Shadow DOM，未指定时保持官方默认挂载方式。Shadow DOM 的事件重定向处理在业务菜单中完成，保留官方选择、禁用和关闭行为；不迁入旧自定义菜单的配色或状态管理。本次移除 Popup 与下载记录层，不新增公共下载业务。
+- Telegram Download 复用现有 DropdownMenu；Content 增加可选 `portalContainer`，仅将 Portal 挂入网页 Shadow DOM，未指定时保持官方默认挂载方式。Shadow DOM 的事件重定向处理在业务菜单中完成，保留官方选择、禁用和关闭行为；不迁入旧自定义菜单的配色或状态管理。Popup 不恢复；2026-10-24 的独立 downloads 模块仅管理成功记录元数据，Newtab 组合展示和清空。
 - Sheet 关闭后的 Tooltip 抑制、菜单与 Tooltip 互斥、指针外部关闭处理继续位于业务组合处；不放入共享控件。
 - 官网叠放窗口保留原生 button 与现有卡片池。专用展示的尺寸、网格、窗口内容与轮换不适合套用默认 Button 或标准 Carousel。
 - 书签卡片、EDU 遮罩、品牌图标与网站分类布局按需求组合；未发现需要为本次目标迁入通用 UI 的业务逻辑，不创建跨应用组件包。
@@ -74,3 +74,11 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 - TG 在自身 Shadow DOM 中挂载 Toaster，并导入 sonner/dist/styles.css；原页面中的官方默认 CSS 注入行为不修改。堆叠、折叠、关闭时长和交互沿用 Sonner 默认。TG 使用默认 success 类型和文件名描述，不自写关闭计时或通知队列。
 - 共用组件只负责展示；实际完成判断、文案、文件名和调用时机仍在 TG 模块中。
 - 2026-10-24 按用户反馈在共用 Toaster 显式设置默认 bottom-right，TG 去除 top-right 覆盖，与 Newtab 提示共用位置规则；不同页面分别挂载，不增加跨页提示中心或业务管理层。
+
+## 扩展 Alert Dialog 与 Download（2026-10-24）
+
+- Alert Dialog 源码固定为本文官方基线 c257f688cf4de7ec10cc1be84cad29cd4631182c 的 new-york-v4/ui/alert-dialog.tsx，读取官方原文件后接入；使用现有 radix-ui，无新增依赖。
+- shared/ui/alert-dialog.tsx 保留官方 Root、Trigger、Portal、Overlay、Content、Header/Footer、Title/Description、Action/Cancel 及 Button asChild 组合。去除 use client，适配本地 cn/Button 路径；未引入未使用的 Media。
+- 未安装动画工具类，移除对应进出场类；边框显式引用 border-border，文字引用 text-foreground。确认框位于整个页面中心，保留官方黑色半透明遮罩；为叠在既有 Sheet 上，Overlay/Content 分别使用 z-60/z-70，其余保留官方默认样式及取消优先焦点。
+- Download 自己持有筛选、确认文案和清空逻辑，无全局弹窗管理。记录截断和图标名称复用现有 Tooltip，文件夹不可用和清空失败复用现有 Sonner，沿用当前主题。
+- 工具栏使用官方 ToggleGroup、Button icon-sm 和既有品牌资源；新增通用列表、文件夹、垃圾桶图标通过 UiIcon 静态映射。40px 记录行属于业务布局，不新增通用表格或卡片封装。

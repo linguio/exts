@@ -22,6 +22,7 @@ export interface SaveMediaDependencies {
   logger: Pick<Console, 'error'>;
   selectFile?(suggestedName: string): Promise<SaveFileHandle>;
   onError?(error: unknown): void;
+  onSaved?(record: { filename: string; sizeBytes: number }): void;
   showSaveFilePicker?(options: { id: string; startIn: string; suggestedName: string }): Promise<SaveFileHandle>;
 }
 
@@ -68,6 +69,9 @@ export async function saveMedia(media: DownloadableMedia, menu: DownloadMenuCont
     }
     await writable.close();
     menu.completed(handle.name || suggestedName);
+    // 记录通道异常不得把已成功保存的文件误报为失败。
+    try { dependencies.onSaved?.({ filename: handle.name || suggestedName, sizeBytes: offset }); }
+    catch (error) { dependencies.logger.error('TG Download 记录上报失败', error); }
   } catch (error) {
     if (choosing) menu.close();
     try { await writable?.abort?.(); }

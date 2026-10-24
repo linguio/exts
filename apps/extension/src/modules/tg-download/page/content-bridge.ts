@@ -2,9 +2,11 @@ import type { ContentScriptContext } from 'wxt/utils/content-script-context';
 import { telegramDownloadSetting } from '../settings';
 import { type ThemePreference } from '../../../shared/theme/preference';
 import { getSettings, subscribeSettings } from '../../../shared/settings';
-import { TELEGRAM_CONFIG_EVENT, TELEGRAM_READY_EVENT } from './events';
+import { TELEGRAM_CONFIG_EVENT, TELEGRAM_READY_EVENT, TELEGRAM_SAVED_EVENT } from './events';
+import { addTelegramDownload } from '../../downloads';
+import { validateSavedDownload } from '../../downloads/schema';
 
-/** 隔离环境只同步开关和主题，不再持有下载记录或后台消息链路。 */
+/** 隔离环境同步配置并仅将成功保存元数据传给后台，不传媒体和目录句柄。 */
 export function registerTelegramDownloadBridge(ctx: ContentScriptContext) {
   const setting = telegramDownloadSetting();
   let enabled = false;
@@ -36,4 +38,16 @@ export function registerTelegramDownloadBridge(ctx: ContentScriptContext) {
     if (active && themeVersion === initialThemeVersion) { theme = settings.theme; publish(); }
   }).catch(error => { if (active && ctx.isValid) console.error('TG Download 主题读取失败', error); });
   ctx.addEventListener(window, TELEGRAM_READY_EVENT, publish);
+  ctx.addEventListener(window, TELEGRAM_SAVED_EVENT, event => {
+    if (!active || !ctx.isValid) return;
+    try {
+      const detail = (event as CustomEvent<unknown>).detail;
+      if (typeof detail !== 'string' || detail.length > 4096) return;
+      const record: unknown = JSON.parse(detail);
+      validateSavedDownload(record);
+      void addTelegramDownload(record).catch(error => {
+        if (active && ctx.isValid) console.error('TG Download 记录保存失败', error);
+      });
+    } catch (error) { if (active && ctx.isValid) console.error('TG Download 记录消息无效', error); }
+  });
 }
