@@ -19,8 +19,7 @@ export function CheckInCard() {
       aria-label="Daily check-in"
       className="box-border h-[var(--size-bookmark-folder)] w-full shrink-0 gap-4 rounded-[var(--radius)] p-4 shadow-none"
     >
-      <header className="flex h-8 shrink-0 items-center justify-between">
-        <h2 className="text-sm font-medium">Daily check-in</h2>
+      <header className="flex h-8 shrink-0 items-center">
         <ToggleGroup
           type="single"
           value={activity}
