@@ -24,12 +24,8 @@ export function GeneralSettings() {
         <ToggleGroup type="single" variant="outline" size="sm" spacing={0} value={theme} aria-labelledby={`${id}-label`} onValueChange={(value) => {
           // 单选主题不能取消成空值，保持最后一个有效选择。
           if (value !== 'light' && value !== 'dark' && value !== 'system') return;
-          try {
-            setTheme(value);
-            setError(null);
-          } catch {
-            setError('Unable to save this setting. Please try again.');
-          }
+          void setTheme(value).then(() => setError(null))
+            .catch(() => setError('Unable to save this setting. Please try again.'));
         }}>
           {choices.map((choice) => (
             <Tooltip key={choice.value}>

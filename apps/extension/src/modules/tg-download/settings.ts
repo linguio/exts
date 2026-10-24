@@ -1,4 +1,7 @@
-import { createBooleanSetting } from '../../shared/settings/boolean-setting';
+import { getSettings, subscribeSettings, updateSettings } from '../../shared/settings';
 
-export const TELEGRAM_DOWNLOAD_ENABLED_KEY = 'telegramDownload.enabled';
-export const telegramDownloadSetting = () => createBooleanSetting(TELEGRAM_DOWNLOAD_ENABLED_KEY, true);
+export const telegramDownloadSetting = () => ({
+  get: async () => (await getSettings()).telegramDownload.enabled,
+  set: async (enabled: boolean) => { await updateSettings({ telegramDownload: { enabled } }); },
+  subscribe: (listener: (enabled: boolean) => void) => subscribeSettings(settings => listener(settings.telegramDownload.enabled)),
+});

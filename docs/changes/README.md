@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [统一 Settings 本地配置与公共读写](./issues/2026-10-24-extension-settings-storage-issue.md) · [Commit 记录](./commits/2026-10-24-extension-settings-storage-commit.md)；用户于 2026-10-24 明确批准本地提交并完结；68 项测试、类型检查与构建此前通过，浏览器验收未由代理执行，不推送。
+
 - [为 TG 下载增加快速保存和文件夹选择](./issues/2026-10-23-extension-telegram-directory-save-issue.md) · [Commit 记录](./commits/2026-10-23-extension-telegram-directory-save-commit.md)；用户明确要求本地 commit 并完结；快速保存、任意文件夹选择、句柄持久化和同名避重已交付；此前 61 项测试、类型检查和生产构建通过，真实授权与文件验收限制保留，提交时不追加验证，不推送。
 
 - [动态居中 Newtab 上半区并统一文件夹行距](./issues/2026-10-23-extension-newtab-content-centering-issue.md) · [Commit 记录](./commits/2026-10-23-extension-newtab-content-centering-commit.md)；用户明确批准本地 commit 并完结；动态宽度与整体居中、名称上下各 8px 和单行行高 16px（预览框间总共 32px）、48px Dock 分割线及说明已实现；48 项测试与类型检查此前通过，最终样式已重新构建通过，代理未独立执行浏览器验收，提交时不追加验证，不推送。

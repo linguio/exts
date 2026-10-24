@@ -18,9 +18,9 @@
 
 明暗主题由 `src/shared/theme/` 解析：默认 System，通过系统 `prefers-color-scheme` 跟随变化；选择 Light/Dark 后固定为对应主题。根 `data-theme` 持有实际明暗，组件与 Portal 继承原有语义 Token，不独立硬编码配色。Geist 字体、既有明暗色值、遮罩透明度与模糊不变。
 
-偏好以 `exts.theme` 保存于扩展页面同源 localStorage，不同步设备；浏览器 storage 事件同步其他已打开页面，本页事件通知当前设置。页面 head 通过 WXT 独立外部脚本 `theme-init.js` 在解析时读取偏好，使用与运行时相同的解析逻辑应用主题；不内联可执行脚本或放宽 CSP。主页面持续监听系统与跨页变化，面板关闭后仍生效。
+正式偏好保存在 `chrome.storage.local` 的 `settings.theme`，不同步设备；扩展页面同源 localStorage 的 `exts.theme` 只作同步首屏缓存。页面 head 通过 WXT 独立外部脚本 `theme-init.js` 在解析时读取缓存，使用与运行时相同的解析逻辑应用主题；不内联可执行脚本或放宽 CSP。主页面读取正式配置并订阅变化，继续监听系统主题，面板关闭后仍生效。
 
-上述规范属于整个 extension，并非 Newtab 专属。运行时将偏好发布到扩展 storage.local 的 `exts.theme` 副本，供无法访问扩展同源 localStorage 的网页内容脚本订阅；配置入口及主事实来源仍是既有扩展页面偏好。网页菜单在 Shadow DOM 中通过 `:host` 和 `:host(...)` 引用同一 Token。官方 Sonner 样式同时导入该 Shadow DOM，以支持提示的默认交互。
+上述规范属于整个 extension，并非 Newtab 专属。无法访问扩展同源 localStorage 的网页内容脚本直接读取并订阅 `settings` 对象，取得主题与功能开关；旧 `exts.theme` 存储键迁入正式配置后移除。网页菜单在 Shadow DOM 中通过 `:host` 和 `:host(...)` 引用同一 Token。官方 Sonner 样式同时导入该 Shadow DOM，以支持提示的默认交互。
 
 | 用途 | Token | 现行规则 |
 | --- | --- | --- |

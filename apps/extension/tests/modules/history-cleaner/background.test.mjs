@@ -13,7 +13,7 @@ function setup({ enabled = true, granted = true, windows = [] } = {}) {
       onRemoved: { addListener: vi.fn((listener) => { listeners.closed = listener; }) },
       getAll: vi.fn(async () => windows),
     },
-    storage: { local: { get: vi.fn(async () => ({ 'historyCleaner.enabled': enabled })) } },
+    storage: { local: { get: vi.fn(async () => ({ settings: { historyCleaner: { enabled } } })) } },
     permissions: { contains: vi.fn(async () => granted) },
     browsingData: { removeHistory: vi.fn(async () => {}) },
   };
@@ -62,7 +62,7 @@ test('最后窗口关闭时清理，DevTools 不参与计数', async () => {
 test('每次触发重新读取开关，后续关闭开关即可停止清理', async () => {
   const { api, listeners } = setup();
   await listeners.startup();
-  api.storage.local.get.mockResolvedValue({ 'historyCleaner.enabled': false });
+  api.storage.local.get.mockResolvedValue({ settings: { historyCleaner: { enabled: false } } });
   await listeners.closed(1);
   assert.equal(api.browsingData.removeHistory.mock.calls.length, 1);
 });
@@ -86,7 +86,7 @@ test('权限检查期间关闭开关，尚未开始的删除应停止', async ()
   api.permissions.contains.mockImplementation(() => new Promise((resolve) => { allow = resolve; }));
   const pending = listeners.startup();
   await new Promise(setImmediate);
-  api.storage.local.get.mockResolvedValue({ 'historyCleaner.enabled': false });
+  api.storage.local.get.mockResolvedValue({ settings: { historyCleaner: { enabled: false } } });
   allow(true);
   await pending;
   assert.equal(api.browsingData.removeHistory.mock.calls.length, 0);

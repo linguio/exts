@@ -4,7 +4,8 @@ import { Switch } from '../../shared/ui/switch';
 import { Button } from '../../shared/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../shared/ui/tooltip';
 import { UiIcon } from '../../shared/ui/ui-icon';
-import { getHistoryCleanerEnabled, HISTORY_CLEANER_ENABLED_KEY, setHistoryCleanerEnabled } from './settings';
+import { getHistoryCleanerEnabled, setHistoryCleanerEnabled } from './settings';
+import { subscribeSettings } from '../../shared/settings';
 
 const description = 'Clears all browsing history when the browser starts and the last window closes. Cookies, cache, and downloads are kept.';
 
@@ -33,9 +34,6 @@ export function HistoryCleanerSettings() {
 
   useEffect(() => {
     mounted.current = true;
-    const onStorageChanged = (changes: Record<string, chrome.storage.StorageChange>, area: string) => {
-      if (area === 'local' && HISTORY_CLEANER_ENABLED_KEY in changes) void refresh();
-    };
     const onPermissionRemoved = (permissions: chrome.permissions.Permissions) => {
       if (!permissions.permissions?.includes('browsingData')) return;
       setError('History permission was removed. Turn this setting on to grant access again.');
@@ -44,14 +42,14 @@ export function HistoryCleanerSettings() {
     const onPermissionAdded = (permissions: chrome.permissions.Permissions) => {
       if (permissions.permissions?.includes('browsingData')) void refresh();
     };
-    chrome.storage.onChanged.addListener(onStorageChanged);
+    const stopSettings = subscribeSettings(() => { void refresh(); });
     chrome.permissions.onRemoved.addListener(onPermissionRemoved);
     chrome.permissions.onAdded.addListener(onPermissionAdded);
     void refresh();
     return () => {
       mounted.current = false;
       version.current++;
-      chrome.storage.onChanged.removeListener(onStorageChanged);
+      stopSettings();
       chrome.permissions.onRemoved.removeListener(onPermissionRemoved);
       chrome.permissions.onAdded.removeListener(onPermissionAdded);
     };

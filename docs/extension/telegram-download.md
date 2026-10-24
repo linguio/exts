@@ -7,7 +7,7 @@ Telegram Web 图片、视频右键下载，模块位于 apps/extension/src/modul
 - components/download-menu：复用官方 DropdownMenuItem asChild 与 Button ghost，菜单只有“下载资源”和“选择文件夹”，无常驻目录或帮助说明；必要错误时显示恢复文字。
 - download-core：媒体保存、Range 写入、文件名、目录目标与 IndexedDB 句柄存储。平台下载逻辑与文件选择都留在 TG 模块。
 - page：媒体识别、页面注册、开关/主题接入；没有下载记录或后台任务上报。
-- views/settings 与 settings.ts：默认开启，配置保存在 storage.local。关闭立即阻止新下载，正在写入的任务继续；Newtab 只组合功能开关。
+- views/settings 与 settings.ts：默认开启，配置保存在 storage.local 的 `settings.telegramDownload.enabled`。关闭立即阻止新下载，正在写入的任务继续；Newtab 只组合功能开关。
 
 仅注入 https://web.telegram.org/*，保留 Telegram Web K 的 .media-viewer-mover 识别边界。开关与主题由隔离环境发布，扩展重载后旧页面入口停用，刷新恢复；不承诺关闭 Telegram 页面后下载继续。
 
