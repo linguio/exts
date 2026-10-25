@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { SiteDocumentLayout } from '@/components/layout/site-document-layout';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { productCategories, resolveFeatureSectionId } from '@/features/products/categories';
 import { QuickStart } from './quick-start';
@@ -44,7 +45,10 @@ export function FeaturesPage() {
               <h2 className="site-section-title break-words">{module.name}</h2>
               <p className="text-sm leading-6 text-foreground">{module.description}</p>
               {module.installCommand && (
-                <pre className="mt-3 overflow-x-auto rounded-md bg-secondary p-3 text-sm leading-6"><code>{module.installCommand}</code></pre>
+                <ScrollArea className="mt-3 rounded-md bg-secondary">
+                  <pre className="w-max p-3 text-sm leading-6"><code>{module.installCommand}</code></pre>
+                  <ScrollBar orientation="horizontal" />
+                </ScrollArea>
               )}
               {module.links && (
                 <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm leading-6">

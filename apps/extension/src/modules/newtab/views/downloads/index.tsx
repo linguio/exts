@@ -6,6 +6,7 @@ import { selectRecords, type Downloads, type DownloadFilter } from '../../../dow
 import { subscribeTheme } from '../../../../shared/theme/runtime';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../../../../shared/ui/alert-dialog';
 import { Button } from '../../../../shared/ui/button';
+import { ScrollArea } from '../../../../shared/ui/scroll-area';
 import { ToggleGroup, ToggleGroupItem } from '../../../../shared/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
 import { Toaster, toast } from '../../../../shared/ui/sonner';
@@ -110,12 +111,14 @@ export function DownloadsPanel() {
           </AlertDialog>
         </div>
       </div>
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pb-6">
-        {problem ? <p role="alert" className="py-4 text-sm text-destructive">{problem}</p>
-          : !data ? <p role="status" className="py-4 text-sm text-muted-foreground">正在读取下载记录…</p>
-            : records.length ? <ul className="shrink-0" aria-label={`${names[filter]}下载记录`}>{records.map(record => <DownloadRecordRow key={record.id} record={record} />)}</ul>
-              : <p className="flex flex-1 items-center justify-center text-sm text-muted-foreground">暂无下载记录</p>}
-      </div>
+      <ScrollArea className="min-h-0 flex-1" viewportClassName="[&>div]:h-full">
+        <div className="flex min-h-full flex-col px-6 pb-6">
+          {problem ? <p role="alert" className="py-4 text-sm text-destructive">{problem}</p>
+            : !data ? <p role="status" className="py-4 text-sm text-muted-foreground">正在读取下载记录…</p>
+              : records.length ? <ul className="shrink-0" aria-label={`${names[filter]}下载记录`}>{records.map(record => <DownloadRecordRow key={record.id} record={record} />)}</ul>
+                : <p className="flex flex-1 items-center justify-center text-sm text-muted-foreground">暂无下载记录</p>}
+        </div>
+      </ScrollArea>
       <Toaster theme={appearance} />
     </section>
   );

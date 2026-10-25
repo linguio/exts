@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [接入官方滚动区域组件](./issues/2026-10-25-web-scroll-area-issue.md) · [Commit 记录](./commits/2026-10-25-web-scroll-area-commit.md)；用户于 2026-10-25 明确批准本地提交并完结；五处扩展容器与官网命令区接入官方 Scroll Area，并补充官方优先规范；扩展74项、官网10项测试及两端类型检查和构建此前通过，浏览器滚动与布局未验证，提交时不追加验证，不推送或部署。
+
 - [整理近期扩展更新并更新官网日志](./issues/2026-10-24-website-recent-changelog-issue.md) · [Commit 记录](./commits/2026-10-24-website-recent-changelog-commit.md)；用户于 2026-10-25 明确批准本地提交并完结；根版本 1.5.0 与三点 Extension 日志及对应下载链接已更新；官网 10 项测试、类型检查和最终构建此前通过，浏览器与远端附件未验证，提交时不追加验证，不推送、部署或发布。
 
 - [用按钮组整理 TG 下载入口](./issues/2026-10-24-extension-telegram-browser-save-issue.md) · [Commit 记录](./commits/2026-10-24-extension-telegram-browser-save-commit.md)；用户于 2026-10-25 验收通过并批准本地提交完结；官方按钮组、文件另存为与目录选择、预览关闭清理已交付；74 项测试与类型检查此前通过，最终构建通过，提交时不追加验证，不推送。

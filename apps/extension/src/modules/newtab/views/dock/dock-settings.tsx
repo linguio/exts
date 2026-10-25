@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 
 import { Button } from '../../../../shared/ui/button';
+import { ScrollArea } from '../../../../shared/ui/scroll-area';
 import { Separator } from '../../../../shared/ui/separator';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../../../../shared/ui/sheet';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
@@ -46,14 +47,16 @@ export function DockSettings() {
           <SheetTitle ref={titleRef} tabIndex={-1} className="text-lg font-semibold">Settings</SheetTitle>
         </header>
         <Separator />
-        <div className="min-h-0 space-y-6 overflow-y-auto p-6">
-          <GeneralSettings />
-          <section aria-labelledby="features-heading" className="space-y-4">
-            <h3 id="features-heading" className="text-xs font-medium text-muted-foreground">Features</h3>
-            <HistoryCleanerSettings />
-            <TelegramDownloadSettings />
-          </section>
-        </div>
+        <ScrollArea className="min-h-0 flex-1">
+          <div className="space-y-6 p-6">
+            <GeneralSettings />
+            <section aria-labelledby="features-heading" className="space-y-4">
+              <h3 id="features-heading" className="text-xs font-medium text-muted-foreground">Features</h3>
+              <HistoryCleanerSettings />
+              <TelegramDownloadSettings />
+            </section>
+          </div>
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );

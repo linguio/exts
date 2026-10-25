@@ -93,3 +93,11 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 - TG 业务负责右键位置、操作和 Shadow DOM 外部事件判定，Popover 只定位按钮组，调用方去掉其边框、背景、内边距与阴影，不再额外包一层白框；保留 w-max、8px 碰撞边距。DropdownMenu 按用户要求使用官方 4px sideOffset，不使用项目共用的 12px；共用默认不改。现有流式保存、目录授权和另存为保持各自职责，不接 chrome.downloads。
 - TG 的两个 outline 按钮显式使用 border-solid border-border，恢复 Shadow DOM 中未生效的边框样式和主题颜色；未手画分割线、未加入 Separator 或新变量。Tailwind 产物的 border 依赖 @property --tw-border-style，Shadow DOM 对 @property 存在限制，参见 [Chrome 说明](https://developer.chrome.com/docs/css-ui/css-names)。
 - TG host 默认 pointer-events:none，Popover 与下拉菜单通过 Portal 成为兄弟层，业务调用方分别添加 pointer-events-auto，避免下拉层无法悬停和点击；沿用官方 highlighted/focus 配色。
+
+## 官网与扩展 Scroll Area（2026-10-25）
+
+- 两端源码固定为同一官方基线 c257f688cf4de7ec10cc1be84cad29cd4631182c 的 new-york-v4/ui/scroll-area.tsx，保留 Root、Viewport、ScrollBar、Thumb 与 Corner 的官方组合。使用现有 radix-ui，无新增依赖。
+- 仅移除 use client、适配各应用 cn 导入；滚动条宽度、轨道、Thumb、颜色、显隐与焦点均沿用官方默认，不增加状态、事件管理或自制滚动逻辑。
+- 扩展增加可选 viewportClassName：书签区、卡片区和 Dock 保留原 overscroll 约束；Download 用 [&>div]:h-full 让 Radix 内容包装层填满已有区域，内层保留最小满高与 flex，以维持空列表居中。这些仅为容器布局适配，不改变滚动条外观。
+- 纵向区域使用官方自带 ScrollBar；书签区与卡片区保留双向溢出能力，Dock 与官网命令区按官方 Horizontal 示例组合水平 ScrollBar。调用方只维护原有尺寸、间距与内容。
+- 已删除被替代的 Newtab 隐藏原生滚动条规则。DropdownMenu 自带滚动、官网文档主体、Telegram 原网页及 macOS 原生界面保持原有机制。

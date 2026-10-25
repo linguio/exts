@@ -4,6 +4,7 @@ import { BOOKMARK_GRID, DOCK_COMPONENTS, DOCK_FAVORITES } from '../modules/newta
 import { BookmarkDock } from '../modules/newtab/views/dock/bookmark-dock';
 import { BookmarkGrid } from '../modules/newtab/views/bookmarks/bookmark-grid';
 import { NewtabCards } from '../modules/newtab/views/cards/index';
+import { ScrollArea, ScrollBar } from '../shared/ui/scroll-area';
 import { TooltipProvider } from '../shared/ui/tooltip';
 import { openBookmarkInGroup } from '../modules/newtab/utils/tab.js';
 import type { Bookmark, BookmarkCollection } from '../modules/newtab/types/bookmarks';
@@ -65,13 +66,19 @@ export function App() {
       <main className="bookmarks-page newtab-page">
         <div className="newtab-content-viewport" ref={viewportRef}>
           <div className="newtab-content" ref={contentRef} style={{ width: contentWidth }}>
-            <section className="newtab-scroll-area overflow-auto overscroll-contain" aria-label="常用书签">
-              <div className="bookmarks newtab-bookmarks" ref={bookmarksRef} data-bookmarks>
-                <BookmarkGrid bookmarks={BOOKMARK_GRID} onOpenBookmark={onOpenBookmark} />
-              </div>
+            <section className="newtab-scroll-area" aria-label="常用书签">
+              <ScrollArea className="size-full" viewportClassName="overscroll-contain">
+                <div className="bookmarks newtab-bookmarks" ref={bookmarksRef} data-bookmarks>
+                  <BookmarkGrid bookmarks={BOOKMARK_GRID} onOpenBookmark={onOpenBookmark} />
+                </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
             </section>
-            <aside className="newtab-scroll-area overflow-auto overscroll-contain" ref={cardsRef} aria-label="卡片区域">
-              <NewtabCards />
+            <aside className="newtab-scroll-area" ref={cardsRef} aria-label="卡片区域">
+              <ScrollArea className="size-full" viewportClassName="overscroll-contain">
+                <NewtabCards />
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
             </aside>
           </div>
         </div>
