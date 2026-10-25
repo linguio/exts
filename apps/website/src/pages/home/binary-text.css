@@ -1,0 +1,46 @@
+.home-binary-character {
+  position: relative;
+  display: inline-grid;
+  line-height: inherit;
+  white-space: pre;
+}
+
+.home-binary-strip {
+  display: none;
+}
+
+/* 原文决定每个字符的占位，系统允许动态效果时才显示动画层。 */
+@media (prefers-reduced-motion: no-preference) {
+  .home-binary-character {
+    overflow: hidden;
+  }
+
+  .home-binary-original {
+    visibility: hidden;
+  }
+
+  .home-binary-strip {
+    position: absolute;
+    inset: 0 0 auto;
+    display: grid;
+    grid-auto-rows: 1.2em;
+    text-align: center;
+    animation: home-binary-decode 400ms steps(8, end) var(--binary-delay) both;
+  }
+
+  .home-binary-bit {
+    color: var(--muted-foreground);
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-weight: 400;
+  }
+}
+
+@keyframes home-binary-decode {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-9.6em);
+  }
+}

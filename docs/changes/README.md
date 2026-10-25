@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [为官网介绍文字添加二进制解码动效](./issues/2026-10-25-website-binary-text-issue.md) · [Commit 记录](./commits/2026-10-25-website-binary-text-commit.md)；用户于 2026-10-25 明确批准本地提交并完结；介绍文字首次挂载解码一次，Exts 标题保持静态；官网 10 项逻辑测试、类型检查、构建与 diff 检查此前通过，浏览器视觉与辅助技术未由代理验收，提交时不追加验证，不推送或部署。
+
 - [补充书签与界面规范日志](./issues/2026-10-25-website-bookmarks-ui-changelog-issue.md) · [Commit 记录](./commits/2026-10-25-website-bookmarks-ui-changelog-commit.md)；用户于 2026-10-25 明确批准本地提交并完结；今天新增滚动组件与下载框架规范两点日志，TG 日志日期改为昨天；初版官网类型检查、构建和 diff 检查通过，最终文字精简未重新构建，提交时不追加验证，不推送或部署。
 
 - [接入官方滚动区域组件](./issues/2026-10-25-web-scroll-area-issue.md) · [Commit 记录](./commits/2026-10-25-web-scroll-area-commit.md)；用户于 2026-10-25 明确批准本地提交并完结；五处扩展容器与官网命令区接入官方 Scroll Area，并补充官方优先规范；扩展74项、官网10项测试及两端类型检查和构建此前通过，浏览器滚动与布局未验证，提交时不追加验证，不推送或部署。

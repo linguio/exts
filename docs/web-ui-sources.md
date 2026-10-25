@@ -31,6 +31,7 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 
 ## 业务组合与扫描边界
 
+- 官网介绍文字二进制动效（2026-10-25）：核对 [shadcn/ui 官方组件目录](https://ui.shadcn.com/docs/components)，没有对应字符解码组件，现有通用控件组合不能提供该效果。在 `pages/home/binary-text.tsx` 与同目录 CSS 独立实现固定二进制序列及单次分步动画，仅供首页介绍文字使用；参考 shadcn.io 的公开效果及本地 Demo，不复制 Pro 源码，不作为官方组件或引入动画依赖。保留原文字体、字距和主题 Token；字符占位、辅助技术原文与减少动态效果降级由该组件负责，1.2 行高沿用首页目标文字的既有值。
 - 历史清理设置视图与权限/存储逻辑继续由 `modules/history-cleaner` 持有；Newtab 的 DockSettings 只组合设置区域和外壳。通用 Switch 不调用 Chrome API，不持有配置或错误状态。
 - Telegram Download 复用现有 DropdownMenu；Content 增加可选 `portalContainer`，仅将 Portal 挂入网页 Shadow DOM，未指定时保持官方默认挂载方式。Shadow DOM 的事件重定向处理在业务菜单中完成，保留官方选择、禁用和关闭行为；不迁入旧自定义菜单的配色或状态管理。Popup 不恢复；2026-10-24 的独立 downloads 模块仅管理成功记录元数据，Newtab 组合展示和清空。
 - Sheet 关闭后的 Tooltip 抑制、菜单与 Tooltip 互斥、指针外部关闭处理继续位于业务组合处；不放入共享控件。
