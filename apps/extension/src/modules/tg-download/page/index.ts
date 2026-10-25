@@ -8,14 +8,34 @@ import { normalizeTheme } from '../../../shared/theme/preference';
 export function registerTelegramDownloadPage() {
   let enabled = false;
   let selected: DownloadableMedia | undefined;
+  let previewObserver: MutationObserver | undefined;
   const directory = createDirectoryTarget();
-  const save = () => {
+  const clearPreview = () => {
+    previewObserver?.disconnect();
+    previewObserver = undefined;
+    selected = undefined;
+    menu.close();
+  };
+  const watchPreview = (media: HTMLImageElement | HTMLVideoElement) => {
+    previewObserver?.disconnect();
+    const viewer = media.closest('.media-viewer-whole') ?? media.closest('.media-viewer-mover');
+    if (!viewer) return;
+    // 仅跟随当前预览层；TG 退出预览会先取消 active，再移除整个预览节点。
+    previewObserver = new MutationObserver(() => {
+      if (!viewer.isConnected || (viewer.matches('.media-viewer-whole') && !viewer.classList.contains('active'))) {
+        clearPreview();
+      }
+    });
+    previewObserver.observe(viewer, { attributes: true, attributeFilter: ['class'] });
+    if (viewer.parentElement) previewObserver.observe(viewer.parentElement, { childList: true });
+  };
+  const save = (saveAs = false) => {
     if (!enabled || !selected) { menu.close(); return; }
     const media = selected;
     // 直接进入 picker 或缓存句柄的权限请求，不先等待 IndexedDB。
     void saveMedia(media, menu, {
       onSaved: record => window.dispatchEvent(new CustomEvent(TELEGRAM_SAVED_EVENT, { detail: JSON.stringify(record) })),
-      ...(directory.available ? {
+      ...(!saveAs && directory.available ? {
       selectFile: filename => directory.openFile(filename),
       onError(error) {
         if (!enabled || selected !== media) return;
@@ -33,6 +53,7 @@ export function registerTelegramDownloadPage() {
   const menu = createDownloadMenu(document, {
     directoryAvailable: directory.available,
     save: () => save(),
+    saveAs: () => save(true),
     chooseDirectory() {
       if (!enabled) { menu.close(); return; }
       // choose() 在点击栈内立即调用系统目录选择器。
@@ -61,8 +82,8 @@ export function registerTelegramDownloadPage() {
       const config = JSON.parse((event as CustomEvent<string>).detail);
       enabled = config.enabled === true;
       menu.theme(normalizeTheme(config.theme));
-      if (!enabled) { selected = undefined; menu.disable(); }
-    } catch { enabled = false; menu.disable(); }
+      if (!enabled) clearPreview();
+    } catch { enabled = false; clearPreview(); }
   });
   document.addEventListener('contextmenu', event => {
     // 每次打开前同步核对隔离环境，扩展重载后旧页面入口立即停用。
@@ -72,6 +93,7 @@ export function registerTelegramDownloadPage() {
     if (!media || !canOpenDownloadMenu(menu.busy(), media)) return;
     event.preventDefault();
     selected = media;
+    watchPreview(media);
     menu.open({ x: event.clientX, y: event.clientY });
   }, true);
   window.dispatchEvent(new Event(TELEGRAM_READY_EVENT));

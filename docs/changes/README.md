@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [用按钮组整理 TG 下载入口](./issues/2026-10-24-extension-telegram-browser-save-issue.md) · [Commit 记录](./commits/2026-10-24-extension-telegram-browser-save-commit.md)；用户于 2026-10-25 验收通过并批准本地提交完结；官方按钮组、文件另存为与目录选择、预览关闭清理已交付；74 项测试与类型检查此前通过，最终构建通过，提交时不追加验证，不推送。
+
 - [添加 shadcn 网站书签](./issues/2026-10-24-extension-shadcn-bookmarks-issue.md) · [Commit 记录](./commits/2026-10-24-extension-shadcn-bookmarks-commit.md)；用户明确批准本地提交并完结；DevOps 首位添加 shadcn/ui、Components 第二位添加 shadcn.io，接入用户提供的 SVG；74 项测试、类型检查与生产构建此前通过，浏览器效果未验证，提交时不追加验证，不推送。
 
 - [统一提示组件与抽屉宽度](./issues/2026-10-24-extension-shared-feedback-sheet-issue.md) · [Commit 记录](./commits/2026-10-24-extension-shared-feedback-sheet-commit.md)；用户明确批准本地提交并完结；共用 Sonner 入口与四级图标规范、TG 简化提示及共用 Sheet 420px 宽度已交付；74 项测试、类型检查此前通过，最终宽度生产构建通过，浏览器视觉与交互未由代理验收，提交时不追加验证，不推送。

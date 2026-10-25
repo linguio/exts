@@ -83,3 +83,13 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 - 未安装动画工具类，移除对应进出场类；边框显式引用 border-border，文字引用 text-foreground。确认框位于整个页面中心，保留官方黑色半透明遮罩；为叠在既有 Sheet 上，Overlay/Content 分别使用 z-60/z-70，其余保留官方默认样式及取消优先焦点。
 - Download 自己持有筛选、确认文案和清空逻辑，无全局弹窗管理。记录截断和图标名称复用现有 Tooltip，文件夹不可用和清空失败复用现有 Sonner，沿用当前主题。
 - 工具栏使用官方 ToggleGroup、Button icon-sm 和既有品牌资源；新增通用列表、文件夹、垃圾桶图标通过 UiIcon 静态映射。40px 记录行属于业务布局，不新增通用表格或卡片封装。
+
+## 扩展 TG 下载按钮组（2026-10-25）
+
+- Button Group 与 Popover 源码固定为官方基线 c257f688cf4de7ec10cc1be84cad29cd4631182c 的 new-york-v4/ui/button-group.tsx、popover.tsx，使用现有 radix-ui、class-variance-authority，无新增依赖。
+- Button Group 沿用官方 group 语义、orientation、组合选择器与属性透传，仅适配本地 cn/Separator 路径。主按钮和横向三点使用现有 Button outline，不自建选中状态。
+- TG 按用户最终提供的 ButtonGroupDropdown 示例使用单一 ButtonGroup，下载资源与三点均用 outline Button，不额外加入 ButtonGroupSeparator。项目现用 Radix，对应触发器采用 asChild；保留已确认图标与业务菜单，不增加子组、手动间距或宽度变量。
+- Popover 仅引入 Root、Trigger、Content、Anchor，适配本地 cn，去掉 use client 和未安装的动画工具类，显式主题边框、复用既有浮层阴影；Content 增加 portalContainer 以挂到 TG Shadow DOM。不是恢复旧自定义 Popover；此处承载按钮组，次要操作仍由官方 DropdownMenu 负责。
+- TG 业务负责右键位置、操作和 Shadow DOM 外部事件判定，Popover 只定位按钮组，调用方去掉其边框、背景、内边距与阴影，不再额外包一层白框；保留 w-max、8px 碰撞边距。DropdownMenu 按用户要求使用官方 4px sideOffset，不使用项目共用的 12px；共用默认不改。现有流式保存、目录授权和另存为保持各自职责，不接 chrome.downloads。
+- TG 的两个 outline 按钮显式使用 border-solid border-border，恢复 Shadow DOM 中未生效的边框样式和主题颜色；未手画分割线、未加入 Separator 或新变量。Tailwind 产物的 border 依赖 @property --tw-border-style，Shadow DOM 对 @property 存在限制，参见 [Chrome 说明](https://developer.chrome.com/docs/css-ui/css-names)。
+- TG host 默认 pointer-events:none，Popover 与下拉菜单通过 Portal 成为兄弟层，业务调用方分别添加 pointer-events-auto，避免下拉层无法悬停和点击；沿用官方 highlighted/focus 配色。

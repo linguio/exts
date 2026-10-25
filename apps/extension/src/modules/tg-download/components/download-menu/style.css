@@ -4,6 +4,8 @@
 
 /* 网页注入界面引用同一组 Token，不把扩展页面的字体二进制内联进内容脚本。 */
 @theme inline {
+  --color-background: var(--background);
+  --color-input: var(--input);
   --color-foreground: var(--foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
