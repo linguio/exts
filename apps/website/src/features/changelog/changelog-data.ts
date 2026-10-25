@@ -14,6 +14,22 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'telegram-download-newtab-improvements',
+    date: '2026-10-25',
+    title: '完善 Telegram 下载体验',
+    groups: [{
+      platform: 'Extension',
+      changes: [
+        '优化 TG 下载操作，支持快速保存、文件另存为和保存文件夹选择。',
+        '新增下载记录，支持查看文件名与大小、按来源筛选和清空记录。',
+        '规范操作提示，统一提示文案、状态图标与显示位置。',
+      ],
+      links: [
+        { label: 'exts-chrome.zip · 1.5.0', href: 'https://github.com/linguio/exts/releases/download/v1.5.0/exts-chrome.zip' },
+      ],
+    }],
+  },
+  {
     id: 'newtab-check-in-layout',
     date: '2026-10-22',
     title: '完善 Newtab 布局与学习日历',
