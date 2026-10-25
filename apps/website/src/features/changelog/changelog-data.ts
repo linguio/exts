@@ -14,8 +14,20 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
-    id: 'telegram-download-newtab-improvements',
+    id: 'bookmarks-scroll-download-standards',
     date: '2026-10-25',
+    title: '整理书签与统一功能规范',
+    groups: [{
+      platform: 'Extension',
+      changes: [
+        '统一滚动区域组件，保持界面风格一致。',
+        '统一下载功能框架，明确媒体保存、下载记录与操作提示的职责和规范。',
+      ],
+    }],
+  },
+  {
+    id: 'telegram-download-newtab-improvements',
+    date: '2026-10-24',
     title: '完善 Telegram 下载体验',
     groups: [{
       platform: 'Extension',
