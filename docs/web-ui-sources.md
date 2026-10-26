@@ -102,3 +102,4 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 - 扩展增加可选 viewportClassName：书签区、卡片区和 Dock 保留原 overscroll 约束；Download 用 [&>div]:h-full 让 Radix 内容包装层填满已有区域，内层保留最小满高与 flex，以维持空列表居中。这些仅为容器布局适配，不改变滚动条外观。
 - 纵向区域使用官方自带 ScrollBar；书签区与卡片区保留双向溢出能力，Dock 与官网命令区按官方 Horizontal 示例组合水平 ScrollBar。调用方只维护原有尺寸、间距与内容。
 - 已删除被替代的 Newtab 隐藏原生滚动条规则。DropdownMenu 自带滚动、官网文档主体、Telegram 原网页及 macOS 原生界面保持原有机制。
+- 2026-10-26 UI 文件夹按用户明确批准在调用方隐藏直接子级的官方 ScrollBar，保留 Root、Viewport、内部滚动与 overscroll-y-contain；不改共用源码，不新增原生滚动条 CSS 或手写滚动事件。其余区域继续使用官方默认滚动条。
