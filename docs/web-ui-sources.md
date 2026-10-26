@@ -29,6 +29,8 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 
 扩展实际深色通过根 `data-theme` 覆盖原有 Token，System 模式才跟随系统媒体查询，不依赖 `.dark`。接入源码时移除依赖 `.dark` 的配色分支，以主题 Token 表达对应状态；减少动态效果继续由现有全局规则处理。仓库未安装动画工具类插件，因此不引入无法生效的动画类或新依赖。Sheet 当前仅使用右侧入口，其余方向保留官方定位接口，不增加未批准的新交互。
 
+2026-10-26 Studio 直接组合现有官方 Toggle 与 Tooltip，调用方指定现有 Dock 的 64px 外框；因 Tooltip 共享 data-state 且 entry-surface 会遮住按钮底色，选中外观通过根 aria-pressed 将官方 accent/accent-foreground 应用到共用入口图块。Radix 继续管理 pressed，不改 Toggle 源码，不添加图标填充或自定义状态。Actions 复用现有 DropdownMenu 默认 Hover、焦点、键盘与选中关闭行为，保留菜单打开时抑制 Tooltip 及原有关闭焦点行为；两个占位项通过 onSelect 调用 toast.info 显示「暂未接入」。现有 Toaster 从下载面板移到 Newtab 根部，仍复用同一共用 Sonner 源码、主题与右下角默认位置，不重复挂载或新增管理层。
+
 ## 业务组合与扫描边界
 
 - 官网介绍文字二进制动效（2026-10-25）：核对 [shadcn/ui 官方组件目录](https://ui.shadcn.com/docs/components)，没有对应字符解码组件，现有通用控件组合不能提供该效果。在 `pages/home/binary-text.tsx` 与同目录 CSS 独立实现固定二进制序列及单次分步动画，仅供首页介绍文字使用；参考 shadcn.io 的公开效果及本地 Demo，不复制 Pro 源码，不作为官方组件或引入动画依赖。保留原文字体、字距和主题 Token；字符占位、辅助技术原文与减少动态效果降级由该组件负责，1.2 行高沿用首页目标文字的既有值。

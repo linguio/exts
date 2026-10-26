@@ -73,6 +73,8 @@
 - Tooltip 提供名称或简短帮助说明，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Sheet 打开时 Dock 的 Settings 与 Download 入口不显示 Tooltip，关闭恢复焦点不自动弹出入口提示，后续正常悬停仍可显示；两个入口的状态由 Dock 局部 hook 共用，面板内部提示正常使用。
 - 品牌图标由 `BookmarkIcon` 负责；单色 adaptive 资源随主题转换，Exts 品牌 SVG 保持固定黑底白图。通用图标由 `UiIcon` 显式静态导入。
 - UI 文件夹的七个网站 SVG 按批准范围只统一颜色，保留原始几何、viewBox、线宽、留白与遮罩；采用 neutral 中性灰阶策略，深色主题仅反转明暗，保留多层图案，不使用 adaptive 的 brightness(0) 压平层次。不套用 V3 的重绘与统一坐标要求，也不增加深浅两套源稿。
+- Dock 左侧保持 favorites，右侧 tools 顺序为 Studio、Actions、Download、Settings。Studio 复用官方 Toggle：固定 PanelsTopLeft，首页提示 Switch to Studio、工作台提示 Back to Home；选中反馈使用官方 accent/accent-foreground，通过 aria-pressed 应用到 entry-surface，避免 Tooltip 的 data-state 覆盖及内部图块盖住反馈。不切换图标、不加 fill，不新增选中状态管理。
+- Studio 是独立模块，只显示标题与 No content yet；首页和工作台由 React Activity 切换，保留状态和 DOM，隐藏时暂停副作用、恢复时重新测量布局。Dock 与抽屉位于两者之外；每个新标签页默认首页，不保存视图偏好。Actions 沿用向上的官方 DropdownMenu，只有带 List / FolderOpen 的 Placeholder A / B；复用官方 Hover、焦点、键盘与选中关闭行为，onSelect 仅调用 toast.info 显示「暂未接入」，不执行业务功能。Newtab 根部挂一份复用主题的右下角 Toaster，供菜单与下载面板共用，业务继续决定提示文案，不新增通知管理层。Components 旧菜单已移除，资源收藏只保留在 UI 文件夹。
 - 字号、页面列数、具体宽高、位置与排版仍由现有组件负责；本次不建立全站布局框架或额外组件层。
 
 ## 验证与变更

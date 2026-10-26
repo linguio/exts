@@ -83,7 +83,7 @@ docs/
 
 ## Issue 队列
 
-1. [新增工作台切换与快速开始入口](./issues/2026-10-26-extension-workspace-entry-issue.md) · [Commit 记录](./commits/2026-10-26-extension-workspace-entry-commit.md)；前序最终交付提交成功后再实施；固定图标、英文切换提示与两个带图标的中性占位项，不接入业务功能。
+无。
 
 
 ## 待办
@@ -91,6 +91,8 @@ docs/
 无。
 
 ## 已完成
+
+- [新增 Studio 切换与 Actions 入口](./issues/2026-10-26-extension-workspace-entry-issue.md) · [Commit 记录](./commits/2026-10-26-extension-workspace-entry-commit.md)；用户于 2026-10-26 明确批准代码、文档两笔本地提交并完结；Studio 同页切换、Actions 占位菜单与右下角信息提示已交付；最新 Extension 73 项测试、类型检查、构建与 diff 检查此前通过，浏览器视觉与交互未由代理验收，提交时不追加验证，不推送。
 
 - [统一 UI 资源图标并新增书签文件夹](./issues/2026-10-26-extension-ui-bookmarks-issue.md) · [Commit 记录](./commits/2026-10-26-extension-ui-bookmarks-commit.md)；用户于 2026-10-26 明确批准本地提交并完结；七个图标、UI 文件夹、上下箭头及贴边渐变磨砂已交付；最新 Extension 74 项测试、类型检查、构建与 diff 检查通过，浏览器视觉与交互未由代理验收，提交时不追加验证，不推送。
 
