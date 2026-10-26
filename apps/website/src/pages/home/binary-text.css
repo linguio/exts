@@ -16,7 +16,7 @@
   }
 
   .home-binary-original {
-    visibility: hidden;
+    animation: home-binary-reveal 400ms step-end var(--binary-delay) both;
   }
 
   .home-binary-strip {
@@ -37,10 +37,23 @@
 
 @keyframes home-binary-decode {
   from {
+    visibility: visible;
     transform: translateY(0);
   }
 
   to {
+    visibility: hidden;
     transform: translateY(-9.6em);
+  }
+}
+
+/* 动画结束后由原文接管显示，不依赖位移层的最终绘制状态。 */
+@keyframes home-binary-reveal {
+  from {
+    visibility: hidden;
+  }
+
+  to {
+    visibility: visible;
   }
 }
