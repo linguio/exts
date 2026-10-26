@@ -53,7 +53,6 @@ export function BookmarkCard({ bookmark, target = '_blank', onClick, linkRef, re
         <BookmarkIcon
           icon={bookmark.icon}
           name={bookmark.name}
-          tone={bookmark.iconTone}
           size={bookmark.iconSize}
           className="entry-glyph"
         />

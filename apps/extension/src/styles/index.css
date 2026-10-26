@@ -131,16 +131,20 @@ body {
   font-family: var(--font-geist-sans);
 }
 
-/* 仅将明确标记为 adaptive 的单色图标转换为主题前景色，多色品牌图标保持原色。 */
-.bookmark-icon--adaptive {
+/* 书签资源统一为透明单色，浅色显示黑色，深色显示白色。 */
+.bookmark-icon {
   filter: brightness(0);
 }
 
-:root[data-theme='dark'] .bookmark-icon--adaptive {
+:root[data-theme='dark'] .bookmark-icon {
   filter: brightness(0) invert(1);
 }
 
-/* 中性灰阶资源仅反转明暗，保留原有渐变、黑白区域及遮罩的层次。 */
-:root[data-theme='dark'] .bookmark-icon--neutral {
+/* Exts 保留正式外形，浅色黑底白图，深色白底黑图。 */
+.bookmark-icon[data-brand='exts'] {
+  filter: none;
+}
+
+:root[data-theme='dark'] .bookmark-icon[data-brand='exts'] {
   filter: invert(1);
 }

@@ -1,4 +1,4 @@
-import type { IconSize, IconTone } from './icons';
+import type { IconSize } from './icons';
 
 /** 页面中可以直接打开的外链书签。 */
 export interface Bookmark {
@@ -7,7 +7,6 @@ export interface Bookmark {
   name: string;
   url: string;
   icon: string;
-  iconTone?: IconTone;
   iconSize?: IconSize;
 }
 

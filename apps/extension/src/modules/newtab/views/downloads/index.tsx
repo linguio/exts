@@ -73,7 +73,7 @@ export function DownloadsPanel() {
           {filters.map(item => (
             <NamedTooltip key={item.value} label={item.label} suppressed={confirmOpen}>
               <ToggleGroupItem value={item.value} aria-label={item.label} className="w-9">
-                {item.icon ? <BookmarkIcon icon={item.icon} name={item.label} tone="adaptive" size="sm" /> : <UiIcon name="list" className="size-4" />}
+                {item.icon ? <BookmarkIcon icon={item.icon} name={item.label} size="sm" /> : <UiIcon name="list" className="size-4" />}
               </ToggleGroupItem>
             </NamedTooltip>
           ))}
