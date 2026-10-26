@@ -14,6 +14,22 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'newtab-studio-actions-ui-folder',
+    date: '2026-10-26',
+    title: '新增工作台入口并优化书签体验',
+    groups: [{
+      platform: 'Extension',
+      changes: [
+        '新增 Studio 工作台入口与 Actions 快捷操作菜单，支持首页与工作台切换。',
+        '调整书签分类，新增 UI 文件夹并统一网站 SVG 图标配色。',
+        '优化文件夹内部滚动，补充上下方向提示与边缘渐变磨砂。',
+      ],
+      links: [
+        { label: 'exts-chrome.zip · 1.6.0', href: 'https://github.com/linguio/exts/releases/download/v1.6.0/exts-chrome.zip' },
+      ],
+    }],
+  },
+  {
     id: 'bookmarks-scroll-download-standards',
     date: '2026-10-25',
     title: '整理书签与统一功能规范',
