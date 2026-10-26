@@ -87,6 +87,12 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 - Download 自己持有筛选、确认文案和清空逻辑，无全局弹窗管理。记录截断和图标名称复用现有 Tooltip，文件夹不可用和清空失败复用现有 Sonner，沿用当前主题。
 - 工具栏使用官方 ToggleGroup、Button icon-sm 和既有品牌资源；新增通用列表、文件夹、垃圾桶图标通过 UiIcon 静态映射。40px 记录行属于业务布局，不新增通用表格或卡片封装。
 
+## 扩展 Input OTP（2026-10-26）
+
+- `input-otp.tsx` 使用固定官方基线 c257f688cf4de7ec10cc1be84cad29cd4631182c 的 [Input OTP](https://github.com/shadcn-ui/ui/blob/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/registry/new-york-v4/ui/input-otp.tsx) 源码。运行时依赖固定为 `input-otp` 1.5.0，精确写入 Extension package 与锁文件；本地源码去除 Vite 客户端不需要的 `use client`，适配 `cn` 路径。
+- Input OTP 保留官方单一真实输入与 Group/Slot 的上下文、焦点、粘贴能力，省略未使用的 Separator。因用户确认四格彼此分开，本地 Slot 改为四边完整边框与统一圆角，Group 使用 8px 间距；增加可选 `masked` 以圆点显示已输入字符。EDU 调用方覆盖组内和组间间距为 16px、四周留白为 16px，以对齐内部书签布局，并设置真实输入的 password 类型、纵向两组各两格及输满自动校验，不自制四个输入框或焦点管理。
+- 文件夹轻度遮挡、EDU 固定 `0000` 界面锁与成功过渡由 Newtab 业务层维护；输入格直接组合在 EDU 文件夹内，无 Dialog。Input OTP 共用组件不保存验证码、书签或业务状态。浏览器里的实际外观、焦点、输入和过渡效果由用户验收。
+
 ## 扩展 TG 下载按钮组（2026-10-25）
 
 - Button Group 与 Popover 源码固定为官方基线 c257f688cf4de7ec10cc1be84cad29cd4631182c 的 new-york-v4/ui/button-group.tsx、popover.tsx，使用现有 radix-ui、class-variance-authority，无新增依赖。

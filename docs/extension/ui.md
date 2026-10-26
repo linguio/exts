@@ -53,7 +53,8 @@
 | `entry-glyph` | 入口图形：统一过渡属性和缩放；用于书签品牌图、Dock 工具图标和 EDU 锁图标 |
 | `entry-glyph--lift` | 无图块入口的图形上移变体；用于 EDU 锁图标，让透明遮罩保持不动 |
 
-书签和工具按钮使用 `entry-trigger` → `entry-surface` → `entry-glyph`。EDU 遮罩按钮使用 `blur-overlay entry-trigger`，Lock 在 Hover 时切换为 LockOpen，两者使用 `entry-glyph entry-glyph--lift`，不额外添加卡片阴影或改变遮罩背景。
+书签和工具按钮使用 `entry-trigger` → `entry-surface` → `entry-glyph`。文件夹遮罩按钮使用 `blur-overlay entry-trigger`，图标使用 `entry-glyph entry-glyph--lift`，不额外添加卡片阴影或改变遮罩背景。
+UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU 属于固定四位码 `0000` 的界面锁，使用 Lock；点击后直接在文件夹内只显示官方 Input OTP 的四个 64px 密文密码块，与内部书签图块同尺寸，横纵间距和四周留白均为 16px，上下两行各两个分离输入位，不弹出对话框或额外提示。输满四位自动校验，错误即清空，正确后切换为 LockOpen；未成功解锁时点文件夹外部或按 Escape 退出输入并恢复锁。两者统一按图标交叉淡变 200ms、停留 200ms、整个遮罩淡出 200ms 的三阶段过渡解锁；悬停不切换图标，减少动态效果偏好下直接显示，刷新 Newtab 后恢复遮挡。成功解锁后焦点停在文件夹容器，不默认聚焦第一个书签；下一次 Tab 可进入书签。EDU 锁定期间书签不可键盘聚焦或打开；此码仅是界面门槛，书签内容并未加密，不能作为安全防护声明。交付边界见[当前 Issue](../changes/issues/2026-10-26-extension-folder-access-issue.md)。
 
 入口 Hover 与键盘 Focus 共用规则。保持当前即时缩放与上移效果：过渡属性只包含 `filter`、`transform`，图块另外包含边框和阴影；CSS 独立 `scale` / `translate` 不单独补充平滑过渡。若后续调整动效，修改这里的共用规则，不在某个组件单独添加 `transition-transform`。
 
