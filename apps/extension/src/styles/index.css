@@ -133,3 +133,8 @@ body {
 :root[data-theme='dark'] .bookmark-icon--adaptive {
   filter: brightness(0) invert(1);
 }
+
+/* 中性灰阶资源仅反转明暗，保留原有渐变、黑白区域及遮罩的层次。 */
+:root[data-theme='dark'] .bookmark-icon--neutral {
+  filter: invert(1);
+}

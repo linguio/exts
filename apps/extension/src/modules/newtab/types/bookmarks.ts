@@ -18,6 +18,7 @@ export interface BookmarkFolder {
   name: string;
   items: Bookmark[];
   blur?: boolean;
+  scrollable?: boolean;
 }
 
 /** Dock 使用的聚合入口，点击后通过浮层展示内部书签。 */

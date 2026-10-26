@@ -8,14 +8,19 @@ import { defineConfig } from 'wxt';
 import { readProjectVersion } from '../../scripts/version.mjs';
 
 const assetFiles = [
+  'modules/newtab/assets/brand/antd.svg',
   'modules/newtab/assets/brand/bilibili.svg',
   'modules/newtab/assets/brand/chatgpt.svg',
   'modules/newtab/assets/brand/cursor.svg',
+  'modules/newtab/assets/brand/element-plus.svg',
+  'modules/newtab/assets/brand/element-ui.svg',
   'modules/newtab/assets/brand/exts.svg',
   'modules/newtab/assets/brand/github.svg',
   'modules/newtab/assets/brand/gmail.svg',
   'modules/newtab/assets/brand/grok.svg',
+  'modules/newtab/assets/brand/iconfont.svg',
   'modules/newtab/assets/brand/linear.svg',
+  'modules/newtab/assets/brand/lucide.svg',
   'modules/newtab/assets/brand/namecheap.svg',
   'modules/newtab/assets/brand/notion.svg',
   'modules/newtab/assets/brand/npm.svg',
@@ -36,12 +41,6 @@ const assetFiles = [
   'assets/logo/exts-16.png',
   'assets/logo/exts-32.png',
   'assets/logo/exts-48.png',
-  'modules/newtab/assets/tools/antd.svg',
-  'modules/newtab/assets/tools/element-plus.svg',
-  'modules/newtab/assets/tools/element-ui.svg',
-  'modules/newtab/assets/tools/google-translate.png',
-  'modules/newtab/assets/tools/iconfont.svg',
-  'modules/newtab/assets/tools/lucide.svg',
 ] as const;
 
 const outputAssetPaths: string[] = assetFiles.map((file) => `/src/${file}`);

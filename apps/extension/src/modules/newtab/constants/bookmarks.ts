@@ -1,5 +1,16 @@
 import type { Bookmark, BookmarkGridItem, BookmarkGroup } from '../types/bookmarks';
 
+// 过渡期首页 UI 文件夹与 Dock Components 共用同一份资源收藏。
+const UI_BOOKMARKS: Bookmark[] = [
+  { type: 'bookmark', id: 'lucide', name: 'Lucide', url: 'https://lucide.dev', icon: 'brand/lucide.svg', iconTone: 'neutral' },
+  { type: 'bookmark', id: 'shadcnio', name: 'shadcn.io', url: 'https://www.shadcn.io/', icon: 'brand/shadcnio.svg', iconTone: 'neutral' },
+  { type: 'bookmark', id: 'iconfont', name: 'Iconfont', url: 'https://www.iconfont.cn', icon: 'brand/iconfont.svg', iconTone: 'neutral' },
+  { type: 'bookmark', id: 'antd', name: 'Ant Design', url: 'https://ant.design', icon: 'brand/antd.svg', iconTone: 'neutral' },
+  { type: 'bookmark', id: 'element-ui', name: 'Element UI', url: 'https://element.eleme.io', icon: 'brand/element-ui.svg', iconTone: 'neutral' },
+  { type: 'bookmark', id: 'element-plus', name: 'Element Plus', url: 'https://element-plus.org', icon: 'brand/element-plus.svg', iconTone: 'neutral' },
+  { type: 'bookmark', id: 'simpleicons', name: 'Simple Icons', url: 'https://simpleicons.org/', icon: 'brand/simpleicons.svg', iconTone: 'neutral' },
+];
+
 // 书签配置按页面区域直接导出，避免调用方依赖聚合对象。
 // 首页 Grid 只消费文件夹和普通书签，不包含底部 Dock 的内容。
 export const BOOKMARK_GRID: BookmarkGridItem[] = [
@@ -45,6 +56,14 @@ export const BOOKMARK_GRID: BookmarkGridItem[] = [
   },
   {
     type: 'folder',
+    id: 'ui',
+    name: 'UI',
+    blur: true,
+    scrollable: true,
+    items: UI_BOOKMARKS,
+  },
+  {
+    type: 'folder',
     id: 'edu',
     name: 'EDU',
     blur: true,
@@ -71,13 +90,5 @@ export const DOCK_COMPONENTS: BookmarkGroup = {
   id: 'components',
   name: 'Components',
   icon: { kind: 'ui', name: 'blocks' },
-  bookmarks: [
-    { type: 'bookmark', id: 'lucide', name: 'Lucide', url: 'https://lucide.dev', icon: 'tools/lucide.svg' },
-    { type: 'bookmark', id: 'shadcnio', name: 'shadcn.io', url: 'https://www.shadcn.io/', icon: 'brand/shadcnio.svg' },
-    { type: 'bookmark', id: 'iconfont', name: 'Iconfont', url: 'https://www.iconfont.cn', icon: 'tools/iconfont.svg' },
-    { type: 'bookmark', id: 'antd', name: 'Ant Design', url: 'https://ant.design', icon: 'tools/antd.svg' },
-    { type: 'bookmark', id: 'element-ui', name: 'Element UI', url: 'https://element.eleme.io', icon: 'tools/element-ui.svg' },
-    { type: 'bookmark', id: 'element-plus', name: 'Element Plus', url: 'https://element-plus.org', icon: 'tools/element-plus.svg' },
-    { type: 'bookmark', id: 'simpleicons', name: 'Simple Icons', url: 'https://simpleicons.org/', icon: 'brand/simpleicons.svg', iconTone: 'adaptive' },
-  ],
+  bookmarks: UI_BOOKMARKS,
 };

@@ -4,8 +4,18 @@ import * as bookmarkConfig from '../../../src/modules/newtab/constants/bookmarks
 
 const { BOOKMARK_GRID, DOCK_COMPONENTS, DOCK_FAVORITES } = bookmarkConfig;
 
+const uiBookmarks = [
+  { type: 'bookmark', id: 'lucide', name: 'Lucide', url: 'https://lucide.dev', icon: 'brand/lucide.svg', iconTone: 'neutral' },
+  { type: 'bookmark', id: 'shadcnio', name: 'shadcn.io', url: 'https://www.shadcn.io/', icon: 'brand/shadcnio.svg', iconTone: 'neutral' },
+  { type: 'bookmark', id: 'iconfont', name: 'Iconfont', url: 'https://www.iconfont.cn', icon: 'brand/iconfont.svg', iconTone: 'neutral' },
+  { type: 'bookmark', id: 'antd', name: 'Ant Design', url: 'https://ant.design', icon: 'brand/antd.svg', iconTone: 'neutral' },
+  { type: 'bookmark', id: 'element-ui', name: 'Element UI', url: 'https://element.eleme.io', icon: 'brand/element-ui.svg', iconTone: 'neutral' },
+  { type: 'bookmark', id: 'element-plus', name: 'Element Plus', url: 'https://element-plus.org', icon: 'brand/element-plus.svg', iconTone: 'neutral' },
+  { type: 'bookmark', id: 'simpleicons', name: 'Simple Icons', url: 'https://simpleicons.org/', icon: 'brand/simpleicons.svg', iconTone: 'neutral' },
+];
+
 // 验证页面展示的文件夹内容与入口顺序。
-test('Grid 书签配置提供 EDU 和 AI 文件夹', () => {
+test('Grid 书签配置在 EDU 前提供默认模糊且可滚动的 UI 文件夹', () => {
   assert.deepEqual(BOOKMARK_GRID, [
       {
         type: 'folder',
@@ -49,6 +59,14 @@ test('Grid 书签配置提供 EDU 和 AI 文件夹', () => {
       },
       {
         type: 'folder',
+        id: 'ui',
+        name: 'UI',
+        blur: true,
+        scrollable: true,
+        items: uiBookmarks,
+      },
+      {
+        type: 'folder',
         id: 'edu',
         name: 'EDU',
         blur: true,
@@ -78,14 +96,6 @@ test('Components 聚合入口保持当前组件工具顺序', () => {
     id: 'components',
     name: 'Components',
     icon: { kind: 'ui', name: 'blocks' },
-    bookmarks: [
-      { type: 'bookmark', id: 'lucide', name: 'Lucide', url: 'https://lucide.dev', icon: 'tools/lucide.svg' },
-      { type: 'bookmark', id: 'shadcnio', name: 'shadcn.io', url: 'https://www.shadcn.io/', icon: 'brand/shadcnio.svg' },
-      { type: 'bookmark', id: 'iconfont', name: 'Iconfont', url: 'https://www.iconfont.cn', icon: 'tools/iconfont.svg' },
-      { type: 'bookmark', id: 'antd', name: 'Ant Design', url: 'https://ant.design', icon: 'tools/antd.svg' },
-      { type: 'bookmark', id: 'element-ui', name: 'Element UI', url: 'https://element.eleme.io', icon: 'tools/element-ui.svg' },
-      { type: 'bookmark', id: 'element-plus', name: 'Element Plus', url: 'https://element-plus.org', icon: 'tools/element-plus.svg' },
-      { type: 'bookmark', id: 'simpleicons', name: 'Simple Icons', url: 'https://simpleicons.org/', icon: 'brand/simpleicons.svg', iconTone: 'adaptive' },
-    ],
+    bookmarks: uiBookmarks,
   });
 });

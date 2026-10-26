@@ -50,6 +50,25 @@
   line-height: 16px;
 }
 
+/* 贴边三像素盖住内部边框，再向内容侧渐隐；上下提示镜像且不占布局。 */
+.bookmark-folder__scroll-hint {
+  --scroll-hint-direction: to bottom;
+}
+
+.bookmark-folder__scroll-hint[data-edge='bottom'] {
+  --scroll-hint-direction: to top;
+}
+
+.bookmark-folder__scroll-hint::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--card);
+  backdrop-filter: blur(var(--overlay-blur));
+  mask-image: linear-gradient(var(--scroll-hint-direction), black 3px, transparent);
+}
+
 /* 页面区域保留最小尺寸约束，滚动交给官方 Scroll Area。 */
 .newtab-scroll-area {
   min-width: 0;
