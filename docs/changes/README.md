@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [补充 Newtab 更新日志](./issues/2026-10-26-website-newtab-changelog-issue.md) · [Commit 记录](./commits/2026-10-26-website-newtab-changelog-commit.md)；用户于 2026-10-26 明确批准版本与官网数据、工作项文档两笔本地提交并完结；根版本与三点日志关联同步为 1.6.0，历史日志保持；版本检查、直接运行现有工具的官网类型检查与构建及 diff 检查此前通过，浏览器与远端附件未实测，提交时不追加验证，不推送或部署。
+
 - [新增 Studio 切换与 Actions 入口](./issues/2026-10-26-extension-workspace-entry-issue.md) · [Commit 记录](./commits/2026-10-26-extension-workspace-entry-commit.md)；用户于 2026-10-26 明确批准代码、文档两笔本地提交并完结；Studio 同页切换、Actions 占位菜单与右下角信息提示已交付；最新 Extension 73 项测试、类型检查、构建与 diff 检查此前通过，浏览器视觉与交互未由代理验收，提交时不追加验证，不推送。
 
 - [统一 UI 资源图标并新增书签文件夹](./issues/2026-10-26-extension-ui-bookmarks-issue.md) · [Commit 记录](./commits/2026-10-26-extension-ui-bookmarks-commit.md)；用户于 2026-10-26 明确批准本地提交并完结；七个图标、UI 文件夹、上下箭头及贴边渐变磨砂已交付；最新 Extension 74 项测试、类型检查、构建与 diff 检查通过，浏览器视觉与交互未由代理验收，提交时不追加验证，不推送。
