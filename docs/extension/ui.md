@@ -71,8 +71,9 @@
 - 历史清理开关标题旁的圆圈问号复用 Button/UiIcon/Tooltip，帮助提示完整保留原说明，最大宽度 280px、优先向上显示并支持换行；独立按钮不切换开关，读屏描述通过常驻隐藏文本保留。错误不放进 Tooltip。
 - Sheet 内容、边框与分隔线使用根主题；全屏遮罩使用 `blur-overlay`。打开/关闭动画为 200ms/160ms，减少动态效果时遵循全局规则。
 - Tooltip 提供名称或简短帮助说明，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Sheet 打开时 Dock 的 Settings 与 Download 入口不显示 Tooltip，关闭恢复焦点不自动弹出入口提示，后续正常悬停仍可显示；两个入口的状态由 Dock 局部 hook 共用，面板内部提示正常使用。
-- 品牌图标由 `BookmarkIcon` 负责；单色 adaptive 资源随主题转换，Exts 品牌 SVG 保持固定黑底白图。通用图标由 `UiIcon` 显式静态导入。
-- UI 文件夹的七个网站 SVG 按批准范围只统一颜色，保留原始几何、viewBox、线宽、留白与遮罩；采用 neutral 中性灰阶策略，深色主题仅反转明暗，保留多层图案，不使用 adaptive 的 brightness(0) 压平层次。不套用 V3 的重绘与统一坐标要求，也不增加深浅两套源稿。
+- 品牌图标由 `BookmarkIcon` 负责；Newtab 书签、Dock 收藏及其复用入口随主题切换黑白，不再按站点配置 original、adaptive 或 neutral。普通书签透明背景、单色主体，浅色显示黑色、深色显示白色。通用图标由 `UiIcon` 显式静态导入。
+- UI 文件夹图标沿用原始几何、viewBox、线宽与留白，移除灰阶和渐变；白色覆盖形成的必要孔洞通过黑白遮罩转成真正透明区域，再统一主题转换，避免整体滤镜压平镂空。不套用 V3 重绘或统一坐标要求，不维护深浅两套源稿。
+- Grok 书签移除固定底板、保留主体路径。Exts 按用户最新确认保留正式完整外形及底板，浅色黑底白图、深色白底黑图；沿用现有内嵌正式 PNG 的 SVG，不重绘外形、不替换为仅含内部主体的源稿，也不对其应用压平对比的 brightness 滤镜。此主题反转仅用于书签，品牌唯一源稿及三端应用图标保持原样。此次交付见[书签单色 Issue](../changes/issues/2026-10-26-extension-bookmark-monochrome-issue.md)。
 - Dock 左侧保持 favorites，右侧 tools 顺序为 Studio、Actions、Download、Settings。Studio 复用官方 Toggle：固定 PanelsTopLeft，首页提示 Switch to Studio、工作台提示 Back to Home；选中反馈使用官方 accent/accent-foreground，通过 aria-pressed 应用到 entry-surface，避免 Tooltip 的 data-state 覆盖及内部图块盖住反馈。不切换图标、不加 fill，不新增选中状态管理。
 - Studio 是独立模块，只显示标题与 No content yet；首页和工作台由 React Activity 切换，保留状态和 DOM，隐藏时暂停副作用、恢复时重新测量布局。Dock 与抽屉位于两者之外；每个新标签页默认首页，不保存视图偏好。Actions 沿用向上的官方 DropdownMenu，只有带 List / FolderOpen 的 Placeholder A / B；复用官方 Hover、焦点、键盘与选中关闭行为，onSelect 仅调用 toast.info 显示「暂未接入」，不执行业务功能。Newtab 根部挂一份复用主题的右下角 Toaster，供菜单与下载面板共用，业务继续决定提示文案，不新增通知管理层。Components 旧菜单已移除，资源收藏只保留在 UI 文件夹。
 - 字号、页面列数、具体宽高、位置与排版仍由现有组件负责；本次不建立全站布局框架或额外组件层。

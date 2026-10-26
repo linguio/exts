@@ -28,7 +28,7 @@
 
 - `UiIcon` 只适配 Lucide 通用 UI 图标，统一使用 `currentColor`、已批准的尺寸和线宽；只能显式静态导入实际使用的图标。
 - 禁止 `import * as Icons from 'lucide-react'`、完整图标注册表、根据任意字符串动态访问 Lucide 全量导出或其他可能将整套图标打入产物的方式。
-- `BookmarkIcon` 只管理品牌、网站书签、文字 Logo 和既有 SVG/PNG 资源，并继续遵守原色与自适应单色规则；不得使用 Lucide 重绘或替换品牌 Logo。
+- `BookmarkIcon` 只管理品牌、网站书签和文字 Logo；Newtab 书签及 Dock 收藏随明暗主题切换黑白，不再维护 original、adaptive 或 neutral 配置。普通书签透明单色，浅色黑色、深色白色；Exts 保留正式完整外形，浅色黑底白图、深色白底黑图，沿用现有正式导出资源。品牌唯一源稿与三端应用图标保持原样；不得使用 Lucide 重绘或替换品牌 Logo。
 - 被 Lucide 替代的通用功能 SVG 在完成迁移和验收后必须删除，不得长期保留两套等价资源或运行时实现。
 
 ## Dock 交互
