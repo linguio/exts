@@ -1,11 +1,12 @@
-import { Blocks, ChevronDown, ChevronUp, CircleQuestionMark, Download, FolderOpen, LaptopMinimal, List, Lock, LockOpen, Moon, Settings, Sun, Trash2, X, type LucideIcon } from 'lucide-react';
+import { ChevronDown, ChevronUp, CircleQuestionMark, Download, FolderOpen, LaptopMinimal, List, Lock, LockOpen, Moon, PanelsTopLeft, Settings, Sun, Trash2, X, Zap, type LucideIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
 
 import type { UiIconName } from './types';
 import { cn } from '../lib/utils';
 
 const uiIconMap: Record<UiIconName, LucideIcon> = {
-  blocks: Blocks,
+  'panels-top-left': PanelsTopLeft,
+  zap: Zap,
   download: Download,
   lock: Lock,
   'lock-open': LockOpen,

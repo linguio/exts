@@ -67,6 +67,12 @@
     transform var(--duration-fast) var(--ease-standard);
 }
 
+/* Toggle 沿用官方选中 Token，将反馈落在入口图块；aria-pressed 避免 Tooltip 的 data-state 覆盖。 */
+.entry-trigger[aria-pressed='true'] .entry-surface {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
 .entry-trigger:focus-visible .entry-surface {
   outline: 2px solid var(--ring);
   outline-offset: 2px;

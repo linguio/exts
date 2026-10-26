@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import * as bookmarkConfig from '../../../src/modules/newtab/constants/bookmarks.ts';
 
-const { BOOKMARK_GRID, DOCK_COMPONENTS, DOCK_FAVORITES } = bookmarkConfig;
+const { BOOKMARK_GRID, DOCK_FAVORITES } = bookmarkConfig;
 
 const uiBookmarks = [
   { type: 'bookmark', id: 'lucide', name: 'Lucide', url: 'https://lucide.dev', icon: 'brand/lucide.svg', iconTone: 'neutral' },
@@ -88,14 +88,4 @@ test('Dock 收藏配置保持当前常用入口顺序', () => {
     { type: 'bookmark', id: 'exts', name: 'Exts', url: 'https://exts.linguio.dev/', icon: 'brand/exts.svg' },
     { type: 'bookmark', id: 'gmail', name: 'Gmail', url: 'https://mail.google.com', icon: 'brand/gmail.svg', iconTone: 'adaptive' },
   ]);
-});
-
-test('Components 聚合入口保持当前组件工具顺序', () => {
-  assert.deepEqual(DOCK_COMPONENTS, {
-    type: 'bookmark-group',
-    id: 'components',
-    name: 'Components',
-    icon: { kind: 'ui', name: 'blocks' },
-    bookmarks: uiBookmarks,
-  });
 });

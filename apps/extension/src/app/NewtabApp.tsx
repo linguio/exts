@@ -1,18 +1,24 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { Activity, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
+import 'sonner/dist/styles.css';
 
-import { BOOKMARK_GRID, DOCK_COMPONENTS, DOCK_FAVORITES } from '../modules/newtab/constants/bookmarks';
+import { BOOKMARK_GRID, DOCK_FAVORITES } from '../modules/newtab/constants/bookmarks';
 import { BookmarkDock } from '../modules/newtab/views/dock/bookmark-dock';
 import { BookmarkGrid } from '../modules/newtab/views/bookmarks/bookmark-grid';
 import { NewtabCards } from '../modules/newtab/views/cards/index';
 import { ScrollArea, ScrollBar } from '../shared/ui/scroll-area';
 import { TooltipProvider } from '../shared/ui/tooltip';
 import { openBookmarkInGroup } from '../modules/newtab/utils/tab.js';
-import type { Bookmark, BookmarkCollection } from '../modules/newtab/types/bookmarks';
+import type { OpenBookmark } from '../modules/newtab/types/bookmarks';
+import { Studio } from '../modules/studio';
+import { subscribeTheme } from '../shared/theme/runtime';
+import { Toaster } from '../shared/ui/sonner';
 
 import './newtab.css';
 
-/** 页面级组合入口：业务数据由 constants 提供，交互由下层视图组件负责。 */
-export function App() {
+const readAppearance = () => document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+
+/** 首页保留自身状态与布局测量，隐藏时由 Activity 暂停观察，显示后重新测量。 */
+function NewtabHome() {
   const viewportRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const bookmarksRef = useRef<HTMLDivElement>(null);
@@ -57,39 +63,57 @@ export function App() {
     return () => observer.disconnect();
   }, []);
 
-  const onOpenBookmark = (folder: BookmarkCollection, bookmark: Bookmark) => {
+  const onOpenBookmark: OpenBookmark = (folder, bookmark) => {
     void openBookmarkInGroup(window.chrome, folder, bookmark);
   };
 
   return (
+    <div className="newtab-content-viewport" ref={viewportRef}>
+      <div className="newtab-content" ref={contentRef} style={{ width: contentWidth }}>
+        <section className="newtab-scroll-area" aria-label="常用书签">
+          <ScrollArea className="size-full" viewportClassName="overscroll-contain">
+            <div className="bookmarks newtab-bookmarks" ref={bookmarksRef} data-bookmarks>
+              <BookmarkGrid bookmarks={BOOKMARK_GRID} onOpenBookmark={onOpenBookmark} />
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        </section>
+        <aside className="newtab-scroll-area" ref={cardsRef} aria-label="卡片区域">
+          <ScrollArea className="size-full" viewportClassName="overscroll-contain">
+            <NewtabCards />
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        </aside>
+      </div>
+    </div>
+  );
+}
+
+/** 页面组合只管理主视图切换，Dock 与抽屉不随主视图隐藏。 */
+export function App() {
+  const [studioActive, setStudioActive] = useState(false);
+  const appearance = useSyncExternalStore(subscribeTheme, readAppearance);
+
+  return (
     <TooltipProvider>
       <main className="bookmarks-page newtab-page">
-        <div className="newtab-content-viewport" ref={viewportRef}>
-          <div className="newtab-content" ref={contentRef} style={{ width: contentWidth }}>
-            <section className="newtab-scroll-area" aria-label="常用书签">
-              <ScrollArea className="size-full" viewportClassName="overscroll-contain">
-                <div className="bookmarks newtab-bookmarks" ref={bookmarksRef} data-bookmarks>
-                  <BookmarkGrid bookmarks={BOOKMARK_GRID} onOpenBookmark={onOpenBookmark} />
-                </div>
-                <ScrollBar orientation="horizontal" />
-              </ScrollArea>
-            </section>
-            <aside className="newtab-scroll-area" ref={cardsRef} aria-label="卡片区域">
-              <ScrollArea className="size-full" viewportClassName="overscroll-contain">
-                <NewtabCards />
-                <ScrollBar orientation="horizontal" />
-              </ScrollArea>
-            </aside>
-          </div>
+        <div className="grid min-h-0 min-w-0 overflow-hidden">
+          <Activity mode={studioActive ? 'hidden' : 'visible'}>
+            <NewtabHome />
+          </Activity>
+          <Activity mode={studioActive ? 'visible' : 'hidden'}>
+            <Studio />
+          </Activity>
         </div>
         <div className="flex min-w-0 justify-center" data-bookmark-dock>
           <BookmarkDock
             favorites={DOCK_FAVORITES}
-            components={DOCK_COMPONENTS}
-            onOpenBookmark={onOpenBookmark}
+            studioActive={studioActive}
+            onStudioChange={setStudioActive}
           />
         </div>
       </main>
+      <Toaster theme={appearance} />
     </TooltipProvider>
   );
 }

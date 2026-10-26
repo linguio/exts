@@ -1,15 +1,13 @@
-import { useEffect, useState, useSyncExternalStore, type ReactElement } from 'react';
-import 'sonner/dist/styles.css';
+import { useEffect, useState, type ReactElement } from 'react';
 
 import { clearDownloads, getDownloads, subscribeDownloads } from '../../../downloads';
 import { selectRecords, type Downloads, type DownloadFilter } from '../../../downloads/schema';
-import { subscribeTheme } from '../../../../shared/theme/runtime';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../../../../shared/ui/alert-dialog';
 import { Button } from '../../../../shared/ui/button';
 import { ScrollArea } from '../../../../shared/ui/scroll-area';
 import { ToggleGroup, ToggleGroupItem } from '../../../../shared/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
-import { Toaster, toast } from '../../../../shared/ui/sonner';
+import { toast } from '../../../../shared/ui/sonner';
 import { UiIcon } from '../../../../shared/ui/ui-icon';
 import { BookmarkIcon } from '../../components/bookmark-icon';
 import { DownloadRecordRow } from './download-record';
@@ -21,7 +19,6 @@ const filters = [
 ] as const;
 const names = { all: '全部', tg: 'TG', x: 'X' };
 const folders = { all: 'Exts Downloads', tg: 'Exts Downloads/Telegram', x: 'Exts Downloads/X' };
-const readAppearance = () => document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
 
 function NamedTooltip({ label, children, suppressed = false }: { label: string; children: ReactElement; suppressed?: boolean }) {
   return (
@@ -39,7 +36,6 @@ export function DownloadsPanel() {
   const [problem, setProblem] = useState('');
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [clearing, setClearing] = useState(false);
-  const appearance = useSyncExternalStore(subscribeTheme, readAppearance);
 
   useEffect(() => {
     let active = true;
@@ -119,7 +115,6 @@ export function DownloadsPanel() {
                 : <p className="flex flex-1 items-center justify-center text-sm text-muted-foreground">暂无下载记录</p>}
         </div>
       </ScrollArea>
-      <Toaster theme={appearance} />
     </section>
   );
 }

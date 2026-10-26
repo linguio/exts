@@ -1,6 +1,6 @@
-import type { Bookmark, BookmarkGridItem, BookmarkGroup } from '../types/bookmarks';
+import type { Bookmark, BookmarkGridItem } from '../types/bookmarks';
 
-// 过渡期首页 UI 文件夹与 Dock Components 共用同一份资源收藏。
+// UI 文件夹的开发资源收藏，统一使用保留层次的中性主题配色。
 const UI_BOOKMARKS: Bookmark[] = [
   { type: 'bookmark', id: 'lucide', name: 'Lucide', url: 'https://lucide.dev', icon: 'brand/lucide.svg', iconTone: 'neutral' },
   { type: 'bookmark', id: 'shadcnio', name: 'shadcn.io', url: 'https://www.shadcn.io/', icon: 'brand/shadcnio.svg', iconTone: 'neutral' },
@@ -83,12 +83,3 @@ export const DOCK_FAVORITES: Bookmark[] = [
   { type: 'bookmark', id: 'exts', name: 'Exts', url: 'https://exts.linguio.dev/', icon: 'brand/exts.svg' },
   { type: 'bookmark', id: 'gmail', name: 'Gmail', url: 'https://mail.google.com', icon: 'brand/gmail.svg', iconTone: 'adaptive' },
 ];
-
-// Components 是 Dock 内的聚合入口，内部书签按名称加入标签组。
-export const DOCK_COMPONENTS: BookmarkGroup = {
-  type: 'bookmark-group',
-  id: 'components',
-  name: 'Components',
-  icon: { kind: 'ui', name: 'blocks' },
-  bookmarks: UI_BOOKMARKS,
-};

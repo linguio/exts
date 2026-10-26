@@ -1,4 +1,4 @@
-import type { DockIcon, IconSize, IconTone } from './icons';
+import type { IconSize, IconTone } from './icons';
 
 /** 页面中可以直接打开的外链书签。 */
 export interface Bookmark {
@@ -21,16 +21,6 @@ export interface BookmarkFolder {
   scrollable?: boolean;
 }
 
-/** Dock 使用的聚合入口，点击后通过浮层展示内部书签。 */
-export interface BookmarkGroup {
-  type: 'bookmark-group';
-  id: string;
-  name: string;
-  icon: DockIcon;
-  bookmarks: Bookmark[];
-}
-
-// Grid 同时承载普通书签和文件夹，集合类型统一两种分组的打开回调签名。
+// Grid 同时承载普通书签和文件夹，分组打开只处理书签文件夹。
 export type BookmarkGridItem = Bookmark | BookmarkFolder;
-export type BookmarkCollection = BookmarkFolder | BookmarkGroup;
-export type OpenBookmark = (collection: BookmarkCollection, bookmark: Bookmark) => void;
+export type OpenBookmark = (folder: BookmarkFolder, bookmark: Bookmark) => void;
