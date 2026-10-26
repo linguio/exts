@@ -48,6 +48,37 @@
   backdrop-filter: blur(var(--overlay-blur));
 }
 
+/* 两种文件夹解锁均依次切换图标、停留、淡出遮罩，每阶段 200ms。 */
+.bookmark-folder__icon-open {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bookmark-folder__blur[data-revealing='true'] .bookmark-folder__icon-closed {
+    animation: bookmark-folder-icon-close 200ms ease forwards;
+  }
+
+  .bookmark-folder__blur[data-revealing='true'] .bookmark-folder__icon-open {
+    animation: bookmark-folder-icon-open 200ms ease forwards;
+  }
+
+  .bookmark-folder__blur[data-revealing='true'] {
+    animation: bookmark-folder-reveal 200ms ease 400ms forwards;
+  }
+}
+
+@keyframes bookmark-folder-icon-close {
+  to { opacity: 0; }
+}
+
+@keyframes bookmark-folder-icon-open {
+  to { opacity: 1; }
+}
+
+@keyframes bookmark-folder-reveal {
+  to { opacity: 0; }
+}
+
 /* 入口图块与图形分别承担容器反馈和图标反馈；触发方式在同一处维护。 */
 .entry-surface {
   display: grid;
