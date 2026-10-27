@@ -83,7 +83,8 @@ docs/
 
 ## Issue 队列
 
-无。
+- [改造首页活动录入与日历统计（讨论草稿）](./issues/2026-10-27-extension-activity-cards-issue.md) · [Commit 记录](./commits/2026-10-27-extension-activity-cards-commit.md)；仅保存讨论，待确认录入完结、最高值配置、统计规则和首个交付边界，未批准实施。
+- [整合媒体下载模块与统一记录（讨论草稿）](./issues/2026-10-27-extension-media-dl-issue.md) · [Commit 记录](./commits/2026-10-27-extension-media-dl-commit.md)；仅保存讨论，已记录 media-dl / tg-dl / x-dl 方向、Newtab 自有界面与统一数据订阅边界；X／桌面接入范围待定，未批准实施。
 
 
 ## 待办
