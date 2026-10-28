@@ -4,6 +4,7 @@ import { useRef, useState, type KeyboardEvent } from 'react';
 export function useDockSheetTooltip() {
   const [open, setOpen] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
+  const [restoredFocus, setRestoredFocus] = useState(false);
   const suppressRestoredFocusTooltip = useRef(false);
 
   return {
@@ -21,22 +22,27 @@ export function useDockSheetTooltip() {
       },
     },
     triggerProps: {
+      'data-restored-focus': restoredFocus || undefined,
       onPointerMove() {
         suppressRestoredFocusTooltip.current = false;
       },
       onBlur() {
         suppressRestoredFocusTooltip.current = false;
+        setRestoredFocus(false);
       },
       onPointerDown() {
+        setRestoredFocus(false);
         setTooltipOpen(false);
       },
       onKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
+        setRestoredFocus(false);
         if (event.key === 'Enter' || event.key === ' ') setTooltipOpen(false);
       },
     },
     onCloseAutoFocus() {
-      // 保留 Sheet 默认焦点恢复，只阻止随之弹出的入口提示。
+      // 保留抽屉默认焦点恢复，仅抑制本次恢复附带的描边与提示。
       suppressRestoredFocusTooltip.current = true;
+      setRestoredFocus(true);
       setTooltipOpen(false);
     },
   };

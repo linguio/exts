@@ -104,7 +104,7 @@
   color: var(--accent-foreground);
 }
 
-.entry-trigger:focus-visible .entry-surface {
+.entry-trigger:focus-visible:not([data-restored-focus]) .entry-surface {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
