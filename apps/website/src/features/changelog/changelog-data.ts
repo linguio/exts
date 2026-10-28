@@ -14,6 +14,22 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'folders-media-download-settings',
+    date: '2026-10-28',
+    title: '优化文件夹、下载与设置体验',
+    groups: [{
+      platform: 'Extension',
+      changes: [
+        '优化文件夹查看、解锁与滚动体验。',
+        '整合并优化 Media Download 与下载记录，预留 X 下载扩展。',
+        '整合并优化 Settings，统一全局状态图标与操作反馈。',
+      ],
+      links: [
+        { label: 'exts-chrome.zip · 1.7.0', href: 'https://github.com/linguio/exts/releases/download/v1.7.0/exts-chrome.zip' },
+      ],
+    }],
+  },
+  {
     id: 'newtab-studio-actions-ui-folder',
     date: '2026-10-26',
     title: '新增工作台入口并优化书签体验',
