@@ -1,6 +1,8 @@
 import { useRef } from 'react';
 
 import { Button } from '../../../../shared/ui/button';
+import { Card } from '../../../../shared/ui/card';
+import { ItemGroup, ItemSeparator } from '../../../../shared/ui/item';
 import { ScrollArea } from '../../../../shared/ui/scroll-area';
 import { Separator } from '../../../../shared/ui/separator';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../../../../shared/ui/sheet';
@@ -50,10 +52,15 @@ export function DockSettings() {
         <ScrollArea className="min-h-0 flex-1">
           <div className="space-y-6 p-6">
             <GeneralSettings />
-            <section aria-labelledby="features-heading" className="space-y-4">
-              <h3 id="features-heading" className="text-xs font-medium text-muted-foreground">Features</h3>
-              <HistoryCleanerSettings />
-              <MediaDownloadSettings />
+            <section aria-labelledby="features-heading" className="space-y-3">
+              <h3 id="features-heading" className="text-sm font-medium">Features</h3>
+              <Card className="gap-0 px-4 py-0 shadow-none">
+                <ItemGroup>
+                  <HistoryCleanerSettings />
+                  <ItemSeparator />
+                  <MediaDownloadSettings />
+                </ItemGroup>
+              </Card>
             </section>
           </div>
         </ScrollArea>

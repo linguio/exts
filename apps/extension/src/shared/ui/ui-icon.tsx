@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp, CircleQuestionMark, Download, Eye, EyeOff, FolderOpen, LaptopMinimal, List, Lock, LockOpen, Moon, PanelsTopLeft, Settings, Sun, Trash2, X, Zap, type LucideIcon } from 'lucide-react';
+import { ChevronDown, ChevronUp, CircleCheck, CircleDashed, CircleMinus, CircleQuestionMark, CircleX, Download, Eye, EyeOff, FolderOpen, LaptopMinimal, List, LoaderCircle, Lock, LockOpen, Moon, PanelsTopLeft, Settings, Sun, Trash2, TriangleAlert, X, Zap, type LucideIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
 
 import type { UiIconName } from './types';
@@ -23,6 +23,12 @@ const uiIconMap: Record<UiIconName, LucideIcon> = {
   'trash-2': Trash2,
   'chevron-down': ChevronDown,
   'chevron-up': ChevronUp,
+  'circle-check': CircleCheck,
+  'circle-minus': CircleMinus,
+  'circle-dashed': CircleDashed,
+  'loader-circle': LoaderCircle,
+  'triangle-alert': TriangleAlert,
+  'circle-x': CircleX,
 };
 
 interface UiIconProps extends Omit<ComponentProps<'svg'>, 'name'> {

@@ -4,17 +4,22 @@ import { Switch } from '../../shared/ui/switch';
 import { Button } from '../../shared/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../shared/ui/tooltip';
 import { UiIcon } from '../../shared/ui/ui-icon';
+import { Item, ItemActions, ItemContent, ItemTitle } from '../../shared/ui/item';
 import { getHistoryCleanerEnabled, setHistoryCleanerEnabled } from './settings';
 import { subscribeSettings } from '../../shared/settings';
+import { settingsMessages } from '../../shared/settings/messages';
+import { toast } from '../../shared/ui/sonner';
 
-const description = 'Clears all browsing history when the browser starts and the last window closes. Cookies, cache, and downloads are kept.';
+const descriptions = [
+  'Clears all browsing history when the browser starts and when the last window closes.',
+  'Keeps cookies, cache, and downloaded files.',
+];
 
 export function HistoryCleanerSettings() {
   const id = useId();
   const [enabled, setEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const mounted = useRef(false);
   const saving = useRef(false);
   const version = useRef(0);
@@ -26,7 +31,9 @@ export function HistoryCleanerSettings() {
       const current = await getHistoryCleanerEnabled();
       if (mounted.current && currentVersion === version.current) setEnabled(current);
     } catch {
-      if (mounted.current && currentVersion === version.current) setError('Unable to load this setting. Please try again.');
+      if (mounted.current && currentVersion === version.current) {
+        toast.error(settingsMessages.loadFailed);
+      }
     } finally {
       if (mounted.current && currentVersion === version.current) setLoading(false);
     }
@@ -36,7 +43,7 @@ export function HistoryCleanerSettings() {
     mounted.current = true;
     const onPermissionRemoved = (permissions: chrome.permissions.Permissions) => {
       if (!permissions.permissions?.includes('browsingData')) return;
-      setError('History permission was removed. Turn this setting on to grant access again.');
+      toast.error(settingsMessages.historyPermissionRemoved);
       void refresh();
     };
     const onPermissionAdded = (permissions: chrome.permissions.Permissions) => {
@@ -60,16 +67,17 @@ export function HistoryCleanerSettings() {
     saving.current = true;
     version.current++;
     setPending(true);
-    setError(null);
     try {
       // 直接从点击调用设置方法，让其中的权限请求保留用户手势。
       const current = await setHistoryCleanerEnabled(next);
       if (mounted.current) {
         setEnabled(current);
-        if (next && !current) setError('History permission was not granted. This setting is still off.');
+        if (next && !current) toast.error(settingsMessages.historyPermissionDenied);
       }
     } catch {
-      if (mounted.current) setError('Unable to save this setting. Please try again.');
+      if (mounted.current) {
+        toast.error(settingsMessages.saveFailed);
+      }
     } finally {
       saving.current = false;
       if (mounted.current) {
@@ -81,19 +89,25 @@ export function HistoryCleanerSettings() {
   }
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between gap-6">
-        <div className="flex min-w-0 items-center gap-1">
-          <p id={`${id}-label`} className="text-sm font-normal">Clear History</p>
+    <Item role="listitem" className="px-0">
+      <ItemContent className="min-w-0">
+        <ItemTitle>
+          <span id={`${id}-label`}>Clear History</span>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button type="button" variant="ghost" size="icon-sm" className="size-6 shrink-0 cursor-pointer text-muted-foreground" aria-label="About history cleanup">
                 <UiIcon name="circle-question-mark" className="size-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="top" collisionPadding={8} className="max-w-[280px] text-left leading-5">{description}</TooltipContent>
+            <TooltipContent side="top" collisionPadding={8} className="max-w-[280px] text-left leading-5">
+              <div className="space-y-1">
+                {descriptions.map(description => <p key={description}>{description}</p>)}
+              </div>
+            </TooltipContent>
           </Tooltip>
-        </div>
+        </ItemTitle>
+      </ItemContent>
+      <ItemActions>
         <Switch
           checked={enabled}
           aria-labelledby={`${id}-label`}
@@ -101,9 +115,8 @@ export function HistoryCleanerSettings() {
           disabled={loading || pending}
           onCheckedChange={(next) => { void toggle(next); }}
         />
-      </div>
-      <span id={`${id}-description`} className="sr-only">{description}</span>
-      {error && <p role="alert" className="text-sm leading-6 text-foreground">{error}</p>}
-    </div>
+      </ItemActions>
+      <span id={`${id}-description`} className="sr-only">{descriptions.join(' ')}</span>
+    </Item>
   );
 }
