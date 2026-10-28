@@ -79,7 +79,7 @@ docs/
 
 ## 当前 Issue
 
-- [统一设置列表与全局状态反馈](./issues/2026-10-28-extension-settings-ui-issue.md) · [Commit 记录](./commits/2026-10-28-extension-settings-ui-commit.md)；按用户要求从已交付成果独立拆出，验收通过、待提交；下载工作项先完结后提交本项，包含设置分组／折叠、Toast 与 StatusIcon，不接入 X／Helper。
+无。
 
 ## Issue 队列
 
@@ -91,6 +91,8 @@ docs/
 无。
 
 ## 已完成
+
+- [统一设置列表与全局状态反馈](./issues/2026-10-28-extension-settings-ui-issue.md) · [Commit 记录](./commits/2026-10-28-extension-settings-ui-commit.md)；按用户批准独立提交设置代码和文档；官方分组列表／折叠、集中 Toast 文案、共用 StatusIcon 已交付；用户验收通过，沿用此前 76 项测试、类型与构建结果，不重复验证，不推送。
 
 - [整合媒体下载模块与记录抽屉](./issues/2026-10-27-extension-media-dl-issue.md) · [Commit 记录](./commits/2026-10-27-extension-media-dl-commit.md)；按用户批准独立提交下载代码和文档；统一 media-download、模块自有记录 Sheet 与配置迁移，保留 TG／数据；沿用已验收整体验证结果，不重复测试中间快照，不推送。
 

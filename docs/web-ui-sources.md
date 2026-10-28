@@ -35,7 +35,7 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 
 - 官网介绍文字二进制动效（2026-10-25）：核对 [shadcn/ui 官方组件目录](https://ui.shadcn.com/docs/components)，没有对应字符解码组件，现有通用控件组合不能提供该效果。在 `pages/home/binary-text.tsx` 与同目录 CSS 独立实现固定二进制序列及单次分步动画，仅供首页介绍文字使用；参考 shadcn.io 的公开效果及本地 Demo，不复制 Pro 源码，不作为官方组件或引入动画依赖。保留原文字体、字距和主题 Token；字符占位、辅助技术原文与减少动态效果降级由该组件负责，1.2 行高沿用首页目标文字的既有值。
 - 历史清理设置视图与权限/存储逻辑继续由 `modules/history-cleaner` 持有；Newtab 的 DockSettings 只组合设置区域和外壳。通用 Switch 不调用 Chrome API，不持有配置或错误状态。
-- Telegram Download 复用现有 DropdownMenu；Content 增加可选 `portalContainer`，仅将 Portal 挂入网页 Shadow DOM，未指定时保持官方默认挂载方式。Shadow DOM 的事件重定向处理在业务菜单中完成，保留官方选择、禁用和关闭行为；不迁入旧自定义菜单的配色或状态管理。Popup 不恢复；现有 TG 与记录已整合到 media-download，records 持有列表与既有 Sheet，Dock 仅提供入口；不修改通用组件或新增 Drawer。
+- Telegram Download 复用现有 DropdownMenu；Content 增加可选 `portalContainer`，仅将 Portal 挂入网页 Shadow DOM，未指定时保持官方默认挂载方式。Shadow DOM 的事件重定向处理在业务菜单中完成，保留官方选择、禁用和关闭行为；不迁入旧自定义菜单的配色或状态管理。Popup 不恢复；2026-10-28 现有 TG 与记录整合到 media-download，records 自己组合记录列表与现有 Sheet，Dock 只提供入口；不修改通用 Sheet 源码或新增 Drawer。Newtab Settings 自行组合总开关和三项只读状态／帮助，数据复用公共 settings 接口。
 - Sheet 关闭后的 Tooltip 抑制、菜单与 Tooltip 互斥、指针外部关闭处理继续位于业务组合处；不放入共享控件。
 - 官网叠放窗口保留原生 button 与现有卡片池。专用展示的尺寸、网格、窗口内容与轮换不适合套用默认 Button 或标准 Carousel。
 - 书签卡片、EDU 遮罩、品牌图标与网站分类布局按需求组合；未发现需要为本次目标迁入通用 UI 的业务逻辑，不创建跨应用组件包。
@@ -78,6 +78,15 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 - 共用组件只负责展示；实际完成判断、文案、文件名和调用时机仍在 TG 模块中。
 - 2026-10-24 按用户反馈在共用 Toaster 显式设置默认 bottom-right，TG 去除 top-right 覆盖，与 Newtab 提示共用位置规则；不同页面分别挂载，不增加跨页提示中心或业务管理层。
 - 2026-10-24 统一通过 shared/ui/sonner.tsx 导出既有 toast API，TG 与 Download 均从该入口导入；沿用官方 success/info/warning/error 和现有 Lucide 映射，不添加消息管理封装或彩色状态覆盖。业务仅选择等级与提示语；当前文件夹提示改用 info，以展示既有信息图标。后续 X 遵守同一规则，不在本期接入。
+
+## Settings 分组列表与折叠（2026-10-28）
+
+- 用户批准的共用 StatusIcon 基于现有 UiIcon 与 lucide-react 1.46.0 静态导入，仅负责六个等级的 SVG 映射。官方 Item／Badge／Sonner 不适合作为独立状态图标的替代，因此提供此最小展示组件；不仿写官方 Tooltip。Media Download 调用方自行组合现有 Tooltip、焦点与读屏文案；不改变现有官方 Tooltip 或 Sonner 样式。
+
+- 新接入 Item 与 Collapsible 的 shadcn/ui new-york-v4 官方源码，固定提交 `c257f688cf4de7ec10cc1be84cad29cd4631182c`：[Item 源码](https://github.com/shadcn-ui/ui/blob/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/registry/new-york-v4/ui/item.tsx)、[Collapsible 源码](https://github.com/shadcn-ui/ui/blob/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/registry/new-york-v4/ui/collapsible.tsx)。沿用现有 radix-ui 1.6.7、class-variance-authority 0.7.1，不新增或升级依赖。
+- 本地差异仅为中文来源注释、cn／Separator 的本地导入路径、移除无需求的 use client 指令、补充 React 类型导入；保留官方组件结构、默认样式、可访问属性与状态管理。
+- General／Features 以已有 Card 加官方 ItemGroup／Item／ItemSeparator 组合用户指定的圆角边框分组；Card 调用处去阴影、纵向内边距与 gap，Item 去水平内边距以共享分隔线边缘。这是本次参考图明确批准的业务布局，不改通用组件默认样式。
+- Media Download 通过 CollapsibleTrigger asChild 组合官方 ghost Button 与现有 chevron 图标，依据官方 data-state 翻转箭头；默认收起，不维护额外展开状态。总开关与触发器是独立元素，仅主项保留 Tooltip，子项不带问号且全部英文；不进行浏览器交互自动化验收。
 
 ## 扩展 Alert Dialog 与 Download（2026-10-24）
 

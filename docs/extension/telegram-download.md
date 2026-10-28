@@ -1,13 +1,13 @@
 # Telegram Download
 
-Telegram Web 图片、视频右键下载，模块位于 apps/extension/src/modules/media-download/tg-download/。在 Telegram 页面取流并流式写入用户选择的文件夹，不连接 Desktop，不额外登录。
+Telegram Web 图片、视频右键下载，模块位于 apps/extension/src/modules/media-download/tg-download/。在 Telegram 页面取流并流式写入用户选择的文件夹，不连接 Desktop，不额外登录。媒体下载记录与 Sheet 由同级 records 维护；X／Helper 尚未接入。
 
 ## 模块与配置
 
 - components/download-menu：官方 Popover 定位右键操作面板，内部复用官方 Button Group、Button outline 与 DropdownMenu；默认显示下载图标加“下载资源”和横向三点，下拉收起“文件另存为”“选择文件夹”。无常驻目录说明，必要错误时显示恢复文字。
 - download：媒体保存、Range 写入、文件名、目录目标与 IndexedDB 句柄存储。平台下载逻辑与文件选择都留在 TG 模块。
-- page：媒体识别、页面注册、开关/主题接入；文件关闭成功后上报实际文件名和写入字节数，由隔离脚本校验后交给media-download/records 后台，不上报进行中任务。
-- media-download/settings.ts：默认开启，公共 settings 格式升级为 version 2，旧 Telegram 开关迁入 settings.mediaDownload.enabled，保留用户选择与下载记录。设置视图位于 Newtab，读写同一份配置；关闭只阻止新下载，进行中保存继续。
+- page：媒体识别、页面注册、开关/主题接入；文件关闭成功后上报实际文件名和写入字节数，由隔离脚本校验后交给 media-download/records 后台，不上报进行中任务。
+- media-download/settings.ts：默认开启，配置保存在 storage.local 的 `settings.mediaDownload.enabled`，公共 Settings 格式升级至 version 2，保留原 Telegram 开关选择。Newtab 持有设置界面，使用分组边框列表；只有 Media Download 总开关可操作，主项保留问号帮助，独立箭头展开默认收起的 Telegram、X、Helper 只读状态，子项不提供问号，文案全英文。关闭立即阻止新下载，正在写入的任务继续，Dock 记录入口仍可用。
 
 仅注入 https://web.telegram.org/*，保留 Telegram Web K 的 .media-viewer-mover 识别边界。开关与主题由隔离环境发布，扩展重载后旧页面入口停用，刷新恢复；不承诺关闭 Telegram 页面后下载继续。
 
@@ -29,7 +29,7 @@ Telegram Web 图片、视频右键下载，模块位于 apps/extension/src/modul
 
 图片/视频按响应流写入，分段响应继续 Range 请求。只有 writable.close() 成功后显示成功图标与“下载完成”，不附加文件名描述；实际文件名仍写入 Download 记录。开始、进度、失败、取消不弹 Toast。失败时中止写入并记录日志，目录错误只通过菜单提供恢复说明。
 
-完成提示复用 shared/ui/sonner 的共用右下角默认位置，TG 不单独覆盖；多个提示沿用官方折叠行为，不维护全局通知管理。成功记录由media-download/records 管理，使用 storage.local.downloads.tg.records，并在 Media Download Sheet 展示；失败或取消不写成功记录。桥接和记录失败只记录错误，不把已成功保存的文件误报为下载失败，不重复弹 Newtab 成功提示。没有 Popup，也不接入 Desktop 或 X 下载。
+完成提示复用 shared/ui/sonner 的共用右下角默认位置，TG 不单独覆盖；多个提示沿用官方折叠行为，不维护全局通知管理。成功记录由 media-download/records 管理，保留 storage.local.downloads.tg.records，通过 Dock 一级入口打开 Media Download Sheet 展示；失败或取消不写成功记录。桥接和记录失败只记录错误，不把已成功保存的文件误报为下载失败，不重复弹 Newtab 成功提示。没有 Popup，也不接入 Desktop 或 X 下载。
 
 ## 用户验收
 

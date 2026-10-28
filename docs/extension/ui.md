@@ -64,11 +64,12 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 
 - 通用 `Button` 保留官方 variant 与常见状态；普通 ghost 反馈不变。Dock 工具按钮复用 `variant="entry" size="entry"` 透明外壳，实际反馈由内部 `entry-surface` 承担，不在调用方复制同套参数。
 - EDU 保留默认模糊和点击解除逻辑，Hover 背景不变、指针为手形；其 hover 背景引用同一个 `overlay` Token，覆盖 ghost 默认背景变化。
-- Settings 与 Download 使用右侧 Sheet：共用组件统一维护默认宽 420px、最大不超过屏幕，调用方不重复写宽度。Header 高 56px，均显示对应 Lucide 图标与标题，关闭按钮提示为 `Close`。Download 正文展示下载记录；Settings 正文包含 General 和 Features 两区，分区标题为 12px／font-medium／text-muted-foreground，设置项正文为 14px／font-normal。Settings 正文父容器统一设置 24px 内边距及 24px 分区间距，子分区不叠加外侧内边距；两区之间不用 Separator，不叠加 Browsing history 标题；两个 Header 下方均保留分割线。
+- Settings 与 Download 使用右侧 Sheet：共用组件统一维护默认宽 420px、最大不超过屏幕，调用方不重复写宽度。Header 高 56px，均显示对应 Lucide 图标与标题，关闭按钮提示为 `Close`。Download 正文展示下载记录；Settings 正文包含 General 和 Features 两区，分区标题为 14px／font-medium，设置项标题沿用官方 ItemTitle 的 14px／font-medium。Settings 正文父容器统一设置 24px 内边距及 24px 分区间距，子分区不叠加外侧内边距；两区之间不用 Separator，不叠加 Browsing history 标题；两个 Header 下方均保留分割线。
 - General 的 Theme 行使用官方 ToggleGroup 单选组合，Light/Dark/System 分别用太阳、月亮、笔记本（LaptopMinimal）图标，默认 System；图标不带可见文字，使用可访问名称与现有 Tooltip 提示名称，始终保留一个选项。控件的主题状态不进入 shared/ui。
 - ToggleGroup 单选项以 `aria-checked` 显示激活状态，选中背景使用官方 accent、图标使用 accent-foreground，不增加高反差主色选中块。Tooltip 组合也使用 data-state，因此不得仅凭该属性表达单选反馈；选择判断仍由官方控件负责。
 - 共用 `Switch` 可操作时显示手形指针，禁用时显示禁止指针；在组件内统一维护，不在设置调用方重复指定。
-- 历史清理区域使用官方基础的 `Switch`，通过 `checked` / `onCheckedChange` 连接状态，保留可访问名称与说明；默认关闭，加载、授权和保存期间禁用重复操作，错误就地展示。配置和权限变更同步到已打开页面，不把业务状态放入通用组件或新增全局设置状态。
+- Media Download 的记录列表与 Sheet 由 media-download/records 持有，Dock 保留一级入口。Settings 的 General／Features 采用官方 Card、ItemGroup、Item、ItemSeparator 的圆角边框列表，标题置于框外。Media Download 只有一个总开关，独立箭头通过官方 Collapsible 展开默认收起的三个只读子项；仅主项保留问号，子项无问号。界面文案使用英文，TG 状态为 Enabled／Disabled，X／Helper 显示 Not integrated。设置界面归 Newtab，订阅公共 settings 数据，不在其中展示下载记录；保持官方折叠状态与焦点管理，不另写展开状态逻辑。
+- 历史清理区域使用官方基础的 `Switch`，通过 `checked` / `onCheckedChange` 连接状态，保留可访问名称与说明；默认关闭，加载、授权和保存期间禁用重复操作，失败通过共用 toast.error 提示。配置和权限变更同步到已打开页面，不把业务状态放入通用组件或新增全局设置状态。
 - 历史清理开关标题旁的圆圈问号复用 Button/UiIcon/Tooltip，帮助提示完整保留原说明，最大宽度 280px、优先向上显示并支持换行；独立按钮不切换开关，读屏描述通过常驻隐藏文本保留。错误不放进 Tooltip。
 - Sheet 内容、边框与分隔线使用根主题；全屏遮罩使用 `blur-overlay`。打开/关闭动画为 200ms/160ms，减少动态效果时遵循全局规则。
 - Tooltip 提供名称或简短帮助说明，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Sheet 打开时 Dock 的 Settings 与 Download 入口不显示 Tooltip，关闭恢复焦点不自动弹出入口提示，后续正常悬停仍可显示；两个入口的状态由 Dock 局部 hook 共用，面板内部提示正常使用。
@@ -106,6 +107,23 @@ Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Do
 
 ## 临时 Toast 提示
 
+### 共用状态等级
+
+状态图标使用 src/shared/ui/status-icon.tsx，基于现有 UiIcon 静态映射。官方 Item 用于行布局、Badge 用于标签、Sonner 用于临时通知，均不提供本需求所需的独立状态 SVG 等级映射，因此按用户批准提供此最小组件，不重写官方 Tooltip 或通知逻辑。
+
+| 等级 | 状态图标 | 语义 |
+|---|---|---|
+| success | CircleCheck | 已启用、已连接、已完成 |
+| neutral | CircleMinus | 已关闭、未启用 |
+| pending | CircleDashed | 未接入、未配置 |
+| loading | LoaderCircle | 正在读取、连接或处理 |
+| warning | TriangleAlert | 受限、需要处理 |
+| error | CircleX | 操作失败、连接异常 |
+
+统一 16px、既有线宽与 muted-foreground，沿用主题颜色，不增加红绿等级配色；loading 使用旋转并尊重减少动画偏好。业务负责映射等级及提供英文 Tooltip／读屏文案，组件只展示图标，不读取业务数据。Media Download 子项名称保留，右侧以此图标替代文字状态，鼠标悬停或键盘聚焦显示业务自有 Tooltip。Toast 与状态图标共用等级含义，Toast 继续沿用现有官方图标与 API，不新增等级通知封装。
+
+### Toast 使用规则
+
 扩展各模块统一从 src/shared/ui/sonner.tsx 导入 Toaster 和原生 toast API，复用 shadcn 官方 Sonner 展示组件、Lucide 图标和现有主题。通用组件维护各自页面视口右下角位置、图标映射和外观；业务不覆盖位置、图标或品牌配色，不分别手写提示框、关闭定时器或折叠逻辑。TG、Newtab 和后续 X 使用同一套规则。
 
 提示采用“等级图标 + 提示语”，不增加第二层 description。内容使用现有主题文字与背景，通过图标区分等级，不启用彩色 richColors。长文案可自然换行，不为单行展示裁掉重要反馈。
@@ -119,8 +137,6 @@ Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Do
 
 业务模块持有文案、等级、完成条件等状态；不在共用 UI 中加入 Chrome API、下载记录、跨页面通知管理或重复消息包装器。不同页面/Shadow DOM 各自挂载 Toaster，多条提示沿用 Sonner 默认折叠堆叠与关闭行为，互不转发。
 
+Settings 的加载、保存与权限操作失败统一使用根部现有 Toaster 的 toast.error，不在设置行追加错误段落；共用英文文案集中在 src/shared/settings/messages.ts，调用方直接使用官方 API，不包装新的通知服务。Toast 不复制内部异常细节；保留必要的正式异常日志，临时排错日志结束后清理。此规则不改变已有 TG 下载仅成功提示的专属约定。
+
 TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标和“下载完成”，不再描述文件名；文件名保留在 Download 记录。开始、进行中、取消和失败不显示 Toast。后续 X 必须复用同一组件和位置，实际触发条件由其独立 Issue 决定，不代表本次已接入。
-
-## Media Download 模块归属
-
-记录数据、列表和现有 Sheet 由 media-download/records 持有，Dock 保留一级入口并打开 Media Download。设置数据使用公共 settings 读写／订阅，下载能力与记录不依赖页面自己的副本；本次不接入 X／Helper。
