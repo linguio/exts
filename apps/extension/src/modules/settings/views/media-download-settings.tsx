@@ -1,14 +1,14 @@
 import { Fragment, useEffect, useId, useState } from 'react';
-import { Button } from '../../../../shared/ui/button';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../../../shared/ui/collapsible';
-import { Item, ItemActions, ItemContent, ItemGroup, ItemSeparator, ItemTitle } from '../../../../shared/ui/item';
-import { Switch } from '../../../../shared/ui/switch';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
-import { UiIcon } from '../../../../shared/ui/ui-icon';
-import { mediaDownloadSetting } from '../../../media-download/settings';
-import { settingsMessages } from '../../../../shared/settings/messages';
-import { toast } from '../../../../shared/ui/sonner';
-import { StatusIcon, type StatusLevel } from '../../../../shared/ui/status-icon';
+import { Button } from '../../../shared/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../../shared/ui/collapsible';
+import { Item, ItemActions, ItemContent, ItemGroup, ItemSeparator, ItemTitle } from '../../../shared/ui/item';
+import { Switch } from '../../../shared/ui/switch';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../../shared/ui/tooltip';
+import { UiIcon } from '../../../shared/ui/ui-icon';
+import { mediaDownloadSetting } from '../../media-download/settings';
+import { settingsMessages } from '../../../shared/settings/messages';
+import { toast } from '../../../shared/ui/sonner';
+import { StatusIcon, type StatusLevel } from '../../../shared/ui/status-icon';
 
 const descriptions = [
   'Download photos and videos from Telegram Web.',

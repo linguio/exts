@@ -1,9 +1,9 @@
-import { Button } from '../../../../shared/ui/button';
-import { SheetTrigger } from '../../../../shared/ui/sheet';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
-import { UiIcon } from '../../../../shared/ui/ui-icon';
-import { useDockSheetTooltip } from './use-dock-sheet-tooltip';
-import { MediaDownloadSheet } from '../../../media-download/records/views/sheet';
+import { Button } from '../../../shared/ui/button';
+import { SheetTrigger } from '../../../shared/ui/sheet';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../../shared/ui/tooltip';
+import { UiIcon } from '../../../shared/ui/ui-icon';
+import { useDockSheetTooltip } from '../components/use-dock-sheet-tooltip';
+import { MediaDownloadSheet } from '../../media-download/records/views/sheet';
 
 /** Dock 只提供一级入口，记录抽屉由媒体下载模块持有。 */
 export function DockDownload() {

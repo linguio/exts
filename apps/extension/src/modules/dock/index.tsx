@@ -1,21 +1,21 @@
-import { BookmarkCard } from '../../components/bookmark-card/index';
-import { ScrollArea, ScrollBar } from '../../../../shared/ui/scroll-area';
-import { Separator } from '../../../../shared/ui/separator';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
-import type { Bookmark } from '../../types/bookmarks';
-import { StudioDockEntry } from '../../../studio/dock-entry';
-import { DockActions } from './dock-actions';
-import { DockDownload } from './dock-download';
-import { DockSettings } from './dock-settings';
+import { BookmarkCard } from '../newtab/components/bookmark-card/index';
+import { ScrollArea, ScrollBar } from '../../shared/ui/scroll-area';
+import { Separator } from '../../shared/ui/separator';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../shared/ui/tooltip';
+import type { Bookmark } from '../newtab/types/bookmarks';
+import { StudioDockEntry } from '../studio/dock-entry';
+import { DockActions } from './views/dock-actions';
+import { DockDownload } from './views/dock-download';
+import { DockSettings } from './views/dock-settings';
 
-interface BookmarkDockProps {
+interface DockProps {
   favorites: Bookmark[];
   studioActive: boolean;
   onStudioChange: (active: boolean) => void;
 }
 
-/** React Dock，保持直接收藏、分隔线与工具菜单的固定分区结构。 */
-export function BookmarkDock({ favorites, studioActive, onStudioChange }: BookmarkDockProps) {
+/** 常驻 Dock 组合收藏、模块入口与工具菜单，具体业务由所属模块持有。 */
+export function Dock({ favorites, studioActive, onStudioChange }: DockProps) {
   return (
     <nav className="bookmark-dock box-border min-w-0 w-max max-w-full rounded-[var(--radius)] border border-border bg-surface-raised shadow-[var(--shadow-hover)]" aria-label="Dock">
       <ScrollArea className="min-w-0 max-w-full" viewportClassName="overscroll-x-contain">

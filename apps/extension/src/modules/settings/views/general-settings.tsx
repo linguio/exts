@@ -1,13 +1,13 @@
 import { useId, useSyncExternalStore } from 'react';
 
-import { readTheme, setTheme, subscribeTheme } from '../../../../shared/theme/runtime';
-import { settingsMessages } from '../../../../shared/settings/messages';
-import { toast } from '../../../../shared/ui/sonner';
-import { Card } from '../../../../shared/ui/card';
-import { Item, ItemActions, ItemContent, ItemGroup, ItemTitle } from '../../../../shared/ui/item';
-import { ToggleGroup, ToggleGroupItem } from '../../../../shared/ui/toggle-group';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
-import { UiIcon } from '../../../../shared/ui/ui-icon';
+import { readTheme, setTheme, subscribeTheme } from '../../../shared/theme/runtime';
+import { settingsMessages } from '../../../shared/settings/messages';
+import { toast } from '../../../shared/ui/sonner';
+import { Card } from '../../../shared/ui/card';
+import { Item, ItemActions, ItemContent, ItemGroup, ItemTitle } from '../../../shared/ui/item';
+import { ToggleGroup, ToggleGroupItem } from '../../../shared/ui/toggle-group';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../../shared/ui/tooltip';
+import { UiIcon } from '../../../shared/ui/ui-icon';
 
 const choices = [
   { value: 'light', label: 'Light', icon: 'sun' },

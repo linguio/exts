@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
 
-import { Button } from '../../../../shared/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../../../shared/ui/dropdown-menu';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
-import { UiIcon } from '../../../../shared/ui/ui-icon';
-import { toast } from '../../../../shared/ui/sonner';
+import { Button } from '../../../shared/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../../shared/ui/dropdown-menu';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../../shared/ui/tooltip';
+import { UiIcon } from '../../../shared/ui/ui-icon';
+import { toast } from '../../../shared/ui/sonner';
 
 const placeholders = [
   { name: 'Placeholder A', icon: 'list' },
