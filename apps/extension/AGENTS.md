@@ -39,13 +39,13 @@
 - Dock 位于视口底部，DropdownMenu 默认从上方弹出并支持碰撞调整；由用户验证菜单在 `1280×720`、缩放后 CSS 视口 `640×360` 以及 100%、125%、150%、200% 缩放下不被裁剪或移出视口。
 - 用户验收 DropdownMenu 应覆盖 Enter、Space 或 ArrowDown 打开、方向键移动、Enter 激活、Esc 关闭并恢复触发器焦点、外部点击关闭等行为；Portal 必须正确继承明暗主题 Token 和层级。
 - 已废弃的自定义 Popover 不得重新引入；DropdownMenu 与 Tooltip 分别承担菜单和提示职责，不维护双轨实现。
-- Settings 包含 General/Features：General 组合主题选择，Features 组合历史清理与 Telegram Download 的开关和帮助。主题偏好由共用主题模块持有；各功能持有自己的配置和业务。Newtab 只组合入口，新增功能按本地 Issue 流程确认范围。
+- Settings 包含 General/Features：General 组合主题选择，Features 组合历史清理与 Media Download 总开关和帮助。主题偏好由共用主题模块持有；各功能持有自己的配置和业务。Newtab 只组合入口，新增功能按本地 Issue 流程确认范围。
 
-## Telegram Download 与记录边界
+## Media Download 与记录边界
 
-- `src/modules/tg-download/` 只处理 Telegram Web 下载，默认开启；内部按业务组件、设置视图、download-core 和页面接入划分职责。配置关闭立即禁止新下载，正在写入的任务继续。
+- `src/modules/media-download/` 整合媒体下载；tg-download/ 持有 Telegram 网页下载与 download/ 执行逻辑，records/ 持有记录数据、列表与 Sheet。配置默认开启，保存在 settings.mediaDownload.enabled，旧 Telegram 选择迁移保留；关闭屏蔽新下载入口，正在进行的任务继续。
 - 不提供 Popup；完成 Toast 使用 shared/ui 中的官方 Sonner 样式组件，文案与触发由 TG 模块负责。只在文件关闭成功后显示成功图标与“下载完成”，不附加文件名描述；实际文件名保留在下载记录。不提示开始、进度、失败或取消，不修改现有文件名生成规则。
-- 文件关闭成功后，TG 页面仅把实际文件名和字节数通过隔离脚本交给独立 modules/downloads 后台模块；记录模块复用 shared/storage，持有 downloads 顶层对象、来源校验和按筛选清空，Newtab 只读取与展示。记录错误不改变已保存文件或成功 Toast，不传媒体流、目录句柄或真实磁盘路径。X 下载与 Desktop 通信尚未接入，文件夹入口仅提示未接入。
+- 文件关闭成功后，TG 页面只上报实际名称和字节数至 media-download/records 后台，保留 downloads 顶层对象及来源校验、筛选清空。Dock 一级入口只打开模块自有 Media Download Sheet，不传媒体流、目录句柄或磁盘路径。记录错误不影响成功保存；X／Helper 尚未接入。
 - 保留 MAIN world 页面取流；目录选择与权限请求在用户手势内直接调用。下载入口使用官方 Button Group：主按钮为下载图标加“下载资源”，横向三点 DropdownMenu 收起“文件另存为”和“选择文件夹”；按钮组外层使用官方 Popover 定位，禁止恢复旧自定义 Popover。首次快速下载选择并记住目录后继续保存，后续直接保存；另存为独立选择本次文件而不更改目录，重新选择只更换后续目录。不限定目录名称、不创建固定子目录。句柄留在 Telegram 同来源 IndexedDB，同名递增避重；目录 API 不可用时快速保存降级为系统另存为。不把媒体流交给 desktop。统一主题 Token 位于 `src/styles/theme.css`，网页菜单与扩展页面共用。
 
 ## 历史清理边界

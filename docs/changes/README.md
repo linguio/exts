@@ -75,16 +75,15 @@ docs/
 
 想法只表示可能开展的方向，不代表已经批准创建 Issue 或开始实施。
 
-无。
+- 后续 X Download／Helper 接入：Extension 提交任务，Helper 独立下载与整合，成功后只通知一次；允许丢失，不确认、不重试、不补发、不恢复。关闭总开关屏蔽网页入口并停止通信，不终止任务。未来使用 x-download 目录；不纳入本次下载整合或设置两个 Issue。
 
 ## 当前 Issue
 
-无。
+- [统一设置列表与全局状态反馈](./issues/2026-10-28-extension-settings-ui-issue.md) · [Commit 记录](./commits/2026-10-28-extension-settings-ui-commit.md)；按用户要求从已交付成果独立拆出，验收通过、待提交；下载工作项先完结后提交本项，包含设置分组／折叠、Toast 与 StatusIcon，不接入 X／Helper。
 
 ## Issue 队列
 
 - [改造首页活动录入与日历统计（讨论草稿）](./issues/2026-10-27-extension-activity-cards-issue.md) · [Commit 记录](./commits/2026-10-27-extension-activity-cards-commit.md)；仅保存讨论，待确认录入完结、最高值配置、统计规则和首个交付边界，未批准实施。
-- [整合媒体下载模块与统一记录（讨论草稿）](./issues/2026-10-27-extension-media-dl-issue.md) · [Commit 记录](./commits/2026-10-27-extension-media-dl-commit.md)；仅保存讨论，已记录 media-dl / tg-dl / x-dl 方向、Newtab 自有界面与统一数据订阅边界；X／桌面接入范围待定，未批准实施。
 
 
 ## 待办
@@ -92,6 +91,8 @@ docs/
 无。
 
 ## 已完成
+
+- [整合媒体下载模块与记录抽屉](./issues/2026-10-27-extension-media-dl-issue.md) · [Commit 记录](./commits/2026-10-27-extension-media-dl-commit.md)；按用户批准独立提交下载代码和文档；统一 media-download、模块自有记录 Sheet 与配置迁移，保留 TG／数据；沿用已验收整体验证结果，不重复测试中间快照，不推送。
 
 - [区分文件夹遮挡并为 EDU 添加四位界面锁](./issues/2026-10-26-extension-folder-access-issue.md) · [Commit 记录](./commits/2026-10-26-extension-folder-access-commit.md)；用户于 2026-10-27 明确批准代码与文档两笔本地提交并完结；UI 一键显示与 EDU 四位界面锁已交付；74 项测试、类型检查、生产构建与 diff 检查此前通过，浏览器视觉与交互未由代理验收，提交时未追加验证，不推送或发布。
 

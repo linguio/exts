@@ -120,3 +120,7 @@ Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Do
 业务模块持有文案、等级、完成条件等状态；不在共用 UI 中加入 Chrome API、下载记录、跨页面通知管理或重复消息包装器。不同页面/Shadow DOM 各自挂载 Toaster，多条提示沿用 Sonner 默认折叠堆叠与关闭行为，互不转发。
 
 TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标和“下载完成”，不再描述文件名；文件名保留在 Download 记录。开始、进行中、取消和失败不显示 Toast。后续 X 必须复用同一组件和位置，实际触发条件由其独立 Issue 决定，不代表本次已接入。
+
+## Media Download 模块归属
+
+记录数据、列表和现有 Sheet 由 media-download/records 持有，Dock 保留一级入口并打开 Media Download。设置数据使用公共 settings 读写／订阅，下载能力与记录不依赖页面自己的副本；本次不接入 X／Helper。
