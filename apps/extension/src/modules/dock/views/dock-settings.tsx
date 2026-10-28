@@ -3,7 +3,7 @@ import { SheetTrigger } from '../../../shared/ui/sheet';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../shared/ui/tooltip';
 import { UiIcon } from '../../../shared/ui/ui-icon';
 import { SettingsSheet } from '../../settings';
-import { useDockSheetTooltip } from '../components/use-dock-sheet-tooltip';
+import { useDockSheetTooltip } from '../hooks/use-dock-sheet-tooltip';
 
 /** Dock 只提供设置入口，设置抽屉及分区由设置模块持有。 */
 export function DockSettings() {

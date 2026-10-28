@@ -7,7 +7,7 @@ import { UiIcon } from '../../../../shared/ui/ui-icon';
 import type { ActivityRecords } from '../../types/activity';
 import { createActivityCalendar } from '../../utils/activity/calendar';
 import { ActivityCalendar } from './calendar-grid';
-import { useLocalDate } from './use-local-date';
+import { useLocalDate } from '../../hooks/activity/use-local-date';
 
 /** 活动卡片归 Studio 持有；日历保留完整网格，记录初始为空，图表暂留空。 */
 export function ActivityCard() {

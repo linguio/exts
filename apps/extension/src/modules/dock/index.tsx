@@ -1,9 +1,9 @@
-import { BookmarkCard } from '../newtab/components/bookmark-card/index';
+import { BookmarkCard } from '../../shared/bookmarks/bookmark-card';
 import { ScrollArea, ScrollBar } from '../../shared/ui/scroll-area';
 import { Separator } from '../../shared/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../shared/ui/tooltip';
-import type { Bookmark } from '../newtab/types/bookmarks';
-import { StudioDockEntry } from '../studio/dock-entry';
+import type { Bookmark } from '../../shared/bookmarks/types';
+import { StudioDockEntry } from '../studio';
 import { DockActions } from './views/dock-actions';
 import { DockDownload } from './views/dock-download';
 import { DockSettings } from './views/dock-settings';

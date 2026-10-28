@@ -6,7 +6,7 @@ import { ScrollArea } from '../../shared/ui/scroll-area';
 import { Separator } from '../../shared/ui/separator';
 import { Sheet, SheetContent, SheetTitle } from '../../shared/ui/sheet';
 import { UiIcon } from '../../shared/ui/ui-icon';
-import { HistoryCleanerSettings } from '../history-cleaner/settings-section';
+import { HistoryCleanerSettings } from '../history-cleaner';
 import { MediaDownloadSettings } from './views/media-download-settings';
 import { GeneralSettings } from './views/general-settings';
 

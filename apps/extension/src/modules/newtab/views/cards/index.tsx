@@ -1,4 +1,4 @@
-import { ActivityCard } from '../../../studio/components/activity';
+import { ActivityCard } from '../../../studio';
 
 /** 首页只组合展示卡片，活动组件及其后续业务由 Studio 持有。 */
 export function NewtabCards() {

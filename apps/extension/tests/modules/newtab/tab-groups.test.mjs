@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import assert from 'node:assert/strict';
-import { getRandomTabGroupColor, openBookmarkInGroup } from '../../../src/modules/newtab/utils/tab.js';
+import { getRandomTabGroupColor, openBookmarkInGroup } from '../../../src/modules/newtab/utils/bookmarks/tab.js';
 
 /**
  * 创建可记录标签页与标签组调用的 Chrome API 测试替身。

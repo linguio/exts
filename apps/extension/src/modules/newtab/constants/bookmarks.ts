@@ -1,4 +1,5 @@
-import type { Bookmark, BookmarkGridItem } from '../types/bookmarks';
+import type { Bookmark } from '../../../shared/bookmarks/types';
+import type { BookmarkGridItem } from '../types/bookmarks';
 
 // UI 文件夹的开发资源收藏，统一使用透明单色主题配色。
 const UI_BOOKMARKS: Bookmark[] = [

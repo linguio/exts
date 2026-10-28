@@ -3,12 +3,12 @@ import { REGEXP_ONLY_DIGITS } from 'input-otp';
 
 import type { BookmarkFolder as BookmarkFolderData, OpenBookmark } from '../../types/bookmarks';
 import { cn } from '../../../../shared/lib/utils';
-import { BookmarkCard } from '../bookmark-card/index';
+import { BookmarkCard } from '../../../../shared/bookmarks/bookmark-card';
 import { Button } from '../../../../shared/ui/button';
 import { UiIcon } from '../../../../shared/ui/ui-icon';
 import { ScrollArea } from '../../../../shared/ui/scroll-area';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '../../../../shared/ui/input-otp';
-import { canUnlockEdu } from './folder-access';
+import { canUnlockEdu } from '../../utils/bookmarks/folder-access';
 
 interface BookmarkFolderProps {
   folder: BookmarkFolderData;

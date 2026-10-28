@@ -1,3 +1,6 @@
+export { ActivityCard } from './components/activity';
+export { StudioDockEntry } from './components/dock-entry';
+
 /** 工作台主视图，本期只承载标题与空状态。 */
 export function Studio() {
   return (

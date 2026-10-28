@@ -4,7 +4,7 @@ import { BOOKMARK_GRID } from './constants/bookmarks';
 import { BookmarkGrid } from './views/bookmarks/bookmark-grid';
 import { NewtabCards } from './views/cards/index';
 import { ScrollArea, ScrollBar } from '../../shared/ui/scroll-area';
-import { openBookmarkInGroup } from './utils/tab.js';
+import { openBookmarkInGroup } from './utils/bookmarks/tab.js';
 import type { OpenBookmark } from './types/bookmarks';
 
 /** 首页保留自身状态与布局测量，隐藏时由 Activity 暂停观察，显示后重新测量。 */

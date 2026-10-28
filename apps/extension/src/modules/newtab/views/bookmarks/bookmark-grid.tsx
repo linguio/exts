@@ -1,5 +1,5 @@
 import type { BookmarkGridItem, OpenBookmark } from '../../types/bookmarks';
-import { BookmarkCard } from '../../components/bookmark-card/index';
+import { BookmarkCard } from '../../../../shared/bookmarks/bookmark-card';
 import { BookmarkFolder } from '../../components/bookmark-folder/index';
 
 interface BookmarkGridProps {
