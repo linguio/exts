@@ -1,20 +1,13 @@
-const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'] as const;
+import type { ActivityDay, ActivityRecords } from '../../types/activity';
 
-export interface StudyDay {
-  date: string;
-  label: string;
-  weekday: number;
-  minutes: number;
-  level: 0 | 1 | 2 | 3;
-  isFuture: boolean;
-}
+const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'] as const;
 
 function localDateKey(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
 /** 日期运算使用本地日历，避免 UTC 截日与夏令时导致日期偏移。 */
-export function createJlptCalendar(records: Readonly<Record<string, number>>, today: Date): StudyDay[] {
+export function createActivityCalendar(records: ActivityRecords, today: Date): ActivityDay[] {
   const todayKey = localDateKey(today);
   const firstDay = today.getDate() - today.getDay() - 23 * 7;
 
@@ -36,7 +29,7 @@ export function createJlptCalendar(records: Readonly<Record<string, number>>, to
   });
 }
 
-export function formatStudyDuration(minutes: number) {
+export function formatActivityDuration(minutes: number) {
   if (minutes < 60) return `${minutes}分钟`;
   const hours = Math.floor(minutes / 60);
   const remainder = minutes % 60;

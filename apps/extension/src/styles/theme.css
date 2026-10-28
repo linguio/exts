@@ -32,11 +32,11 @@
   --size-icon-tile: 4rem;
   /* 文件夹外框为两枚图标、内部间距、两侧内边距及边框之和。 */
   --size-bookmark-folder: calc(2 * var(--size-icon-tile) + 3rem + 2px);
-  /* 学习日历按时长递增使用中性灰阶，深色主题采用由暗到亮的顺序。 */
-  --check-in-level-0: #eeeeee;
-  --check-in-level-1: #cccccc;
-  --check-in-level-2: #999999;
-  --check-in-level-3: #666666;
+  /* 活动日历沿用中性灰阶，无记录日期使用基础档位。 */
+  --activity-level-0: #eeeeee;
+  --activity-level-1: #cccccc;
+  --activity-level-2: #999999;
+  --activity-level-3: #666666;
   --size-icon-glyph: 2rem;
   --overlay-blur: 8px;
   --entry-hover-scale: 1.06;
@@ -49,10 +49,10 @@
 
 /* 实际主题由共用主题模块解析，手动选择不受系统媒体查询覆盖。 */
 :root[data-theme='dark'] {
-  --check-in-level-0: #2a2a2a;
-  --check-in-level-1: #484848;
-  --check-in-level-2: #737373;
-  --check-in-level-3: #a3a3a3;
+  --activity-level-0: #2a2a2a;
+  --activity-level-1: #484848;
+  --activity-level-2: #737373;
+  --activity-level-3: #a3a3a3;
   color-scheme: dark;
   --background: oklch(0.12 0 0);
   --foreground: oklch(0.97 0 0);
