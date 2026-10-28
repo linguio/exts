@@ -1,13 +1,13 @@
 import { Blocks, Download, Film, Image as ImageIcon, Settings } from 'lucide-react';
-import x from './assets/x.svg';
-import bilibili from './assets/bilibili.svg';
-import youtube from './assets/youtube.svg';
-import vercel from './assets/vercel.svg';
-import npm from './assets/npm.svg';
-import linear from './assets/linear.svg';
-import notion from './assets/notion.svg';
-import github from './assets/github.svg';
-import gmail from './assets/gmail.svg';
+import x from '@/assets/brand/x.svg';
+import bilibili from '@/assets/brand/bilibili.svg';
+import youtube from '@/assets/brand/youtube.svg';
+import vercel from '@/assets/brand/vercel.svg';
+import npm from '@/assets/brand/npm.svg';
+import linear from '@/assets/brand/linear.svg';
+import notion from '@/assets/brand/notion.svg';
+import github from '@/assets/brand/github.svg';
+import gmail from '@/assets/brand/gmail.svg';
 
 const bookmarks = [x, bilibili, youtube, vercel, npm, linear, notion];
 const favorites = [x, github, '/exts.svg', gmail];

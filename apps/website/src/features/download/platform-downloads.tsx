@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { site } from '@/config/site';
-import chromeIcon from '@/assets/googlechrome.svg';
-import appleIcon from '@/assets/apple.svg';
+import chromeIcon from '@/assets/brand/googlechrome.svg';
+import appleIcon from '@/assets/brand/apple.svg';
 
 export function PlatformDownloads() {
   return (

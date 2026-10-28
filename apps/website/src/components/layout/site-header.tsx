@@ -1,6 +1,6 @@
 import { site } from '@/config/site';
 import { Button } from '@/components/ui/button';
-import githubIcon from '@/assets/github.svg';
+import githubIcon from '@/assets/brand/github.svg';
 import { BookOpen, FileClock } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
