@@ -14,7 +14,7 @@
 
 滚动区域也按上述通用 UI 规则选型，优先采用官方 Scroll Area 与默认滚动条，不在业务模块各自维护滚动条样式。当前已接入 Download、Settings、Newtab 书签区、卡片区与 Dock；具体交付与验收状态见对应 Issue。
 
-迁入官方组件保持修改前已确认的视觉效果；小差异沿用官方，明显差异保留必要定制，不逐像素复刻。Sheet 的官方结构不覆盖现有 `blur-overlay` 遮罩效果，具体 Token 与组合见下文。
+迁入官方组件保持修改前已确认的视觉效果；小差异沿用官方，明显差异保留必要定制，不逐像素复刻。用户于 2026-10-28 最终要求 Download／Settings 恢复试用前的整套 Sheet 样式，保留 420px 和模糊遮罩，仅新增复用 --radius 的左侧圆角；不保留官方默认视觉试用方案。
 
 ## 主题与 Token
 
@@ -64,15 +64,15 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 
 - 通用 `Button` 保留官方 variant 与常见状态；普通 ghost 反馈不变。Dock 工具按钮复用 `variant="entry" size="entry"` 透明外壳，实际反馈由内部 `entry-surface` 承担，不在调用方复制同套参数。
 - EDU 保留默认模糊和点击解除逻辑，Hover 背景不变、指针为手形；其 hover 背景引用同一个 `overlay` Token，覆盖 ghost 默认背景变化。
-- Settings 与 Download 使用右侧 Sheet：共用组件统一维护默认宽 420px、最大不超过屏幕，调用方不重复写宽度。Header 高 56px，均显示对应 Lucide 图标与标题，关闭按钮提示为 `Close`。Download 正文展示下载记录；Settings 正文包含 General 和 Features 两区，分区标题为 14px／font-medium，设置项标题沿用官方 ItemTitle 的 14px／font-medium。Settings 正文父容器统一设置 24px 内边距及 24px 分区间距，子分区不叠加外侧内边距；两区之间不用 Separator，不叠加 Browsing history 标题；两个 Header 下方均保留分割线。
+- Settings 与 Download 使用右侧 Sheet：共用组件统一维护默认宽 420px、最大不超过屏幕，调用方不重复写宽度。Header 高 56px，均显示对应 Lucide 图标与标题，关闭按钮提示为 `Close`。Download 正文展示下载记录；Settings 正文包含 General 和 Features 两区，分区标题为 14px／font-medium，设置项标题沿用官方 ItemTitle 的 14px／font-medium。Settings 正文父容器统一设置 24px 内边距及 24px 分区间距，子分区不叠加外侧内边距；两区之间不用 Separator，不叠加 Browsing history 标题；两个 Header 下方均保留分割线。 用户最终选择恢复此原样式，仅在共用右侧 Sheet 增加左上／左下 rounded-l-[var(--radius)]，当前为 16px；右侧直角贴边。
 - General 的 Theme 行使用官方 ToggleGroup 单选组合，Light/Dark/System 分别用太阳、月亮、笔记本（LaptopMinimal）图标，默认 System；图标不带可见文字，使用可访问名称与现有 Tooltip 提示名称，始终保留一个选项。控件的主题状态不进入 shared/ui。
 - ToggleGroup 单选项以 `aria-checked` 显示激活状态，选中背景使用官方 accent、图标使用 accent-foreground，不增加高反差主色选中块。Tooltip 组合也使用 data-state，因此不得仅凭该属性表达单选反馈；选择判断仍由官方控件负责。
 - 共用 `Switch` 可操作时显示手形指针，禁用时显示禁止指针；在组件内统一维护，不在设置调用方重复指定。
-- Media Download 的记录列表与 Sheet 由 media-download/records 持有，Dock 保留一级入口。Settings 的 General／Features 采用官方 Card、ItemGroup、Item、ItemSeparator 的圆角边框列表，标题置于框外。Media Download 只有一个总开关，独立箭头通过官方 Collapsible 展开默认收起的三个只读子项；仅主项保留问号，子项无问号。界面文案使用英文，TG 状态为 Enabled／Disabled，X／Helper 显示 Not integrated。设置界面归 Newtab，订阅公共 settings 数据，不在其中展示下载记录；保持官方折叠状态与焦点管理，不另写展开状态逻辑。
+- Media Download 的记录列表与 Sheet 由 media-download/records 持有，Dock 保留一级入口。Settings 的 General／Features 采用官方 Card、ItemGroup、Item、ItemSeparator 的圆角边框列表，标题置于框外。Media Download 只有一个总开关，独立箭头通过官方 Collapsible 展开默认收起的三个只读子项；仅主项保留问号，子项无问号。界面文案使用英文，TG 状态为 Enabled／Disabled，X／Helper 显示 Not integrated。设置界面与 Sheet 归 `modules/settings`，`modules/dock` 只组合入口并协调入口提示，设置界面订阅公共 settings 数据，不在其中展示下载记录；保持官方折叠状态与焦点管理，不另写展开状态逻辑。
 - 历史清理区域使用官方基础的 `Switch`，通过 `checked` / `onCheckedChange` 连接状态，保留可访问名称与说明；默认关闭，加载、授权和保存期间禁用重复操作，失败通过共用 toast.error 提示。配置和权限变更同步到已打开页面，不把业务状态放入通用组件或新增全局设置状态。
 - 历史清理开关标题旁的圆圈问号复用 Button/UiIcon/Tooltip，帮助提示完整保留原说明，最大宽度 280px、优先向上显示并支持换行；独立按钮不切换开关，读屏描述通过常驻隐藏文本保留。错误不放进 Tooltip。
-- Sheet 内容、边框与分隔线使用根主题；全屏遮罩使用 `blur-overlay`。打开/关闭动画为 200ms/160ms，减少动态效果时遵循全局规则。
-- Tooltip 提供名称或简短帮助说明，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Sheet 打开时 Dock 的 Settings 与 Download 入口不显示 Tooltip，关闭恢复焦点不自动弹出入口提示，后续正常悬停仍可显示；两个入口的状态由 Dock 局部 hook 共用，面板内部提示正常使用。
+- Sheet 内容、边框与分隔线使用根主题；全屏遮罩使用 blur-overlay，阴影使用项目 Token。打开／关闭动画恢复为 200ms／160ms，减少动态效果遵循全局规则。
+- Tooltip 提供名称或简短帮助说明，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Sheet 打开时 Dock 的 Settings 与 Download 入口不显示 Tooltip，关闭恢复焦点不自动弹出入口提示，后续正常悬停仍可显示；两个入口的状态由 Dock 局部 useDockSheetTooltip 共用，面板内部提示正常使用。关闭自动恢复焦点阶段，入口标记 data-restored-focus 并仅抑制该阶段的描边；不取消默认焦点恢复。入口失焦、指针按下或主动键盘操作后清除标记，正常键盘聚焦仍有描边。
 - 品牌图标由 `BookmarkIcon` 负责；Newtab 书签、Dock 收藏及其复用入口随主题切换黑白，不再按站点配置 original、adaptive 或 neutral。普通书签透明背景、单色主体，浅色显示黑色、深色显示白色。通用图标由 `UiIcon` 显式静态导入。
 - UI 文件夹图标沿用原始几何、viewBox、线宽与留白，移除灰阶和渐变；白色覆盖形成的必要孔洞通过黑白遮罩转成真正透明区域，再统一主题转换，避免整体滤镜压平镂空。不套用 V3 重绘或统一坐标要求，不维护深浅两套源稿。
 - Grok 书签移除固定底板、保留主体路径。Exts 按用户最新确认保留正式完整外形及底板，浅色黑底白图、深色白底黑图；沿用现有内嵌正式 PNG 的 SVG，不重绘外形、不替换为仅含内部主体的源稿，也不对其应用压平对比的 brightness 滤镜。此主题反转仅用于书签，品牌唯一源稿及三端应用图标保持原样。此次交付见[书签单色 Issue](../changes/issues/2026-10-26-extension-bookmark-monochrome-issue.md)。
@@ -93,9 +93,8 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - UI 文件夹放在 EDU 前，沿用两列图标网格与默认模糊机制；高度固定为文件夹外框基准，更多内容在官方 Scroll Area 内纵向滚动并阻止滚动传播。按用户批准仅隐藏该文件夹内的滚动条，其他文件夹与页面滚动条保持既有行为。
 - UI 上下两端各用 16px 高的绝对定位提示层，贴边 3px 使用 card 背景色盖住内部图标边框，再向内容侧渐隐；复用 overlay-blur，磨砂和背景由同一线性蒙版渐隐，上下镜像，保留文件夹自身外边框。次要前景色 ChevronUp 与 ChevronDown 单独显示、不受蒙版影响；对应方向还有内容时才显示，顶部只有下提示，中间两个都有，底部只有上提示。默认模糊或无溢出时都隐藏，不占布局、不额外预留空间，保留网格原有内边距。不依赖 Hover，不响应点击或阻挡滚动；判断由文件夹局部监听滚动与尺寸变化，卸载后清理。
 - 右侧首卡采用官方 Card 基础，按批准的文件夹外框效果组合主题圆角、16px 内边距和无阴影。右侧卡片间距为 24px，卡片区域统一滚动。
-- Daily check-in 首行高 32px，左侧标题 14px，右侧复用 Settings 的 outline/sm/spacing=0 ToggleGroup，仅有固定选中的 JLPT 项，不维护额外选中样式。首行与日历相隔 16px；日历每格 12px、圆角 2px、横纵间距 2px，24 列×7 行共 334×96px，水平居中；不额外添加描边、阴影、月份或统计行。
-- 日历颜色集中在 `theme.css` 的 `--check-in-level-0` 至 `3`：浅色为 #EEEEEE/#CCCCCC/#999999/#666666，深色为 #2A2A2A/#484848/#737373/#A3A3A3，按分钟档位递增使用，不将颜色散落在组件内。
-- 正分钟数格子复用页面现有 TooltipProvider 和共用 TooltipContent，沿用默认 400ms 延迟与 4px 间距、优先向上并使用组件边界避让。日期与学习时长分两行显示，0 分钟和未来日期不创建 Tooltip；键盘聚焦正分钟格子也能触发提示。
+- ActivityCard 由 `modules/studio/components/activity` 持有，Home 的 cards 区域只引入展示；卡片尺寸和材质保留，首行高 32px，使用现有 outline/sm/spacing=0 ToggleGroup，切换项为 CalendarDays 和 ChartColumn 图标，名称为 Calendar／Chart，宽度沿用现有图标切换的 36px。
+- 默认 Calendar，重复选择不能取消至空值；图标名称复用官方 Tooltip，状态只使用组件 useState，Home／Studio 切换沿用 React Activity 保留状态，刷新恢复默认。Calendar 保留完整 24 周网格、每格 12px、间距 2px、周日开始及未来日期留白；记录状态初始为空，不导入 JLPT／Workout JSON，无记录日期显示基础灰阶。只有 Chart 内容留空。日期 Hook、日历组件与计算逻辑迁入 Studio，不预建记录 Store 或订阅。日历颜色沿用原明暗灰阶，由 theme.css 的 --activity-level-0 至 3 统一维护。
 
 ### 验证边界
 

@@ -83,7 +83,8 @@ docs/
 
 ## Issue 队列
 
-- [改造首页活动录入与日历统计（讨论草稿）](./issues/2026-10-27-extension-activity-cards-issue.md) · [Commit 记录](./commits/2026-10-27-extension-activity-cards-commit.md)；仅保存讨论，待确认录入完结、最高值配置、统计规则和首个交付边界，未批准实施。
+- [按职责整理媒体下载模块内部结构](./issues/2026-10-28-extension-media-download-structure-issue.md) · [Commit 记录](./commits/2026-10-28-extension-media-download-structure-commit.md)；仅补充后续范围，内部参考 Newtab 按职责目录组织并按功能分组，保留下载和记录行为；未开始实施，本轮仅提交排队记录。
+
 
 
 ## 待办
@@ -91,6 +92,13 @@ docs/
 无。
 
 ## 已完成
+
+- [恢复原 Sheet 样式并统一左侧圆角](./issues/2026-10-28-extension-download-drawer-issue.md) · [Commit 记录](./commits/2026-10-28-extension-download-drawer-commit.md)；用户验收通过，代码与本轮文档均批准本地提交；原 420px／模糊／Header／关闭入口／动画保留，左侧圆角复用全局 Token，关闭反馈修正保留；77 项测试、类型与构建通过，提交不追加验证，不推送。
+
+- [将活动日历迁入 Studio](./issues/2026-10-27-extension-activity-cards-issue.md) · [Commit 记录](./commits/2026-10-27-extension-activity-cards-commit.md)；用户确认验证通过，代码与文档本地提交完结；日历完整保留，记录清空，图表留空，按 Studio 职责目录组织；77 项测试、类型与构建通过，不追加验证，不推送。
+
+- [拆分 Dock 与 Settings 并归位 Home](./issues/2026-10-28-extension-module-boundaries-issue.md) · [Commit 记录](./commits/2026-10-28-extension-module-boundaries-commit.md)；用户验收通过，代码已先提交，本轮文档提交完结；新增 Dock／Settings 模块，Home 归位 Newtab；沿用此前 76 项测试、类型与构建结果，不追加验证，不推送。
+
 
 - [补充文件夹、下载与设置更新日志](./issues/2026-10-28-website-extension-changelog-issue.md) · [Commit 记录](./commits/2026-10-28-website-extension-changelog-commit.md)；用户批准更新至 1.7.0 并本地提交完结；根版本与新日志标签／链接同步，历史记录保留；官网类型检查、构建与 diff 检查此前通过，提交时未追加验证或重建产物，未推送或部署。
 

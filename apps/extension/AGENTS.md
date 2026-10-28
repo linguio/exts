@@ -20,9 +20,14 @@
 - `src/shared/ui/` 持有通用组件，不包含书签、Dock、Chrome API 或模块状态；各功能在自己的 `src/modules/<功能>/` 中组合，Newtab 也遵循此边界。
 - 扩展主题由 `src/shared/theme/` 解析 Light/Dark/System，默认跟随系统；实际明暗通过根 `data-theme` 应用，Portal 继承根 Token，不直接依赖 `.dark` 类。偏好保存、同步与首屏初始化不得放进通用 UI。官方源码接入和必要差异见 [Web UI 来源](../../docs/web-ui-sources.md)。
 - 临时提示统一从 `src/shared/ui/sonner.tsx` 导入 Toaster 与 toast，复用 shadcn Sonner 和 Lucide 成功/信息/警告/错误图标，使用图标加提示语、各自页面右下角位置和统一主题；不增加文件名副标题、模块独立配色或位置覆盖。TG 与后续 X 均遵守，业务只负责等级、文案与触发，不建立跨页面通知管理。等级规则见扩展 UI 规范。
-- Download 与 Settings 复用共用 Sheet 的右侧默认 420px 宽度，最大不超过视口；调用方不重复维护同用途宽度，其余方向保持既有布局。
+- Download 与 Settings 共用试用前的 Sheet：默认右侧 420px、最大不超过视口，保留主题模糊遮罩、浮层阴影、原 Header／标题图标与分隔线、关闭按钮和 200ms／160ms 动画。仅按用户新增批准在共用组件增加左上／左下 rounded-l-[var(--radius)]，复用全局 1rem，右侧保持直角贴边；不新增边缘留白。
 - 应用根只创建一个 `TooltipProvider`。Tooltip 只提供简短名称或帮助说明，不含可交互内容；菜单或 Sheet 打开时其入口不得残留 Tooltip，Sheet 内的主题名称和帮助提示可正常显示。
 - Tooltip、菜单、Sheet、Button 与链接通过 `asChild` 等方式共享唯一真实交互元素，禁止嵌套交互控件。
+
+## Studio 功能归属
+
+- Studio 参考 Newtab 按 views、components、stores、types、utils 等职责组织，目录内部按功能分组，只创建实际需要的目录；不预建全局 Store、空功能目录或通用事件总线。
+- ActivityCard 归 `modules/studio/components/activity`，Home 仅引入展示；当前保留 Calendar／Chart 图标切换，默认 Calendar；Calendar 展示原 24 周日历，活动记录状态初始为空，只有 Chart 内容留空，组件状态不持久化。旧模拟 JSON 删除，日历组件、日期逻辑与类型按职责迁入 Studio，灰阶 Token 使用 --activity-level-*；后续数据操作与订阅仍归 Studio，按获批需求再创建。
 
 ## 图标职责
 
@@ -32,7 +37,11 @@
 - `BookmarkIcon` 只管理品牌、网站书签和文字 Logo；Newtab 书签及 Dock 收藏随明暗主题切换黑白，不再维护 original、adaptive 或 neutral 配置。普通书签透明单色，浅色黑色、深色白色；Exts 保留正式完整外形，浅色黑底白图、深色白底黑图，沿用现有正式导出资源。品牌唯一源稿与三端应用图标保持原样；不得使用 Lucide 重绘或替换品牌 Logo。
 - 被 Lucide 替代的通用功能 SVG 在完成迁移和验收后必须删除，不得长期保留两套等价资源或运行时实现。
 
-## Dock 交互
+## 模块组合与 Dock 交互
+
+- `src/app/NewtabApp.tsx` 负责 Home／Studio 切换、公共 Provider 和常驻 Dock 的组合；Home 布局、测量与书签打开由 `modules/newtab` 持有。
+- `modules/dock` 持有 Dock 布局、入口、Actions 菜单和抽屉入口提示协调；收藏由应用组合层传入。Settings Sheet 归 `modules/settings`，Download Sheet 归 `modules/media-download/records`；业务模块不得依赖 Dock 内部实现。
+
 
 - Dock 网页入口使用真实链接语义；工具分组使用真实按钮打开 `DropdownMenu`；已批准的 Settings 使用真实按钮打开 `Sheet`。各入口按已批准职责组合，不维护第二套交互实现。
 - Dock 入口 Hover 或键盘 Focus 时只显示 Tooltip；不得通过 Hover 直接展开 DropdownMenu，也不得让同一个弹层同时承担 Tooltip 和菜单职责。
@@ -40,13 +49,13 @@
 - Dock 位于视口底部，DropdownMenu 默认从上方弹出并支持碰撞调整；由用户验证菜单在 `1280×720`、缩放后 CSS 视口 `640×360` 以及 100%、125%、150%、200% 缩放下不被裁剪或移出视口。
 - 用户验收 DropdownMenu 应覆盖 Enter、Space 或 ArrowDown 打开、方向键移动、Enter 激活、Esc 关闭并恢复触发器焦点、外部点击关闭等行为；Portal 必须正确继承明暗主题 Token 和层级。
 - 已废弃的自定义 Popover 不得重新引入；DropdownMenu 与 Tooltip 分别承担菜单和提示职责，不维护双轨实现。
-- Settings 包含 General/Features，使用官方 Card、ItemGroup、Item 和 ItemSeparator 组成圆角边框列表。General 组合主题选择，Features 组合历史清理与 Media Download 总开关和帮助。媒体下载设置界面由 Newtab 持有，通过公共 settings 数据源读写／订阅；TG、X、Helper 子项由官方 Collapsible 默认收起，只读展示英文状态，不提供独立开关或子项问号，仅主项保留帮助。折叠触发器与总开关独立，不在 Settings 展示下载记录。
+- Settings 包含 General/Features，使用官方 Card、ItemGroup、Item 和 ItemSeparator 组成圆角边框列表。General 组合主题选择，Features 组合历史清理与 Media Download 总开关和帮助。Settings Sheet 与通用、媒体下载设置界面由 `modules/settings` 持有，Dock 只组合入口；通过公共 settings 数据源读写／订阅；TG、X、Helper 子项由官方 Collapsible 默认收起，只读展示英文状态，不提供独立开关或子项问号，仅主项保留帮助。折叠触发器与总开关独立，不在 Settings 展示下载记录。
 
 ## Media Download 与记录边界
 
 - `src/modules/media-download/` 统一媒体下载；`tg-download/` 持有 Telegram 网页按钮、download 和页面接入，`records/` 持有共用记录、列表和 Sheet。总开关默认开启，保存在版本化的 `settings.mediaDownload.enabled`，保留旧 Telegram 开关选择；关闭立即屏蔽新下载入口，正在写入的任务继续。X／Helper 当前未接入，不预建空模块或模拟连接状态。
 - 不提供 Popup；完成 Toast 使用 shared/ui 中的官方 Sonner 样式组件，文案与触发由 TG 模块负责。只在文件关闭成功后显示成功图标与“下载完成”，不附加文件名描述；实际文件名保留在下载记录。不提示开始、进度、失败或取消，不修改现有文件名生成规则。
-- 文件关闭成功后，TG 页面仅把实际文件名和字节数通过隔离脚本交给 media-download/records 后台；记录模块复用 shared/storage，保留 downloads 顶层对象、来源校验和按筛选清空。Newtab Dock 仅提供打开 Media Download Sheet 的一级入口，列表与抽屉归 media-download。记录错误不改变已保存文件或成功 Toast，不传媒体流、目录句柄或真实磁盘路径。X 下载与 Desktop 通信尚未接入，文件夹入口仅提示未接入。
+- 文件关闭成功后，TG 页面仅把实际文件名和字节数通过隔离脚本交给 media-download/records 后台；记录模块复用 shared/storage，保留 downloads 顶层对象、来源校验和按筛选清空。Dock 仅提供打开 Media Download Sheet 的一级入口，列表与抽屉归 media-download。记录错误不改变已保存文件或成功 Toast，不传媒体流、目录句柄或真实磁盘路径。X 下载与 Desktop 通信尚未接入，文件夹入口仅提示未接入。
 - 后续 X／Helper 按当前 Issue 获批阶段接入：Helper 独立执行，成功后通知一次，扩展收到后记记录；关闭总开关停止通信但不取消任务。通知丢失可接受，不加确认、重试、补发、恢复同步或历史补拉。
 - 保留 MAIN world 页面取流；目录选择与权限请求在用户手势内直接调用。下载入口使用官方 Button Group：主按钮为下载图标加“下载资源”，横向三点 DropdownMenu 收起“文件另存为”和“选择文件夹”；按钮组外层使用官方 Popover 定位，禁止恢复旧自定义 Popover。首次快速下载选择并记住目录后继续保存，后续直接保存；另存为独立选择本次文件而不更改目录，重新选择只更换后续目录。不限定目录名称、不创建固定子目录。句柄留在 Telegram 同来源 IndexedDB，同名递增避重；目录 API 不可用时快速保存降级为系统另存为。不把媒体流交给 desktop。统一主题 Token 位于 `src/styles/theme.css`，网页菜单与扩展页面共用。
 

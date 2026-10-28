@@ -34,12 +34,18 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 ## 业务组合与扫描边界
 
 - 官网介绍文字二进制动效（2026-10-25）：核对 [shadcn/ui 官方组件目录](https://ui.shadcn.com/docs/components)，没有对应字符解码组件，现有通用控件组合不能提供该效果。在 `pages/home/binary-text.tsx` 与同目录 CSS 独立实现固定二进制序列及单次分步动画，仅供首页介绍文字使用；参考 shadcn.io 的公开效果及本地 Demo，不复制 Pro 源码，不作为官方组件或引入动画依赖。保留原文字体、字距和主题 Token；字符占位、辅助技术原文与减少动态效果降级由该组件负责，1.2 行高沿用首页目标文字的既有值。
-- 历史清理设置视图与权限/存储逻辑继续由 `modules/history-cleaner` 持有；Newtab 的 DockSettings 只组合设置区域和外壳。通用 Switch 不调用 Chrome API，不持有配置或错误状态。
-- Telegram Download 复用现有 DropdownMenu；Content 增加可选 `portalContainer`，仅将 Portal 挂入网页 Shadow DOM，未指定时保持官方默认挂载方式。Shadow DOM 的事件重定向处理在业务菜单中完成，保留官方选择、禁用和关闭行为；不迁入旧自定义菜单的配色或状态管理。Popup 不恢复；2026-10-28 现有 TG 与记录整合到 media-download，records 自己组合记录列表与现有 Sheet，Dock 只提供入口；不修改通用 Sheet 源码或新增 Drawer。Newtab Settings 自行组合总开关和三项只读状态／帮助，数据复用公共 settings 接口。
+- 历史清理设置视图与权限/存储逻辑继续由 `modules/history-cleaner` 持有；`modules/settings` 组合设置区域和 Sheet 外壳，`modules/dock` 只组合入口。通用 Switch 不调用 Chrome API，不持有配置或错误状态。
+- Telegram Download 复用现有 DropdownMenu；Content 增加可选 `portalContainer`，仅将 Portal 挂入网页 Shadow DOM，未指定时保持官方默认挂载方式。Shadow DOM 的事件重定向处理在业务菜单中完成，保留官方选择、禁用和关闭行为；不迁入旧自定义菜单的配色或状态管理。Popup 不恢复；2026-10-28 现有 TG 与记录整合到 media-download，records 自己组合记录列表与现有 Sheet，Dock 只提供入口；不修改通用 Sheet 源码或新增 Drawer。Settings 模块自行组合总开关和三项只读状态／帮助，数据复用公共 settings 接口。
 - Sheet 关闭后的 Tooltip 抑制、菜单与 Tooltip 互斥、指针外部关闭处理继续位于业务组合处；不放入共享控件。
 - 官网叠放窗口保留原生 button 与现有卡片池。专用展示的尺寸、网格、窗口内容与轮换不适合套用默认 Button 或标准 Carousel。
 - 书签卡片、EDU 遮罩、品牌图标与网站分类布局按需求组合；未发现需要为本次目标迁入通用 UI 的业务逻辑，不创建跨应用组件包。
 - 现有测试为纯逻辑、配置和体积边界，没有需要移除的截图、布局或焦点交互测试；本次不新增模拟 DOM 测试。
+
+## Sheet 左侧圆角与试用回退（2026-10-28）
+
+- 用户最终明确要求全部恢复试用前 Sheet 方案，以本地代码提交 54f33fc 对应实现核对：保留 420px、主题模糊遮罩、浮层阴影、原标题图标和分隔线、Button／UiIcon 关闭按钮、200ms／160ms 自写动画。
+- 唯一新增的外壳样式为右侧分支 rounded-l-[var(--radius)]，复用主题 1rem，只影响左上／左下，右侧保持贴边直角。关闭恢复焦点描边修正仍在 Dock 局部 hook 及入口样式中，不改变内部内容。
+- Drawer 源码、Vaul 和 tw-animate-css 试用依赖全部移除；不将官方默认样式试用方案保留为第二套实现，README 仍推迟到整轮最后更新。
 
 ## 更新方式
 
