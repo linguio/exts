@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [补充文件夹、下载与设置更新日志](./issues/2026-10-28-website-extension-changelog-issue.md) · [Commit 记录](./commits/2026-10-28-website-extension-changelog-commit.md)；用户批准更新至 1.7.0 并本地提交完结；根版本与新日志标签／链接同步，历史记录保留；官网类型检查、构建与 diff 检查此前通过，提交时未追加验证或重建产物，未推送或部署。
+
 - [统一设置列表与全局状态反馈](./issues/2026-10-28-extension-settings-ui-issue.md) · [Commit 记录](./commits/2026-10-28-extension-settings-ui-commit.md)；按用户批准独立提交设置代码和文档；官方分组列表／折叠、集中 Toast 文案、共用 StatusIcon 已交付；用户验收通过，沿用此前 76 项测试、类型与构建结果，不重复验证，不推送。
 
 - [整合媒体下载模块与记录抽屉](./issues/2026-10-27-extension-media-dl-issue.md) · [Commit 记录](./commits/2026-10-27-extension-media-dl-commit.md)；按用户批准独立提交下载代码和文档；统一 media-download、模块自有记录 Sheet 与配置迁移，保留 TG／数据；沿用已验收整体验证结果，不重复测试中间快照，不推送。
