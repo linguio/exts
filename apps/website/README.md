@@ -28,12 +28,12 @@ pnpm web:build
 - src/pages/home：首页正文布局，组合布局组件与下载模块。
 - src/components/layout：SiteLayout 统一装配页头、页脚和正文，SiteDocumentLayout 统一产品介绍与更新日志的阅读框架；src/components/ui：纳入 Git 的 shadcn 基础组件。
 - src/features/download：组合 shadcn 平台下载链接。
-- src/features/showcase：首页模块示意卡片与轮换行为；assets 为现有扩展书签 SVG 的本地副本，网站不直接依赖扩展业务模块。
+- src/features/showcase：首页模块示意卡片与轮换行为；品牌资源统一引用 src/assets/brand，网站不直接依赖扩展业务模块。
 - src/pages/changelog：更新日志页面与独立 React 入口；src/features/changelog：静态日志数据与时间线模块。
 - src/pages/features：产品介绍页面与独立 React 入口，分类由 URL hash 控制。
 - src/features/products：首页卡片与产品介绍共用的四类数据，以及分类 URL 解析逻辑。
 - src/config/site.ts：产品文案、GitHub 地址、固定 latest 下载链接与署名。
-- src/assets：用户提供的单色 Chrome、Apple 与 GitHub 品牌 SVG；public：已有正式品牌资源、favicon 与第三方许可声明。
+- src/assets/brand：Chrome、Apple、GitHub 与展示卡片共用的品牌 SVG，GitHub 图标只维护一份；public：已有正式 Exts 品牌资源、favicon 与第三方许可声明。
 - src/lib/utils.ts：class-variance-authority 配合的本地样式合并工具，不提取共享 UI 包。
 
 ## 组件与资源
@@ -65,7 +65,7 @@ GitHub Pages 使用 workflow 的 GITHUB_TOKEN 与 OIDC，不需要额外 PAT 或
 - [部署 Issue](../../docs/changes/issues/2026-10-11-website-manual-pages-deploy-issue.md)
 - [GitHub 官方自定义 workflow 说明](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
 
-- [当前 Issue](../../docs/changes/issues/2026-10-12-website-home-tool-categories-issue.md)
+- [项目工作台](../../docs/changes/README.md)
 - [设计](../../docs/superpowers/specs/2026-10-11-website-product-homepage-design.md)
 - [Plan](../../docs/superpowers/plans/2026-10-11-website-product-homepage.md)
 - [构建规范](../../docs/build-release.md)

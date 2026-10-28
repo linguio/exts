@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [统一官网品牌资源目录](./issues/2026-10-29-website-brand-assets-issue.md) · [Commit 记录](./commits/2026-10-29-website-brand-assets-commit.md)；用户于 2026-10-29 确认验收通过并批准代码、文档两笔本地提交；11 份 SVG 归位、重复与无引用资源清理及 README 修正已交付；沿用此前 10 项测试、类型检查与构建结果，提交不追加验证，不推送或部署。
+
 - [按职责整理扩展模块与共用能力](./issues/2026-10-28-extension-media-download-structure-issue.md) · [Commit 记录](./commits/2026-10-28-extension-media-download-structure-commit.md)；用户于 2026-10-29 明确要求代码与文档两笔本地提交完结；六个模块、共用书签与品牌资源已按职责归位；沿用此前 77 项测试、类型检查与构建结果，提交不追加验证，浏览器实测限制保留，不推送。
 
 - [恢复原 Sheet 样式并统一左侧圆角](./issues/2026-10-28-extension-download-drawer-issue.md) · [Commit 记录](./commits/2026-10-28-extension-download-drawer-commit.md)；用户验收通过，代码与本轮文档均批准本地提交；原 420px／模糊／Header／关闭入口／动画保留，左侧圆角复用全局 Token，关闭反馈修正保留；77 项测试、类型与构建通过，提交不追加验证，不推送。
