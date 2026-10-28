@@ -1,7 +1,7 @@
 import { expect, it, vi } from 'vitest';
-import { createDownloadsRepository } from '../../../src/modules/downloads/store';
-import { selectRecords, formatSize } from '../../../src/modules/downloads/schema';
-import { registerDownloads } from '../../../src/modules/downloads/background';
+import { createDownloadsRepository } from '../../../../src/modules/media-download/records/store';
+import { selectRecords, formatSize } from '../../../../src/modules/media-download/records/schema';
+import { registerDownloads } from '../../../../src/modules/media-download/records/background';
 
 function storage() {
   const data: Record<string, unknown> = {};

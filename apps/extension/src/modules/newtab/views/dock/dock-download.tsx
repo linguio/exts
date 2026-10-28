@@ -1,20 +1,16 @@
-import { useRef } from 'react';
-
 import { Button } from '../../../../shared/ui/button';
-import { Separator } from '../../../../shared/ui/separator';
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../../../../shared/ui/sheet';
+import { SheetTrigger } from '../../../../shared/ui/sheet';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
 import { UiIcon } from '../../../../shared/ui/ui-icon';
 import { useDockSheetTooltip } from './use-dock-sheet-tooltip';
-import { DownloadsPanel } from '../downloads';
+import { MediaDownloadSheet } from '../../../media-download/records/views/sheet';
 
-/** Dock 仅组合下载入口、抽屉外壳和独立记录视图。 */
+/** Dock 只提供一级入口，记录抽屉由媒体下载模块持有。 */
 export function DockDownload() {
   const sheetTooltip = useDockSheetTooltip();
-  const titleRef = useRef<HTMLHeadingElement>(null);
 
   return (
-    <Sheet {...sheetTooltip.sheetProps}>
+    <MediaDownloadSheet {...sheetTooltip.sheetProps} onCloseAutoFocus={sheetTooltip.onCloseAutoFocus}>
       <Tooltip {...sheetTooltip.tooltipProps}>
         <TooltipTrigger asChild>
           <SheetTrigger asChild>
@@ -23,7 +19,7 @@ export function DockDownload() {
               variant="entry"
               size="entry"
               className="bookmark-card bookmark-card--dock bookmark-dock__tool"
-              aria-label="Open download"
+              aria-label="Open Media Download"
               {...sheetTooltip.triggerProps}
             >
               <span className="bookmark-card__icon entry-surface">
@@ -32,19 +28,8 @@ export function DockDownload() {
             </Button>
           </SheetTrigger>
         </TooltipTrigger>
-        <TooltipContent side="top" align="center" sideOffset={12}>Download</TooltipContent>
+        <TooltipContent side="top" align="center" sideOffset={12}>Media Download</TooltipContent>
       </Tooltip>
-      <SheetContent aria-describedby={undefined} onOpenAutoFocus={(event) => {
-        event.preventDefault();
-        titleRef.current?.focus();
-      }} onCloseAutoFocus={sheetTooltip.onCloseAutoFocus}>
-        <header className="flex min-h-14 shrink-0 items-center px-6 pr-16">
-          <UiIcon name="download" className="mr-3 size-5 shrink-0" />
-          <SheetTitle ref={titleRef} tabIndex={-1} className="text-lg font-semibold">Download</SheetTitle>
-        </header>
-        <Separator />
-        <DownloadsPanel />
-      </SheetContent>
-    </Sheet>
+    </MediaDownloadSheet>
   );
 }

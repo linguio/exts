@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { saveMedia, type SaveMediaDependencies } from '../../../../src/modules/tg-download/download-core/save-media';
+import { saveMedia, type SaveMediaDependencies } from '../../../../../src/modules/media-download/tg-download/download/save-media';
 
 function setup(overrides: Partial<SaveMediaDependencies> = {}) {
   const writable = { write: vi.fn(), close: vi.fn(), abort: vi.fn() };

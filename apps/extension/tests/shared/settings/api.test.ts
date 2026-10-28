@@ -7,9 +7,9 @@ it('订阅 settings 对象变化并在取消后停止通知', () => {
   const listeners = new Set<(changes: Record<string, { newValue?: unknown }>, area: string) => void>();
   const api = { storage: { onChanged: { addListener: (listener: typeof listeners extends Set<infer T> ? T : never) => listeners.add(listener), removeListener: (listener: typeof listeners extends Set<infer T> ? T : never) => listeners.delete(listener) } } };
   const received: boolean[] = [];
-  const stop = subscribeSettings(settings => received.push(settings.telegramDownload.enabled), api as never);
-  for (const listener of listeners) listener({ settings: { newValue: { telegramDownload: { enabled: false } } } }, 'sync');
-  for (const listener of listeners) listener({ settings: { newValue: { telegramDownload: { enabled: false } } } }, 'local');
+  const stop = subscribeSettings(settings => received.push(settings.mediaDownload.enabled), api as never);
+  for (const listener of listeners) listener({ settings: { newValue: { mediaDownload: { enabled: false } } } }, 'sync');
+  for (const listener of listeners) listener({ settings: { newValue: { mediaDownload: { enabled: false } } } }, 'local');
   expect(received).toEqual([false]);
   stop();
   expect(listeners.size).toBe(0);
@@ -47,8 +47,8 @@ it('后台串行处理来自扩展页面的配置更新，拒绝网页内容脚�
   const trusted = { id: 'exts-test', url: 'chrome-extension://exts-test/newtab.html' };
   const results = await Promise.all([
     send(trusted, { theme: 'dark' }),
-    send(trusted, { telegramDownload: { enabled: false } }),
+    send(trusted, { mediaDownload: { enabled: false } }),
   ]);
   expect(results).toEqual([expect.objectContaining({ ok: true }), expect.objectContaining({ ok: true })]);
-  expect(data[SETTINGS_KEY]).toMatchObject({ theme: 'dark', telegramDownload: { enabled: false } });
+  expect(data[SETTINGS_KEY]).toMatchObject({ theme: 'dark', mediaDownload: { enabled: false } });
 });

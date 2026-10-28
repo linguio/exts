@@ -1,4 +1,4 @@
-import { readObject, subscribeObject } from '../../shared/storage/object-store';
+import { readObject, subscribeObject } from '../../../shared/storage/object-store';
 import { DOWNLOADS_KEY, normalizeDownloads, type Downloads, type DownloadFilter, type SavedDownload } from './schema';
 
 export const ADD_TG_DOWNLOAD_MESSAGE = 'exts:downloads:add-tg';

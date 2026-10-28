@@ -12,7 +12,7 @@ export function createSettingsRepository(storage: ObjectStorage) {
     apply(current, patch) {
       return {
         ...current, ...patch,
-        telegramDownload: { ...current.telegramDownload, ...patch.telegramDownload },
+        mediaDownload: { ...current.mediaDownload, ...patch.mediaDownload },
         historyCleaner: { ...current.historyCleaner, ...patch.historyCleaner },
       };
     },

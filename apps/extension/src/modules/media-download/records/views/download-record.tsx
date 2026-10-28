@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
-import { formatSize, type DownloadRecord } from '../../../downloads/schema';
+import { formatSize, type DownloadRecord } from '../schema';
 
 export function DownloadRecordRow({ record }: { record: DownloadRecord }) {
   const stemRef = useRef<HTMLSpanElement>(null);

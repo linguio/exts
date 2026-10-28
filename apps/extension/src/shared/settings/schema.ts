@@ -4,15 +4,15 @@ export const SETTINGS_KEY = 'settings';
 export const LEGACY_SETTINGS_KEYS = ['exts.theme', 'telegramDownload.enabled', 'historyCleaner.enabled'];
 
 export interface Settings {
-  version: 1;
+  version: 2;
   theme: ThemePreference;
-  telegramDownload: { enabled: boolean };
+  mediaDownload: { enabled: boolean };
   historyCleaner: { enabled: boolean };
 }
 
 export type SettingsPatch = {
   theme?: ThemePreference;
-  telegramDownload?: { enabled: boolean };
+  mediaDownload?: { enabled: boolean };
   historyCleaner?: { enabled: boolean };
 };
 
@@ -23,14 +23,21 @@ function object(value: unknown): Record<string, unknown> {
 /** 新配置优先，旧键只补齐缺失值；保留已存在的其他字段。 */
 export function normalizeSettings(stored: Record<string, unknown>): Settings {
   const current = object(stored[SETTINGS_KEY]);
-  if (typeof current.version === 'number' && current.version > 1) throw new Error('当前扩展不支持此配置版本');
-  const telegramDownload = object(current.telegramDownload);
+  if (typeof current.version === 'number' && current.version > 2) throw new Error('当前扩展不支持此配置版本');
+  const { telegramDownload: previousTelegramDownload, ...retained } = current;
+  const telegramDownload = object(previousTelegramDownload);
+  const mediaDownload = object(current.mediaDownload);
   const historyCleaner = object(current.historyCleaner);
   return {
-    ...current,
-    version: 1,
+    ...retained,
+    version: 2,
     theme: normalizeTheme(current.theme ?? stored['exts.theme']),
-    telegramDownload: { ...telegramDownload, enabled: typeof telegramDownload.enabled === 'boolean' ? telegramDownload.enabled : typeof stored['telegramDownload.enabled'] === 'boolean' ? stored['telegramDownload.enabled'] : true },
+    mediaDownload: {
+      ...telegramDownload, ...mediaDownload,
+      enabled: typeof mediaDownload.enabled === 'boolean' ? mediaDownload.enabled
+        : typeof telegramDownload.enabled === 'boolean' ? telegramDownload.enabled
+          : typeof stored['telegramDownload.enabled'] === 'boolean' ? stored['telegramDownload.enabled'] : true,
+    },
     historyCleaner: { ...historyCleaner, enabled: typeof historyCleaner.enabled === 'boolean' ? historyCleaner.enabled : stored['historyCleaner.enabled'] === true },
   };
 }
@@ -41,7 +48,7 @@ export function validateSettingsPatch(value: unknown): asserts value is Settings
   for (const [key, entry] of Object.entries(value)) {
     if (key === 'theme') {
       if (entry !== 'light' && entry !== 'dark' && entry !== 'system') throw new Error('无效主题');
-    } else if (key === 'telegramDownload' || key === 'historyCleaner') {
+    } else if (key === 'mediaDownload' || key === 'historyCleaner') {
       const section = object(entry);
       if (typeof section.enabled !== 'boolean' || Object.keys(section).some(field => field !== 'enabled')) throw new Error('无效功能配置');
     } else throw new Error('未知配置字段');

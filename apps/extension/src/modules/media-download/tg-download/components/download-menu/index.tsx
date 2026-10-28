@@ -1,14 +1,14 @@
 import { createRoot } from 'react-dom/client';
 import { flushSync } from 'react-dom';
 import { Download, Ellipsis, FolderOpen, Save } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../../../shared/ui/dropdown-menu';
-import { Button } from '../../../../shared/ui/button';
-import { ButtonGroup } from '../../../../shared/ui/button-group';
-import { Popover, PopoverContent, PopoverTrigger } from '../../../../shared/ui/popover';
-import { Toaster, toast } from '../../../../shared/ui/sonner';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../../../../shared/ui/dropdown-menu';
+import { Button } from '../../../../../shared/ui/button';
+import { ButtonGroup } from '../../../../../shared/ui/button-group';
+import { Popover, PopoverContent, PopoverTrigger } from '../../../../../shared/ui/popover';
+import { Toaster, toast } from '../../../../../shared/ui/sonner';
 import styles from './style.css?inline';
-import type { DownloadMenuController } from '../../download-core/save-media';
-import { resolveTheme, type ThemePreference } from '../../../../shared/theme/preference';
+import type { DownloadMenuController } from '../../download/save-media';
+import { resolveTheme, type ThemePreference } from '../../../../../shared/theme/preference';
 
 /** 菜单和完成提示隔离在同一 Shadow DOM，业务提示只在保存成功后触发。 */
 export function createDownloadMenu(document: Document, actions: {

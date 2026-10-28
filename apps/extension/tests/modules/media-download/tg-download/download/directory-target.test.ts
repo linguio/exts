@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createDirectoryTarget, type DownloadDirectory } from '../../../../src/modules/tg-download/download-core/directory-target';
+import { createDirectoryTarget, type DownloadDirectory } from '../../../../../src/modules/media-download/tg-download/download/directory-target';
 
 function directory(name = 'My downloads') {
   const entries = new Map<string, 'file' | 'directory'>();

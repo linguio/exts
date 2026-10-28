@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseContentRange, writeResponse } from '../../../../src/modules/tg-download/download-core/range';
+import { parseContentRange, writeResponse } from '../../../../../src/modules/media-download/tg-download/download/range';
 
 describe('媒体响应范围', () => {
   it('解析后续 Range 请求需要的总字节数', () => {

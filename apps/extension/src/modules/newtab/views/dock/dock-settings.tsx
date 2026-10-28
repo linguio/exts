@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../../../../share
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
 import { UiIcon } from '../../../../shared/ui/ui-icon';
 import { HistoryCleanerSettings } from '../../../history-cleaner/settings-section';
-import { TelegramDownloadSettings } from '../../../tg-download/views/settings/index';
+import { MediaDownloadSettings } from '../settings/media-download-settings';
 import { GeneralSettings } from '../settings/general-settings';
 import { useDockSheetTooltip } from './use-dock-sheet-tooltip';
 
@@ -53,7 +53,7 @@ export function DockSettings() {
             <section aria-labelledby="features-heading" className="space-y-4">
               <h3 id="features-heading" className="text-xs font-medium text-muted-foreground">Features</h3>
               <HistoryCleanerSettings />
-              <TelegramDownloadSettings />
+              <MediaDownloadSettings />
             </section>
           </div>
         </ScrollArea>

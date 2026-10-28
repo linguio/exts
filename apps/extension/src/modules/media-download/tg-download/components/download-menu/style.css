@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "sonner/dist/styles.css";
-@import "../../../../styles/theme.css";
+@import "../../../../../styles/theme.css";
 
 /* 网页注入界面引用同一组 Token，不把扩展页面的字体二进制内联进内容脚本。 */
 @theme inline {

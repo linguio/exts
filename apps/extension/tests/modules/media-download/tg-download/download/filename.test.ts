@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { createDownloadFilename } from '../../../../src/modules/tg-download/download-core/filename';
+import { createDownloadFilename } from '../../../../../src/modules/media-download/tg-download/download/filename';
 
 describe('下载文件名', () => {
   it('按媒体类型生成固定宽度时间戳文件名', () => {

@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactElement } from 'react';
 
-import { clearDownloads, getDownloads, subscribeDownloads } from '../../../downloads';
-import { selectRecords, type Downloads, type DownloadFilter } from '../../../downloads/schema';
+import { clearDownloads, getDownloads, subscribeDownloads } from '../index';
+import { selectRecords, type Downloads, type DownloadFilter } from '../schema';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../../../../shared/ui/alert-dialog';
 import { Button } from '../../../../shared/ui/button';
 import { ScrollArea } from '../../../../shared/ui/scroll-area';
@@ -9,7 +9,7 @@ import { ToggleGroup, ToggleGroupItem } from '../../../../shared/ui/toggle-group
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
 import { toast } from '../../../../shared/ui/sonner';
 import { UiIcon } from '../../../../shared/ui/ui-icon';
-import { BookmarkIcon } from '../../components/bookmark-icon';
+import { BookmarkIcon } from '../../../newtab/components/bookmark-icon/index';
 import { DownloadRecordRow } from './download-record';
 
 const filters = [
@@ -29,7 +29,7 @@ function NamedTooltip({ label, children, suppressed = false }: { label: string; 
   );
 }
 
-/** Download 只组合记录视图与交互；数据写入由 downloads 后台模块持有。 */
+/** 媒体下载模块持有记录视图与交互，数据写入由记录后台处理。 */
 export function DownloadsPanel() {
   const [data, setData] = useState<Downloads>();
   const [filter, setFilter] = useState<DownloadFilter>('all');

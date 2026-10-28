@@ -1,9 +1,9 @@
 import { createDownloadMenu } from '../components/download-menu/index';
 import { findMediaAt, canOpenDownloadMenu } from './media-target';
-import { saveMedia, type DownloadableMedia } from '../download-core/save-media';
+import { saveMedia, type DownloadableMedia } from '../download/save-media';
 import { TELEGRAM_CONFIG_EVENT, TELEGRAM_READY_EVENT, TELEGRAM_SAVED_EVENT } from './events';
-import { createDirectoryTarget } from '../download-core/directory-target';
-import { normalizeTheme } from '../../../shared/theme/preference';
+import { createDirectoryTarget } from '../download/directory-target';
+import { normalizeTheme } from '../../../../shared/theme/preference';
 
 export function registerTelegramDownloadPage() {
   let enabled = false;

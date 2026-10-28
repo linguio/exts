@@ -1,14 +1,14 @@
 import type { ContentScriptContext } from 'wxt/utils/content-script-context';
-import { telegramDownloadSetting } from '../settings';
-import { type ThemePreference } from '../../../shared/theme/preference';
-import { getSettings, subscribeSettings } from '../../../shared/settings';
+import { mediaDownloadSetting } from '../../settings';
+import { type ThemePreference } from '../../../../shared/theme/preference';
+import { getSettings, subscribeSettings } from '../../../../shared/settings/index';
 import { TELEGRAM_CONFIG_EVENT, TELEGRAM_READY_EVENT, TELEGRAM_SAVED_EVENT } from './events';
-import { addTelegramDownload } from '../../downloads';
-import { validateSavedDownload } from '../../downloads/schema';
+import { addTelegramDownload } from '../../records/index';
+import { validateSavedDownload } from '../../records/schema';
 
 /** 隔离环境同步配置并仅将成功保存元数据传给后台，不传媒体和目录句柄。 */
 export function registerTelegramDownloadBridge(ctx: ContentScriptContext) {
-  const setting = telegramDownloadSetting();
+  const setting = mediaDownloadSetting();
   let enabled = false;
   let theme: ThemePreference = 'system';
   let active = true;
