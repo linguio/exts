@@ -83,15 +83,15 @@ docs/
 
 ## Issue 队列
 
-- [按职责整理媒体下载模块内部结构](./issues/2026-10-28-extension-media-download-structure-issue.md) · [Commit 记录](./commits/2026-10-28-extension-media-download-structure-commit.md)；仅补充后续范围，内部参考 Newtab 按职责目录组织并按功能分组，保留下载和记录行为；未开始实施，本轮仅提交排队记录。
-
-
+无。
 
 ## 待办
 
 无。
 
 ## 已完成
+
+- [按职责整理扩展模块与共用能力](./issues/2026-10-28-extension-media-download-structure-issue.md) · [Commit 记录](./commits/2026-10-28-extension-media-download-structure-commit.md)；用户于 2026-10-29 明确要求代码与文档两笔本地提交完结；六个模块、共用书签与品牌资源已按职责归位；沿用此前 77 项测试、类型检查与构建结果，提交不追加验证，浏览器实测限制保留，不推送。
 
 - [恢复原 Sheet 样式并统一左侧圆角](./issues/2026-10-28-extension-download-drawer-issue.md) · [Commit 记录](./commits/2026-10-28-extension-download-drawer-commit.md)；用户验收通过，代码与本轮文档均批准本地提交；原 420px／模糊／Header／关闭入口／动画保留，左侧圆角复用全局 Token，关闭反馈修正保留；77 项测试、类型与构建通过，提交不追加验证，不推送。
 

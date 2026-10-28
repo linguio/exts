@@ -1,56 +1,55 @@
-# 按职责整理媒体下载模块内部结构
+# 按职责整理扩展模块与共用能力
 
 ## 元信息
 
 - 工作项：2026-10-28-extension-media-download-structure
-- 状态：已排队
-- 当前阶段：按用户要求补充后续结构整理范围，仅建档，未开始代码实施。
-- 批准依据：用户要求 media-download 内部也参考 Newtab 的职责目录设计，并要求先补充 Issue。
-- 任务规模：待目录映射核对后确定；不因文件数量增加子 Issue。
+- 状态：已完成
+- 当前阶段：用户于 2026-10-29 明确要求本地提交，代码与文档按两笔提交完结；沿用已有验证，不追加检查，不推送。
+- 批准依据：用户确认整理全部 modules，并确认 SVG 归 src/assets、共用组件归 shared，最新要求有真实需要的 utils 等职责一并归位。
+- 任务规模：小型行为保持重构；沿用已排队工作项标识，不另建重复 Issue。
 
 ## 背景与目标
 
-现有 media-download 已整合 Telegram 网页下载、共用记录和 Sheet，但内部仍以 tg-download、records 聚合。后续按 Newtab 的职责目录组织，同时保持媒体下载完整归属，不把业务拆入 Dock、Settings 或 shared。
+六个业务模块已有部分职责目录，但 Hook、品牌资源和共用书签仍存在归属混杂。媒体下载原本按 tg-download、records 聚合，需在完整业务模块内进一步明确下载、运行环境、存储和界面边界。
 
 ## 范围与设计约束
 
-- 在 media-download 内按 components、views、types、stores、utils 等职责归置实际代码，各目录内部用功能名称分组，不创建空目录或无实际需求的层级。
-- 网页接入和后台入口继续保留清楚边界，不为目录形式把 MAIN world、隔离脚本、后台与 React 界面混在一起；具体落点在实施前列出旧路径到新路径映射。
-- components 管下载菜单和内部展示组件；views 管下载记录面板与 Sheet；types 管数据类型，格式校验与迁移按实际职责归置；stores 管记录存储和订阅相关实现；utils 管文件命名、下载计算和记录选择等纯函数。公开读写方法与后台注册提供明确接口，不强行将所有函数塞进 utils。
-- 设置界面仍由 modules/settings 组合，媒体下载自己的开关操作接口留在模块内，正式配置仍由 shared/settings 持有。
-- 共用记录、来源字段和筛选规则继续覆盖已交付语义；按职责分目录不等于删除 TG 与记录的业务边界，不因当前只有 TG 而修改未来来源格式。
-- Dock 只接入 Media Download Sheet，不持有下载状态、记录或业务操作；模块不反向依赖 Dock 或 Settings 内部界面。
-- 迁移前保留并调整现有行为测试的导入，测试继续按实际功能组织，不新增目录结构断言或 UI 交互模拟。
+- 覆盖 dock、history-cleaner、media-download、newtab、settings、studio；按实际职责归位，不强制相同目录和空层级。
+- 品牌 SVG 迁入 src/assets/brand，共用图标组件与尺寸类型归 shared/brand；保留 SVG 内容、CSS 类、主题与尺寸表现。
+- 共用 BookmarkCard 和基础 Bookmark 类型归 shared/bookmarks；首页文件夹、配置与打开行为留在 Newtab。
+- Dock 和 Studio 的 Hook 归 hooks；历史清理设置界面归 views；Studio 明确导出 ActivityCard，Newtab 只组合展示。
+- 媒体下载在模块内区分 components、views、download、pages、bridges、background、stores、types、constants、utils；目录内部按 telegram、records 等功能组织。
+- download 持有保存与目录授权；utils 承载媒体定位、文件命名、分段读写辅助、记录校验筛选与格式化，不承载配置订阅、权限申请或通信注册。
+- 同步入口、资源复制配置和原有行为测试引用，最后统一更新 README、现行模块规范和功能文档中的相关路径。
 
 ## 排除项
 
-- 不接入 X／Helper，不增加协议、恢复、重试、补发、历史补拉或新下载行为。
-- 不修改总开关语义、正式配置键、downloads 数据格式、权限、文件命名、目录句柄或保存方式。
-- 不改菜单、抽屉、主题和交互，不升级依赖，不新增全局 Store、通知层或通用事件总线。
-- 品牌 SVG 与图标公共化由独立后续工作处理；本项不复制图标资源。
-- 本次只补充 Issue 和 Commit 记录，不实施代码；应用 README 按用户最新要求留到整轮整理最后统一更新。
+- 不改变功能、文案、样式、交互、配置键、downloads 数据格式、权限、文件名、目录句柄和下载方式。
+- 不接入 X／Helper，不新增全局 Store、通知层、事件总线、依赖或浏览器模拟环境。
+- 不修改根 assets/brand 三端源稿，不改 SVG 内容，不新增视觉、焦点、指针或布局测试。
+- 不自动提交、推送、发布或执行浏览器视觉与交互验收。
 
 ## Todo
 
-- [ ] 核对实际职责与运行环境，列出简洁的旧路径到新路径映射和公开接口。
-- [ ] 当前活动 Issue 完结后，按获批映射迁移源码及入口引用，清理被替代目录。
-- [ ] 调整原有行为测试引用，保留真实数据和下载行为覆盖。
-- [ ] 完成一次必要验证，记录限制并停在用户验收，不自动提交。
+- [x] 固定迁移映射与共用能力边界，更新工作项和实施清单。
+- [x] 归位品牌资源、共用书签及六个模块的实际职责，同步入口引用。
+- [x] 保留并调整原有行为测试，更新现行职责文档和 README。
+- [x] 完成一次逻辑测试、类型检查、生产构建和 diff 检查，停在用户验收。
 
 ## 验收标准
 
-- 目录按职责组织且按功能分组，下载业务和记录仍完整归 media-download。
-- 原有总开关、TG 保存、目录选择、成功记录、列表筛选和清空语义不变，旧数据不重置。
-- 后台不导入 React 视图，网页脚本隔离边界不改变；模块不依赖 Dock、Settings 的内部实现。
-- 逻辑测试、类型检查和生产构建通过；浏览器行为由用户在 Chrome/Edge 加载根 dist/build/chrome-mv3 验收，代理不做视觉、布局或交互验收。
+- Dock 和下载记录不再从 Newtab 内部引用品牌图标或共用书签基础能力；Newtab 通过 Studio 公开入口展示 ActivityCard。
+- 现有书签配置与顺序、文件夹解锁、Dock、Settings、Studio 日历、历史清理和 TG 下载行为不变。
+- 品牌 SVG 内容不变，构建产物在新路径包含全部资源；正式配置和既有下载数据保持兼容。
+- 后台不导入 React 视图，MAIN 与隔离脚本边界不变，目录授权仍在用户手势内调用。
+- 扩展逻辑测试、类型检查和生产构建通过；用户在 Chrome／Edge 加载根 dist/build/chrome-mv3 验收界面及交互。
 
 ## 关联文档
 
 - [Commit 记录](../commits/2026-10-28-extension-media-download-structure-commit.md)
-- [既有媒体下载交付](./2026-10-27-extension-media-dl-issue.md)
-- [当前模块归属整理](./2026-10-28-extension-module-boundaries-issue.md)
+- [实施清单](../../superpowers/plans/2026-10-28-extension-media-download-structure.md)
 - [工作台](../README.md)
 
 ## 唯一下一步
 
-保持排队；前项代码与文档已提交完结，本项只保存后续范围。开始代码前按现有文件确认路径映射与获批边界，不让目录调整引入业务变化。
+本工作项已按用户本地提交指令完结，无待执行开发步骤；浏览器实测限制保留在 Commit 记录中。

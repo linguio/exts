@@ -68,12 +68,12 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - General 的 Theme 行使用官方 ToggleGroup 单选组合，Light/Dark/System 分别用太阳、月亮、笔记本（LaptopMinimal）图标，默认 System；图标不带可见文字，使用可访问名称与现有 Tooltip 提示名称，始终保留一个选项。控件的主题状态不进入 shared/ui。
 - ToggleGroup 单选项以 `aria-checked` 显示激活状态，选中背景使用官方 accent、图标使用 accent-foreground，不增加高反差主色选中块。Tooltip 组合也使用 data-state，因此不得仅凭该属性表达单选反馈；选择判断仍由官方控件负责。
 - 共用 `Switch` 可操作时显示手形指针，禁用时显示禁止指针；在组件内统一维护，不在设置调用方重复指定。
-- Media Download 的记录列表与 Sheet 由 media-download/records 持有，Dock 保留一级入口。Settings 的 General／Features 采用官方 Card、ItemGroup、Item、ItemSeparator 的圆角边框列表，标题置于框外。Media Download 只有一个总开关，独立箭头通过官方 Collapsible 展开默认收起的三个只读子项；仅主项保留问号，子项无问号。界面文案使用英文，TG 状态为 Enabled／Disabled，X／Helper 显示 Not integrated。设置界面与 Sheet 归 `modules/settings`，`modules/dock` 只组合入口并协调入口提示，设置界面订阅公共 settings 数据，不在其中展示下载记录；保持官方折叠状态与焦点管理，不另写展开状态逻辑。
+- Media Download 的记录列表与 Sheet 由 media-download/views/records 持有，Dock 保留一级入口。Settings 的 General／Features 采用官方 Card、ItemGroup、Item、ItemSeparator 的圆角边框列表，标题置于框外。Media Download 只有一个总开关，独立箭头通过官方 Collapsible 展开默认收起的三个只读子项；仅主项保留问号，子项无问号。界面文案使用英文，TG 状态为 Enabled／Disabled，X／Helper 显示 Not integrated。设置界面与 Sheet 归 `modules/settings`，`modules/dock` 只组合入口并协调入口提示，设置界面订阅公共 settings 数据，不在其中展示下载记录；保持官方折叠状态与焦点管理，不另写展开状态逻辑。
 - 历史清理区域使用官方基础的 `Switch`，通过 `checked` / `onCheckedChange` 连接状态，保留可访问名称与说明；默认关闭，加载、授权和保存期间禁用重复操作，失败通过共用 toast.error 提示。配置和权限变更同步到已打开页面，不把业务状态放入通用组件或新增全局设置状态。
 - 历史清理开关标题旁的圆圈问号复用 Button/UiIcon/Tooltip，帮助提示完整保留原说明，最大宽度 280px、优先向上显示并支持换行；独立按钮不切换开关，读屏描述通过常驻隐藏文本保留。错误不放进 Tooltip。
 - Sheet 内容、边框与分隔线使用根主题；全屏遮罩使用 blur-overlay，阴影使用项目 Token。打开／关闭动画恢复为 200ms／160ms，减少动态效果遵循全局规则。
 - Tooltip 提供名称或简短帮助说明，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Sheet 打开时 Dock 的 Settings 与 Download 入口不显示 Tooltip，关闭恢复焦点不自动弹出入口提示，后续正常悬停仍可显示；两个入口的状态由 Dock 局部 useDockSheetTooltip 共用，面板内部提示正常使用。关闭自动恢复焦点阶段，入口标记 data-restored-focus 并仅抑制该阶段的描边；不取消默认焦点恢复。入口失焦、指针按下或主动键盘操作后清除标记，正常键盘聚焦仍有描边。
-- 品牌图标由 `BookmarkIcon` 负责；Newtab 书签、Dock 收藏及其复用入口随主题切换黑白，不再按站点配置 original、adaptive 或 neutral。普通书签透明背景、单色主体，浅色显示黑色、深色显示白色。通用图标由 `UiIcon` 显式静态导入。
+- 品牌图标由 `shared/brand/BrandIcon` 负责；Newtab 书签、Dock 收藏及其复用入口随主题切换黑白，不再按站点配置 original、adaptive 或 neutral。普通书签透明背景、单色主体，浅色显示黑色、深色显示白色。通用图标由 `UiIcon` 显式静态导入。
 - UI 文件夹图标沿用原始几何、viewBox、线宽与留白，移除灰阶和渐变；白色覆盖形成的必要孔洞通过黑白遮罩转成真正透明区域，再统一主题转换，避免整体滤镜压平镂空。不套用 V3 重绘或统一坐标要求，不维护深浅两套源稿。
 - Grok 书签移除固定底板、保留主体路径。Exts 按用户最新确认保留正式完整外形及底板，浅色黑底白图、深色白底黑图；沿用现有内嵌正式 PNG 的 SVG，不重绘外形、不替换为仅含内部主体的源稿，也不对其应用压平对比的 brightness 滤镜。此主题反转仅用于书签，品牌唯一源稿及三端应用图标保持原样。此次交付见[书签单色 Issue](../changes/issues/2026-10-26-extension-bookmark-monochrome-issue.md)。
 - Dock 左侧保持 favorites，右侧 tools 顺序为 Studio、Actions、Download、Settings。Studio 复用官方 Toggle：固定 PanelsTopLeft，首页提示 Switch to Studio、工作台提示 Back to Home；选中反馈使用官方 accent/accent-foreground，通过 aria-pressed 应用到 entry-surface，避免 Tooltip 的 data-state 覆盖及内部图块盖住反馈。不切换图标、不加 fill，不新增选中状态管理。

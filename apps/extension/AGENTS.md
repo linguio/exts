@@ -8,7 +8,7 @@
 
 - 网站图标的原始参考优先使用 [Simple Icons](https://simpleicons.org/)。
 - 图标资源仓库为 [simple-icons/simple-icons](https://github.com/simple-icons/simple-icons)。
-- `src/modules/newtab/assets/brand/` 中的书签图标优先从 Simple Icons 查找参考；允许按用户确认的范围参考原图手绘、调整大小与绘制细节，形成统一风格。有现成图标不限制手绘；没有对应资源时使用用户提供的参考。不直接嵌入或引用位图。
+- `src/assets/brand/` 中的书签图标优先从 Simple Icons 查找参考；允许按用户确认的范围参考原图手绘、调整大小与绘制细节，形成统一风格。有现成图标不限制手绘；没有对应资源时使用用户提供的参考。不直接嵌入或引用位图。
 - 是否带框由用户逐图确认，不按品牌身份决定；带框时复用共同外框，无框时不添加。手绘源稿及登记规则见 [V3 图标规范](../../docs/ohmy-icon-system.md)；未确认的图标不得擅自重绘、加框、去框或替换。
 - 本轮统一风格的正式 SVG 使用 `viewBox="0 0 1024 1024"`，不写固定 `width`、`height`；包含 `role="img"`、可访问的 `<title>` 与一个或多个 `<path>`。每个图标只维护一份正式 SVG，不另生成 24×24 接入版，实际显示大小与渲染适配由使用方负责；未调整的既有资源不自动转换。
 - 本轮正式 SVG 采用透明背景、单色 `currentColor`，不维护独立黑色、深浅主题或上传版本；不得添加渐变、阴影、纹理或透明度效果，并保留小尺寸下可辨识的核心特征。未调整的既有黑色资源不在本次文档工作中改色。
@@ -27,20 +27,27 @@
 ## Studio 功能归属
 
 - Studio 参考 Newtab 按 views、components、stores、types、utils 等职责组织，目录内部按功能分组，只创建实际需要的目录；不预建全局 Store、空功能目录或通用事件总线。
-- ActivityCard 归 `modules/studio/components/activity`，Home 仅引入展示；当前保留 Calendar／Chart 图标切换，默认 Calendar；Calendar 展示原 24 周日历，活动记录状态初始为空，只有 Chart 内容留空，组件状态不持久化。旧模拟 JSON 删除，日历组件、日期逻辑与类型按职责迁入 Studio，灰阶 Token 使用 --activity-level-*；后续数据操作与订阅仍归 Studio，按获批需求再创建。
+- ActivityCard 归 `modules/studio/components/activity`，通过 Studio 模块入口导出，Home 仅引入展示；日期 Hook 归 `hooks/activity`，Dock 入口组件归 `components/dock-entry`；当前保留 Calendar／Chart 图标切换，默认 Calendar；Calendar 展示原 24 周日历，活动记录状态初始为空，只有 Chart 内容留空，组件状态不持久化。旧模拟 JSON 删除，日历组件、日期逻辑与类型按职责迁入 Studio，灰阶 Token 使用 --activity-level-*；后续数据操作与订阅仍归 Studio，按获批需求再创建。
 
 ## 图标职责
 
 - `UiIcon` 只适配 Lucide 通用 UI 图标，统一使用 `currentColor`、已批准的尺寸和线宽；只能显式静态导入实际使用的图标。
 - 状态等级复用 shared/ui/status-icon.tsx 的 StatusIcon：success、neutral、pending、loading、warning、error；等级语义与 Toast 的成功／信息／加载／警告／错误反馈一致，展示组件各自保留已确认图标。图标统一 16px、既有线宽与 muted-foreground，不额外加红绿等等级配色；loading 旋转且遵循减少动画偏好。业务自行判断状态、映射等级并组合官方 Tooltip，Tooltip 与可访问文案不得写入 StatusIcon，不建立全局业务状态管理。
 - 禁止 `import * as Icons from 'lucide-react'`、完整图标注册表、根据任意字符串动态访问 Lucide 全量导出或其他可能将整套图标打入产物的方式。
-- `BookmarkIcon` 只管理品牌、网站书签和文字 Logo；Newtab 书签及 Dock 收藏随明暗主题切换黑白，不再维护 original、adaptive 或 neutral 配置。普通书签透明单色，浅色黑色、深色白色；Exts 保留正式完整外形，浅色黑底白图、深色白底黑图，沿用现有正式导出资源。品牌唯一源稿与三端应用图标保持原样；不得使用 Lucide 重绘或替换品牌 Logo。
+- `shared/brand/BrandIcon` 只管理品牌、网站书签和文字 Logo；Newtab 书签及 Dock 收藏随明暗主题切换黑白，不再维护 original、adaptive 或 neutral 配置。普通书签透明单色，浅色黑色、深色白色；Exts 保留正式完整外形，浅色黑底白图、深色白底黑图，沿用现有正式导出资源。品牌唯一源稿与三端应用图标保持原样；不得使用 Lucide 重绘或替换品牌 Logo。
 - 被 Lucide 替代的通用功能 SVG 在完成迁移和验收后必须删除，不得长期保留两套等价资源或运行时实现。
+
+## 共用能力与职责目录
+
+- `src/assets/brand/` 持有扩展共用品牌 SVG，`src/shared/brand/` 持有 BrandIcon 与尺寸类型；通过 WXT 复制资源到相同相对路径，不更改 SVG 内容或三端品牌源稿。
+- `src/shared/bookmarks/` 持有 Newtab 与 Dock 实际复用的 BookmarkCard 和基础 Bookmark 类型；首页配置、文件夹类型、解锁及打开辅助仍归 Newtab，不把业务放进 shared/ui。
+- 模块内部按实际职责创建 views、components、hooks、types、constants、utils 等目录，目录内部按功能分组；下载执行、权限和运行环境接入保留明确的业务目录，不统放 utils，不建空目录或全局管理层。
+- 界面消费者使用模块公开界面入口；后台、MAIN 页面和隔离脚本直接引用对应环境入口，不经过导出 React 视图的聚合入口。
 
 ## 模块组合与 Dock 交互
 
 - `src/app/NewtabApp.tsx` 负责 Home／Studio 切换、公共 Provider 和常驻 Dock 的组合；Home 布局、测量与书签打开由 `modules/newtab` 持有。
-- `modules/dock` 持有 Dock 布局、入口、Actions 菜单和抽屉入口提示协调；收藏由应用组合层传入。Settings Sheet 归 `modules/settings`，Download Sheet 归 `modules/media-download/records`；业务模块不得依赖 Dock 内部实现。
+- `modules/dock` 持有 Dock 布局、入口、Actions 菜单和抽屉入口提示协调；收藏由应用组合层传入。Settings Sheet 归 `modules/settings`，Download Sheet 归 `modules/media-download/views/records`；业务模块不得依赖 Dock 内部实现。
 
 
 - Dock 网页入口使用真实链接语义；工具分组使用真实按钮打开 `DropdownMenu`；已批准的 Settings 使用真实按钮打开 `Sheet`。各入口按已批准职责组合，不维护第二套交互实现。
@@ -53,9 +60,9 @@
 
 ## Media Download 与记录边界
 
-- `src/modules/media-download/` 统一媒体下载；`tg-download/` 持有 Telegram 网页按钮、download 和页面接入，`records/` 持有共用记录、列表和 Sheet。总开关默认开启，保存在版本化的 `settings.mediaDownload.enabled`，保留旧 Telegram 开关选择；关闭立即屏蔽新下载入口，正在写入的任务继续。X／Helper 当前未接入，不预建空模块或模拟连接状态。
+- `src/modules/media-download/` 统一媒体下载；`components/telegram` 持有网页按钮，`download/telegram` 持有下载执行与目录授权，`pages`／`bridges` 分别接入 MAIN／隔离环境；记录由 `background/records`、`stores/records`、`views/records` 与 `components/records` 持有，纯辅助逻辑归 `utils`，共用类型与协议常量分别归 `types`、`constants`。总开关默认开启，保存在版本化的 `settings.mediaDownload.enabled`，保留旧 Telegram 开关选择；关闭立即屏蔽新下载入口，正在写入的任务继续。X／Helper 当前未接入，不预建空模块或模拟连接状态。
 - 不提供 Popup；完成 Toast 使用 shared/ui 中的官方 Sonner 样式组件，文案与触发由 TG 模块负责。只在文件关闭成功后显示成功图标与“下载完成”，不附加文件名描述；实际文件名保留在下载记录。不提示开始、进度、失败或取消，不修改现有文件名生成规则。
-- 文件关闭成功后，TG 页面仅把实际文件名和字节数通过隔离脚本交给 media-download/records 后台；记录模块复用 shared/storage，保留 downloads 顶层对象、来源校验和按筛选清空。Dock 仅提供打开 Media Download Sheet 的一级入口，列表与抽屉归 media-download。记录错误不改变已保存文件或成功 Toast，不传媒体流、目录句柄或真实磁盘路径。X 下载与 Desktop 通信尚未接入，文件夹入口仅提示未接入。
+- 文件关闭成功后，TG 页面仅把实际文件名和字节数通过隔离脚本交给 media-download/background/records 后台；记录模块复用 shared/storage，保留 downloads 顶层对象、来源校验和按筛选清空。Dock 仅提供打开 Media Download Sheet 的一级入口，列表与抽屉归 media-download。记录错误不改变已保存文件或成功 Toast，不传媒体流、目录句柄或真实磁盘路径。X 下载与 Desktop 通信尚未接入，文件夹入口仅提示未接入。
 - 后续 X／Helper 按当前 Issue 获批阶段接入：Helper 独立执行，成功后通知一次，扩展收到后记记录；关闭总开关停止通信但不取消任务。通知丢失可接受，不加确认、重试、补发、恢复同步或历史补拉。
 - 保留 MAIN world 页面取流；目录选择与权限请求在用户手势内直接调用。下载入口使用官方 Button Group：主按钮为下载图标加“下载资源”，横向三点 DropdownMenu 收起“文件另存为”和“选择文件夹”；按钮组外层使用官方 Popover 定位，禁止恢复旧自定义 Popover。首次快速下载选择并记住目录后继续保存，后续直接保存；另存为独立选择本次文件而不更改目录，重新选择只更换后续目录。不限定目录名称、不创建固定子目录。句柄留在 Telegram 同来源 IndexedDB，同名递增避重；目录 API 不可用时快速保存降级为系统另存为。不把媒体流交给 desktop。统一主题 Token 位于 `src/styles/theme.css`，网页菜单与扩展页面共用。
 
