@@ -26,13 +26,13 @@ Exts 官网展示产品介绍、下载入口与更新日志。当前包含首页
 
 默认 Newtab 在前，每 3 秒自动轮换；鼠标悬停或键盘焦点进入展示区时暂停，离开后重新计时。两张卡片为原生按钮，可用 Enter/Space 置前；没有底部切换栏。页面隐藏时暂停，减少动态效果时只手动切换，组件卸载清理定时器和监听。窄展示区自动收紧图标与 Dock 尺寸，实际布局由用户验收。
 
-卡片池规则检查：node --test apps/website/tests/showcase/card-pool.test.ts。测试覆盖十张池两轮循环、末尾补位、点击临时置前与小池场景；不覆盖浏览器动画、焦点或布局。
+卡片池规则检查：node --test apps/website/tests/pages/home/showcase/card-pool.test.ts。测试覆盖十张池两轮循环、末尾补位、点击临时置前与小池场景；不覆盖浏览器动画、焦点或布局。
 
 ## 更新日志
 
-页头 FileClock 图标以“更新日志”为提示，链接到 /changelog/，点击 Exts 返回首页。首页、changelog/index.html 和 features/index.html 是独立 Vite HTML 入口，共享页头、页脚和样式；正式产物包含三个页面，支持 GitHub Pages 直接访问与刷新，不依赖 SPA 回退或额外路由库。
+页头 FileClock 图标以“更新日志”为提示，链接到 /changelog/，点击 Exts 返回首页。src/entrypoints 中的 index.html、changelog/index.html 和 features/index.html 是独立 Vite HTML 入口，共享页头、页脚和样式；正式产物包含三个页面，支持 GitHub Pages 直接访问与刷新，不依赖 SPA 回退或额外路由库。
 
-日志维护在 src/features/changelog/changelog-data.ts，产品条目默认按实际公开发布日期、官网条目按上线或代码交付日期倒序，日期统一转换为北京时间。按年份分组，桌面年份位于最左侧且每组仅显示一次，日期仅显示月日；手机端年份置于该组记录上方。年份可点击返回该年第一条，使用现有 shadcn Button 和原生锚点。每条包含事件标题、平台标签和无序列表，无单独版本号或副标题。分类为 Website、Extension、Desktop、Packages，使用黑底白字 Badge；不重复添加最新下载按钮。
+日志维护在 src/pages/changelog/data.ts，产品条目默认按实际公开发布日期、官网条目按上线或代码交付日期倒序，日期统一转换为北京时间。按年份分组，桌面年份位于最左侧且每组仅显示一次，日期仅显示月日；手机端年份置于该组记录上方。年份可点击返回该年第一条，使用现有 shadcn Button 和原生锚点。每条包含事件标题、平台标签和无序列表，无单独版本号或副标题。分类为 Website、Extension、Desktop、Packages，使用黑底白字 Badge；不重复添加最新下载按钮。
 
 标题使用“动作 + 本次主要变化”：推出用于产品或模块首次交付，新增用于增加能力，优化或完善用于改善已有体验，修复用于解决具体问题；官网首次上线可用“上线”。不反复使用“发布扩展”或“发布 Exts”，平台放标签，版本放安装包或工具包版本链接。正文使用“新增、优化”等动作描述用户获得的能力，避免“功能名：说明”的冒号句式及过细的实现过程。
 
@@ -48,7 +48,7 @@ Packages 首次公开发布记录为 2026-10-14，依据 npm 官方 registry 的
 
 页头 BookOpen 图标位于更新日志入口旁，链接到 /features/；提示与页面标题均为“产品介绍”。左侧四类为浏览器扩展、桌面应用、开发工具包、AI 工作流，默认浏览器扩展；原生 hash 链接支持直接打开、刷新与前进/后退，空或无效 hash 回到默认分类，不新增路由依赖。
 
-内容包含 Newtab、History Cleaner、Photos 与 wxt-stable-output，Skills 显示“暂无公开 Skills”，移除原协同分类。模块以标题和一句介绍呈现，工具包附当前 npm 包主页与源码链接；不放截图、卡片、能力标签或详细安装步骤。文案维护在 src/features/products/categories.ts，不请求外部数据。
+内容包含 Newtab、History Cleaner、Photos 与 wxt-stable-output，Skills 显示“暂无公开 Skills”，移除原协同分类。模块以标题和一句介绍呈现，工具包附当前 npm 包主页与源码链接；不放截图、卡片、能力标签或详细安装步骤。文案维护在 src/shared/products/categories.ts，不请求外部数据。
 
 ## 下载行为
 

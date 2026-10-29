@@ -15,7 +15,7 @@ pnpm web:dev
 
 ```sh
 node --test tests/build-release.test.mjs
-node --test apps/website/tests/showcase/card-pool.test.ts apps/website/tests/products/categories.test.ts
+node --test --test-isolation=none apps/website/tests/pages/home/showcase/card-pool.test.ts apps/website/tests/shared/products/categories.test.ts
 pnpm --filter @exts/website typecheck
 pnpm web:build
 ```
@@ -24,17 +24,18 @@ pnpm web:build
 
 ## 工程组织
 
-- src/app：React 启动、顶层页面组合与全局设计变量。
-- src/pages/home：首页正文布局，组合布局组件与下载模块。
-- src/components/layout：SiteLayout 统一装配页头、页脚和正文，SiteDocumentLayout 统一产品介绍与更新日志的阅读框架；src/components/ui：纳入 Git 的 shadcn 基础组件。
-- src/features/download：组合 shadcn 平台下载链接。
-- src/features/showcase：首页模块示意卡片与轮换行为；品牌资源统一引用 src/assets/brand，网站不直接依赖扩展业务模块。
-- src/pages/changelog：更新日志页面与独立 React 入口；src/features/changelog：静态日志数据与时间线模块。
-- src/pages/features：产品介绍页面与独立 React 入口，分类由 URL hash 控制。
-- src/features/products：首页卡片与产品介绍共用的四类数据，以及分类 URL 解析逻辑。
-- src/config/site.ts：产品文案、GitHub 地址、固定 latest 下载链接与署名。
-- src/assets/brand：Chrome、Apple、GitHub 与展示卡片共用的品牌 SVG，GitHub 图标只维护一份；public：已有正式 Exts 品牌资源、favicon 与第三方许可声明。
-- src/lib/utils.ts：class-variance-authority 配合的本地样式合并工具，不提取共享 UI 包。
+- src/entrypoints：三个 HTML 和 React 启动入口；Vite 页面根位于此处，外部地址仍为 /、/features/、/changelog/。
+- src/pages/home：首页正文及 components 下的文字动效、平台下载入口、展示卡片池等首页专用内容。
+- src/pages/products：产品介绍与 Quick Start；内部目录改名，不改变外部 /features/ 地址或分类 hash。
+- src/pages/changelog：更新日志页面、时间线和 data.ts 日志数据。
+- src/shared/layout：共用 SiteLayout、SiteDocumentLayout、页头和页脚；src/shared/ui：纳入 Git 的官方基础组件。
+- src/shared/products/categories.ts：首页／产品页共用分类数据和 hash 解析；src/shared/config/site.ts：站点文案、GitHub 和固定 latest 下载地址；src/shared/lib/utils.ts：样式合并工具。
+- src/styles：index.css 统一导入，theme.css 保存原主题声明，layout.css 保存原公共布局和基础样式，声明顺序不变；Tailwind 显式保留原网站扫描范围。
+- src/assets/brand：保留已统一的品牌 SVG，public 保留固定 URL 的正式 Exts 资源、favicon 和许可声明；本轮不移动或清理任何品牌文件。
+- tests/pages/home/showcase 与 tests/shared/products：原卡片池、分类解析行为测试，随职责迁移保留。
+- vite.config.ts、components.json、tsconfig.json、package.json：构建、组件生成、类型与依赖配置；产物及缓存仍位于仓库根 dist。
+
+页面持有专用内容，shared 只放实际共用能力，不新增状态或服务框架。纯 HomePage 转发 App 已移除，三页各自的 SEO、canonical 与 noscript 内容保持。
 
 ## 组件与资源
 

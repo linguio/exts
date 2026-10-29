@@ -79,7 +79,7 @@ docs/
 
 ## 当前 Issue
 
-无。
+- [整理官网入口页面与共享目录](./issues/2026-10-29-website-directory-structure-issue.md) · [Commit 记录](./commits/2026-10-29-website-directory-structure-commit.md)；待验收，基于最新 main 完成目录整理，品牌资源保留；10 项官网测试、19 项根构建测试、类型与构建通过，两份生成 CSS 字节一致、三页正文／SEO 等价，未提交，浏览器行为待用户验收。
 
 ## Issue 队列
 

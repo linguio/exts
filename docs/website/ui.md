@@ -11,7 +11,7 @@
 ## 主题与组件
 
 - 固定浅色、黑白风格，不增加深色模式。沿用现有系统字体栈。
-- 颜色沿用 shadcn 语义 token，定义在 apps/website/src/app/styles.css；业务组件引用语义颜色，不各自新增硬编码颜色。
+- 颜色沿用 shadcn 语义 token，定义在 apps/website/src/styles/theme.css（统一由 index.css 导入，公共布局在 layout.css）；业务组件引用语义颜色，不各自新增硬编码颜色。
 - 图标入口和年份链接使用现有 shadcn Button，入口说明使用基于 shadcn 官方源码并按主题定制的共用 Tooltip，平台标签使用 Badge，通用图标使用现有 Lucide；品牌资源遵循 [Logo 规范](../exts-logo.md)。
 - 仅将各页实际复用的排版与布局值提取为共享规则；不建设额外主题框架，不增加依赖。
 
