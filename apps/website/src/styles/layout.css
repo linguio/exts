@@ -1,0 +1,126 @@
+@layer components {
+  .site-main {
+    @apply flex-1 pt-8 pb-6 sm:pt-12;
+  }
+
+  .home-main {
+    @apply py-4;
+  }
+
+  .site-document {
+    @apply mx-auto max-w-[720px] text-sm leading-6;
+  }
+
+  .site-document-title {
+    @apply mb-6 text-[28px] leading-[1.2] font-semibold tracking-[-0.035em] sm:mb-8 sm:text-[32px];
+  }
+
+  .site-section-title {
+    @apply mb-2 text-xl leading-8 font-semibold tracking-[-0.025em];
+  }
+
+  .site-container {
+    @apply mx-auto w-full max-w-[1280px] px-6 sm:px-10 lg:px-12;
+  }
+
+  .site-shell {
+    @apply flex min-h-svh flex-col;
+    padding-top: var(--site-header-offset);
+  }
+
+  .site-header {
+    @apply fixed inset-x-0 top-0 z-30 border-b border-border bg-background;
+    height: var(--site-header-offset);
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .site-header-content {
+    @apply flex items-center justify-between;
+    height: calc(var(--site-header-height) - 1px);
+  }
+
+  .site-footer {
+    @apply shrink-0 bg-background text-center text-xs leading-5 text-muted-foreground;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .site-footer-content {
+    @apply flex min-h-12 items-center justify-center py-3;
+  }
+
+  .site-anchor {
+    scroll-margin-top: calc(var(--site-header-offset) + 24px);
+  }
+
+  .site-resource-link {
+    @apply inline-flex items-center gap-1 text-sm leading-6 text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring;
+  }
+
+  .site-category-card {
+    border: 1px solid transparent;
+    background-color: var(--secondary);
+    transition: background-color 150ms, border-color 150ms, transform 150ms;
+  }
+
+  @media (hover: hover) {
+    .site-category-card:hover {
+      border-color: color-mix(in srgb, var(--foreground) 30%, var(--background));
+      background-color: var(--accent);
+      transform: translateY(-2px);
+    }
+  }
+
+  .site-category-card:focus-visible {
+    border-color: var(--ring);
+    outline: 2px solid var(--ring);
+    outline-offset: 4px;
+  }
+
+  .site-category-card:active {
+    border-color: var(--ring);
+    background-color: var(--accent);
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-category-card {
+      transition: none;
+    }
+
+    .site-category-card:hover,
+    .site-category-card:active {
+      transform: none;
+    }
+  }
+}
+
+@supports (backdrop-filter: blur(12px)) {
+  .site-header {
+    background-color: color-mix(in srgb, var(--background) 85%, transparent);
+    backdrop-filter: blur(12px);
+  }
+}
+
+@layer base {
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply m-0 bg-background font-sans text-foreground antialiased;
+  }
+
+  button:not(:disabled), a {
+    cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0s !important;
+    }
+  }
+}
