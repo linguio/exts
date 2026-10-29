@@ -12,7 +12,7 @@
 
 - 追加批准：Extension 仅将 components.json 的 components 别名从 Newtab 改为 @/shared，不迁移模块；该配置修正单独提交。JSON 解析、四项别名和目标路径、主题 CSS 存在性检查通过，diff 确认仅一行配置改变。最初检查脚本因子进程权限限制无法调用 Git，改为直接检查配置并用独立 Git diff 核对后通过；未执行组件生成或扩展构建。
 
-该追加修正的待审核提交消息：
+该追加修正的已批准提交消息：
 
 ```text
 chore(extension): 修正通用组件生成目录别名
@@ -30,18 +30,18 @@ chore(extension): 修正通用组件生成目录别名
 - 19 项根构建边界通过：node --test --test-isolation=none tests/build-release.test.mjs。
 - 官网目录执行 node node_modules/typescript/bin/tsc --noEmit 和 node node_modules/vite/bin/vite.js build，通过；git diff --check 通过。
 - 32 个迁移文件正文等价，CSS 原声明顺序无损；两份生成 CSS 与最新 main 基准字节一致，三页 HTML 正文和 SEO 等价（忽略换行与生成资源标签），23 处资源引用存在。
-- 品牌／public 源码和 public 产物指纹一致；Extension、品牌、public、package.json、锁文件无变更。
-- 基准及最终构建、根测试在已确认可用环境执行，无依赖重装；真实浏览器视觉、导航、动画和下载待用户验收，未提交、推送或部署。
+- 品牌／public 源码和 public 产物指纹一致；官网迁移验证时 Extension 无变更，后追加批准一行别名修正；品牌、public、package.json、锁文件无变更。
+- 基准及最终构建、根测试在已确认可用环境执行，无依赖重装；真实浏览器视觉、导航、动画和下载未实测；按用户要求本地提交完结，未推送或部署。
 
 ## 用户验收
 
-待验收。
+用户于 2026-10-29 明确要求本地提交完结；浏览器未实测，不记为通过。
 
 ## 文件边界与完整 Commit message
 
 - 代码：官网 src 的入口／页面／共享／样式目录迁移、三个 HTML、Vite 和 components.json 配置适配、两份原有测试迁移。品牌、public、依赖和其他应用不在修改范围。
 - 文档：apps/website/README.md、apps/website/AGENTS.md、docs/website/README.md、docs/website/ui.md、docs/web-ui-sources.md、本 Issue、Commit 记录及工作台。
-- 以下完整消息为待审核方案，不表示已经批准 Git 提交。
+- 以下完整消息已获用户本地提交指令批准。
 
 ```text
 refactor(website): 基于最新主线整理官网目录职责
@@ -60,4 +60,14 @@ docs(website): 同步官网目录与等价验证记录
 
 ## 最终提交批准
 
-未批准本轮 Git 提交，不自动提交或推送。
+用户于 2026-10-29 明确要求 commit，批准代码与文档本地提交并完结；不推送。
+
+## 完成状态补充提交
+
+代码及交付文档已本地提交，首次终态脚本未成功执行，本笔仅补充 Issue、Commit 记录和工作台的完成状态，不修改代码，不追加验证。
+
+完整 Commit message：
+
+    docs(website): 完结目录整理工作项状态
+
+    - 同步 Issue 交付记录与工作台为已完成
