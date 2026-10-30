@@ -22,6 +22,7 @@ const assetFiles = [
   'assets/brand/linear.svg',
   'assets/brand/lucide.svg',
   'assets/brand/namecheap.svg',
+  'assets/brand/neon.svg',
   'assets/brand/notion.svg',
   'assets/brand/npm.svg',
   'assets/brand/shadcnio.svg',

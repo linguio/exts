@@ -5,13 +5,14 @@ import * as bookmarkConfig from '../../../src/modules/newtab/constants/bookmarks
 const { BOOKMARK_GRID, DOCK_FAVORITES } = bookmarkConfig;
 
 const uiBookmarks = [
+  { type: 'bookmark', id: 'shadcnui', name: 'shadcn/ui', url: 'https://ui.shadcn.com/', icon: 'brand/shadcnui.svg' },
   { type: 'bookmark', id: 'lucide', name: 'Lucide', url: 'https://lucide.dev', icon: 'brand/lucide.svg' },
   { type: 'bookmark', id: 'shadcnio', name: 'shadcn.io', url: 'https://www.shadcn.io/', icon: 'brand/shadcnio.svg' },
+  { type: 'bookmark', id: 'simpleicons', name: 'Simple Icons', url: 'https://simpleicons.org/', icon: 'brand/simpleicons.svg' },
   { type: 'bookmark', id: 'iconfont', name: 'Iconfont', url: 'https://www.iconfont.cn', icon: 'brand/iconfont.svg' },
   { type: 'bookmark', id: 'antd', name: 'Ant Design', url: 'https://ant.design', icon: 'brand/antd.svg' },
   { type: 'bookmark', id: 'element-ui', name: 'Element UI', url: 'https://element.eleme.io', icon: 'brand/element-ui.svg' },
   { type: 'bookmark', id: 'element-plus', name: 'Element Plus', url: 'https://element-plus.org', icon: 'brand/element-plus.svg' },
-  { type: 'bookmark', id: 'simpleicons', name: 'Simple Icons', url: 'https://simpleicons.org/', icon: 'brand/simpleicons.svg' },
 ];
 
 // 验证页面展示的文件夹内容与入口顺序。
@@ -33,8 +34,8 @@ test('Grid 书签配置在 EDU 前提供默认模糊且可滚动的 UI 文件夹
         name: 'Social Media',
         items: [
           { id: 'telegram', name: 'Telegram', url: 'https://web.telegram.org/', icon: 'brand/telegram.svg' },
-          { id: 'bilibili', name: 'Bilibili', url: 'https://www.bilibili.com', icon: 'brand/bilibili.svg' },
           { id: 'youtube', name: 'YouTube', url: 'https://www.youtube.com', icon: 'brand/youtube.svg' },
+          { id: 'bilibili', name: 'Bilibili', url: 'https://www.bilibili.com', icon: 'brand/bilibili.svg' },
         ],
       },
       {
@@ -42,10 +43,9 @@ test('Grid 书签配置在 EDU 前提供默认模糊且可滚动的 UI 文件夹
         id: 'devops',
         name: 'DevOps',
         items: [
-          { id: 'shadcnui', name: 'shadcn/ui', url: 'https://ui.shadcn.com/', icon: 'brand/shadcnui.svg' },
           { id: 'namecheap', name: 'Namecheap', url: 'https://www.namecheap.com', icon: 'brand/namecheap.svg' },
           { id: 'vercel', name: 'Vercel', url: 'https://vercel.com', icon: 'brand/vercel.svg' },
-          { id: 'npm', name: 'npm', url: 'https://www.npmjs.com/', icon: 'brand/npm.svg' },
+          { id: 'neon', name: 'Neon', url: 'https://neon.com/', icon: 'brand/neon.svg' },
         ],
       },
       {
@@ -55,6 +55,7 @@ test('Grid 书签配置在 EDU 前提供默认模糊且可滚动的 UI 文件夹
         items: [
           { id: 'linear', name: 'Linear', url: 'https://linear.app', icon: 'brand/linear.svg' },
           { id: 'notion', name: 'Notion', url: 'https://www.notion.so', icon: 'brand/notion.svg' },
+          { id: 'npm', name: 'npm', url: 'https://www.npmjs.com/', icon: 'brand/npm.svg' },
         ],
       },
       {
