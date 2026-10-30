@@ -79,7 +79,7 @@ docs/
 
 ## 当前 Issue
 
-- [按文件夹保存书签显示与密码设置](./issues/2026-10-30-extension-bookmark-folder-settings-issue.md) · [Commit 记录](./commits/2026-10-30-extension-bookmark-folder-settings-commit.md)；待批准，仅完成需求建档并批准本地文档提交，未批准功能实施；拖拽排序作为后续独立方向，跨文件夹移动尚待确认。
+无。
 
 ## Issue 队列
 
