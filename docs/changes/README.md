@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [明确 Python API 上线前置与手动配置](./issues/2026-10-30-repo-python-api-connectivity-issue.md) · [Commit 记录](./commits/2026-10-30-repo-python-api-connectivity-commit.md)；用户要求先完成前置建档并本地提交，实际 FastAPI、Neon、Vercel、DNS 与两端连接留待后续独立 Issue；本轮仅文档核对，未运行测试、构建、推送或部署。
+
 - [整理官网入口页面与共享目录](./issues/2026-10-29-website-directory-structure-issue.md) · [Commit 记录](./commits/2026-10-29-website-directory-structure-commit.md)；用户于 2026-10-29 明确要求本地提交完结；官网目录与 Extension 别名分别提交，文档单独提交，补充完成状态；沿用此前官网 10 项测试、根测试 19 项、类型与构建及等价核对结果，别名配置检查通过；浏览器未实测，未推送。
 
 - [统一官网品牌资源目录](./issues/2026-10-29-website-brand-assets-issue.md) · [Commit 记录](./commits/2026-10-29-website-brand-assets-commit.md)；用户于 2026-10-29 确认验收通过并批准代码、文档两笔本地提交；11 份 SVG 归位、重复与无引用资源清理及 README 修正已交付；沿用此前 10 项测试、类型检查与构建结果，提交不追加验证，不推送或部署。
