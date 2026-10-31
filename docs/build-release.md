@@ -96,9 +96,9 @@ project.yml 是原生配置入口，desk 命令先用 XcodeGen 生成工程再�
 
 pnpm ext:release 独立构建扩展，检查 Manifest 版本、新标签页入口及图标资源，生成 ZIP 并校验后发布到根 dist/release。本地允许再次打包，完成暂存生成与校验后替换固定文件，失败保留旧包。Windows 使用系统 PowerShell/.NET ZIP，Linux/macOS 使用 zip/unzip；此命令不构建网站或桌面，不创建 Tag 或上传。
 
-手动流程 .github/workflows/exts-deploy.yml 展示为 Exts Publish，仅允许 main，通过下拉选择 Website 或 Release，不因推送自动运行。Release 使用 xcode-27 arm64 runner，显式选择 Xcode 27.0.0 路径，下载并校验固定 XcodeGen 2.46.0，使用 Node.js 24.16.0、pnpm 12.4.2 冻结安装。执行发布与桌面入口逻辑测试、稳定工具和扩展测试、官网及扩展类型检查，以及 Photos 的 MediaGroupingTests、ThumbnailSchedulerTests、AppStoragePathsTests、DownloadCoordinatorTests 四组原生纯逻辑测试；调用现有 pnpm release 完整构建并校验两包，再检查扩展体积。全部通过后创建指向本次构建提交的 v<版本> Tag 与一个草稿 Release，同时附带固定名 ZIP、DMG。已有 Release 拒绝覆盖，已有 Tag 指向不同提交时失败；失败草稿需人工检查，不自动删除或覆盖。
+流程 .github/workflows/exts-deploy.yml 展示为 Exts Publish，仅允许 main。推送 main 自动部署官网；手动运行时通过下拉选择 Website 或 Release。Release 只支持手动触发，使用 xcode-27 arm64 runner，显式选择 Xcode 27.0.0 路径，下载并校验固定 XcodeGen 2.46.0，使用 Node.js 24.16.0、pnpm 12.4.2 冻结安装。执行发布与桌面入口逻辑测试、稳定工具和扩展测试、官网及扩展类型检查，以及 Photos 的 MediaGroupingTests、ThumbnailSchedulerTests、AppStoragePathsTests、DownloadCoordinatorTests 四组原生纯逻辑测试；调用现有 pnpm release 完整构建并校验两包，再检查扩展体积。全部通过后创建指向本次构建提交的 v<版本> Tag 与一个草稿 Release，同时附带固定名 ZIP、DMG。已有 Release 拒绝覆盖，已有 Tag 指向不同提交时失败；失败草稿需人工检查，不自动删除或覆盖。
 
-选择 Website 时只构建、校验官网并部署 dist/build/exts-web 到 GitHub Pages，保留 github-pages 环境。Release 虽随完整构建生成官网产物，但不部署官网。两种目标各用独立并发组，只有官网部署 job 获得 Pages/OIDC 权限，只有 Release job 获得 Release 写权限；已移除 Chrome 单包入口及 Desktop 提示占位。
+推送 main 或手动选择 Website 时只构建、校验官网并部署 dist/build/exts-web 到 GitHub Pages，保留 github-pages 环境。Release 虽随完整构建生成官网产物，但不部署官网。自动与手动官网部署共用 Website 并发组，Release 使用独立并发组；只有官网部署 job 获得 Pages/OIDC 权限，只有 Release job 获得 Release 写权限；已移除 Chrome 单包入口及 Desktop 提示占位。
 
 GitHub Actions → Exts Publish → Run workflow，分支选择 main，在 target 下拉选择目标。NPM 工具包使用独立 NPM Publish 入口，暂存上传与网页批准规则见 [NPM 发布指导](./npm-release.md)。旧 Website Deploy 与 Release Deploy 文件已由统一入口替代。
 

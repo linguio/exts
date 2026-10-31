@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [启用官网 main 自动部署](./issues/2026-10-31-website-auto-deploy-issue.md) · [Commit 记录](./commits/2026-10-31-website-auto-deploy-commit.md)；用户于 2026-10-31 明确要求本地提交完结；main 推送自动部署官网，保留手动入口，Release 仅手动触发；YAML、6 组触发条件和并发组检查及 19 项测试此前通过，未验证远端部署，未推送。
+
 - [接入 Scalar 文档并添加官网入口](./issues/2026-10-31-api-scalar-docs-issue.md) · [Commit 记录](./commits/2026-10-31-api-scalar-docs-commit.md)；用户于 2026-10-31 明确要求本地提交完结，代码与文档分开提交；固定版本 Scalar、中文接口说明和 Header Cable 入口已交付，沿用 API 6 项、官网 10 项测试、官网类型及构建通过的结果；图标替换后导出检查通过，未重跑全量构建，浏览器验收限制保留，未推送或部署。
 
 - [绑定 API 自定义域名](./issues/2026-10-31-api-custom-domain-issue.md) · [Commit 记录](./commits/2026-10-31-api-custom-domain-commit.md)；用户于 2026-10-31 反馈新域名测试通过并批准本地文档提交完结；Vercel Production 域名与 Namecheap CNAME 已配置、公开 DNS 查询正确，代理此前 HTTPS 检查限制保留；未推送。
