@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [初始化 Neon 并连接后端](./issues/2026-10-31-api-neon-setup-issue.md) · [Commit 记录](./commits/2026-10-31-api-neon-setup-commit.md)；用户于 2026-10-31 反馈本地可用并明确要求本地提交完结；FastAPI 令牌鉴权、Neon 配置与 API 目录归位已交付，代码和文档分开提交；4 项逻辑测试及路径检查通过，代理未独立完成真实 HTTP 验证，Vercel 与 DNS 留待后续；未推送。
+
 - [调整书签归属与顺序并接入 Neon](./issues/2026-10-30-extension-bookmark-order-issue.md) · [Commit 记录](./commits/2026-10-30-extension-bookmark-order-commit.md)；用户于 2026-10-30 明确要求本地提交完结，代码与文档分开提交；书签归属与顺序、Neon 接入完成，77 项测试、类型检查、生产构建和 diff 检查通过；浏览器未实测，原有 theme-init.js 警告保留，未推送。
 
 - [明确 Python API 上线前置与手动配置](./issues/2026-10-30-repo-python-api-connectivity-issue.md) · [Commit 记录](./commits/2026-10-30-repo-python-api-connectivity-commit.md)；用户要求先完成前置建档并本地提交，实际 FastAPI、Neon、Vercel、DNS 与两端连接留待后续独立 Issue；本轮仅文档核对，未运行测试、构建、推送或部署。
