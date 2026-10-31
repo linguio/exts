@@ -1,7 +1,7 @@
 import { site } from '@/shared/config/site';
 import { Button } from '@/shared/ui/button';
 import githubIcon from '@/assets/brand/github.svg';
-import { BookOpen, FileClock } from 'lucide-react';
+import { BookOpen, Cable, FileClock } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
 
 export function SiteHeader({ currentPage }: { currentPage?: 'changelog' | 'features' }) {
@@ -33,6 +33,16 @@ export function SiteHeader({ currentPage }: { currentPage?: 'changelog' | 'featu
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">更新日志</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button asChild variant="ghost" size="icon" className="size-10">
+                  <a href={site.apiDocsUrl} target="_blank" rel="noopener noreferrer" aria-label="在新标签页打开 API 文档">
+                    <Cable aria-hidden="true" className="size-[21px]" />
+                  </a>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">API 文档</TooltipContent>
             </Tooltip>
             <Button asChild variant="ghost" size="icon" className="size-10">
               <a href={site.githubUrl} target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 查看 Exts 源码">

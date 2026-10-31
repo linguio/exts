@@ -52,3 +52,18 @@ class HelloTests(unittest.TestCase):
                 response = self.client.get("/hello", headers={"Authorization": "Bearer test-token"})
                 self.assertEqual(response.status_code, 503)
                 connect.assert_not_called()
+
+    def test_openapi_describes_success_and_errors(self):
+        schema = self.client.get("/openapi.json").json()
+        operation = schema["paths"]["/hello"]["get"]
+        self.assertEqual(operation["summary"], "验证 API 与数据库连接")
+        self.assertEqual(set(operation["responses"]), {"200", "401", "503"})
+        success = operation["responses"]["200"]["content"]["application/json"]["schema"]
+        self.assertEqual(success["$ref"], "#/components/schemas/HelloResponse")
+        self.assertEqual(operation["security"], [{"HTTPBearer": []}])
+
+    def test_documentation_has_one_public_entry(self):
+        self.assertEqual(self.client.get("/docs").status_code, 200)
+        self.assertEqual(self.client.get("/redoc").status_code, 404)
+        schema = self.client.get("/openapi.json").json()
+        self.assertNotIn("/docs", schema["paths"])
