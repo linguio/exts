@@ -5,8 +5,9 @@ import { ScrollArea, ScrollBar } from '@/shared/ui/scroll-area';
 import { Button } from '@/shared/ui/button';
 import { productCategories, resolveFeatureSectionId } from '@/shared/products/categories';
 import { QuickStart } from './quick-start';
+import { ApiOverview } from './api';
 
-const navigation = [{ id: 'quick-start', label: 'Quick Start' }, ...productCategories];
+const navigation = [{ id: 'quick-start', label: 'Quick Start' }, ...productCategories, { id: 'api', label: 'API' }];
 
 function subscribeToCategory(onChange: () => void) {
   window.addEventListener('hashchange', onChange);
@@ -39,8 +40,8 @@ export function FeaturesPage() {
             </Button>
           ))}
         </nav>
-        <section id="feature-modules" aria-label={selectedId === 'quick-start' ? 'Quick Start' : selected.label} aria-live="polite" className="min-w-0 space-y-8 pt-1">
-          {selectedId === 'quick-start' ? <QuickStart /> : selected.modules.length > 0 ? selected.modules.map((module) => (
+        <section id="feature-modules" aria-label={selectedId === 'quick-start' ? 'Quick Start' : selectedId === 'api' ? 'API' : selected.label} aria-live="polite" className="min-w-0 space-y-8 pt-1">
+          {selectedId === 'quick-start' ? <QuickStart /> : selectedId === 'api' ? <ApiOverview /> : selected.modules.length > 0 ? selected.modules.map((module) => (
             <article key={module.name}>
               <h2 className="site-section-title break-words">{module.name}</h2>
               <p className="text-sm leading-6 text-foreground">{module.description}</p>

@@ -1,5 +1,5 @@
 export type CategoryId = 'extension' | 'desktop' | 'packages' | 'skills';
-export type FeatureSectionId = 'quick-start' | CategoryId;
+export type FeatureSectionId = 'quick-start' | 'api' | CategoryId;
 
 type ProductModule = {
   name: string;
@@ -65,5 +65,6 @@ export const productCategories: readonly ProductCategory[] = [
 
 // URL 是内容选择的事实来源，空地址、未知或旧分类统一回到快速开始。
 export function resolveFeatureSectionId(hash: string): FeatureSectionId {
+  if (hash === '#api') return 'api';
   return productCategories.find((category) => `#${category.id}` === hash)?.id ?? 'quick-start';
 }

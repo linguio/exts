@@ -1,4 +1,6 @@
-export type ChangelogPlatform = 'Website' | 'Extension' | 'Desktop' | 'Packages' | 'Build' | 'Skills';
+import { site } from '@/shared/config/site';
+
+export type ChangelogPlatform = 'Website' | 'Extension' | 'Desktop' | 'API' | 'Packages' | 'Build' | 'Skills';
 
 type ChangelogEntry = {
   id: string;
@@ -13,6 +15,28 @@ type ChangelogEntry = {
 
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
+  {
+    id: 'api-docs-auto-deploy',
+    date: '2026-10-31',
+    title: '新增 API 服务与接口文档',
+    groups: [
+      {
+        platform: 'API',
+        changes: [
+          '上线 API 服务，支持自动部署。',
+          '新增交互式接口文档，支持在线查看与调试。',
+        ],
+        links: [{ label: 'API 文档', href: site.apiDocsUrl }],
+      },
+      {
+        platform: 'Website',
+        changes: [
+          '官网新增接口文档入口，并支持自动部署。',
+          '产品介绍新增 API 分类，集中说明服务架构与使用方式。',
+        ],
+      },
+    ],
+  },
   {
     id: 'folders-media-download-settings',
     date: '2026-10-28',

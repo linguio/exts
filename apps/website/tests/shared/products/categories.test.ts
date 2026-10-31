@@ -12,6 +12,10 @@ test('快速开始可通过独立地址访问', () => {
   assert.equal(resolveFeatureSectionId('#quick-start'), 'quick-start');
 });
 
+test('API 说明可通过独立地址访问', () => {
+  assert.equal(resolveFeatureSectionId('#api'), 'api');
+});
+
 test('空地址、未知分类及已移除分类回到快速开始', () => {
   for (const hash of ['', '#', '#unknown', '#collaboration']) {
     assert.equal(resolveFeatureSectionId(hash), 'quick-start');
