@@ -1,7 +1,10 @@
 name: Exts Publish
-run-name: Exts Publish · ${{ inputs.target }}
+run-name: Exts Publish · ${{ inputs.target || 'Website' }}
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       target:
@@ -17,13 +20,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: exts-deploy-${{ inputs.target }}
+  group: exts-deploy-${{ inputs.target || 'Website' }}
   cancel-in-progress: false
 
 jobs:
   website-build:
     name: Website · Build
-    if: github.ref == 'refs/heads/main' && inputs.target == 'Website'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.target == 'Website')
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -52,7 +55,7 @@ jobs:
 
   website-deploy:
     name: Website · Deploy
-    if: github.ref == 'refs/heads/main' && inputs.target == 'Website'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.target == 'Website')
     needs: website-build
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -69,7 +72,7 @@ jobs:
 
   release:
     name: Release · ZIP & DMG
-    if: github.ref == 'refs/heads/main' && inputs.target == 'Release'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.target == 'Release'
     runs-on: xcode-27
     timeout-minutes: 30
     env:
