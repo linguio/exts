@@ -2,6 +2,12 @@
 
 官网与扩展的通用 Web UI 遵循根 [AGENTS.md](../AGENTS.md#web-ui-选型与风格)。本文记录源码基线与必要差异；主题参数和组合约定分别见 [官网 UI](website/ui.md) 与 [扩展 UI](extension/ui.md)。源码不是随上游自动升级的运行时依赖。
 
+## API 文档 Scalar（2026-10-31）
+
+- 官方集成：[scalar-fastapi](https://scalar.com/products/api-references/integrations/fastapi)，Python 包固定 1.9.1，浏览器资源 @scalar/api-reference 固定 1.76.4，使用 jsDelivr 的 dist/browser/standalone.js。
+- API 文档的 OpenAPI 阅读与交互请求由 Scalar 官方实现；shadcn/ui 不提供 OpenAPI 文档渲染器，不为此仿写通用 UI。沿用 Scalar 默认样式，无自定义主题或 CSS；关闭 Agent、遥测，不启用请求代理或认证持久保存，不预填任何凭据。
+- 官网入口继续组合已有官方 Button ghost/icon 与 Tooltip，按用户更换图标的要求使用现有 Lucide Cable 连接图标，不新增封装或改变控件默认状态。
+
 ## 官方基线
 
 - 核对日期：2026-10-16。
