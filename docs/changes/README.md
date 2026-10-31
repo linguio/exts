@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [修正 Vercel Python 安装命令](./issues/2026-10-31-api-vercel-install-command-issue.md) · [Commit 记录](./commits/2026-10-31-api-vercel-install-command-commit.md)；用户于 2026-10-31 确认线上验证通过并明确批准本地提交完结；Vercel Python 安装命令已覆盖、无缓存部署 Ready、17 项 Python 依赖安装成功，文档与无令牌 401 检查通过；Turbo 空跑限制保留，本轮仅文档提交，未推送。
+
 - [展开依赖清单以修复部署解析错误](./issues/2026-10-31-api-vercel-requirements-issue.md) · [Commit 记录](./commits/2026-10-31-api-vercel-requirements-commit.md)；用户于 2026-10-31 明确要求本地提交完结，代码与文档分开提交；生产依赖直接展开、旧约束文件移除，沿用 20 项版本一致、安装解析和 4 项接口测试通过的结果；Vercel 重新部署尚未验证，未推送。
 
 - [初始化 Neon 并连接后端](./issues/2026-10-31-api-neon-setup-issue.md) · [Commit 记录](./commits/2026-10-31-api-neon-setup-commit.md)；用户于 2026-10-31 反馈本地可用并明确要求本地提交完结；FastAPI 令牌鉴权、Neon 配置与 API 目录归位已交付，代码和文档分开提交；4 项逻辑测试及路径检查通过，代理未独立完成真实 HTTP 验证，Vercel 与 DNS 留待后续；未推送。
