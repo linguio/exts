@@ -6,6 +6,8 @@
 
 Python 固定为 `.python-version` 中的 3.12.13；应用产品版本仍以根 package.json 为准。以下命令从仓库根目录执行：
 
+生产依赖与其传递依赖直接以精确版本列在 `requirements.txt`，不引用额外约束文件，以避免部署预解析阶段的引用文件错误。`requirements-dev.txt` 引入生产清单并额外固定测试专用依赖；调整依赖时同步维护两份清单，不使用浮动版本。
+
 ```sh
 python3.12 -m venv dist/.cache/api/venv
 dist/.cache/api/venv/bin/python -m pip install -r apps/api/requirements-dev.txt
