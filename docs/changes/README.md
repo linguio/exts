@@ -83,7 +83,7 @@ docs/
 
 ## Issue 队列
 
-无。
+- [接入 Scalar 文档并添加官网入口](./issues/2026-10-31-api-scalar-docs-issue.md) · [Commit 记录](./commits/2026-10-31-api-scalar-docs-commit.md)；范围已批准，建档已批准本地提交；前置域名 Issue 已完结，尚未实施。
 
 ## 待办
 
