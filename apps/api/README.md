@@ -1,14 +1,14 @@
 # Exts API
 
-最小 FastAPI 后端。`GET /hello` 先验证个人 Bearer 令牌，再通过 psycopg 对 Neon 执行 `SELECT 1`，成功返回 `{"message":"hello","database":"ok"}`。不创建业务表或写入业务数据。
+最小 FastAPI 后端。`GET /` 通过 307 临时重定向跳转到 `/docs`，无需令牌、不连接数据库。临时 `/hello` 联通验证接口已移除，当前尚未开放业务接口。
 
 ## 接口文档
 
-`/docs` 使用官方 `scalar-fastapi==1.9.1`，读取当前服务的 `/openapi.json`。默认 Swagger 与 ReDoc 页面关闭，只保留这一份文档入口。说明包含中文用途、Bearer 授权步骤、成功模型及 401／503 示例。
+`/docs` 使用官方 `scalar-fastapi==1.9.1`，读取当前服务的 `/openapi.json`。默认 Swagger 与 ReDoc 页面关闭，只保留这一份文档入口。根路由与文档路由不加入 OpenAPI 接口列表，当前列表为空，不展示已移除探针的模型与鉴权说明。
 
 Scalar 浏览器资源固定为 `https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.76.4/dist/browser/standalone.js`，需要浏览器可访问 jsDelivr；不使用浮动 CDN 版本。沿用官方默认样式，关闭 Agent 与遥测，不设置请求代理、不预填令牌、不默认持久保存令牌。在线调试请求直接发往当前 API 服务。
 
-正式入口为 `https://api.exts.linguio.dev/docs`，官网 Header 的 API 文档图标在新标签页打开该地址。本地修改不会自动更新线上页面。
+本次获批部署后，访问正式根地址 `https://api.exts.linguio.dev/` 将自动跳转至 `/docs`；官网 Header 的 API 文档图标仍直接打开 `https://api.exts.linguio.dev/docs`。本地修改不会自动更新线上页面。
 
 ## 本机准备
 
@@ -31,7 +31,7 @@ neon deploy
 
 Neon CLI 已安装时可直接使用 `neon`；本次安装版本为 8.15.1。新机器需先登录并绑定同一项目再部署，不要重新创建项目。用户级 Neon skills 与 MCP 属于开发工具配置，继续保留在用户目录，不复制到仓库。
 
-CLI 将连接变量拉入 `apps/api/.env.local`，API 目录已有 `.env` 时写入 `.env`。在同一文件设置独立随机的 `API_ACCESS_TOKEN`；本次迁移保留原有令牌和数据库凭据。应用只读取 API 目录的环境文件，已有进程环境变量优先。`apps/api/.env.example` 仅提供变量模板，不含真实值。
+CLI 将连接变量拉入 `apps/api/.env.local`，API 目录已有 `.env` 时写入 `.env`。应用只读取 API 目录的环境文件，已有进程环境变量优先。`apps/api/.env.example` 仅提供变量模板，不含真实值。现有数据库变量与历史 `API_ACCESS_TOKEN` 配置保留，本次不删除或轮换凭据；移除 `/hello` 后，当前路由不使用个人令牌或数据库连接，也没有启用用户登录。
 
 `DATABASE_URL` 使用池化连接；`DATABASE_URL_UNPOOLED` 留给后续迁移等管理用途，本阶段不使用。`NEON_BRANCH` 为 CLI 上下文元信息，不参与数据库认证。实际凭据不提交，不嵌入 Extension、Desktop 或官网。
 
@@ -43,18 +43,17 @@ CLI 将连接变量拉入 `apps/api/.env.local`，API 目录已有 `.env` 时写
 pnpm api:dev
 ```
 
-API 监听 `http://127.0.0.1:8000`。访问 `/docs`，在 Scalar 的认证栏填写本机私有文件中的令牌，仅填令牌值，不带引号或 Bearer 前缀；打开 `GET /hello` 的 Test Request 发送请求，预期 200 与 `database: ok`；清除或填入错误令牌后预期 401。缺少服务端配置或数据库不可用时返回 503，不返回数据库错误细节。视觉、导航及实际在线调试由用户在 Chrome 或 Edge 验收。
+API 监听 `http://127.0.0.1:8000`。在 Chrome 或 Edge 打开根地址，预期自动进入同一服务的 `/docs` 并加载 Scalar；文档暂时没有业务接口。访问 `/hello` 预期 404。浏览器导航与文档实际加载由用户验收，文档响应成功不代表已验证数据库连接。
 
 开发验证由代理按需直接执行，不配置根 package.json 快捷命令：
 
 ```sh
 dist/.cache/api/venv/bin/python -B -m unittest discover -s apps/api/tests -v
-dist/.cache/api/venv/bin/python -B apps/api/tests/verify_live.py
 ```
 
-第二条命令会临时启动独立本地端口，真实请求 `/hello` 验证两种鉴权失败和 Neon 查询，结束后自动关闭服务；需要访问 Neon 的网络权限，日志在 `dist/.cache/api/verify-live.log`。
+逻辑测试覆盖根路径重定向、无需令牌或数据库、文档响应、旧探针移除与 OpenAPI 配置。原有 `verify_live.py` 依赖已移除的 `/hello`，已同步删除；本阶段不启动服务或执行真实数据库查询。
 
-根 `npm run build` 继续构建官网、扩展与桌面，不替代 Python 接口验证。Python 源码无需编译为独立二进制，运行 HTTP 探针验证其真实执行。所有可配置缓存与虚拟环境位于根 dist，不在应用内部生成构建目录。
+根 `npm run build` 继续构建官网、扩展与桌面，不替代 Python 接口验证。Python 源码无需编译为独立二进制。所有可配置缓存与虚拟环境位于根 dist，不在应用内部生成构建目录。
 
 ## 后续 Vercel 配置
 
