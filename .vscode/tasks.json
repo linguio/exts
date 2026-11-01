@@ -1,0 +1,77 @@
+{
+  "version": "2.0.0",
+  "options": {
+    "cwd": "${workspaceFolder}"
+  },
+  "presentation": {
+    "reveal": "always",
+    "focus": false,
+    "panel": "dedicated",
+    "clear": true,
+    "showReuseMessage": false
+  },
+  "tasks": [
+    {
+      "label": "Dev",
+      "dependsOn": [
+        "Website",
+        "Extension",
+        "API",
+        "Desktop"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": [],
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Website",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "web:dev"
+      ],
+      "problemMatcher": [],
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Extension",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "ext:dev"
+      ],
+      "problemMatcher": [],
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "API",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "api:dev"
+      ],
+      "problemMatcher": [],
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Desktop",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "desk:dev"
+      ],
+      "problemMatcher": [],
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    }
+  ]
+}

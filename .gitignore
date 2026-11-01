@@ -2,7 +2,8 @@
 .DS_Store
 
 # 编辑器和 IDE
-.vscode/
+.vscode/*
+!.vscode/tasks.json
 
 # 依赖目录
 node_modules/
