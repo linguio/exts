@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [配置 Cursor 独立开发终端](./issues/2026-11-01-repo-cursor-dev-tasks-issue.md) · [Commit 记录](./commits/2026-11-01-repo-cursor-dev-tasks-commit.md)；用户于 2026-11-01 明确要求本地提交完结，配置与文档分开提交；新增四端 pnpm dev、scripts 排序及 Cursor 独立标签终端，沿用配置检查、Git 忽略边界、dry-run 与 diff 检查通过的结果；真实四端启动、失败隔离及编辑器和 Windows 验收未完整执行，未推送。
+
 - [将 API 根地址跳转到文档](./issues/2026-11-01-api-root-docs-redirect-issue.md) · [Commit 记录](./commits/2026-11-01-api-root-docs-redirect-commit.md)；用户于 2026-11-01 明确要求本地提交完结，代码与文档分开提交；根地址 307 跳转 /docs 并移除 /hello，沿用 4 项 API 逻辑测试及 diff 检查通过的结果；数据库配置保留，数据库查询、浏览器及线上验收未执行，未推送或部署。
 
 - [启用官网 main 自动部署](./issues/2026-10-31-website-auto-deploy-issue.md) · [Commit 记录](./commits/2026-10-31-website-auto-deploy-commit.md)；用户于 2026-10-31 明确要求本地提交完结；main 推送自动部署官网，保留手动入口，Release 仅手动触发；YAML、6 组触发条件和并发组检查及 19 项测试此前通过，未验证远端部署，未推送。

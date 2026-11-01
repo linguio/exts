@@ -22,6 +22,7 @@ node scripts/version.mjs
 
 | 命令 | 用途 | 支持平台 |
 |---|---|---|
+| pnpm dev | 同时启动官网、扩展、Desktop 与 API，日志按任务名区分 | macOS；其他平台见下方限制 |
 | pnpm web:dev | 网站开发服务 | Windows、macOS |
 | pnpm ext:dev | 扩展开发服务及稳定开发产物 | Windows、macOS |
 | pnpm desk:dev | 构建并打开独立桌面开发应用 | macOS |
@@ -32,7 +33,9 @@ node scripts/version.mjs
 | pnpm build | 串行构建 website、extension、desktop | macOS |
 | pnpm release | 完整构建后生成本地 ZIP、DMG | macOS |
 
-没有统一 dev 命令。非 macOS 的根 build/release 和 desktop dev/build 在启动构建前明确报错并退出，不静默跳过桌面。根 release 不自动提交、打 Git 标签、推送、部署或上传发布。
+统一 dev 使用已有 Turbo 注册的四个根任务并行执行既有开发命令，不缓存开发任务；使用 --continue=always 保持单项失败不自动停止其他任务，所有任务结束后仍报告失败。命令行日志按任务名显示在同一个终端；环境变量沿用各端单独启动时的进程环境，不启用 Turbo 严格过滤。需要四个独立命名终端时，在 Cursor 执行 Tasks: Run Task → Dev。各端仍可单独启动，不自动随编辑器打开启动开发服务。
+
+非 macOS 的根 build/release 和 desktop dev/build 在启动构建前明确报错并退出，不静默跳过桌面；统一 dev 也会尝试 Desktop，由其报告平台限制，其余任务继续。API 当前仍依赖 dist/.cache/api/venv/bin/python，本次未处理 Windows 虚拟环境路径兼容。根 release 不自动提交、打 Git 标签、推送、部署或上传发布。
 
 根 scripts/ 只维护 version.mjs、build.mjs、release.mjs；根入口负责公共规则和调度，应用内部脚本负责各端实现，不为小型辅助函数继续拆文件。
 
