@@ -93,6 +93,8 @@ docs/
 
 ## 已完成
 
+- [准备 1.8.0 版本并更新官网日志](./issues/2026-11-02-repo-v180-update-issue.md) · [Commit 记录](./commits/2026-11-02-repo-v180-update-commit.md)；用户明确要求本地提交完结，代码与文档分开提交；根版本 1.8.0、官网三项更新说明及本聊天扩展小调整已交付。沿用版本与差异检查结果，官网类型检查和构建受本地依赖缺失阻塞，视觉交互未验收；未推送或部署。
+
 - [搭建 Studio 侧栏与静态账户登录框](./issues/2026-11-02-extension-studio-static-shell-issue.md) · [Commit 记录](./commits/2026-11-02-extension-studio-static-shell-commit.md)；用户于 2026-11-02 明确要求本地提交完结，代码与文档分开提交；官方结构恢复、左右 Empty、独立 House 返回及静态登录入口已交付，根规范明确限制代理额外定制；沿用 77 项逻辑测试、类型检查和构建通过结果，单包略超 500 kB 警告及未执行的浏览器验收如实保留，不追加验证，未推送。真实登录仍排队，图标管理仍暂停。
 
 - [修复 Windows 下 API 本地启动](./issues/2026-11-02-api-windows-dev-issue.md) · [Commit 记录](./commits/2026-11-02-api-windows-dev-commit.md)；用户于 2026-11-02 明确要求本地提交完结，代码与文档分开提交；启动器按系统选择解释器，沿用 7 项逻辑测试与缺失环境提示验证通过的结果，Windows 本地启动获用户确认；Mac/Linux 实机、浏览器与 Ctrl+C 未单独确认，不追加验证，未推送。
