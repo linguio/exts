@@ -31,7 +31,7 @@ test('Grid 书签配置在 EDU 前提供默认模糊且可滚动的 UI 文件夹
       {
         type: 'folder',
         id: 'social-media',
-        name: 'Social Media',
+        name: 'Social',
         items: [
           { id: 'telegram', name: 'Telegram', url: 'https://web.telegram.org/', icon: 'brand/telegram.svg' },
           { id: 'youtube', name: 'YouTube', url: 'https://www.youtube.com', icon: 'brand/youtube.svg' },
