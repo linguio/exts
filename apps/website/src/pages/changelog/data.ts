@@ -16,6 +16,26 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'studio-activity-v180',
+    date: '2026-11-02',
+    title: '新增 Studio 布局与登录入口，优化本地调试',
+    groups: [
+      {
+        platform: 'Extension',
+        changes: [
+          '支持侧栏折叠与返回首页，提供独立的工作空间。',
+          '提供账户登录弹窗与 GitHub、Google 登录选项。',
+        ],
+      },
+      {
+        platform: 'Build',
+        changes: [
+          '支持统一启动官网、扩展、桌面端与 API，在独立终端窗口中查看各任务日志。',
+        ],
+      },
+    ],
+  },
+  {
     id: 'api-docs-auto-deploy',
     date: '2026-10-31',
     title: '新增 API 服务与接口文档',

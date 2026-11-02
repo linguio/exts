@@ -1,4 +1,4 @@
-import { CalendarDays, ChartColumn, ChevronDown, ChevronsUpDown, ChevronUp, CircleCheck, CircleDashed, CircleMinus, CircleQuestionMark, CircleX, Download, Eye, EyeOff, FolderOpen, House, LaptopMinimal, List, LoaderCircle, Lock, LockOpen, Moon, PanelLeft, PanelsTopLeft, Settings, Sun, Trash2, TriangleAlert, UserRound, X, Zap, type LucideIcon } from 'lucide-react';
+import { CalendarDays, ChartColumn, ChartPie, ChevronDown, ChevronsUpDown, ChevronUp, CircleCheck, CircleDashed, CircleMinus, CircleQuestionMark, CircleX, Download, Eye, EyeOff, FolderOpen, House, LaptopMinimal, List, LoaderCircle, Lock, LockOpen, Moon, PanelLeft, PanelsTopLeft, Settings, Sun, Trash2, TriangleAlert, UserRound, X, Zap, type LucideIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
 
 import type { UiIconName } from './types';
@@ -10,6 +10,7 @@ const uiIconMap: Record<UiIconName, LucideIcon> = {
   'user-round': UserRound,
   'calendar-days': CalendarDays,
   'chart-column': ChartColumn,
+  'chart-pie': ChartPie,
   'panels-top-left': PanelsTopLeft,
   zap: Zap,
   download: Download,

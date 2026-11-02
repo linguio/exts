@@ -11,7 +11,7 @@ import { useLocalDate } from '../../hooks/activity/use-local-date';
 
 /** 活动卡片归 Studio 持有；日历保留完整网格，记录初始为空，图表暂留空。 */
 export function ActivityCard() {
-  const [view, setView] = useState<'calendar' | 'chart'>('calendar');
+  const [view, setView] = useState<'calendar' | 'chart' | 'pie'>('calendar');
   const [records] = useState<ActivityRecords>({});
   const today = useLocalDate();
   const days = createActivityCalendar(records, today);
@@ -26,7 +26,7 @@ export function ActivityCard() {
           type="single"
           value={view}
           onValueChange={(value) => {
-            if (value === 'calendar' || value === 'chart') setView(value);
+            if (value === 'calendar' || value === 'chart' || value === 'pie') setView(value);
           }}
           variant="outline"
           size="sm"
@@ -48,6 +48,14 @@ export function ActivityCard() {
               </ToggleGroupItem>
             </TooltipTrigger>
             <TooltipContent>Chart</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <ToggleGroupItem value="pie" aria-label="Pie chart" className="w-9">
+                <UiIcon name="chart-pie" className="size-4" />
+              </ToggleGroupItem>
+            </TooltipTrigger>
+            <TooltipContent>Pie chart</TooltipContent>
           </Tooltip>
         </ToggleGroup>
       </header>

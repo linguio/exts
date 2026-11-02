@@ -27,7 +27,6 @@ export function AccountLogin() {
                 <span className="truncate font-medium">Account</span>
                 <span className="truncate text-xs">Not signed in</span>
               </div>
-              <UiIcon name="chevrons-up-down" className="ml-auto size-4" />
             </SidebarMenuButton>
           </DialogTrigger>
         </SidebarMenuItem>
