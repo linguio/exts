@@ -1,4 +1,8 @@
 :root {
+  /* 官方 Sidebar 复用现有材质与边框，随既有明暗 Token 解析。 */
+  --sidebar: var(--surface-raised);
+  --sidebar-border: var(--border);
+  --sidebar-accent: var(--accent);
   /* 这里是 shadcn/ui 兼容的基础 token；全局额外 token 也集中在此处维护。 */
   color-scheme: light;
   --font-geist-sans: "Geist Sans", "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;

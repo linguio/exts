@@ -13,30 +13,32 @@ import './newtab.css';
 
 const readAppearance = () => document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
 
-/** 页面组合只管理主视图切换，Dock 与抽屉不随主视图隐藏。 */
+/** 首页和工作台各自持有布局；Activity 保留页面状态，Dock 只随首页显示。 */
 export function App() {
   const [studioActive, setStudioActive] = useState(false);
   const appearance = useSyncExternalStore(subscribeTheme, readAppearance);
 
   return (
     <TooltipProvider>
-      <main className="bookmarks-page newtab-page">
-        <div className="grid min-h-0 min-w-0 overflow-hidden">
-          <Activity mode={studioActive ? 'hidden' : 'visible'}>
-            <NewtabHome />
-          </Activity>
-          <Activity mode={studioActive ? 'visible' : 'hidden'}>
-            <Studio />
-          </Activity>
-        </div>
-        <div className="flex min-w-0 justify-center" data-bookmark-dock>
-          <Dock
-            favorites={DOCK_FAVORITES}
-            studioActive={studioActive}
-            onStudioChange={setStudioActive}
-          />
-        </div>
-      </main>
+      <div className="bookmarks-page h-dvh overflow-hidden">
+        <Activity mode={studioActive ? 'hidden' : 'visible'}>
+          <main className="newtab-page">
+            <div className="grid min-h-0 min-w-0 overflow-hidden">
+              <NewtabHome />
+            </div>
+            <div className="flex min-w-0 justify-center" data-bookmark-dock>
+              <Dock
+                favorites={DOCK_FAVORITES}
+                studioActive={studioActive}
+                onStudioChange={setStudioActive}
+              />
+            </div>
+          </main>
+        </Activity>
+        <Activity mode={studioActive ? 'visible' : 'hidden'}>
+          <Studio onHome={() => setStudioActive(false)} />
+        </Activity>
+      </div>
       <Toaster theme={appearance} />
     </TooltipProvider>
   );
