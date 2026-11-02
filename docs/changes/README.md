@@ -79,17 +79,21 @@ docs/
 
 ## 当前 Issue
 
-无。
+无活动 Issue。
+
+- 已暂停：[在 Studio 统一管理网站图标与扩展缓存](./issues/2026-11-02-extension-remote-brand-cache-issue.md) · [Commit 记录](./commits/2026-11-02-extension-remote-brand-cache-commit.md)；用户于 2026-11-02 决定暂不实施，后续在 Studio 做管理与查询页，支持增删改查；旧静态发布草案仅供参考，数据库、接口及权限恢复时重新确认；当前仅文档改动尚未提交，未配置 Neon、上传或修改代码，未完结归档。
 
 ## Issue 队列
 
-无。
+- [接入 Studio GitHub 真实登录](./issues/2026-11-02-extension-github-login-issue.md) · [Commit 记录](./commits/2026-11-02-extension-github-login-commit.md)；仅建档排队，静态 Studio 完结后再确认认证、回跳、会话与外部配置，不自动实施。
 
 ## 待办
 
 无。
 
 ## 已完成
+
+- [搭建 Studio 侧栏与静态账户登录框](./issues/2026-11-02-extension-studio-static-shell-issue.md) · [Commit 记录](./commits/2026-11-02-extension-studio-static-shell-commit.md)；用户于 2026-11-02 明确要求本地提交完结，代码与文档分开提交；官方结构恢复、左右 Empty、独立 House 返回及静态登录入口已交付，根规范明确限制代理额外定制；沿用 77 项逻辑测试、类型检查和构建通过结果，单包略超 500 kB 警告及未执行的浏览器验收如实保留，不追加验证，未推送。真实登录仍排队，图标管理仍暂停。
 
 - [修复 Windows 下 API 本地启动](./issues/2026-11-02-api-windows-dev-issue.md) · [Commit 记录](./commits/2026-11-02-api-windows-dev-commit.md)；用户于 2026-11-02 明确要求本地提交完结，代码与文档分开提交；启动器按系统选择解释器，沿用 7 项逻辑测试与缺失环境提示验证通过的结果，Windows 本地启动获用户确认；Mac/Linux 实机、浏览器与 Ctrl+C 未单独确认，不追加验证，未推送。
 

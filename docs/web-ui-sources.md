@@ -8,6 +8,18 @@
 - API 文档的 OpenAPI 阅读与交互请求由 Scalar 官方实现；shadcn/ui 不提供 OpenAPI 文档渲染器，不为此仿写通用 UI。沿用 Scalar 默认样式，无自定义主题或 CSS；关闭 Agent、遥测，不启用请求代理或认证持久保存，不预填任何凭据。
 - 官网入口继续组合已有官方 Button ghost/icon 与 Tooltip，按用户更换图标的要求使用现有 Lucide Cable 连接图标，不新增封装或改变控件默认状态。
 
+## Studio 侧栏与静态登录（2026-11-02）
+
+- 沿用既有固定源码版本 c257f688cf4de7ec10cc1be84cad29cd4631182c，不执行 latest CLI、不升级或新增依赖。官方目录为 apps/v4/registry/new-york-v4；Sidebar 来自 ui/sidebar.tsx，移动端 Hook 来自 hooks/use-mobile.ts，Dialog、Breadcrumb 和 Card 子组件来自同目录 ui；业务组合参考 blocks/sidebar-07/components/app-sidebar.tsx 与 blocks/login-03/components/login-form.tsx。
+- Sidebar 保留官方 Provider/context、setOpen/toggleSidebar、Ctrl/Meta+B、icon/offcanvas、桌面间距/固定定位、移动 Sheet、Rail、MenuButton CVA 与 Tooltip 行为。仅迁入实际使用的组合项，省略 Input/Skeleton/Submenu 等未用组件；去掉示例 cookie 写入（扩展本期不持久化折叠状态）及嵌套 TooltipProvider（复用根部唯一 Provider），不自建另一套折叠状态。官方英文注释移除或改中文，import 路径适配 shared，PanelLeft 通过既有 UiIcon 静态映射。
+- Sidebar 颜色语义在应用主题映射现有 Token；border、foreground、accent、ring 及 primary 不引入业务色值或额外激活状态。应用无官方全局默认边框规则，因此 Sidebar 容器显式使用 border-sidebar-border，避免 border-r 使用前景色。官方内部滚动沿用；当前右侧仅有官方 Empty，无正文滚动包装。移动 Sheet 直接复用现有共用组件，不更改 Settings/Download 材质参数。
+- Breadcrumb 只迁入 nav/list/item/page，不迁入当前未用的 separator/link/ellipsis；用户去掉 Overview 后只显示 Studio 当前页，已移除不再使用的 ChevronRight 映射。保留官方语义及默认状态。
+- Dialog 保留 Root、Trigger、Portal、Overlay、Content、Title、Description 与默认关闭按钮，省略未使用的 Footer/Header/独立 Close 包装。Overlay 复用现有 blur-overlay 材质，Overlay/Content 都保留官方 z-50；Content 恢复官方 shadow-lg，边框颜色显式引用已有 Token。账户调用方为承载完整官方 Card，仅让 Dialog 定位外壳 border-0/bg-transparent/p-0/shadow-none，Card 自己保留官方边框、背景、py-6、圆角和 shadow-sm，避免双重外框。这是将用户指定登录块放入 Dialog 的承载适配，不再自改 Card 材质。移除未安装动画插件的 animate/fade/zoom 类，不引入新动画；关闭图标经 UiIcon 适配，Radix 管理焦点、Esc 与外部点击。
+- 现有 Card 根样式不改，从同一官方版本补充 CardHeader/CardContent/CardTitle/CardDescription。login-03 恢复官方 flex-col/gap-6 外层、Card、form/FieldGroup/Field 组合，只移除用户指定的品牌首行、Apple、邮箱密码、注册、分隔线与无目标条款。Field/FieldGroup 直接取自同一 ui/field.tsx，保留官方 CVA/默认 vertical 及间距，未引入未使用的 Label 等组件。标题与说明以 DialogTitle/Description asChild 包裹官方 CardTitle/Description，保留可访问性和官方 text-center、Welcome back，指定说明为 Login with your Github or Google account。GitHub 使用已有品牌 SVG，Google path 沿用该官方块，两个 outline 按钮仅提示未接入。Button outline 在共用 variant 补 border-border，复用已有全局边框颜色，不改 background/radius 等变量值，不在业务调用方写配色覆盖；现有 Telegram outline 调用原本已显式 border-border，无对应业务文件改动。
+- Account 入口恢复同一 sidebar-07/components/nav-user.tsx 的 SidebarMenuButton lg、h-8/w-8/rounded-lg Avatar、原双行文字与尾部 ChevronsUpDown，去掉代理添加的副标题 muted 色和折叠隐藏类。Avatar/AvatarFallback 源自同版 ui/avatar.tsx；静态未登录时不放假用户头像，以既有 UserRound 放在官方 32px Fallback 内。唯一功能替换为点击打开用户指定的登录 Dialog，保留原账户行间距及官方 data-state=open 状态样式，Tooltip 仍复用单一 Provider。
+- sidebar-07 移除样例团队切换、假用户、Projects、Overview 菜单与 Studio Activity，不保留未使用 Group 组件和 LayoutDashboard 图标。原 TeamSwitcher 是可点击的团队选择控件，不满足用户最新明确的 Logo 不可点击要求；因此仅保留官方 32px 标识与双行文字比例，以非交互业务布局展示既有完整 Exts SVG（不叠加另一层底板），旁边独立组合已有官方 Button ghost/icon-sm 与 Tooltip。返回图标为显式静态导入的 Lucide House，已移除不再使用的 ArrowLeft；收起时隐藏品牌并保留该独立按钮，不把 Logo 变成替代返回目标。正文 header 继续沿用官方触发器与分隔线，面包屑只显示 Studio。Account 的登录弹框打开时隐藏原 Tooltip，不改变官方 MenuButton 的激活外观。
+- 新增 ui/empty.tsx 来自同一固定版本官方源码，迁入 Empty/Header/Media/Title/Description，保留官方默认样式、Media CVA 与 icon variant；仅适配 cn 路径和 React 类型导入，省略未用 EmptyContent。左侧菜单与右侧内容直接组合官方 Empty；左侧随侧栏收起隐藏，右侧作为 SidebarInset 的 flex 内容填充，不再需要 Activity/Overview 内容包装或正文 Scroll Area。不另建缺省组件、样式或通知逻辑。缺省图使用现有 UiIcon 的 List/PanelsTopLeft，尺寸沿用官方 Media 的 24px 图形。
+
 ## 官方基线
 
 - 核对日期：2026-10-16。

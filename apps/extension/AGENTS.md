@@ -26,6 +26,8 @@
 
 ## Studio 功能归属
 
+- Studio 采用固定版本 shadcn/ui sidebar-07 作为框架，侧栏可收起为图标，窄屏沿用官方 Sheet；左侧菜单区与右侧内容区均直接组合官方 Empty 的图标、标题和说明，不保留 Overview/Activity、假菜单或自写缺省面板。首页 ActivityCard 仍按原位置使用。品牌头部保留官方 32px Logo 与两行名称比例，以非交互布局展示既有 Exts 资源；Logo 与文字不可点击，只有其右侧独立的官方 Button ghost/icon-sm + Lucide House 返回 Home。折叠时隐藏品牌与左侧 Empty，保留该独立按钮与 Tooltip；窄屏在侧栏内访问。不在正文顶部放 Home 文字按钮或自定义边框；顶部官方触发器与分隔线保留，面包屑只显示 Studio。Studio 不显示 Dock 且不保留其布局空行。每个新标签页仍默认首页，Home／Studio 由 React Activity 保留各自状态。
+- Account 位于 Studio 侧栏底部，当前固定为 Not signed in，不读取或持久化身份；点击以官方 Dialog 展示精简 login-03，不显示首行 Logo/Exts 品牌，保留官方 Welcome back 与 text-center 标题结构，说明为 Login with your Github or Google account，仅保留 Login with GitHub / Login with Google。不得擅自增加品牌行或改写官方文案/样式；用户指定替换除外。两个按钮均可点击且只调用共用 toast.info 提示对应登录暂未接入；不得禁用 Google、添加邮箱密码或注册、模拟会话、请求接口或启动 OAuth。真实登录独立排队；Media Download、Settings、Actions 保持现有归属和行为。
 - Studio 参考 Newtab 按 views、components、stores、types、utils 等职责组织，目录内部按功能分组，只创建实际需要的目录；不预建全局 Store、空功能目录或通用事件总线。
 - ActivityCard 归 `modules/studio/components/activity`，通过 Studio 模块入口导出，Home 仅引入展示；日期 Hook 归 `hooks/activity`，Dock 入口组件归 `components/dock-entry`；当前保留 Calendar／Chart 图标切换，默认 Calendar；Calendar 展示原 24 周日历，活动记录状态初始为空，只有 Chart 内容留空，组件状态不持久化。旧模拟 JSON 删除，日历组件、日期逻辑与类型按职责迁入 Studio，灰阶 Token 使用 --activity-level-*；后续数据操作与订阅仍归 Studio，按获批需求再创建。
 
@@ -46,7 +48,7 @@
 
 ## 模块组合与 Dock 交互
 
-- `src/app/NewtabApp.tsx` 负责 Home／Studio 切换、公共 Provider 和常驻 Dock 的组合；Home 布局、测量与书签打开由 `modules/newtab` 持有。
+- `src/app/NewtabApp.tsx` 负责 Home／Studio 切换、公共 Provider 与首页 Dock 的组合；Home 布局、测量与书签打开由 `modules/newtab` 持有。Studio 的侧栏、顶部返回及静态账户登录框由 `modules/studio` 持有，不把工作台布局或账户业务放入通用 UI。
 - `modules/dock` 持有 Dock 布局、入口、Actions 菜单和抽屉入口提示协调；收藏由应用组合层传入。Settings Sheet 归 `modules/settings`，Download Sheet 归 `modules/media-download/views/records`；业务模块不得依赖 Dock 内部实现。
 
 
