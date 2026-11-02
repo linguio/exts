@@ -2,7 +2,7 @@
   "name": "@exts/api",
   "private": true,
   "scripts": {
-    "dev": "../../dist/.cache/api/venv/bin/python -B -m uvicorn app:app --host 127.0.0.1 --port 8000"
+    "dev": "node scripts/dev.mjs"
   },
   "devDependencies": {
     "@neon/config": "1.10.0",
