@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [修复 Windows 下 API 本地启动](./issues/2026-11-02-api-windows-dev-issue.md) · [Commit 记录](./commits/2026-11-02-api-windows-dev-commit.md)；用户于 2026-11-02 明确要求本地提交完结，代码与文档分开提交；启动器按系统选择解释器，沿用 7 项逻辑测试与缺失环境提示验证通过的结果，Windows 本地启动获用户确认；Mac/Linux 实机、浏览器与 Ctrl+C 未单独确认，不追加验证，未推送。
+
 - [配置 Cursor 独立开发终端](./issues/2026-11-01-repo-cursor-dev-tasks-issue.md) · [Commit 记录](./commits/2026-11-01-repo-cursor-dev-tasks-commit.md)；用户于 2026-11-01 明确要求本地提交完结，配置与文档分开提交；新增四端 pnpm dev、scripts 排序及 Cursor 独立标签终端，沿用配置检查、Git 忽略边界、dry-run 与 diff 检查通过的结果；真实四端启动、失败隔离及编辑器和 Windows 验收未完整执行，未推送。
 
 - [将 API 根地址跳转到文档](./issues/2026-11-01-api-root-docs-redirect-issue.md) · [Commit 记录](./commits/2026-11-01-api-root-docs-redirect-commit.md)；用户于 2026-11-01 明确要求本地提交完结，代码与文档分开提交；根地址 307 跳转 /docs 并移除 /hello，沿用 4 项 API 逻辑测试及 diff 检查通过的结果；数据库配置保留，数据库查询、浏览器及线上验收未执行，未推送或部署。
