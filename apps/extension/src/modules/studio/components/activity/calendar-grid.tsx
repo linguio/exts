@@ -1,6 +1,10 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
+import { ChartTooltipContent } from '../../../../shared/ui/chart';
 import type { ActivityDay } from '../../types/activity';
 import { formatActivityDuration } from '../../utils/activity/calendar';
+import { growthCategories } from '../../utils/activity/summary';
+import { activityChartConfig } from './chart-config';
+import { ActivityTooltipValue } from './tooltip-content';
 
 /** 保留日历网格；无记录日期显示基础灰阶，未来日期留白。 */
 export function ActivityCalendar({ days }: { days: ActivityDay[] }) {
@@ -13,7 +17,7 @@ export function ActivityCalendar({ days }: { days: ActivityDay[] }) {
       {days.map((day) => {
         if (day.isFuture) return <span key={day.date} aria-hidden="true" />;
 
-        const description = `${day.label}，活动时长：${formatActivityDuration(day.minutes)}`;
+        const description = `${day.label}，完成 ${day.level}/4 项，${growthCategories.map(item => `${item.label} ${formatActivityDuration(day.growth[item.key] ?? 0)}`).join('，')}`;
         const cell = (
           <span
             key={day.date}
@@ -28,11 +32,16 @@ export function ActivityCalendar({ days }: { days: ActivityDay[] }) {
         if (day.minutes === 0) return cell;
 
         return (
-          <Tooltip key={day.date}>
+          <Tooltip key={day.date} disableHoverableContent>
             <TooltipTrigger asChild>{cell}</TooltipTrigger>
-            <TooltipContent side="top">
-              <p>{day.label}</p>
-              <p>活动时长：{formatActivityDuration(day.minutes)}</p>
+            <TooltipContent side="top" className="border-0 bg-transparent p-0 shadow-none">
+              <ChartTooltipContent
+                config={activityChartConfig}
+                active
+                label={day.date}
+                payload={growthCategories.map(item => ({ graphicalItemId: item.key, name: item.key, dataKey: item.key, value: day.growth[item.key] ?? 0, color: item.color }))}
+                formatter={(value, name) => <ActivityTooltipValue name={String(name)} minutes={Number(value)} />}
+              />
             </TooltipContent>
           </Tooltip>
         );

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { Card } from '../../../../shared/ui/card';
+import { Button } from '../../../../shared/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '../../../../shared/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../shared/ui/tooltip';
 import { UiIcon } from '../../../../shared/ui/ui-icon';
@@ -8,11 +9,16 @@ import type { ActivityRecords } from '../../types/activity';
 import { createActivityCalendar } from '../../utils/activity/calendar';
 import { ActivityCalendar } from './calendar-grid';
 import { useLocalDate } from '../../hooks/activity/use-local-date';
+import mockRecords from '../../data/activity/mock-records.json';
+import { ActivityTrend } from './trend-chart';
+import { ActivityWeek } from './week-charts';
 
-/** 活动卡片归 Studio 持有；日历保留完整网格，记录初始为空，图表暂留空。 */
+/** 活动卡片使用固定本地模拟记录，不提供录入或持久化。 */
 export function ActivityCard() {
   const [view, setView] = useState<'calendar' | 'chart' | 'pie'>('calendar');
-  const [records] = useState<ActivityRecords>({});
+  const [category, setCategory] = useState<'growth' | 'sleep'>('growth');
+  const categoryLabel = category === 'growth' ? 'Growth' : 'Sleep';
+  const records: ActivityRecords = mockRecords;
   const today = useLocalDate();
   const days = createActivityCalendar(records, today);
 
@@ -21,7 +27,7 @@ export function ActivityCard() {
       aria-label="Activity"
       className="box-border h-[var(--size-bookmark-folder)] w-full shrink-0 gap-4 rounded-[var(--radius)] p-4 shadow-none"
     >
-      <header className="flex h-8 shrink-0 items-center">
+      <header className="flex h-8 shrink-0 items-center justify-between">
         <ToggleGroup
           type="single"
           value={view}
@@ -58,8 +64,18 @@ export function ActivityCard() {
             <TooltipContent>Pie chart</TooltipContent>
           </Tooltip>
         </ToggleGroup>
+        {view === 'chart' ? <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon-sm" aria-label={categoryLabel} onClick={() => setCategory(current => current === 'growth' ? 'sleep' : 'growth')}>
+                <UiIcon name="chevrons-up-down" className="size-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{categoryLabel}</TooltipContent>
+        </Tooltip> : null}
       </header>
       {view === 'calendar' ? <ActivityCalendar days={days} /> : null}
+      {view === 'chart' ? <ActivityTrend records={records} today={today} category={category} /> : null}
+      {view === 'pie' ? <ActivityWeek records={records} today={today} /> : null}
     </Card>
   );
 }

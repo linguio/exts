@@ -2,7 +2,7 @@ import type { ActivityDay, ActivityRecords } from '../../types/activity';
 
 const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'] as const;
 
-function localDateKey(date: Date) {
+export function localDateKey(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
@@ -15,23 +15,31 @@ export function createActivityCalendar(records: ActivityRecords, today: Date): A
     const date = new Date(today.getFullYear(), today.getMonth(), firstDay + offset);
     const key = localDateKey(date);
     const isFuture = key > todayKey;
-    const minutes = isFuture ? 0 : (records[key] ?? 0);
-    const level = minutes === 0 ? 0 : minutes <= 30 ? 1 : minutes <= 60 ? 2 : 3;
+    const growth = isFuture ? {} : (records[key]?.growth ?? {});
+    const values = Object.values(growth);
+    const minutes = values.reduce((sum, value) => sum + value, 0);
+    const level = values.filter(value => value >= 30).length as ActivityDay['level'];
 
     return {
       date: key,
       label: `${key.slice(5)} · ${weekdays[date.getDay()]}`,
       weekday: date.getDay(),
       minutes,
+      growth,
       level,
       isFuture,
     };
   });
 }
 
+function activityHours(minutes: number) {
+  return String(Number((minutes / 60).toFixed(1)));
+}
+
 export function formatActivityDuration(minutes: number) {
-  if (minutes < 60) return `${minutes}分钟`;
-  const hours = Math.floor(minutes / 60);
-  const remainder = minutes % 60;
-  return `${hours}小时${remainder ? `${remainder}分钟` : ''}`;
+  return `${activityHours(minutes)}h`;
+}
+
+export function formatActivityProgress(minutes: number, percent: number, goal?: number) {
+  return `${Math.round(percent)}% / ${formatActivityDuration(goal ?? minutes)}`;
 }
