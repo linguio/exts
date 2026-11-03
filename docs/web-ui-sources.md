@@ -11,14 +11,17 @@
 - 趋势分类直接组合现有官方 Button 与 Tooltip，点击轮换两个分类；不新增 Select 包装或业务通知层。视觉、布局、Tooltip 与明暗主题实际效果留待用户 Chrome/Edge 验收。
 - 验收反馈修正：14 天窗口逐柱显示日号，睡眠只保留固定 7 小时虚线，无均值或标签；用户要求卡片内所有数据提示统一为 ChartTooltipContent。组件仅增加可选 config 属性供非 Recharts 日历使用，仍保留官方内容结构及默认样式；其他图表继续从官方 ChartContext 取配置。日历复用官方 Tooltip 触发与定位，外定位层清除自身边框/背景/内边距/阴影，唯一可见外观来自 ChartTooltipContent。
 - 日历连续 Hover：核对安装的 Radix Tooltip 实现，其默认 hoverable content 会建立 trigger 到 content 的 pointer grace 区域，Provider 在 transit 时阻止下个 Trigger 打开；日历小格局部使用官方 disableHoverableContent 关闭该区域，不自写计时器/受控 Tooltip 管理。浏览器实际切换仍待用户复验。
-- 提示语统一：Studio activity/tooltip-content.tsx 只持有业务标题与数据行，所有日期使用 YYYY-MM-DD，所有时长使用同一格式化函数；日历/成长只显示日期与明细，周图标题为本周投入/本周计划且不显示日期范围，目标和百分比按统一顺序附加。外框/主题/间距仍完全由同一官方 ChartTooltipContent 提供，不分别维护四套提示样式。
+- 提示语统一：Studio activity/tooltip-content.tsx 只持有业务标题与数据行，日期数据使用 YYYY-MM-DD、提示仅显示 MM-DD，所有时长使用同一格式化函数；日历/成长只显示日期与明细，周图标题为 W<周号> Time Spent / W<周号> Plan且不显示日期范围，目标和百分比按统一顺序附加。外框/主题/间距仍完全由同一官方 ChartTooltipContent 提供，不分别维护四套提示样式。
 - 最新分类入口按用户图示使用既有 Lucide ChevronsUpDown + 官方 Button ghost/icon-sm，英文 Growth/Sleep Tooltip 与顶部视图图标一致；按用户最新要求，点击直接轮换分类，移除 DropdownMenu 导入、菜单内容及菜单打开状态。成长新增 14 天日均 ReferenceLine，睡眠保留 7 小时线，无常驻标签或额外 Hover 管理。
 - 趋势窗口最终统一为截至昨天的14个自然日，成长/睡眠均排除今天；成长均值仅使用该窗口，无投入日按0计，不影响日历与本周视图。
 - 最新周视图修正：用户提供的 ChartPieSimple 为实心饼图，因此删除误加的 innerRadius=25，保留适配现有卡片的 outerRadius=44；移除“投入/计划”标题。计划环使用同一全局灰阶按每25%完成度分档，而非按项目着色；0%用muted，超过100%保持4档，轨道与官方 RadialBar 实现保留。具体区间见扩展 UI 规范，不再表述为所有图表颜色都绑定分类。
-- 周视图Tooltip按最新批准使用官方ChartTooltip content渲染回调：保留原生active与悬停payload，业务侧提供完整四项payload给同一ChartTooltipContent，避免计划环把progress字段名当文案。标题直接用官方label属性“本周投入/本周计划”，不显示周日期；formatter复用同一数据行，仅将当前项加粗。日历/柱状图去掉自定义合计标题，保留日期；所有活动时长使用小写h，最多一位小数且整数无.0。未新增Tooltip定位、堆叠或状态管理。
+- 周视图Tooltip按最新批准使用官方ChartTooltip content渲染回调：保留原生active与悬停payload，业务侧提供完整四项payload给同一ChartTooltipContent，避免计划环把progress字段名当文案。标题直接用官方label属性“W<周号> Time Spent / W<周号> Plan”，不显示周日期；formatter复用同一数据行，仅将当前项加粗。日历/柱状图去掉自定义合计标题，保留日期；所有活动时长使用小写h，最多一位小数且整数无.0。未新增Tooltip定位、堆叠或状态管理。
 - 最新文案格式：普通时长使用小写h、最多一位小数且整数去掉.0；投入明细先百分比再斜杠投入时长，如30% / 5h，计划先完成率再斜杠目标时长，如120% / 10h。仍通过官方formatter使用同一业务数据行，不改变组件样式。计划环颜色已核对为每25%一档，0%用muted，超额保持chart-4；当前模拟数据两项超额同色，不为差异不明显擅改全局色阶。
 - 柱状图圆角：用户批准统一圆角，选用4px，共用Chart仅新增导出CHART_BAR_RADIUS数值，供需要参与数值运算的SVG半径属性使用。成长使用已安装Recharts 3.10.1的官方BarStack.radius，睡眠使用Bar.radius；整根柱外轮廓圆角、内部接缝直角，保留官方处理缺项/薄端部的逻辑。未使用已弃用Cell、未仿写shape/clip，无新增依赖。
-- 四轴雷达试用：基于用户提供的ChartRadarDefault，复用现有ChartContainer/ChartTooltip和官方PolarAngleAxis/PolarGrid/Radar，desktop/month替换为四项周计划完成率。复用既有progress封顶值，PolarRadiusAxis固定[0,100]且不显示文字；保留官方示例fillOpacity=0.6，颜色使用全局chart-1。按当前卡片三图同排需求不嵌套示例Card/标题/访客说明/页脚，三列仍高96px、间距16px；按用户后续反馈半径44px并关闭轴文字，项目名称通过同一完整四项Tooltip提供。未安装依赖、未新增雷达数据模型，不宣称视觉已验收。
+
+- 用户后续批准数据提示样式差异：ChartTooltipContent 移除官方 min-w-[8rem]，改用 w-max 随内容撑开；后续按用户批准增加 min-w-[120px] 作为统一最小宽度，仍随内容撑开；增加 whitespace-nowrap 并移除数据行 flex-wrap，保留标题及各明细独立行。内边距从 px-2.5/py-1.5 改为全局 p-4（当前16px），统一作用于日历及各图表，不覆盖普通 Tooltip，不改变全局间距 Token。
+
+- 用户最新批准提示文案：四项显示名为 Exercise/Reading/Learning/Creation；日历/趋势提示仅显示MM-DD，不改数据日期键；周图以 W<周号> Time Spent / W<周号> Plan 替换中文标题。周号沿用周日开周、含元旦为第1周，两图周号一致，不改变统计范围。
 
 ## API 文档 Scalar（2026-10-31）
 
