@@ -41,27 +41,27 @@ export function ActivityCard() {
         >
           <Tooltip>
             <TooltipTrigger asChild>
-              <ToggleGroupItem value="calendar" aria-label="Calendar" className="w-9">
+              <ToggleGroupItem value="calendar" aria-label="Check-ins" className="w-9">
                 <UiIcon name="calendar-days" className="size-4" />
               </ToggleGroupItem>
             </TooltipTrigger>
-            <TooltipContent>Calendar</TooltipContent>
+            <TooltipContent>Check-ins</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <ToggleGroupItem value="chart" aria-label="Chart" className="w-9">
+              <ToggleGroupItem value="chart" aria-label="Trends" className="w-9">
                 <UiIcon name="chart-column" className="size-4" />
               </ToggleGroupItem>
             </TooltipTrigger>
-            <TooltipContent>Chart</TooltipContent>
+            <TooltipContent>Trends</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <ToggleGroupItem value="pie" aria-label="Pie chart" className="w-9">
+              <ToggleGroupItem value="pie" aria-label="Summary" className="w-9">
                 <UiIcon name="chart-pie" className="size-4" />
               </ToggleGroupItem>
             </TooltipTrigger>
-            <TooltipContent>Pie chart</TooltipContent>
+            <TooltipContent>Summary</TooltipContent>
           </Tooltip>
         </ToggleGroup>
         {view === 'chart' ? <Tooltip>

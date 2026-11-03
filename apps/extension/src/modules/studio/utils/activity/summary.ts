@@ -5,8 +5,8 @@ import { localDateKey } from './calendar';
 export const growthCategories = [
   { key: 'exercise', label: 'Exercise', goal: 180, color: 'var(--chart-1)' },
   { key: 'reading', label: 'Reading', goal: 300, color: 'var(--chart-2)' },
-  { key: 'learning', label: 'Learning', goal: 600, color: 'var(--chart-3)' },
-  { key: 'creation', label: 'Creation', goal: 900, color: 'var(--chart-4)' },
+  { key: 'learning', label: 'Learning', goal: 1200, color: 'var(--chart-3)' },
+  { key: 'creation', label: 'Creation', goal: 180, color: 'var(--chart-4)' },
 ] as const satisfies ReadonlyArray<{ key: GrowthKey; label: string; goal: number; color: string }>;
 
 export function sleepLevel(minutes: number) {

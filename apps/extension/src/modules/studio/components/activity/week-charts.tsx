@@ -17,7 +17,7 @@ export function ActivityWeek({ records, today }: { records: ActivityRecords; tod
           <PieChart accessibilityLayer>
             <ChartTooltip cursor={false} content={({ active, payload }) => <ChartTooltipContent
               active={active}
-              label={`W${week.weekNumber} Time Spent`}
+              label={`W${week.weekNumber} Spent`}
               payload={fullPayload}
               formatter={(value, name) => <ActivityTooltipValue
                 name={String(name)} minutes={Number(value)} percent={week.total ? Number(value) / week.total * 100 : 0}
@@ -26,7 +26,7 @@ export function ActivityWeek({ records, today }: { records: ActivityRecords; tod
             />} />
             <Pie data={week.items.filter(item => item.minutes > 0)} dataKey="minutes" nameKey="key" outerRadius={44} startAngle={90} endAngle={-270} />
           </PieChart>
-        </ChartContainer> : <div className="flex h-full items-center justify-center text-xs text-muted-foreground">本周暂无记录</div>}
+        </ChartContainer> : <div className="flex h-full items-center justify-center text-xs text-muted-foreground">No activity this week</div>}
       </div>
       <div className="relative min-w-0" role="group" aria-label="本周成长计划完成度，从内到外为运动、阅读、学习、创作">
         <ChartContainer config={activityChartConfig} className="h-24 w-full aspect-auto">
