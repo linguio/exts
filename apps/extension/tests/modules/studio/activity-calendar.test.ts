@@ -85,6 +85,19 @@ test('周统计按周日至周六，保留实际超额比例，仅截断进度�
   assert.equal(createActivityWeek({}, new Date(2026, 10, 3)).total, 0);
 });
 
+test('周号以周日开始且含元旦的周为第一周，和周统计范围一致', () => {
+  for (const [year, month, day, expected] of [
+    [2026, 10, 3, 45],
+    [2026, 10, 7, 45],
+    [2026, 10, 8, 46],
+    [2027, 0, 1, 1],
+    [2027, 0, 2, 1],
+    [2027, 0, 3, 2],
+  ] as const) {
+    assert.equal(createActivityWeek({}, new Date(year, month, day)).weekNumber, expected);
+  }
+});
+
 test('周计划环按每25%分档，与项目配色分离，超额保持最高档', () => {
   const fills = [0, 75, 76, 150, 151, 225, 226, 300, 360].map(minutes => {
     const week = createActivityWeek({ '2026-11-01': { growth: { reading: minutes } } }, new Date(2026, 10, 3));

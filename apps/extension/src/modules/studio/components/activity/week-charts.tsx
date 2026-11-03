@@ -1,4 +1,4 @@
-import { Pie, PieChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarChart } from 'recharts';
+import { Pie, PieChart, PolarAngleAxis, RadialBar, RadialBarChart } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../../../../shared/ui/chart';
 import type { ActivityRecords } from '../../types/activity';
 import { createActivityWeek } from '../../utils/activity/summary';
@@ -11,13 +11,13 @@ export function ActivityWeek({ records, today }: { records: ActivityRecords; tod
     graphicalItemId: item.key, name: item.key, dataKey: item.key, value: item.minutes, payload: item,
   }));
   return (
-    <div className="grid h-24 min-h-0 grid-cols-3 gap-4">
+    <div className="grid h-24 min-h-0 grid-cols-2 gap-4">
       <div className="relative min-w-0" role="group" aria-label="本周成长投入占比">
         {week.total ? <ChartContainer config={activityChartConfig} className="h-24 w-full aspect-auto">
           <PieChart accessibilityLayer>
             <ChartTooltip cursor={false} content={({ active, payload }) => <ChartTooltipContent
               active={active}
-              label="本周投入"
+              label={`W${week.weekNumber} Time Spent`}
               payload={fullPayload}
               formatter={(value, name) => <ActivityTooltipValue
                 name={String(name)} minutes={Number(value)} percent={week.total ? Number(value) / week.total * 100 : 0}
@@ -34,7 +34,7 @@ export function ActivityWeek({ records, today }: { records: ActivityRecords; tod
             <PolarAngleAxis type="number" domain={[0, 100]} tick={false} axisLine={false} />
             <ChartTooltip cursor={false} content={({ active, payload }) => <ChartTooltipContent
               active={active}
-              label="本周计划"
+              label={`W${week.weekNumber} Plan`}
               payload={fullPayload}
               formatter={(_value, name, item) => <ActivityTooltipValue
                 name={String(name)} minutes={item.payload.minutes} goal={item.payload.goal} percent={item.payload.percent}
@@ -43,25 +43,6 @@ export function ActivityWeek({ records, today }: { records: ActivityRecords; tod
             />} />
             <RadialBar dataKey="progress" background />
           </RadialBarChart>
-        </ChartContainer>
-      </div>
-      <div className="min-w-0" role="group" aria-label="本周四项计划完成率雷达图，顺时针为运动、阅读、学习、创作">
-        <ChartContainer config={activityChartConfig} className="h-24 w-full aspect-auto">
-          <RadarChart data={week.items} outerRadius={44} startAngle={90} endAngle={-270}>
-            <ChartTooltip cursor={false} content={({ active, payload }) => <ChartTooltipContent
-              active={active}
-              label="本周计划"
-              payload={fullPayload}
-              formatter={(_value, name, item) => <ActivityTooltipValue
-                name={String(name)} minutes={item.payload.minutes} goal={item.payload.goal} percent={item.payload.percent}
-                highlighted={name === payload?.[0]?.payload?.key}
-              />}
-            />} />
-            <PolarAngleAxis dataKey="label" tick={false} />
-            <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
-            <PolarGrid />
-            <Radar dataKey="progress" fill="var(--color-progress)" fillOpacity={0.6} />
-          </RadarChart>
         </ChartContainer>
       </div>
     </div>

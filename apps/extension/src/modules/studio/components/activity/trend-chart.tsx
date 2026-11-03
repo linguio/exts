@@ -20,7 +20,7 @@ export function ActivityTrend({ records, today, category }: { records: ActivityR
             labelFormatter={(_label, payload) => {
               const day = payload[0]?.payload;
               if (!day) return null;
-              return day.date;
+              return day.date.slice(5);
             }}
             formatter={(value, name) => <ActivityTooltipValue name={String(name)} minutes={Number(value)} />}
           />}

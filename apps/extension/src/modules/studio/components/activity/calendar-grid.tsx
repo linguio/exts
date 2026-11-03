@@ -38,7 +38,7 @@ export function ActivityCalendar({ days }: { days: ActivityDay[] }) {
               <ChartTooltipContent
                 config={activityChartConfig}
                 active
-                label={day.date}
+                label={day.date.slice(5)}
                 payload={growthCategories.map(item => ({ graphicalItemId: item.key, name: item.key, dataKey: item.key, value: day.growth[item.key] ?? 0, color: item.color }))}
                 formatter={(value, name) => <ActivityTooltipValue name={String(name)} minutes={Number(value)} />}
               />
