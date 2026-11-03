@@ -93,6 +93,8 @@ docs/
 
 ## 已完成
 
+- [更新两日活动记录与创作周目标](./issues/2026-11-03-extension-activity-records-issue.md) · [Commit 记录](./commits/2026-11-03-extension-activity-records-commit.md)；用户于2026-11-03明确要求本地提交完结，仅保留两日记录，周目标3/5/20/3h，视图入口Check-ins/Trends/Summary及英文数据提示已同步。代码与文档分开提交，沿用80项测试、类型检查与构建结果，既有警告和浏览器验收限制如实保留，不追加验证、不推送。
+
 - [删除周计划雷达图并检查 Tooltip 宽度](./issues/2026-11-03-extension-remove-radar-issue.md) · [Commit 记录](./commits/2026-11-03-extension-remove-radar-commit.md)；用户于2026-11-03明确要求本地提交完结，雷达已移除、周图左右等宽；数据提示最小宽120px、p-4内边距、不自动换行，英文分类与周号标题、MM-DD日期。代码与文档分开提交，沿用80项测试、类型检查及构建通过结果，保留既有警告与浏览器验收限制，不追加验证、不推送。
 
 - [展示成长打卡与睡眠趋势](./issues/2026-11-03-extension-growth-sleep-charts-issue.md) · [Commit 记录](./commits/2026-11-03-extension-growth-sleep-charts-commit.md)；用户明确批准本地提交完结，最终保留雷达图；代码与文档分开提交，沿用已有79项逻辑测试与最终类型检查/构建结果，视觉交互未由代理验收，不追加验证，不推送。
