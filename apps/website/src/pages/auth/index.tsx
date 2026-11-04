@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { createAuthClient } from '@neon/auth';
 import { BetterAuthVanillaAdapter } from '@neon/auth/vanilla';
 import { Button } from '@/shared/ui/button';
+import { ScrollArea } from '@/shared/ui/scroll-area';
 import { authorizationRequest, issuer, readLoginStart, readLogoutReturn } from './requests';
 
 const client = createAuthClient(issuer, { adapter: BetterAuthVanillaAdapter() });
@@ -74,25 +75,44 @@ export function AuthPage() {
 
   let destination = '';
   try { destination = new URL(query.get('redirect_uri') || '').host; } catch { /* 无效地址由初始化错误阻止操作。 */ }
-  if (signOut) return <main className="mx-auto flex min-h-screen w-full max-w-lg flex-col justify-center gap-6 p-6">
-    <h1 className="text-2xl font-semibold">退出 Exts</h1>
-    {error ? <p role="alert">{error}</p> : <p role="status">正在结束登录会话…</p>}
+  const title = signOut ? '正在退出 Exts' : consent ? '确认授权' : '登录 Exts';
+  const description = signOut ? '正在结束登录会话' : consent ? '请确认这次插件授权请求' : `使用 ${providerName} 账号继续`;
+  return <main className="flex min-h-dvh items-center justify-center bg-muted/40 p-4 text-foreground">
+    <section aria-labelledby="auth-title" className="flex h-[min(460px,calc(100dvh-2rem))] min-h-0 w-full max-w-[520px] flex-col overflow-hidden rounded-lg border border-border bg-background shadow-sm">
+      <header className="border-b border-border px-6 py-5">
+        <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">EXTS / ACCOUNT</p>
+        <h1 id="auth-title" className="mt-3 text-xl font-semibold tracking-tight">{title}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+      </header>
+      <ScrollArea className="min-h-0 flex-1">
+        <div className="space-y-4 px-6 py-5 text-sm">
+          {signOut ? <p role={error ? 'alert' : 'status'} className={error ? 'text-destructive' : 'text-muted-foreground'}>{error || '正在结束登录会话…'}</p> : consent ? <>
+            <dl className="space-y-3 rounded-md border border-border p-4">
+              <AuthDetail label="客户端" value={clientName || clientId || '未指定'} />
+              <AuthDetail label="授权结果发送至" value={destination || '无效地址'} />
+              <AuthDetail label="申请权限" value={query.get('scope') || '未指定'} />
+              <AuthDetail label="资源" value={query.getAll('resource').join('、') || '未指定'} />
+            </dl>
+            <p className="text-muted-foreground">仅在你从可信插件发起此操作时允许。客户端名称由申请方提供。</p>
+            {['localhost', '127.0.0.1', '[::1]'].some(host => destination === host || destination.startsWith(`${host}:`)) ? <p role="alert" className="text-destructive">回调位于本机地址，请确认发起授权的是你信任的应用。</p> : null}
+          </> : <p className="text-muted-foreground">登录完成后将继续插件授权。你可以在 {providerName} 页面选择要使用的账号。</p>}
+          {!signOut && error ? <p role="alert" className="text-destructive">{error}</p> : null}
+          {!signOut && !ready && !error ? <p role="status" className="text-muted-foreground">正在读取授权请求…</p> : null}
+        </div>
+      </ScrollArea>
+      {!signOut ? <footer className="flex gap-3 border-t border-border px-6 py-4">
+        {consent ? <>
+          <Button className="flex-1" disabled={!ready || pending} onClick={() => { void submit(true); }}>{pending ? '处理中…' : '允许'}</Button>
+          <Button className="flex-1" variant="outline" disabled={!ready || pending} onClick={() => { void submit(false); }}>拒绝</Button>
+        </> : <Button className="w-full" disabled={!ready || pending} onClick={() => { void submit(); }}>{pending ? '正在跳转…' : `使用 ${providerName} 登录`}</Button>}
+      </footer> : null}
+    </section>
   </main>;
-  return <main className="mx-auto flex min-h-screen w-full max-w-lg flex-col justify-center gap-6 p-6">
-    <h1 className="text-2xl font-semibold">{consent ? '确认授权' : '登录 Exts'}</h1>
-    {consent ? <>
-      <p>客户端：{clientName || clientId}</p>
-      <p className="break-all">授权结果将发送至：{destination || '无效地址'}</p>
-      <p className="break-all">申请权限：{query.get('scope') || '未指定'}</p>
-      <p className="break-all">资源：{query.getAll('resource').join('、') || '未指定'}</p>
-      <p>仅在你从可信插件发起此操作时允许。客户端名称由申请方提供。</p>
-      {['localhost', '127.0.0.1', '[::1]'].some(host => destination === host || destination.startsWith(`${host}:`)) ? <p role="alert">回调位于本机地址，请确认发起授权的是你信任的应用。</p> : null}
-    </> : <p>使用 {providerName} 登录，完成后继续插件授权。</p>}
-    {error ? <p role="alert">{error}</p> : null}
-    {!ready && !error ? <p role="status">正在读取授权请求…</p> : null}
-    {consent ? <div className="flex gap-3">
-      <Button disabled={!ready || pending} onClick={() => { void submit(true); }}>允许</Button>
-      <Button variant="outline" disabled={!ready || pending} onClick={() => { void submit(false); }}>拒绝</Button>
-    </div> : <Button disabled={!ready || pending} onClick={() => { void submit(); }}>使用 {providerName} 登录</Button>}
-  </main>;
+}
+
+function AuthDetail({ label, value }: { label: string; value: string }) {
+  return <div>
+    <dt className="text-xs text-muted-foreground">{label}</dt>
+    <dd className="mt-1 break-all font-medium">{value}</dd>
+  </div>;
 }
