@@ -95,7 +95,8 @@ export default defineConfig({
     key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyep9KJNkiwxgQMPxqR9ZKmLnaVXERd5ikVWzXtP6mkNI9iuc8LenSpN2Y7zhP7cBJeK86+w97vj7AWUIiZ6Hgr1VF20DTnI8sS5eJsh0dSgCKUWB6sQSQrIM3QJfQ96NoR8Fj+IzEtW2w01+JfVXRIlB7ytSAmic3PvZmYoL1OuSuRfwAn0BaflI0W27+78mpvhHQaVAHRL/cgSLII2dxUs50oRiwMww7sUlfJlPMEZpd8b2e1kmgASAXjkfPccvyEsDhQvu9u35YdBSi9DtpjmKVvoGJsgP7fqutEUn4O7/iEj2DRm+5W2yppwgJ1MatxfLh/i4BLaoLJ/k2xFXxQIDAQAB',
     version: readProjectVersion(),
     description: '将想法与能力延伸为实用工具',
-    permissions: ['tabGroups', 'storage'],
+    permissions: ['tabGroups', 'storage', 'identity'],
+    host_permissions: ['https://ep-patient-grass-ak8aymgi.neonauth.c-3.us-west-2.aws.neon.tech/*'],
     optional_permissions: ['browsingData'],
     icons: actionIcons,
     action: {
