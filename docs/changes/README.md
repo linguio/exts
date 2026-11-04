@@ -79,7 +79,6 @@ docs/
 
 ## 当前 Issue
 
-无。
 
 - 已暂停：[在 Studio 统一管理网站图标与扩展缓存](./issues/2026-11-02-extension-remote-brand-cache-issue.md) · [Commit 记录](./commits/2026-11-02-extension-remote-brand-cache-commit.md)；用户于 2026-11-02 决定暂不实施，后续在 Studio 做管理与查询页，支持增删改查；旧静态发布草案仅供参考，数据库、接口及权限恢复时重新确认；当前仅文档改动尚未提交，未配置 Neon、上传或修改代码，未完结归档。
 
@@ -92,6 +91,8 @@ docs/
 无。
 
 ## 已完成
+
+- [统一 Exts 登录、授权与退出窗口](./issues/2026-11-04-extension-auth-window-unification-issue.md) · [Commit 记录](./commits/2026-11-04-extension-auth-window-unification-commit.md)；按用户指令提交当前页面阶段成果。浏览器外框固定与退出失败定位尚未完成；官网类型检查通过，构建受本机环境错误阻塞，未做浏览器验收或部署。
 
 - [退出后重新选择登录账号](./issues/2026-11-04-extension-full-logout-issue.md) · [Commit 记录](./commits/2026-11-04-extension-full-logout-commit.md)；用户于 2026-11-04 要求本地 commit 完结。插件 100 项、官网 17 项逻辑测试及两端类型检查/构建此前通过，本次提交未重跑。用户实际操作得到“退出未完成，请重试”，线上注销页部署和具体失败环节未确认，需后续排查；未推送或部署。
 
