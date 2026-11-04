@@ -93,6 +93,8 @@ docs/
 
 ## 已完成
 
+- [退出后重新选择登录账号](./issues/2026-11-04-extension-full-logout-issue.md) · [Commit 记录](./commits/2026-11-04-extension-full-logout-commit.md)；用户于 2026-11-04 要求本地 commit 完结。插件 100 项、官网 17 项逻辑测试及两端类型检查/构建此前通过，本次提交未重跑。用户实际操作得到“退出未完成，请重试”，线上注销页部署和具体失败环节未确认，需后续排查；未推送或部署。
+
 - [接入 Studio Google 登录](./issues/2026-11-04-extension-google-login-issue.md) · [Commit 记录](./commits/2026-11-04-extension-google-login-commit.md)；用户于 2026-11-04 明确要求本地 commit，按代码与文档两笔提交完结。插件与官网已接通双提供方，沿用插件 99 项、官网 16 项逻辑测试及两端类型检查/生产构建通过结果；未追加验证。需配套部署新版官网后实际登录验收，未推送或部署。
 
 - [退出插件时结束 Exts 登录会话](./issues/2026-11-04-extension-session-logout-issue.md) · [Commit 记录](./commits/2026-11-04-extension-session-logout-commit.md)；用户于 2026-11-04 表示已验证可以并要求本地提交完结。退出时撤销刷新令牌并清除指定 Neon 会话 Cookie，不弹窗口；再次登录要求 Exts 授权确认，官网向 GitHub 请求账号选择。代理未部署或推送，Google 登录留待后续独立工作项。
