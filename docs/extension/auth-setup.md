@@ -26,8 +26,12 @@ Resource URL 只用作令牌用途标识，本工作项不创建 API 接口。�
 4. 将 apps/extension/.env.example 复制为同目录 .env.local，填入 VITE_OIDC_CLIENT_ID，重新构建插件。不将真实令牌或 Client Secret 写入环境文件；Client ID 是公开配置。
 5. 在 Chrome/Edge 加载根 dist/build/chrome-mv3，核对固定 ID。进入 Studio → Account → Login with GitHub，经官网中转、GitHub 授权和官网确认返回插件，显示真实账户。
 6. 关闭授权窗口或点击拒绝，不能变成已登录；重试和多页同时点击不应重复打开授权。Google 仍提示未接入。
-7. 登录后刷新及重启浏览器，应恢复仍有效的身份；过期时按刷新令牌恢复。退出后刷新保持未登录，但不会退出 GitHub 网站或官网 SSO；再次主动登录可能复用它们的已有会话。
-8. 退出需先成功撤销刷新令牌再删除插件身份；断网失败时应提示并能重试。原 access token 可能在原有效期内仍有效，不承诺即时全局注销。本地 Settings、书签、下载记录保持原有数据。
+7. 登录后刷新及重启浏览器，应恢复仍有效的身份；过期时按刷新令牌恢复。退出不打开窗口：先撤销插件刷新令牌，再删除当前 Neon Auth 来源的 `__Secure-neonauth.session_token` 浏览器 Cookie，最后删除插件身份。再次点击插件登录会向 Neon 发送 `prompt=consent`，应显示 Exts 授权确认；官网登录页调用 Neon GitHub 社交登录时另传 `additionalParams.prompt=select_account`，应出现 GitHub 账号选择器。选择其他 GitHub 账号后，插件应显示该账号。GitHub 网站自己的应用授权页仍可能被跳过。
+8. 删除 Cookie 或撤销令牌失败时应提示退出未完成并能重试；Neon 明确返回 `invalid_request / token not found` 表示刷新令牌已不存在时继续完成本地退出。刷新令牌可能已经撤销，因此其他失败后保留的身份不保证仍可刷新。本地 Settings、书签、下载记录保持原有数据。
+
+不会注销 GitHub/Google 网站账号，也不撤销用户已授予插件的 consent；GitHub 账号选择器不要求再次输入密码，也不等于重新授予应用权限。原 access token 可能在原有效期内仍有效，不承诺即时全局注销。Google 登录本次仍未接入；后续应在相同社交登录边界要求选择账号，不能只改插件发给 Neon 的 `prompt`。
+
+Cookie 名称及 HttpOnly 属性见 [Neon 认证流程](https://neon.com/docs/auth/authentication-flow)；删除需 Chrome `cookies` 权限及现有 Neon Auth 主机权限，见 [Chrome Cookies API](https://developer.chrome.com/docs/extensions/reference/api/cookies)。本流程删除本机浏览器 Cookie，不通过 Neon signOut 删除服务端会话。相同浏览器配置中使用这个 Neon Auth 会话的其他页面也会失去该登录状态。
 
 ## 当前限制
 

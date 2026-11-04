@@ -93,6 +93,8 @@ docs/
 
 ## 已完成
 
+- [退出插件时结束 Exts 登录会话](./issues/2026-11-04-extension-session-logout-issue.md) · [Commit 记录](./commits/2026-11-04-extension-session-logout-commit.md)；用户于 2026-11-04 表示已验证可以并要求本地提交完结。退出时撤销刷新令牌并清除指定 Neon 会话 Cookie，不弹窗口；再次登录要求 Exts 授权确认，官网向 GitHub 请求账号选择。代理未部署或推送，Google 登录留待后续独立工作项。
+
 - [修复插件退出时的令牌撤销](./issues/2026-11-04-extension-logout-revoke-issue.md) · [Commit 记录](./commits/2026-11-04-extension-logout-revoke-commit.md)；用户于 2026-11-04 要求本地提交完结。退出撤销省略网页 Cookie，登录后补读用户信息并提示，已登录账户改为展开菜单。92 项测试在菜单改动前通过，其后类型检查与生产构建通过；浏览器登录、资料和退出未复验，未推送。
 
 - [接入 Studio GitHub 真实登录](./issues/2026-11-02-extension-github-login-issue.md) · [Commit 记录](./commits/2026-11-02-extension-github-login-commit.md)；用户于 2026-11-04 要求拆成四笔本地提交完结。插件改为 OIDC 授权码与 PKCE，官网增加登录和授权确认页。Cookie 直连因退出 403 INVALID_ORIGIN 且 Neon 拒绝 chrome-extension 来源而停用。线上两个认证页仍为 404，用户登录得到认证请求失败；Client ID 只在本地 .env.local，未写入仓库。本次提交未重跑测试、类型检查或构建，未推送或部署。

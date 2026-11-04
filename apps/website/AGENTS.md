@@ -3,7 +3,7 @@
 - 通用开发与操作规则遵循根 [AGENTS.md](../../AGENTS.md)。
 - 官网视觉规则统一维护在 [docs/website/ui.md](../../docs/website/ui.md)，本文件不复制字号、颜色或布局数值。规范草案待确认时，不把草案当作已实施事实。
 - 页面和共享组件按已批准规范实施；交付范围与验收状态以当前 Issue 为准。
-- /auth/sign-in/ 与 /auth/consent/ 为插件登录的认证托管页，不改变官网首页或要求访客登录；保留 Neon 原始签名查询，由认证服务完成校验，不在页面重建 OAuth 服务或记录授权参数。使用既有主题和官方 Button，页面设置 no-referrer/noindex，客户端名称不视为可信身份。
+- /auth/sign-in/ 与 /auth/consent/ 为插件登录的认证托管页，不改变官网首页或要求访客登录；保留 Neon 原始签名查询，由认证服务完成校验，不在页面重建 OAuth 服务或记录授权参数。GitHub 社交登录向第三方请求账号选择；此参数属于社交登录请求，不改写插件发给 Neon 的 OIDC 请求。后续接入 Google 时在同一社交登录边界处理账号选择。使用既有主题和官方 Button，页面设置 no-referrer/noindex，客户端名称不视为可信身份。
 
 - 全部 Web UI 的选型、来源与主题维护遵循根 AGENTS 的 Web UI 原则；源码版本与必要定制集中记录在 [Web UI 来源](../../docs/web-ui-sources.md)。
 
