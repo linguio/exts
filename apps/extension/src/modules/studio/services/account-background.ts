@@ -3,6 +3,7 @@ import { createAccountController } from './account-controller';
 import { createAuthStorage } from './auth-storage';
 import { revokeOAuthToken } from './revoke-oauth-token';
 import { mergeUserInfo, readUserInfo } from './user-info';
+import { removeNeonSessionCookie } from './remove-session-cookie';
 
 const authority = 'https://ep-patient-grass-ak8aymgi.neonauth.c-3.us-west-2.aws.neon.tech/neondb/auth';
 const clientId = import.meta.env.VITE_OIDC_CLIENT_ID?.trim();
@@ -53,6 +54,7 @@ export function registerAccount(api: typeof chrome = chrome) {
     },
     signinSilent: () => manager.signinSilent().then(withProfile),
     removeUser: () => manager.removeUser(),
+    endSession: () => removeNeonSessionCookie(api.cookies, authority),
     revokeTokens: async types => {
       const user = await manager.getUser();
       const endpoint = await manager.metadataService.getRevocationEndpoint();
@@ -78,7 +80,9 @@ export function registerAccount(api: typeof chrome = chrome) {
       // 原始认证错误可能包含授权码或令牌，仅返回固定提示。
       const cancelled = error instanceof Error && /cancel|closed|did not approve/i.test(error.message);
       console.error('Studio OIDC 操作失败', { action, category: cancelled ? 'cancelled' : 'request-failed' });
-      respond({ ok: false, error: cancelled ? '已取消登录' : '认证请求失败，请重试并检查 OAuth Provider 配置' });
+      respond({ ok: false, error: action === 'logout'
+        ? '退出未完成，请重试'
+        : (cancelled ? '已取消登录' : '认证请求失败，请重试并检查 OAuth Provider 配置') });
     });
     return true;
   });

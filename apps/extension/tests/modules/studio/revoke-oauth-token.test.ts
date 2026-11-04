@@ -29,3 +29,8 @@ it('撤销被拒绝时使用固定错误，不回显令牌', async () => {
   await expect(failure).rejects.toThrow('撤销刷新令牌失败');
   await expect(failure).rejects.not.toThrow(/refresh-token-value/);
 });
+
+it('远端报告令牌不存在时视为已撤销，允许继续本地退出', async () => {
+  const fetchImpl = vi.fn(async () => Response.json({ error: 'invalid_request', error_description: 'token not found' }, { status: 400 }));
+  await expect(revokeOAuthToken({ ...input, fetchImpl })).resolves.toBeUndefined();
+});

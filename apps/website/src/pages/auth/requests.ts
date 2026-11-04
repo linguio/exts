@@ -4,7 +4,7 @@ export const issuer = 'https://ep-patient-grass-ak8aymgi.neonauth.c-3.us-west-2.
 export async function authorizationRequest(path: 'continue' | 'consent' | 'sign-in', rawQuery: string, callbackURL: string, accept?: boolean) {
   const endpoint = path === 'sign-in' ? '/sign-in/social' : `/oauth2/${path}`;
   const body = path === 'sign-in'
-    ? { provider: 'github', callbackURL, oauth_query: rawQuery, disableRedirect: true }
+    ? { provider: 'github', callbackURL, oauth_query: rawQuery, additionalParams: { prompt: 'select_account' }, disableRedirect: true }
     : path === 'continue' ? { selected: true, oauth_query: rawQuery } : { accept: accept === true, oauth_query: rawQuery };
   const response = await fetch(`${issuer}${endpoint}`, {
     method: 'POST', credentials: 'include', referrerPolicy: 'no-referrer',

@@ -57,9 +57,9 @@ export function AccountLogin() {
       toast.success('退出成功');
       await refetch();
       setOpen(false);
-    } catch {
+    } catch (error) {
       console.error('Studio 账户退出失败');
-      toast.error('退出失败，请重试');
+      toast.error(error instanceof Error ? error.message : '退出失败，请重试');
     } finally {
       setPending(null);
     }

@@ -13,5 +13,11 @@ export async function revokeOAuthToken(input: {
     body: new URLSearchParams({ token: input.token, token_type_hint: input.tokenType, client_id: input.clientId }),
     signal: AbortSignal.timeout(15_000),
   });
-  if (!response.ok) throw new Error('撤销刷新令牌失败');
+  if (response.ok) return;
+  if (response.status === 400) {
+    const result: unknown = await response.json().catch(() => null);
+    if (result && typeof result === 'object' && 'error' in result && 'error_description' in result
+      && result.error === 'invalid_request' && result.error_description === 'token not found') return;
+  }
+  throw new Error('撤销刷新令牌失败');
 }

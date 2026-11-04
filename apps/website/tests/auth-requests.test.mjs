@@ -15,12 +15,16 @@ test('授权确认原样传回签名查询，拒绝授权也由认证服务处�
 });
 
 test('GitHub 登录携带签名请求，拒绝非网页重定向', async () => {
+  let body;
   const fetch = mock.method(globalThis, 'fetch', async (_url, options) => {
-    const body = JSON.parse(options.body);
-    assert.equal(body.provider, 'github');
-    assert.equal(body.oauth_query, 'signed=original');
+    body = JSON.parse(options.body);
     return Response.json({ url: 'javascript:invalid' });
   });
-  try { await assert.rejects(authorizationRequest('sign-in', 'signed=original', 'https://exts.linguio.dev/auth/sign-in/')); }
+  try {
+    await assert.rejects(authorizationRequest('sign-in', 'signed=original', 'https://exts.linguio.dev/auth/sign-in/'), /认证服务返回了无效地址/);
+    assert.equal(body.provider, 'github');
+    assert.equal(body.oauth_query, 'signed=original');
+    assert.deepEqual(body.additionalParams, { prompt: 'select_account' });
+  }
   finally { fetch.mock.restore(); }
 });
