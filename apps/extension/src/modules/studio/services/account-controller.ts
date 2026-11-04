@@ -1,8 +1,9 @@
 export interface AccountUser { id: string; name: string; email: string; image: string | null }
+export type AccountProvider = 'github' | 'google';
 interface StoredUser { expired?: boolean; refresh_token?: string; profile: { sub: string; name?: unknown; email?: unknown; picture?: unknown } }
 interface Manager {
   getUser(): Promise<StoredUser | null>;
-  signinPopup(args: { nonce: string; prompt: 'consent' }): Promise<StoredUser>;
+  signinPopup(args: { nonce: string; prompt: 'consent'; provider: AccountProvider }): Promise<StoredUser>;
   signinSilent(): Promise<StoredUser | null>;
   revokeTokens(types: ('refresh_token' | 'access_token')[]): Promise<void>;
   endSession(): Promise<void>;
@@ -33,8 +34,8 @@ export function createAccountController(manager: Manager) {
       }
       return display(user);
     }),
-    login: () => pendingLogin ??= enqueue(async () => {
-      const user = display(await manager.signinPopup({ nonce: crypto.randomUUID(), prompt: 'consent' }));
+    login: (provider: AccountProvider = 'github') => pendingLogin ??= enqueue(async () => {
+      const user = display(await manager.signinPopup({ nonce: crypto.randomUUID(), prompt: 'consent', provider }));
       if (!user) throw new Error('未取得有效登录身份');
       return user;
     }).finally(() => { pendingLogin = null; }),

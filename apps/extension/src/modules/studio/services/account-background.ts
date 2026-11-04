@@ -1,5 +1,5 @@
 import { UserManager, WebStorageStateStore, type INavigator } from 'oidc-client-ts';
-import { createAccountController } from './account-controller';
+import { createAccountController, type AccountProvider } from './account-controller';
 import { createAuthStorage } from './auth-storage';
 import { revokeOAuthToken } from './revoke-oauth-token';
 import { mergeUserInfo, readUserInfo } from './user-info';
@@ -8,12 +8,20 @@ import { removeNeonSessionCookie } from './remove-session-cookie';
 const authority = 'https://ep-patient-grass-ak8aymgi.neonauth.c-3.us-west-2.aws.neon.tech/neondb/auth';
 const clientId = import.meta.env.VITE_OIDC_CLIENT_ID?.trim();
 
+/** 仅用片段传递本次登录选择，不修改标准库创建的授权请求。 */
+export function createLoginStartUrl(authorize: string, provider: AccountProvider) {
+  const url = new URL('https://exts.linguio.dev/auth/sign-in/');
+  url.hash = new URLSearchParams({ provider, authorize }).toString();
+  return url.href;
+}
+
 export function registerAccount(api: typeof chrome = chrome) {
   const storage = createAuthStorage();
+  let loginProvider: AccountProvider = 'github';
   const navigator: INavigator = {
     prepare: async () => ({
       navigate: async ({ url }) => {
-        const response = await api.identity.launchWebAuthFlow({ url, interactive: true });
+        const response = await api.identity.launchWebAuthFlow({ url: createLoginStartUrl(url, loginProvider), interactive: true });
         if (!response) throw new Error('登录已取消');
         const returned = new URL(response), expected = new URL(api.identity.getRedirectURL('auth'));
         if (returned.origin !== expected.origin || returned.pathname !== expected.pathname) throw new Error('登录回跳地址不匹配');
@@ -47,10 +55,14 @@ export function registerAccount(api: typeof chrome = chrome) {
   }
   const controller = manager && clientId ? createAccountController({
     getUser: () => manager.getUser().then(withProfile),
-    signinPopup: async args => {
-      const user = await manager.signinPopup(args);
-      await withProfile(user);
-      return user;
+    signinPopup: async ({ provider, ...args }) => {
+      // 控制器串行执行登录，在授权窗口完成前不切换提供方。
+      loginProvider = provider;
+      try {
+        const user = await manager.signinPopup(args);
+        await withProfile(user);
+        return user;
+      } finally { loginProvider = 'github'; }
     },
     signinSilent: () => manager.signinSilent().then(withProfile),
     removeUser: () => manager.removeUser(),
@@ -71,8 +83,10 @@ export function registerAccount(api: typeof chrome = chrome) {
     if (sender.id !== api.runtime.id || sender.url?.split('?')[0] !== api.runtime.getURL('newtab.html')) { respond({ ok: false, error: '账户请求来源无效' }); return; }
     const action = message.action;
     if (!['get', 'login', 'logout'].includes(action)) { respond({ ok: false, error: '未知账户操作' }); return; }
+    const provider = message.provider ?? 'github';
+    if (action === 'login' && provider !== 'github' && provider !== 'google') { respond({ ok: false, error: '未知登录提供方' }); return; }
     if (!controller) { respond(action === 'get' ? { ok: true, user: null } : { ok: false, error: '尚未配置 OIDC Client ID，请先完成 Neon 配置并重新构建' }); return; }
-    const operation = action === 'get' ? controller.get : action === 'login' ? controller.login : controller.logout;
+    const operation = action === 'get' ? controller.get : action === 'login' ? () => controller.login(provider) : controller.logout;
     void operation().then(user => {
       respond({ ok: true, user });
       if (action !== 'get') void api.runtime.sendMessage({ type: 'exts:account:changed' }).catch(() => {});

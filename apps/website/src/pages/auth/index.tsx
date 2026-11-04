@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { createAuthClient } from '@neon/auth';
 import { BetterAuthVanillaAdapter } from '@neon/auth/vanilla';
 import { Button } from '@/shared/ui/button';
-import { authorizationRequest, issuer } from './requests';
+import { authorizationRequest, issuer, readLoginStart } from './requests';
 
 const client = createAuthClient(issuer, { adapter: BetterAuthVanillaAdapter() });
 
@@ -15,10 +15,21 @@ export function AuthPage() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
   const [clientName, setClientName] = useState('');
+  const [provider, setProvider] = useState<'github' | 'google'>('github');
+  const providerName = provider === 'google' ? 'Google' : 'GitHub';
 
   useEffect(() => {
     let active = true;
     async function initialize() {
+      if (!consent) {
+        const start = readLoginStart(location.hash);
+        if (start) {
+          sessionStorage.setItem('exts:login-provider', start.provider);
+          location.replace(start.url);
+          return;
+        }
+        setProvider(sessionStorage.getItem('exts:login-provider') === 'google' ? 'google' : 'github');
+      }
       if (!clientId || !query.get('redirect_uri')) throw new Error('请从 Exts 插件发起登录，不要直接打开此页面');
       const session = await client.getSession();
       if (session.error) throw new Error('无法读取登录状态，请重试');
@@ -44,7 +55,7 @@ export function AuthPage() {
     setPending(true);
     setError('');
     try {
-      location.assign(await authorizationRequest(consent ? 'consent' : 'sign-in', location.search.slice(1), location.href, accept));
+      location.assign(await authorizationRequest(consent ? 'consent' : 'sign-in', location.search.slice(1), location.href, accept, provider));
     } catch {
       setError('认证请求失败，请重试；如已超时，请从插件重新发起');
       setPending(false);
@@ -62,12 +73,12 @@ export function AuthPage() {
       <p className="break-all">资源：{query.getAll('resource').join('、') || '未指定'}</p>
       <p>仅在你从可信插件发起此操作时允许。客户端名称由申请方提供。</p>
       {['localhost', '127.0.0.1', '[::1]'].some(host => destination === host || destination.startsWith(`${host}:`)) ? <p role="alert">回调位于本机地址，请确认发起授权的是你信任的应用。</p> : null}
-    </> : <p>使用 GitHub 登录，完成后继续插件授权。</p>}
+    </> : <p>使用 {providerName} 登录，完成后继续插件授权。</p>}
     {error ? <p role="alert">{error}</p> : null}
     {!ready && !error ? <p role="status">正在读取授权请求…</p> : null}
     {consent ? <div className="flex gap-3">
       <Button disabled={!ready || pending} onClick={() => { void submit(true); }}>允许</Button>
       <Button variant="outline" disabled={!ready || pending} onClick={() => { void submit(false); }}>拒绝</Button>
-    </div> : <Button disabled={!ready || pending} onClick={() => { void submit(); }}>使用 GitHub 登录</Button>}
+    </div> : <Button disabled={!ready || pending} onClick={() => { void submit(); }}>使用 {providerName} 登录</Button>}
   </main>;
 }

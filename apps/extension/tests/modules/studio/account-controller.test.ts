@@ -17,7 +17,13 @@ function setup() {
 it('仅返回展示资料，不将访问或刷新令牌交给页面', async () => {
   const { controller, manager } = setup();
   expect(await controller.login()).toEqual({ id: 'user-1', name: 'User', email: 'user@example.com', image: null });
-  expect(manager.signinPopup).toHaveBeenCalledWith({ nonce: expect.any(String), prompt: 'consent' });
+  expect(manager.signinPopup).toHaveBeenCalledWith({ nonce: expect.any(String), prompt: 'consent', provider: 'github' });
+});
+
+it('Google 入口传递提供方，继续使用原有授权与展示资料边界', async () => {
+  const { controller, manager } = setup();
+  expect((await controller.login('google')).id).toBe('user-1');
+  expect(manager.signinPopup).toHaveBeenCalledWith({ nonce: expect.any(String), prompt: 'consent', provider: 'google' });
 });
 
 it('恢复过期会话时使用刷新令牌', async () => {

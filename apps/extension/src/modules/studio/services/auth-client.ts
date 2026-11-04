@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { AccountUser } from './account-controller';
+import type { AccountProvider, AccountUser } from './account-controller';
 
-async function request(action: 'get' | 'login' | 'logout'): Promise<AccountUser | null> {
-  const response = await chrome.runtime.sendMessage({ type: 'exts:account', action });
+async function request(action: 'get' | 'login' | 'logout', provider?: AccountProvider): Promise<AccountUser | null> {
+  const response = await chrome.runtime.sendMessage({ type: 'exts:account', action, provider });
   if (!response?.ok) throw new Error(response?.error || '账户请求失败');
   return response.user;
 }
-export const loginWithGitHub = () => request('login');
+export const loginAccount = (provider: AccountProvider) => request('login', provider);
 export const logoutAccount = () => request('logout');
 
 export function useAccount() {
