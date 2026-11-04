@@ -1,5 +1,5 @@
 name: Exts Publish
-run-name: Exts Publish · ${{ inputs.target || 'Website' }}
+run-name: Exts Publish · ${{ inputs.target || 'Website + Release check' }}
 
 on:
   push:
@@ -24,6 +24,51 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  release_trigger:
+    name: Release · Check version change
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    outputs:
+      run_release: ${{ steps.manual.outputs.run_release || steps.compare.outputs.run_release }}
+    steps:
+      - name: Keep manual Release entry
+        id: manual
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          TARGET: ${{ inputs.target }}
+        run: |
+          if [[ "$TARGET" == 'Release' ]]; then
+            echo 'run_release=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'run_release=false' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Checkout pushed commit
+        if: github.event_name == 'push'
+        uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js for version check
+        if: github.event_name == 'push'
+        uses: actions/setup-node@v5.0.0
+        with:
+          node-version: 24.16.0
+      - name: Compare product versions
+        id: compare
+        if: github.event_name == 'push'
+        shell: bash
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          git show "$BEFORE:package.json" > "$RUNNER_TEMP/exts-previous-package.json"
+          previous="$(node -e 'process.stdout.write(JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8")).version)' "$RUNNER_TEMP/exts-previous-package.json")"
+          current="$(node scripts/version.mjs)"
+          if [[ "$previous" != "$current" ]]; then
+            echo 'run_release=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'run_release=false' >> "$GITHUB_OUTPUT"
+          fi
+
   website-build:
     name: Website · Build
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.target == 'Website')
@@ -72,7 +117,8 @@ jobs:
 
   release:
     name: Release · ZIP & DMG
-    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.target == 'Release'
+    needs: release_trigger
+    if: github.ref == 'refs/heads/main' && needs.release_trigger.outputs.run_release == 'true'
     runs-on: xcode-27
     timeout-minutes: 30
     env:
