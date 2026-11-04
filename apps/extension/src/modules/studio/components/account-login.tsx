@@ -5,8 +5,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '../../../shared/ui/avatar';
 import { Button } from '../../../shared/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../shared/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '../../../shared/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../../../shared/ui/dropdown-menu';
 import { Field, FieldGroup } from '../../../shared/ui/field';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../../../shared/ui/sidebar';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '../../../shared/ui/sidebar';
 import { toast } from '../../../shared/ui/sonner';
 import { UiIcon } from '../../../shared/ui/ui-icon';
 import { useAccount, loginWithGitHub, logoutAccount } from '../services/auth-client';
@@ -16,8 +17,10 @@ import { useAccount, loginWithGitHub, logoutAccount } from '../services/auth-cli
 export function AccountLogin() {
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState<'login' | 'logout' | null>(null);
+  const { isMobile } = useSidebar();
   const { user, isPending, error, refetch } = useAccount();
   const avatar = user?.image?.startsWith('https://') ? user.image : undefined;
+  const name = user?.name || 'Account';
 
   useEffect(() => {
     if (error) {
@@ -31,6 +34,7 @@ export function AccountLogin() {
     setPending('login');
     try {
       await loginWithGitHub();
+      toast.success('登录成功');
       await refetch();
       setOpen(false);
     } catch (error) {
@@ -50,6 +54,7 @@ export function AccountLogin() {
     setPending('logout');
     try {
       await logoutAccount();
+      toast.success('退出成功');
       await refetch();
       setOpen(false);
     } catch {
@@ -60,6 +65,55 @@ export function AccountLogin() {
     }
   }
 
+  if (user) {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" aria-label={`Account: ${name}`}>
+                <Avatar className="h-8 w-8 rounded-lg grayscale">
+                  {avatar ? <AvatarImage src={avatar} alt={name} referrerPolicy="no-referrer" /> : null}
+                  <AvatarFallback className="rounded-lg"><UiIcon name="user-round" className="size-4" /></AvatarFallback>
+                </Avatar>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">{name}</span>
+                  <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+                </div>
+                <UiIcon name="ellipsis-vertical" className="ml-auto size-4" />
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg" side={isMobile ? 'bottom' : 'right'} align="end" sideOffset={4}>
+              <DropdownMenuLabel className="p-0 font-normal">
+                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    {avatar ? <AvatarImage src={avatar} alt={name} referrerPolicy="no-referrer" /> : null}
+                    <AvatarFallback className="rounded-lg"><UiIcon name="user-round" className="size-4" /></AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium">{name}</span>
+                    <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+                  </div>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem><UiIcon name="circle-user" className="size-4" />Account</DropdownMenuItem>
+                <DropdownMenuItem><UiIcon name="credit-card" className="size-4" />Billing</DropdownMenuItem>
+                <DropdownMenuItem><UiIcon name="bell" className="size-4" />Notifications</DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem disabled={pending !== null} onSelect={() => { void logout(); }}>
+                <UiIcon name="log-out" className="size-4" />
+                {pending === 'logout' ? 'Signing out…' : 'Log out'}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => {
       setOpen(nextOpen);
@@ -68,14 +122,13 @@ export function AccountLogin() {
       <SidebarMenu>
         <SidebarMenuItem>
           <DialogTrigger asChild>
-            <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" tooltip={{ children: 'Account', ...(open ? { hidden: true } : {}) }} aria-label={user ? `Account: ${user.name || user.email}` : 'Account: not signed in'}>
+            <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" tooltip={{ children: 'Account', ...(open ? { hidden: true } : {}) }} aria-label="Account: not signed in">
               <Avatar className="h-8 w-8 rounded-lg">
-                {avatar ? <AvatarImage src={avatar} alt="" referrerPolicy="no-referrer" /> : null}
                 <AvatarFallback className="rounded-lg"><UiIcon name="user-round" className="size-4" /></AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user?.name || 'Account'}</span>
-                <span className="truncate text-xs">{user?.email || (isPending ? 'Checking account…' : 'Not signed in')}</span>
+                <span className="truncate font-medium">Account</span>
+                <span className="truncate text-xs">{isPending ? 'Checking account…' : 'Not signed in'}</span>
               </div>
             </SidebarMenuButton>
           </DialogTrigger>
@@ -85,13 +138,11 @@ export function AccountLogin() {
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader className="text-center">
-              <DialogTitle asChild><CardTitle className="text-xl">{user ? user.name || 'Account' : 'Welcome back'}</CardTitle></DialogTitle>
-              <DialogDescription asChild><CardDescription>{user ? user.email : 'Login with your Github or Google account'}</CardDescription></DialogDescription>
+              <DialogTitle asChild><CardTitle className="text-xl">Welcome back</CardTitle></DialogTitle>
+              <DialogDescription asChild><CardDescription>Login with your Github or Google account</CardDescription></DialogDescription>
             </CardHeader>
             <CardContent>
-              {user ? <Button variant="outline" type="button" className="w-full" disabled={pending !== null} onClick={() => { void logout(); }}>
-                {pending === 'logout' ? 'Signing out…' : 'Sign out'}
-              </Button> : <form>
+              <form>
                 <FieldGroup>
                   <Field>
                     <Button variant="outline" type="button" disabled={pending !== null || isPending} onClick={() => { void login(); }}>
@@ -109,7 +160,7 @@ export function AccountLogin() {
                     </Button>
                   </Field>
                 </FieldGroup>
-              </form>}
+              </form>
             </CardContent>
           </Card>
         </div>

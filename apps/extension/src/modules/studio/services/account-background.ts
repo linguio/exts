@@ -1,6 +1,8 @@
 import { UserManager, WebStorageStateStore, type INavigator } from 'oidc-client-ts';
 import { createAccountController } from './account-controller';
 import { createAuthStorage } from './auth-storage';
+import { revokeOAuthToken } from './revoke-oauth-token';
+import { mergeUserInfo, readUserInfo } from './user-info';
 
 const authority = 'https://ep-patient-grass-ak8aymgi.neonauth.c-3.us-west-2.aws.neon.tech/neondb/auth';
 const clientId = import.meta.env.VITE_OIDC_CLIENT_ID?.trim();
@@ -29,7 +31,39 @@ export function registerAccount(api: typeof chrome = chrome) {
     userStore: new WebStorageStateStore({ store: storage, prefix: 'user:' }),
     stateStore: new WebStorageStateStore({ store: storage, prefix: 'state:' }),
   }, undefined, navigator) : null;
-  const controller = manager ? createAccountController(manager) : null;
+  async function withProfile<T extends { access_token?: string; profile: { sub?: string; name?: unknown; email?: unknown; picture?: unknown } }>(user: T | null) {
+    const hasProfile = [user?.profile?.name, user?.profile?.email, user?.profile?.picture].some(value => typeof value === 'string' && value);
+    if (!user?.access_token || hasProfile) return user;
+    const endpoint = await manager!.metadataService.getUserInfoEndpoint();
+    if (!endpoint) return user;
+    try {
+      user.profile = mergeUserInfo(user.profile, await readUserInfo(endpoint, user.access_token));
+      await manager!.storeUser(user as never);
+    } catch (error) {
+      console.error('Studio 用户信息读取失败', { category: error instanceof Error ? 'request-failed' : 'invalid-response' });
+    }
+    return user;
+  }
+  const controller = manager && clientId ? createAccountController({
+    getUser: () => manager.getUser().then(withProfile),
+    signinPopup: async args => {
+      const user = await manager.signinPopup(args);
+      await withProfile(user);
+      return user;
+    },
+    signinSilent: () => manager.signinSilent().then(withProfile),
+    removeUser: () => manager.removeUser(),
+    revokeTokens: async types => {
+      const user = await manager.getUser();
+      const endpoint = await manager.metadataService.getRevocationEndpoint();
+      if (!endpoint) throw new Error('撤销刷新令牌失败');
+      for (const tokenType of types) {
+        const token = user?.[tokenType];
+        if (typeof token !== 'string' || !token) continue;
+        await revokeOAuthToken({ endpoint, clientId, token, tokenType });
+      }
+    },
+  }) : null;
   api.runtime.onMessage.addListener((message, sender, respond) => {
     if (message?.type !== 'exts:account') return;
     if (sender.id !== api.runtime.id || sender.url?.split('?')[0] !== api.runtime.getURL('newtab.html')) { respond({ ok: false, error: '账户请求来源无效' }); return; }
