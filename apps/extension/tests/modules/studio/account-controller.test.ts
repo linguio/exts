@@ -33,6 +33,21 @@ it('恢复过期会话时使用刷新令牌', async () => {
   expect(manager.signinSilent).toHaveBeenCalledTimes(1);
 });
 
+it('没有本地会话时直接返回未登录，不尝试刷新', async () => {
+  const { controller, manager } = setup();
+  manager.getUser.mockResolvedValueOnce(null as never);
+  await expect(controller.get()).resolves.toBeNull();
+  expect(manager.signinSilent).not.toHaveBeenCalled();
+});
+
+it('过期且无法刷新时明确报告会话失效', async () => {
+  const { controller, manager, user } = setup();
+  manager.getUser.mockResolvedValueOnce({ ...user, expired: true, refresh_token: undefined } as never);
+  await expect(controller.get()).rejects.toMatchObject({ code: 'session-expired' });
+  expect(manager.removeUser).toHaveBeenCalledTimes(1);
+  expect(manager.signinSilent).not.toHaveBeenCalled();
+});
+
 it('多页面同时发起登录时只打开一次授权', async () => {
   const { controller, manager } = setup();
   await Promise.all([controller.login(), controller.login()]);
@@ -68,7 +83,7 @@ it('刷新令牌失效后回到未登录，网络错误保留重试机会', asyn
   const { controller, manager, user } = setup();
   manager.getUser.mockResolvedValue({ ...user, expired: true });
   manager.signinSilent.mockRejectedValueOnce({ error: 'invalid_grant' });
-  expect(await controller.get()).toBeNull();
+  await expect(controller.get()).rejects.toMatchObject({ code: 'session-expired' });
   expect(manager.removeUser).toHaveBeenCalledTimes(1);
   manager.signinSilent.mockRejectedValueOnce(new Error('offline'));
   await expect(controller.get()).rejects.toThrow('offline');

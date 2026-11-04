@@ -7,6 +7,9 @@ import { StudioSidebar } from './components/studio-sidebar';
 
 export { ActivityCard } from './components/activity';
 export { StudioDockEntry } from './components/dock-entry';
+export { AccountDialog } from './components/account-dialog';
+export { AccountMenuContent } from './components/account-menu-content';
+export { logoutAccount, useAccount } from './services/auth-client';
 
 interface StudioProps {
   onHome: () => void;

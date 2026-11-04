@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../../shared/ui/tooltip
 import type { Bookmark } from '../../shared/bookmarks/types';
 import { StudioDockEntry } from '../studio';
 import { DockActions } from './views/dock-actions';
+import { DockAccount } from './views/dock-account';
 import { DockDownload } from './views/dock-download';
 import { DockSettings } from './views/dock-settings';
 
@@ -41,6 +42,7 @@ export function Dock({ favorites, studioActive, onStudioChange }: DockProps) {
             <DockActions />
             <DockDownload />
             <DockSettings />
+            <DockAccount />
           </div>
         </div>
         <ScrollBar orientation="horizontal" />

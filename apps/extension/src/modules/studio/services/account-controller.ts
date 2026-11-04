@@ -9,6 +9,10 @@ interface Manager {
   endSession(): Promise<void>;
   removeUser(): Promise<void>;
 }
+export class AccountSessionExpiredError extends Error {
+  readonly code = 'session-expired';
+  constructor() { super('登录已失效，请重新登录'); }
+}
 /** 后台串行协调旋转刷新令牌，页面只接收展示资料。 */
 export function createAccountController(manager: Manager) {
   let tail: Promise<unknown> = Promise.resolve();
@@ -25,10 +29,10 @@ export function createAccountController(manager: Manager) {
     get: () => enqueue(async () => {
       let user = await manager.getUser();
       if (user?.expired) {
-        if (!user.refresh_token) { await manager.removeUser(); return null; }
+        if (!user.refresh_token) { await manager.removeUser(); throw new AccountSessionExpiredError(); }
         try { user = await manager.signinSilent(); }
         catch (error) {
-          if (typeof error === 'object' && error !== null && 'error' in error && error.error === 'invalid_grant') { await manager.removeUser(); return null; }
+          if (typeof error === 'object' && error !== null && 'error' in error && error.error === 'invalid_grant') { await manager.removeUser(); throw new AccountSessionExpiredError(); }
           throw error;
         }
       }

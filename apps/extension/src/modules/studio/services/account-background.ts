@@ -1,5 +1,5 @@
 import { UserManager, WebStorageStateStore, type INavigator } from 'oidc-client-ts';
-import { createAccountController, type AccountProvider } from './account-controller';
+import { AccountSessionExpiredError, createAccountController, type AccountProvider } from './account-controller';
 import { createAuthStorage } from './auth-storage';
 import { revokeOAuthToken } from './revoke-oauth-token';
 import { mergeUserInfo, readUserInfo } from './user-info';
@@ -106,6 +106,12 @@ export function registerAccount(api: typeof chrome = chrome) {
       if (action !== 'get') void api.runtime.sendMessage({ type: 'exts:account:changed' }).catch(() => {});
     }, error => {
       // 原始认证错误可能包含授权码或令牌，仅返回固定提示。
+      if (action === 'get') {
+        const expired = error instanceof AccountSessionExpiredError;
+        console.error('Studio 账户状态读取失败', { category: expired ? 'session-expired' : 'request-failed' });
+        respond({ ok: false, code: expired ? 'session-expired' : 'state-unavailable', error: expired ? '登录已失效，请重新登录' : '暂时无法确认账户状态，请重试' });
+        return;
+      }
       const cancelled = error instanceof Error && /cancel|closed|did not approve/i.test(error.message);
       console.error('Studio OIDC 操作失败', { action, category: cancelled ? 'cancelled' : 'request-failed' });
       respond({ ok: false, error: action === 'logout'
