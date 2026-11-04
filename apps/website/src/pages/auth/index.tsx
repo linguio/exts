@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { createAuthClient } from '@neon/auth';
 import { BetterAuthVanillaAdapter } from '@neon/auth/vanilla';
 import { Button } from '@/shared/ui/button';
-import { authorizationRequest, issuer, readLoginStart } from './requests';
+import { authorizationRequest, issuer, readLoginStart, readLogoutReturn } from './requests';
 
 const client = createAuthClient(issuer, { adapter: BetterAuthVanillaAdapter() });
 
 /** 原始查询由 Neon 校验签名；页面只展示申请内容，不把客户端名称视为可信身份。 */
 export function AuthPage() {
   const consent = location.pathname.startsWith('/auth/consent');
+  const signOut = location.pathname.startsWith('/auth/sign-out');
   const query = new URLSearchParams(location.search);
   const clientId = query.get('client_id');
   const [ready, setReady] = useState(false);
@@ -21,6 +22,15 @@ export function AuthPage() {
   useEffect(() => {
     let active = true;
     async function initialize() {
+      if (signOut) {
+        const redirect = readLogoutReturn(location.hash);
+        const result = await client.signOut();
+        if (result.error) throw new Error('Neon 会话注销失败，请重试');
+        const session = await client.getSession();
+        if (session.error || session.data?.user) throw new Error('无法确认 Neon 会话已结束，请重试');
+        location.replace(redirect);
+        return;
+      }
       if (!consent) {
         const start = readLoginStart(location.hash);
         if (start) {
@@ -64,6 +74,10 @@ export function AuthPage() {
 
   let destination = '';
   try { destination = new URL(query.get('redirect_uri') || '').host; } catch { /* 无效地址由初始化错误阻止操作。 */ }
+  if (signOut) return <main className="mx-auto flex min-h-screen w-full max-w-lg flex-col justify-center gap-6 p-6">
+    <h1 className="text-2xl font-semibold">退出 Exts</h1>
+    {error ? <p role="alert">{error}</p> : <p role="status">正在结束登录会话…</p>}
+  </main>;
   return <main className="mx-auto flex min-h-screen w-full max-w-lg flex-col justify-center gap-6 p-6">
     <h1 className="text-2xl font-semibold">{consent ? '确认授权' : '登录 Exts'}</h1>
     {consent ? <>

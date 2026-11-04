@@ -22,6 +22,7 @@ export default defineConfig({
         home: fileURLToPath(new URL('./src/entrypoints/index.html', import.meta.url)),
         signIn: fileURLToPath(new URL('./src/entrypoints/auth/sign-in/index.html', import.meta.url)),
         consent: fileURLToPath(new URL('./src/entrypoints/auth/consent/index.html', import.meta.url)),
+        signOut: fileURLToPath(new URL('./src/entrypoints/auth/sign-out/index.html', import.meta.url)),
         changelog: fileURLToPath(new URL('./src/entrypoints/changelog/index.html', import.meta.url)),
         features: fileURLToPath(new URL('./src/entrypoints/features/index.html', import.meta.url)),
       },

@@ -1,6 +1,16 @@
 export const issuer = 'https://ep-patient-grass-ak8aymgi.neonauth.c-3.us-west-2.aws.neon.tech/neondb/auth';
 export type LoginProvider = 'github' | 'google';
 
+/** 退出完成只允许返回当前固定插件的专用回跳。 */
+export function readLogoutReturn(hash: string): string {
+  const params = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
+  const raw = params.get('return');
+  if (params.size !== 1 || !raw || raw !== 'https://gclkjdfiiibgahheiejgbmkglebbbgeh.chromiumapp.org/logout') {
+    throw new Error('退出回跳无效，请从插件重新发起');
+  }
+  return raw;
+}
+
 /** 引导片段只选择提供方；授权目标必须是固定 Neon 端点。 */
 export function readLoginStart(hash: string): { provider: LoginProvider; url: string } | null {
   if (!hash) return null;

@@ -15,6 +15,13 @@ export function createLoginStartUrl(authorize: string, provider: AccountProvider
   return url.href;
 }
 
+/** 退出页只接收固定插件回跳，不传递令牌或会话 Cookie。 */
+export function createLogoutStartUrl(redirect: string) {
+  const url = new URL('https://exts.linguio.dev/auth/sign-out/');
+  url.hash = new URLSearchParams({ return: redirect }).toString();
+  return url.href;
+}
+
 export function registerAccount(api: typeof chrome = chrome) {
   const storage = createAuthStorage();
   let loginProvider: AccountProvider = 'github';
@@ -66,7 +73,14 @@ export function registerAccount(api: typeof chrome = chrome) {
     },
     signinSilent: () => manager.signinSilent().then(withProfile),
     removeUser: () => manager.removeUser(),
-    endSession: () => removeNeonSessionCookie(api.cookies, authority),
+    endSession: async () => {
+      const expected = new URL(api.identity.getRedirectURL('logout'));
+      const response = await api.identity.launchWebAuthFlow({ url: createLogoutStartUrl(expected.href), interactive: true });
+      if (!response) throw new Error('退出未完成');
+      const returned = new URL(response);
+      if (returned.origin !== expected.origin || returned.pathname !== expected.pathname || returned.search || returned.hash) throw new Error('退出回跳地址不匹配');
+      await removeNeonSessionCookie(api.cookies, authority);
+    },
     revokeTokens: async types => {
       const user = await manager.getUser();
       const endpoint = await manager.metadataService.getRevocationEndpoint();

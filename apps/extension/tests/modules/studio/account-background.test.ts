@@ -48,3 +48,10 @@ it('登录引导通过官网片段传递提供方和标准授权地址，不改�
   expect(fragment.get('provider')).toBe('google');
   expect(fragment.get('authorize')).toBe(authorize);
 });
+
+it('退出引导只携带插件固定 logout 回跳', async () => {
+  const { createLogoutStartUrl } = await import('../../../src/modules/studio/services/account-background');
+  const url = new URL(createLogoutStartUrl('https://gclkjdfiiibgahheiejgbmkglebbbgeh.chromiumapp.org/logout'));
+  expect(url.origin + url.pathname).toBe('https://exts.linguio.dev/auth/sign-out/');
+  expect(new URLSearchParams(url.hash.slice(1)).get('return')).toBe('https://gclkjdfiiibgahheiejgbmkglebbbgeh.chromiumapp.org/logout');
+});

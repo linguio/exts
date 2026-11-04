@@ -1,6 +1,6 @@
 import { test, mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { authorizationRequest, readLoginStart } from '../src/pages/auth/requests.ts';
+import { authorizationRequest, readLoginStart, readLogoutReturn } from '../src/pages/auth/requests.ts';
 
 test('授权确认原样传回签名查询，拒绝授权也由认证服务处理', async () => {
   const raw = 'scope=openid%20email&signed=a%2Bb&client_id=example';
@@ -65,4 +65,12 @@ test('登录引导拒绝未知提供方及非受信授权地址', () => {
     endpoint.replace('https://', 'https://user:password@'),
     endpoint + '#extra',
   ]) assert.throws(() => readLoginStart(fragment('google', url)), /登录引导无效/);
+});
+
+test('退出回跳只允许固定插件的 logout 路径', () => {
+  const redirect = 'https://gclkjdfiiibgahheiejgbmkglebbbgeh.chromiumapp.org/logout';
+  assert.equal(readLogoutReturn('#' + new URLSearchParams({ return: redirect })), redirect);
+  for (const target of ['https://example.com/logout', redirect + '?code=secret', redirect.replace('/logout', '/auth')]) {
+    assert.throws(() => readLogoutReturn('#' + new URLSearchParams({ return: target })), /退出回跳无效/);
+  }
 });
