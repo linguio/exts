@@ -44,6 +44,7 @@
 ## 官方基线
 
 - Studio GitHub 登录（2026-11-04）：从同一固定版本 c257f688cf4de7ec10cc1be84cad29cd4631182c 的 ui/avatar.tsx 补齐实际需要的 AvatarImage，沿用官方 aspect-square/size-full；未登录 Fallback、Account 行及登录块样式保持原有规则。真实账户、登录进行中及退出属于获批登录行为，不改主题 Token。插件认证采用 oidc-client-ts 3.5.0；官网认证承接页使用现有官方 Button 和主题，不引入额外 UI 模板或图表框架，@neon/auth 0.8.2 仅在官网读取网页会话。
+- 已登录账户（2026-11-04）：用户指定 [Blocks](https://ui.shadcn.com/blocks) 的 dashboard-01 `nav-user.tsx`。只替换 Studio 右下角已登录入口，不执行 CLI，不迁入图表、表格或 Tabler 图标。菜单结构、向右展开、`sideOffset=4`、`min-w-56` 与竖向省略号沿用该块；图标改用既有 Lucide 静态映射。DropdownMenu 仅补同一固定版本的 Group、Label、Separator，不加入动画类，共用菜单默认间距仍为 12px。无头像时继续用 UserRound，不显示示例缩写。Log out 调用现有退出；Account、Billing、Notifications 无新功能。未登录仍打开原登录框。
 
 - 核对日期：2026-10-16。
 - 仓库：[shadcn-ui/ui](https://github.com/shadcn-ui/ui)，MIT 许可。
