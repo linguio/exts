@@ -43,6 +43,8 @@
 
 ## 官方基线
 
+- Studio GitHub 登录（2026-11-04）：从同一固定版本 c257f688cf4de7ec10cc1be84cad29cd4631182c 的 ui/avatar.tsx 补齐实际需要的 AvatarImage，沿用官方 aspect-square/size-full；未登录 Fallback、Account 行及登录块样式保持原有规则。真实账户、登录进行中及退出属于获批登录行为，不改主题 Token。插件认证采用 oidc-client-ts 3.5.0；官网认证承接页使用现有官方 Button 和主题，不引入额外 UI 模板或图表框架，@neon/auth 0.8.2 仅在官网读取网页会话。
+
 - 核对日期：2026-10-16。
 - 仓库：[shadcn-ui/ui](https://github.com/shadcn-ui/ui)，MIT 许可。
 - 固定源码目录：[new-york-v4/ui](https://github.com/shadcn-ui/ui/tree/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/registry/new-york-v4/ui)。以下文件均可在这个固定目录逐项对照，不用随时变化的 main 作为版本依据。

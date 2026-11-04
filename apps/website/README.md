@@ -24,7 +24,10 @@ pnpm web:build
 
 ## 工程组织
 
-- src/entrypoints：三个 HTML 和 React 启动入口；Vite 页面根位于此处，外部地址仍为 /、/features/、/changelog/。
+- 新增 /auth/sign-in/ 与 /auth/consent/ 两个认证托管入口，供插件标准 OIDC/PKCE 流程使用，不在官网首页增加登录要求。使用 @neon/auth 0.8.2 读取网页会话，Neon REST 接口承接原样签名查询；GitHub 密码在 GitHub 官方页面输入。两页不被索引、不发送 referrer，部署/外部配置与实际登录仍需按 [认证配置清单](../../docs/extension/auth-setup.md) 执行。
+- 认证请求纯逻辑检查：node --test --test-isolation=none apps/website/tests/auth-requests.test.mjs。不得将编译或请求单测通过视为线上授权完成。
+
+- src/entrypoints：产品三页及两个认证托管页的 HTML 和 React 启动入口；产品外部地址仍为 /、/features/、/changelog/，认证页为 /auth/sign-in/、/auth/consent/。
 - src/pages/home：首页正文及 components 下的文字动效、平台下载入口、展示卡片池等首页专用内容。
 - src/pages/products：产品介绍与 Quick Start；内部目录改名，不改变外部 /features/ 地址或分类 hash。
 - src/pages/changelog：更新日志页面、时间线和 data.ts 日志数据。

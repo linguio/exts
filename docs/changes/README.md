@@ -79,19 +79,21 @@ docs/
 
 ## 当前 Issue
 
-无活动 Issue。
+无。
 
 - 已暂停：[在 Studio 统一管理网站图标与扩展缓存](./issues/2026-11-02-extension-remote-brand-cache-issue.md) · [Commit 记录](./commits/2026-11-02-extension-remote-brand-cache-commit.md)；用户于 2026-11-02 决定暂不实施，后续在 Studio 做管理与查询页，支持增删改查；旧静态发布草案仅供参考，数据库、接口及权限恢复时重新确认；当前仅文档改动尚未提交，未配置 Neon、上传或修改代码，未完结归档。
 
 ## Issue 队列
 
-- [接入 Studio GitHub 真实登录](./issues/2026-11-02-extension-github-login-issue.md) · [Commit 记录](./commits/2026-11-02-extension-github-login-commit.md)；仅建档排队，静态 Studio 完结后再确认认证、回跳、会话与外部配置，不自动实施。
+无。
 
 ## 待办
 
 无。
 
 ## 已完成
+
+- [接入 Studio GitHub 真实登录](./issues/2026-11-02-extension-github-login-issue.md) · [Commit 记录](./commits/2026-11-02-extension-github-login-commit.md)；用户于 2026-11-04 要求拆成四笔本地提交完结。插件改为 OIDC 授权码与 PKCE，官网增加登录和授权确认页。Cookie 直连因退出 403 INVALID_ORIGIN 且 Neon 拒绝 chrome-extension 来源而停用。线上两个认证页仍为 404，用户登录得到认证请求失败；Client ID 只在本地 .env.local，未写入仓库。本次提交未重跑测试、类型检查或构建，未推送或部署。
 
 - [固定扩展本地加载标识](./issues/2026-11-04-extension-fixed-id-issue.md) · [Commit 记录](./commits/2026-11-04-extension-fixed-id-commit.md)；用户于 2026-11-04 确认 ID 正常并要求本地提交完结，代码与文档分开提交；固定 ID 为 gclkjdfiiibgahheiejgbmkglebbbgeh，沿用 80 项测试、类型检查、正式构建及公钥/ID 校验通过结果；旧开发产物缺少 key 的排查及更新步骤已说明，跨机器、各浏览器分别加载和登录兼容性未独立验证，未推送。
 
