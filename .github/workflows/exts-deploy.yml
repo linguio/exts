@@ -52,18 +52,17 @@ jobs:
         uses: actions/setup-node@v5.0.0
         with:
           node-version: 24.16.0
+          package-manager-cache: false
       - name: Compare product versions
         id: compare
         if: github.event_name == 'push'
         shell: bash
-        env:
-          BEFORE: ${{ github.event.before }}
         run: |
           set -euo pipefail
-          git show "$BEFORE:package.json" > "$RUNNER_TEMP/exts-previous-package.json"
-          previous="$(node -e 'process.stdout.write(JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8")).version)' "$RUNNER_TEMP/exts-previous-package.json")"
           current="$(node scripts/version.mjs)"
-          if [[ "$previous" != "$current" ]]; then
+          latest_tag="$(git ls-remote --refs --tags origin 'refs/tags/v*' | sed -nE 's#^[^[:space:]]+[[:space:]]+refs/tags/(v[0-9]+\.[0-9]+\.[0-9]+)$#\1#p' | sort -V | tail -n 1)"
+          echo "Product version: v$current; latest remote tag: ${latest_tag:-none}"
+          if [[ -z "$latest_tag" ]] || { [[ "$latest_tag" != "v$current" ]] && [[ "$(printf '%s\n%s\n' "$latest_tag" "v$current" | sort -V | tail -n 1)" == "v$current" ]]; }; then
             echo 'run_release=true' >> "$GITHUB_OUTPUT"
           else
             echo 'run_release=false' >> "$GITHUB_OUTPUT"
