@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [准备 1.9.0 版本并更新登录日志](./issues/2026-11-05-repo-v190-auth-changelog-issue.md) · [Commit 记录](./commits/2026-11-05-repo-v190-auth-changelog-commit.md)；用户于 2026-11-05 确认验收通过并要求本地提交，版本和官网改动与文档分开提交；版本读取和 diff 检查通过，官网类型检查与构建因本机依赖缺失及 DNS 失败未完成，未推送或部署。
+
 - [修正账户状态并补充 Newtab 快捷登录](./issues/2026-11-04-extension-account-state-feedback-issue.md) · [Commit 记录](./commits/2026-11-04-extension-account-state-feedback-commit.md)；用户于 2026-11-05 确认验收通过并要求本地提交，代码与文档分开提交；扩展 102 项测试、类型检查、生产构建与 diff 检查通过，浏览器交互由用户验收，代理未独立实测，未推送。
 
 - [统一 Exts 登录、授权与退出窗口](./issues/2026-11-04-extension-auth-window-unification-issue.md) · [Commit 记录](./commits/2026-11-04-extension-auth-window-unification-commit.md)；按用户指令提交当前页面阶段成果。浏览器外框固定与退出失败定位尚未完成；官网类型检查通过，构建受本机环境错误阻塞，未做浏览器验收或部署。
