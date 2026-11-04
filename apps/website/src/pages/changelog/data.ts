@@ -1,5 +1,3 @@
-import { site } from '@/shared/config/site';
-
 export type ChangelogPlatform = 'Website' | 'Extension' | 'Desktop' | 'API' | 'Packages' | 'Build' | 'Skills';
 
 type ChangelogEntry = {
@@ -9,16 +7,28 @@ type ChangelogEntry = {
   groups: readonly {
     platform: ChangelogPlatform;
     changes: readonly string[];
-    links?: readonly { label: string; href: string }[];
   }[];
 };
 
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'account-login-v190',
+    date: '2026-11-05',
+    title: '完善账户登录与状态提示',
+    groups: [{
+      platform: 'Extension',
+      changes: [
+        '配置并接入 GitHub、Google 登录。',
+        '在 Studio 与 Newtab 增加账户登录入口。',
+        '支持查看账户资料与退出登录，并完善登录状态提示。',
+      ],
+    }],
+  },
+  {
     id: 'studio-activity-v180',
     date: '2026-11-02',
-    title: '新增 Studio 布局与登录入口，优化本地调试',
+    title: '新增 Studio 布局与登录入口',
     groups: [
       {
         platform: 'Extension',
@@ -46,7 +56,6 @@ export const changelogEntries: readonly ChangelogEntry[] = [
           '上线 API 服务，支持自动部署。',
           '新增交互式接口文档，支持在线查看与调试。',
         ],
-        links: [{ label: 'API 文档', href: site.apiDocsUrl }],
       },
       {
         platform: 'Website',
@@ -68,9 +77,6 @@ export const changelogEntries: readonly ChangelogEntry[] = [
         '整合并优化 Media Download 与下载记录，预留 X 下载扩展。',
         '整合并优化 Settings，统一全局状态图标与操作反馈。',
       ],
-      links: [
-        { label: 'exts-chrome.zip · 1.7.0', href: 'https://github.com/linguio/exts/releases/download/v1.7.0/exts-chrome.zip' },
-      ],
     }],
   },
   {
@@ -83,9 +89,6 @@ export const changelogEntries: readonly ChangelogEntry[] = [
         '新增 Studio 工作台入口与 Actions 快捷操作菜单，支持首页与工作台切换。',
         '调整书签分类，新增 UI 文件夹并统一网站 SVG 图标配色。',
         '优化文件夹内部滚动，补充上下方向提示与边缘渐变磨砂。',
-      ],
-      links: [
-        { label: 'exts-chrome.zip · 1.6.0', href: 'https://github.com/linguio/exts/releases/download/v1.6.0/exts-chrome.zip' },
       ],
     }],
   },
@@ -112,9 +115,6 @@ export const changelogEntries: readonly ChangelogEntry[] = [
         '新增下载记录，支持查看文件名与大小、按来源筛选和清空记录。',
         '规范操作提示，统一提示文案、状态图标与显示位置。',
       ],
-      links: [
-        { label: 'exts-chrome.zip · 1.5.0', href: 'https://github.com/linguio/exts/releases/download/v1.5.0/exts-chrome.zip' },
-      ],
     }],
   },
   {
@@ -127,9 +127,6 @@ export const changelogEntries: readonly ChangelogEntry[] = [
         '重排书签、卡片与底部 Dock，各区域内容独立滚动。',
         '新增打卡记录日历，按本地日期展示内置示例的每日学习分钟数。',
         'Dock 新增 Download 空抽屉入口，EDU 文件夹悬停时切换锁图标。',
-      ],
-      links: [
-        { label: 'exts-chrome.zip · 1.4.0', href: 'https://github.com/linguio/exts/releases/download/v1.4.0/exts-chrome.zip' },
       ],
     }],
   },
@@ -157,9 +154,6 @@ export const changelogEntries: readonly ChangelogEntry[] = [
         'Newtab Settings 中提供开关，默认开启。',
         '统一全局 Toast 规范，支持主题同步与多条提示折叠。',
       ],
-      links: [
-        { label: 'exts-chrome.zip · 1.3.0', href: 'https://github.com/linguio/exts/releases/download/v1.3.0/exts-chrome.zip' },
-      ],
     }],
   },
   {
@@ -184,10 +178,6 @@ export const changelogEntries: readonly ChangelogEntry[] = [
         '新增 workflow-change，管理开发任务范围、交付记录、验收与本地提交。',
         '新增 workflow-observer，观察并记录开发习惯，通过复盘总结改进方向，优化自己的工作流。',
       ],
-      links: [
-        { label: 'workflow-change · 查看源码', href: 'https://github.com/linguio/exts/tree/main/skills/workflow-change' },
-        { label: 'workflow-observer · 查看源码', href: 'https://github.com/linguio/exts/tree/main/skills/workflow-observer' },
-      ],
     }],
   },
   {
@@ -202,18 +192,12 @@ export const changelogEntries: readonly ChangelogEntry[] = [
           '支持按月份分组选择，批量下载所选照片和视频。',
           '新增 DMG 拖拽安装窗口，支持将 Exts 拖入应用程序。',
         ],
-        links: [
-          { label: 'exts-mac.dmg · 1.2.0', href: 'https://github.com/linguio/exts/releases/download/v1.2.0/exts-mac.dmg' },
-        ],
       },
       {
         platform: 'Extension',
         changes: [
           '新增 Newtab 书签，调整常用入口。',
           '优化 Newtab 与设置页面的样式布局。',
-        ],
-        links: [
-          { label: 'exts-chrome.zip · 1.2.0', href: 'https://github.com/linguio/exts/releases/download/v1.2.0/exts-chrome.zip' },
         ],
       },
     ],
@@ -241,7 +225,6 @@ export const changelogEntries: readonly ChangelogEntry[] = [
         '新增历史清理，支持在浏览器打开与关闭时清理访问历史。',
         '优化界面样式，统一组件风格与交互反馈。',
       ],
-      links: [{ label: 'exts-chrome.zip · 1.1.0', href: 'https://github.com/linguio/exts/releases/download/v1.1.0/exts-chrome.zip' }],
     }],
   },
   {
@@ -267,7 +250,6 @@ export const changelogEntries: readonly ChangelogEntry[] = [
         '新增稳定开发目录，完成产物同步后再通知扩展重载。',
         '新增产物校验，更新失败时保留上一份可用产物。',
       ],
-      links: [{ label: '@linguio/wxt-stable-output · 1.0.0', href: 'https://www.npmjs.com/package/@linguio/wxt-stable-output/v/1.0.0' }],
     }],
   },
   {
@@ -294,7 +276,6 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       '新增标签组，按分组打开并组织网页。',
       '新增书签与 Dock，快速访问常用网站和工具。',
       ],
-      links: [{ label: 'exts-chrome.zip · 1.0.0', href: 'https://github.com/linguio/exts/releases/download/v1.0.0/exts-chrome.zip' }],
     }],
   },
 ];
