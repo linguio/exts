@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [版本变化后自动生成 Release 草稿](./issues/2026-11-05-repo-auto-release-on-version-issue.md) · [Commit 记录](./commits/2026-11-05-repo-auto-release-on-version-commit.md)；用户要求改完本地提交，配置与文档分开提交；版本变化、版本不变及手动目标的本地脚本检查通过，构建发布逻辑测试 19 项通过；未推送，线上 Actions、ZIP／DMG、Tag 与草稿 Release 待远端验证。
+
 - [准备 1.9.0 版本并更新登录日志](./issues/2026-11-05-repo-v190-auth-changelog-issue.md) · [Commit 记录](./commits/2026-11-05-repo-v190-auth-changelog-commit.md)；用户于 2026-11-05 确认验收通过并要求本地提交，版本和官网改动与文档分开提交；版本读取和 diff 检查通过，官网类型检查与构建因本机依赖缺失及 DNS 失败未完成，未推送或部署。
 
 - [修正账户状态并补充 Newtab 快捷登录](./issues/2026-11-04-extension-account-state-feedback-issue.md) · [Commit 记录](./commits/2026-11-04-extension-account-state-feedback-commit.md)；用户于 2026-11-05 确认验收通过并要求本地提交，代码与文档分开提交；扩展 102 项测试、类型检查、生产构建与 diff 检查通过，浏览器交互由用户验收，代理未独立实测，未推送。
