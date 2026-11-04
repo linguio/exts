@@ -38,13 +38,13 @@
 
 应用图标为透明黑／白 PNG，系统配色偏好在新标签页挂载后同步到工具栏及 favicon。用户自行检查真实浏览器主题效果；扩展 ID 或加载目录变化不保证旧存储自动继承。
 
-## Studio GitHub 登录
+## Studio GitHub / Google 登录
 
-Account 使用标准 `oidc-client-ts` 3.5.0 进行 OIDC 授权码 + S256 PKCE 登录。官网只承载认证中转与授权确认，GitHub 密码及 GitHub 授权在官方页面完成。未登录仍可使用本地功能，Google 暂未接入；不新增 FastAPI 接口、业务表或管理员权限。
+Account 使用标准 `oidc-client-ts` 3.5.0 进行 OIDC 授权码 + S256 PKCE 登录。官网只承载认证中转与授权确认，GitHub/Google 密码及授权在对应官方页面完成。插件按钮选择提供方，官网认证页通过窗口 sessionStorage 保留选择，原始授权和签名查询不改写。未登录仍可使用本地功能；不新增 FastAPI 接口、业务表或管理员权限。
 
 Manifest 包含 identity、cookies 与唯一 Neon Auth 主机权限，固定公钥保持不变。所有插件认证请求省略网页 Cookie，后台统一处理授权、令牌刷新及撤销；凭据保存在扩展源 IndexedDB，不返回给页面或内容脚本。配置与部署顺序见 [认证配置清单](../../docs/extension/auth-setup.md)。将同目录 .env.example 复制为 .env.local，填写公开的 VITE_OIDC_CLIENT_ID 后重新构建；不要填写 Client Secret。缺少 Client ID 时保持访客状态并明确提示未配置。
 
-实际验收使用根 dist/build/chrome-mv3；部署网页并配置 Neon public client 后，在 Studio → Account → Login with GitHub 发起。成功显示真实账户，取消/拒绝不能成为已登录。刷新及重启恢复仍有效身份，退出先撤销刷新令牌，再删除 Neon Auth 指定会话 Cookie，最后清除插件身份；全过程不弹退出窗口，失败可重试。详情见认证配置清单；再次登录要求 Neon 显示 Exts 授权确认，官网向 GitHub 请求显示账号选择器；GitHub 自身可能仍沿用已有应用授权。这不注销 GitHub/Google 网站账号，已签发 access token 可能在原有效期内仍有效。本地设置、书签和下载记录不随登录退出清除。真实授权、账号选择、浏览器 Cookie 和恢复/退出尚待用户验收。
+实际验收使用根 dist/build/chrome-mv3；部署网页并配置 Neon public client 后，在 Studio → Account → Login with GitHub 或 Login with Google 发起。成功显示真实账户，取消/拒绝不能成为已登录。刷新及重启恢复仍有效身份，退出先撤销刷新令牌，再删除 Neon Auth 指定会话 Cookie，最后清除插件身份；全过程不弹退出窗口，失败可重试。详情见认证配置清单；再次登录要求 Neon 显示 Exts 授权确认，官网向所选 GitHub/Google 请求显示账号选择器；第三方自身可能仍沿用已有应用授权。这不注销 GitHub/Google 网站账号，已签发 access token 可能在原有效期内仍有效。本地设置、书签和下载记录不随登录退出清除。真实授权、账号选择、浏览器 Cookie 和恢复/退出尚待用户验收。
 
 ## 固定本地扩展 ID
 
