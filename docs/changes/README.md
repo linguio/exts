@@ -79,7 +79,6 @@ docs/
 
 ## 当前 Issue
 
-
 - 已暂停：[在 Studio 统一管理网站图标与扩展缓存](./issues/2026-11-02-extension-remote-brand-cache-issue.md) · [Commit 记录](./commits/2026-11-02-extension-remote-brand-cache-commit.md)；用户于 2026-11-02 决定暂不实施，后续在 Studio 做管理与查询页，支持增删改查；旧静态发布草案仅供参考，数据库、接口及权限恢复时重新确认；当前仅文档改动尚未提交，未配置 Neon、上传或修改代码，未完结归档。
 
 ## Issue 队列
@@ -91,6 +90,8 @@ docs/
 无。
 
 ## 已完成
+
+- [修正账户状态并补充 Newtab 快捷登录](./issues/2026-11-04-extension-account-state-feedback-issue.md) · [Commit 记录](./commits/2026-11-04-extension-account-state-feedback-commit.md)；用户于 2026-11-05 确认验收通过并要求本地提交，代码与文档分开提交；扩展 102 项测试、类型检查、生产构建与 diff 检查通过，浏览器交互由用户验收，代理未独立实测，未推送。
 
 - [统一 Exts 登录、授权与退出窗口](./issues/2026-11-04-extension-auth-window-unification-issue.md) · [Commit 记录](./commits/2026-11-04-extension-auth-window-unification-commit.md)；按用户指令提交当前页面阶段成果。浏览器外框固定与退出失败定位尚未完成；官网类型检查通过，构建受本机环境错误阻塞，未做浏览器验收或部署。
 
