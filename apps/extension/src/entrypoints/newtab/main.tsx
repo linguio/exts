@@ -3,8 +3,8 @@ import '../../styles/index.css';
 import { createRoot } from 'react-dom/client';
 import { browser } from 'wxt/browser';
 
-import { App } from '../../app/NewtabApp';
-import { applyTheme, subscribeTheme } from '../../shared/theme/runtime';
+import { App } from '../../app/App';
+import { applyTheme, subscribeTheme } from '../../features/settings/theme';
 
 applyTheme();
 // 面板关闭时也继续跟随系统和其他页面的偏好更新。
