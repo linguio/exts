@@ -38,7 +38,7 @@ describe('统一 Settings 存储', () => {
 
   it('首次初始化持久化默认值，重复加载不重置选择或触碰下载数据', async () => {
     const { repository, storage, data } = setup({ downloads: { tg: { records: [1] } } });
-    expect(await repository.get()).toEqual({ version: 2, theme: 'system', mediaDownload: { enabled: true }, historyCleaner: { enabled: false } });
+    expect(await repository.get()).toEqual({ version: 2, theme: 'system', mediaDownload: { enabled: false }, historyCleaner: { enabled: false } });
     await repository.update({ theme: 'dark' });
     const calls = storage.set.mock.calls.length;
     expect((await repository.get()).theme).toBe('dark');
@@ -63,7 +63,7 @@ describe('统一 Settings 存储', () => {
   it('旧值无效时补齐默认值，有效旧主题可迁入', async () => {
     expect((await setup({ 'exts.theme': 'dark' }).repository.get()).theme).toBe('dark');
     expect(await setup({ settings: { theme: 'bad', telegramDownload: { enabled: 'yes' } } }).repository.get())
-      .toEqual({ version: 2, theme: 'system', mediaDownload: { enabled: true }, historyCleaner: { enabled: false } });
+      .toEqual({ version: 2, theme: 'system', mediaDownload: { enabled: false }, historyCleaner: { enabled: false } });
   });
 
   it('并发修改主题和不同开关不会丢失彼此的更新', async () => {

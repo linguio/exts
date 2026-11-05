@@ -36,7 +36,7 @@ export function normalizeSettings(stored: Record<string, unknown>): Settings {
       ...telegramDownload, ...mediaDownload,
       enabled: typeof mediaDownload.enabled === 'boolean' ? mediaDownload.enabled
         : typeof telegramDownload.enabled === 'boolean' ? telegramDownload.enabled
-          : typeof stored['telegramDownload.enabled'] === 'boolean' ? stored['telegramDownload.enabled'] : true,
+          : typeof stored['telegramDownload.enabled'] === 'boolean' ? stored['telegramDownload.enabled'] : false,
     },
     historyCleaner: { ...historyCleaner, enabled: typeof historyCleaner.enabled === 'boolean' ? historyCleaner.enabled : stored['historyCleaner.enabled'] === true },
   };
