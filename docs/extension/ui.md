@@ -6,8 +6,8 @@
 
 - `apps/extension/src/styles/theme.css`：整个 extension 的主题 Token 唯一实现位置，Newtab 与网页注入界面共同引用。
 - `apps/extension/src/styles/index.css`：导入主题 Token，集中维护字体、共用语义样式和减少动态效果规则。
-- `apps/extension/src/shared/ui/`：以 shadcn 官方源码为基础的通用组件，不包含书签或 Chrome API 业务逻辑。
-- `apps/extension/src/modules/<功能>/`：持有对应功能的布局、内容、状态和操作；history-cleaner 持有设置区域与业务，Newtab 只组合设置区域。
+- `apps/extension/src/components/ui/`：以 shadcn 官方源码为基础的通用组件，不包含书签或 Chrome API 业务逻辑。
+- `apps/extension/src/features/<功能>/`：持有对应功能的布局、内容、状态和操作；history-cleaner 持有设置区域与业务，Newtab 只组合设置区域。
 - 本文维护用途、参数与组合约定；不在模块 README 再维护一份样式规则。
 
 组件选型遵循根 [AGENTS.md](../../AGENTS.md#web-ui-选型与风格)。固定来源和逐项定制差异见 [Web UI 来源](../web-ui-sources.md)，不把 Radix 包装或组件数量少当作采用官方源码的依据。
@@ -18,7 +18,7 @@
 
 ## 主题与 Token
 
-明暗主题由 `src/shared/theme/` 解析：默认 System，通过系统 `prefers-color-scheme` 跟随变化；选择 Light/Dark 后固定为对应主题。根 `data-theme` 持有实际明暗，组件与 Portal 继承原有语义 Token，不独立硬编码配色。Geist 字体、基础界面明暗色值、遮罩透明度与模糊保留；图表中性灰色阶按下文全局规范维护。
+明暗主题由 `src/lib/theme/preference.ts 与 src/features/settings/theme.ts` 解析：默认 System，通过系统 `prefers-color-scheme` 跟随变化；选择 Light/Dark 后固定为对应主题。根 `data-theme` 持有实际明暗，组件与 Portal 继承原有语义 Token，不独立硬编码配色。Geist 字体、基础界面明暗色值、遮罩透明度与模糊保留；图表中性灰色阶按下文全局规范维护。
 
 正式偏好保存在 `chrome.storage.local` 的 `settings.theme`，不同步设备；扩展页面同源 localStorage 的 `exts.theme` 只作同步首屏缓存。页面 head 通过 WXT 独立外部脚本 `theme-init.js` 在解析时读取缓存，使用与运行时相同的解析逻辑应用主题；不内联可执行脚本或放宽 CSP。主页面读取正式配置并订阅变化，继续监听系统主题，面板关闭后仍生效。
 
@@ -92,15 +92,15 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - 通用 `Button` 保留官方 variant 与常见状态；普通 ghost 反馈不变。Dock 工具按钮复用 `variant="entry" size="entry"` 透明外壳，实际反馈由内部 `entry-surface` 承担，不在调用方复制同套参数。
 - EDU 保留默认模糊和点击解除逻辑，Hover 背景不变、指针为手形；其 hover 背景引用同一个 `overlay` Token，覆盖 ghost 默认背景变化。
 - Settings 与 Download 使用右侧 Sheet：共用组件统一维护默认宽 420px、最大不超过屏幕，调用方不重复写宽度。Header 高 56px，均显示对应 Lucide 图标与标题，关闭按钮提示为 `Close`。Download 正文展示下载记录；Settings 正文包含 General 和 Features 两区，分区标题为 14px／font-medium，设置项标题沿用官方 ItemTitle 的 14px／font-medium。Settings 正文父容器统一设置 24px 内边距及 24px 分区间距，子分区不叠加外侧内边距；两区之间不用 Separator，不叠加 Browsing history 标题；两个 Header 下方均保留分割线。 用户最终选择恢复此原样式，仅在共用右侧 Sheet 增加左上／左下 rounded-l-[var(--radius)]，当前为 16px；右侧直角贴边。
-- General 的 Theme 行使用官方 ToggleGroup 单选组合，Light/Dark/System 分别用太阳、月亮、笔记本（LaptopMinimal）图标，默认 System；图标不带可见文字，使用可访问名称与现有 Tooltip 提示名称，始终保留一个选项。控件的主题状态不进入 shared/ui。
+- General 的 Theme 行使用官方 ToggleGroup 单选组合，Light/Dark/System 分别用太阳、月亮、笔记本（LaptopMinimal）图标，默认 System；图标不带可见文字，使用可访问名称与现有 Tooltip 提示名称，始终保留一个选项。控件的主题状态不进入 components/ui。
 - ToggleGroup 单选项以 `aria-checked` 显示激活状态，选中背景使用官方 accent、图标使用 accent-foreground，不增加高反差主色选中块。Tooltip 组合也使用 data-state，因此不得仅凭该属性表达单选反馈；选择判断仍由官方控件负责。
 - 共用 `Switch` 可操作时显示手形指针，禁用时显示禁止指针；在组件内统一维护，不在设置调用方重复指定。
-- Media Download 的记录列表与 Sheet 由 media-download/views/records 持有，Dock 保留一级入口。Settings 的 General／Features 采用官方 Card、ItemGroup、Item、ItemSeparator 的圆角边框列表，标题置于框外。Media Download 只有一个总开关，独立箭头通过官方 Collapsible 展开默认收起的三个只读子项；仅主项保留问号，子项无问号。界面文案使用英文，TG 状态为 Enabled／Disabled，X／Helper 显示 Not integrated。设置界面与 Sheet 归 `modules/settings`，`modules/dock` 只组合入口并协调入口提示，设置界面订阅公共 settings 数据，不在其中展示下载记录；保持官方折叠状态与焦点管理，不另写展开状态逻辑。
+- Media Download 的记录列表由 features/media-download/records 持有，Sheet 由 pages/download 组合，Dock 保留一级入口。Settings 的 General／Features 采用官方 Card、ItemGroup、Item、ItemSeparator 的圆角边框列表，标题置于框外。Media Download 只有一个总开关，独立箭头通过官方 Collapsible 展开默认收起的三个只读子项；仅主项保留问号，子项无问号。界面文案使用英文，TG 状态为 Enabled／Disabled，X／Helper 显示 Not integrated。设置界面与 Sheet 归 `pages/settings` 与对应 feature，`pages/dock` 只组合入口并协调入口提示，设置界面订阅公共 settings 数据，不在其中展示下载记录；保持官方折叠状态与焦点管理，不另写展开状态逻辑。
 - 历史清理区域使用官方基础的 `Switch`，通过 `checked` / `onCheckedChange` 连接状态，保留可访问名称与说明；默认关闭，加载、授权和保存期间禁用重复操作，失败通过共用 toast.error 提示。配置和权限变更同步到已打开页面，不把业务状态放入通用组件或新增全局设置状态。
 - 历史清理开关标题旁的圆圈问号复用 Button/UiIcon/Tooltip，帮助提示完整保留原说明，最大宽度 280px、优先向上显示并支持换行；独立按钮不切换开关，读屏描述通过常驻隐藏文本保留。错误不放进 Tooltip。
 - Sheet 内容、边框与分隔线使用根主题；全屏遮罩使用 blur-overlay，阴影使用项目 Token。打开／关闭动画恢复为 200ms／160ms，减少动态效果遵循全局规则。
 - Tooltip 提供名称或简短帮助说明，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Sheet 打开时 Dock 的 Settings 与 Download 入口不显示 Tooltip，关闭恢复焦点不自动弹出入口提示，后续正常悬停仍可显示；两个入口的状态由 Dock 局部 useDockSheetTooltip 共用，面板内部提示正常使用。关闭自动恢复焦点阶段，入口标记 data-restored-focus 并仅抑制该阶段的描边；不取消默认焦点恢复。入口失焦、指针按下或主动键盘操作后清除标记，正常键盘聚焦仍有描边。
-- 品牌图标由 `shared/brand/BrandIcon` 负责；Newtab 书签、Dock 收藏及其复用入口随主题切换黑白，不再按站点配置 original、adaptive 或 neutral。普通书签透明背景、单色主体，浅色显示黑色、深色显示白色。通用图标由 `UiIcon` 显式静态导入。
+- 品牌图标由 `components/custom/brand-icon.tsx` 负责；Newtab 书签、Dock 收藏及其复用入口随主题切换黑白，不再按站点配置 original、adaptive 或 neutral。普通书签透明背景、单色主体，浅色显示黑色、深色显示白色。通用图标由 `UiIcon` 显式静态导入。
 - UI 文件夹图标沿用原始几何、viewBox、线宽与留白，移除灰阶和渐变；白色覆盖形成的必要孔洞通过黑白遮罩转成真正透明区域，再统一主题转换，避免整体滤镜压平镂空。不套用 V3 重绘或统一坐标要求，不维护深浅两套源稿。
 - Grok 书签移除固定底板、保留主体路径。Exts 按用户最新确认保留正式完整外形及底板，浅色黑底白图、深色白底黑图；沿用现有内嵌正式 PNG 的 SVG，不重绘外形、不替换为仅含内部主体的源稿，也不对其应用压平对比的 brightness 滤镜。此主题反转仅用于书签，品牌唯一源稿及三端应用图标保持原样。此次交付见[书签单色 Issue](../changes/issues/2026-10-26-extension-bookmark-monochrome-issue.md)。
 - Dock 左侧保持 favorites，右侧 tools 顺序为 Studio、Actions、Download、Settings。Studio 复用官方 Toggle：固定 PanelsTopLeft，首页提示 Switch to Studio、工作台提示 Back to Home；选中反馈使用官方 accent/accent-foreground，通过 aria-pressed 应用到 entry-surface，避免 Tooltip 的 data-state 覆盖及内部图块盖住反馈。不切换图标、不加 fill，不新增选中状态管理。
@@ -116,7 +116,7 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 ### Newtab 区域布局
 
 - Dock 中间分割线使用官方 Separator，局部设置高 48px、垂直居中；宽度沿用官方 1px，颜色引用 border Token。
-- 页面级布局在 `src/app/newtab.css`，只作用于 Newtab；保留 24px 外圈留白，内部左右间距及上方区域与 Dock 间距均为 24px。
+- 页面级布局在 `src/pages/newtab/newtab.css`，只作用于 Newtab；保留 24px 外圈留白，内部左右间距及上方区域与 Dock 间距均为 24px。
 - 页面使用两行网格，上行为左右两列，下行为 Dock；上行使用剩余高度，左右各自通过官方 Scroll Area 滚动，溢出不传播到页面或相邻区域。Dock 仍按内容宽度居中，最大不超过底部可用宽度，撑满后通过官方 Scroll Area 与水平 ScrollBar 滚动。
 - 上行外层提供完整可用宽度，ResizeObserver 监听该层；按左侧实际项目宽度、数量及间距模拟换行，取最宽一行确定左栏占宽，再将左栏、24px 分栏间距和固定右栏整体居中。随窗口宽度变化自动更新，不设置整体固定最大宽度；末行左对齐，右侧卡片仅纵向排列。极窄窗口沿用区域内部溢出约束，不压缩右侧或将其移到左栏下方。
 - 首页文件夹预览框横向间距为 24px；纵向预览框边缘之间总共 32px，由名称前 8px、名称固定单行行高 16px 和下一行前 8px 组成。长名称单行省略，规则限定在 `.newtab-bookmarks`，不改变其他场景。
@@ -124,7 +124,7 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - UI 文件夹放在 EDU 前，沿用两列图标网格与默认模糊机制；高度固定为文件夹外框基准，更多内容在官方 Scroll Area 内纵向滚动并阻止滚动传播。按用户批准仅隐藏该文件夹内的滚动条，其他文件夹与页面滚动条保持既有行为。
 - UI 上下两端各用 16px 高的绝对定位提示层，贴边 3px 使用 card 背景色盖住内部图标边框，再向内容侧渐隐；复用 overlay-blur，磨砂和背景由同一线性蒙版渐隐，上下镜像，保留文件夹自身外边框。次要前景色 ChevronUp 与 ChevronDown 单独显示、不受蒙版影响；对应方向还有内容时才显示，顶部只有下提示，中间两个都有，底部只有上提示。默认模糊或无溢出时都隐藏，不占布局、不额外预留空间，保留网格原有内边距。不依赖 Hover，不响应点击或阻挡滚动；判断由文件夹局部监听滚动与尺寸变化，卸载后清理。
 - 右侧首卡采用官方 Card 基础，按批准的文件夹外框效果组合主题圆角、16px 内边距和无阴影。右侧卡片间距为 24px，卡片区域统一滚动。
-- ActivityCard 由 `modules/studio/components/activity` 持有，Home 的 cards 区域只引入展示；卡片尺寸和材质保留，首行高 32px，使用现有 outline/sm/spacing=0 ToggleGroup，切换为 CalendarDays、ChartColumn、ChartPie，名称为 Calendar／Chart／Pie chart，宽度沿用 36px。
+- ActivityCard 由 `features/activity` 持有，Home 的 cards 区域只引入展示；卡片尺寸和材质保留，首行高 32px，使用现有 outline/sm/spacing=0 ToggleGroup，切换为 CalendarDays、ChartColumn、ChartPie，名称为 Calendar／Chart／Pie chart，宽度沿用 36px。
 - 固定活动记录当前仅保留2026-11-01和2026-11-02。两日睡眠均为5.5h，运动0h/0.5h、阅读0h/0h、学习0h/1h、创作0h/0h；其他日期无记录。数据仍以分钟维护，不提供录入或持久化。
 - 三个视图切换入口按内容模块命名：Check-ins（打卡日历）、Trends（成长与睡眠趋势）、Summary（周投入与计划）；Tooltip与可访问名称一致，内部视图值与切换行为保持。
 - 默认 Calendar，重复选择不能取消至空值；Tooltip 与组件状态机制保留。Calendar 保留完整 24 周网格、每格 12px、间距 2px、周日开始及未来日期留白；运动、阅读、学习、创作每日各累计满 30 分钟完成一项，0–4 项分别使用 --activity-level-0 至 4，仅映射全局 muted/chart 色源，不维护第二套颜色。参数与核算以本文件“全局图表灰阶”为准。
@@ -133,7 +133,7 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - 当前固定样本在 Studio data/activity/mock-records.json，覆盖 2026-10-07 至 2026-11-03，不随机、不自动平移日期；样本范围外自然显示无记录。不提供录入、持久化或跨端同步，Home/Studio 状态保留及刷新默认行为沿用现状。
 - 柱状图横轴每柱显示日号（1、2、…、31，不显示月份与前导零）。活动卡片内四种数据视图统一复用 ChartTooltipContent 的外观与行布局；日历仅由官方普通 Tooltip 提供触发/定位，局部使用 disableHoverableContent，避免相邻小格触发被鼠标过渡区域阻挡。不改其他模块 Tooltip。
 - 横轴预留 28px 容纳默认 tickSize、6px tickMargin 和日号文字，避免文字在 SVG 底部被截断；保持图表 96px 和原卡片高度不变。
-- 柱状图外轮廓统一4px圆角，数值集中在shared/ui/chart.tsx的CHART_BAR_RADIUS，避免SVG数值属性与CSS变量重复维护。睡眠直接用Bar.radius，成长用Recharts官方BarStack.radius，内部各Bar不单独圆角，保留色块直角接缝。缺项、单项和较薄端部沿用官方整体裁切，不自写图形或逐项拼接圆角。
+- 柱状图外轮廓统一4px圆角，数值集中在components/ui/chart.tsx的CHART_BAR_RADIUS，避免SVG数值属性与CSS变量重复维护。睡眠直接用Bar.radius，成长用Recharts官方BarStack.radius，内部各Bar不单独圆角，保留色块直角接缝。缺项、单项和较薄端部沿用官方整体裁切，不自写图形或逐项拼接圆角。
 - 趋势分类入口为既有 Lucide ChevronsUpDown，Button ghost/icon-sm（32px）；不显示常驻分类文字，普通控件 Tooltip 以 Growth/Sleep 表示当前分类；点击直接轮换两个分类，不打开菜单。
 - 成长增加当前 14 个自然日总投入 / 14 的平均时长虚线，无投入日按 0 计；睡眠仍为固定 7 小时。两线无常驻文字，当前 ReferenceLine 不提供独立 Hover 提示，不混同柱子的每日数据提示。
 - 成长与睡眠共用同一日期窗口：从本地今天往前第14天至昨天，共14个完整自然日，不包含今天；均值只计算该窗口。日历和本周统计继续按各自原有范围，不受趋势窗口影响。
@@ -155,7 +155,7 @@ Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Do
 
 ### 共用状态等级
 
-状态图标使用 src/shared/ui/status-icon.tsx，基于现有 UiIcon 静态映射。官方 Item 用于行布局、Badge 用于标签、Sonner 用于临时通知，均不提供本需求所需的独立状态 SVG 等级映射，因此按用户批准提供此最小组件，不重写官方 Tooltip 或通知逻辑。
+状态图标使用 src/components/custom/status-icon.tsx，基于现有 UiIcon 静态映射。官方 Item 用于行布局、Badge 用于标签、Sonner 用于临时通知，均不提供本需求所需的独立状态 SVG 等级映射，因此按用户批准提供此最小组件，不重写官方 Tooltip 或通知逻辑。
 
 | 等级 | 状态图标 | 语义 |
 |---|---|---|
@@ -170,7 +170,7 @@ Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Do
 
 ### Toast 使用规则
 
-扩展各模块统一从 src/shared/ui/sonner.tsx 导入 Toaster 和原生 toast API，复用 shadcn 官方 Sonner 展示组件、Lucide 图标和现有主题。通用组件维护各自页面视口右下角位置、图标映射和外观；业务不覆盖位置、图标或品牌配色，不分别手写提示框、关闭定时器或折叠逻辑。TG、Newtab 和后续 X 使用同一套规则。
+扩展各模块统一从 src/components/ui/sonner.tsx 导入 Toaster 和原生 toast API，复用 shadcn 官方 Sonner 展示组件、Lucide 图标和现有主题。通用组件维护各自页面视口右下角位置、图标映射和外观；业务不覆盖位置、图标或品牌配色，不分别手写提示框、关闭定时器或折叠逻辑。TG、Newtab 和后续 X 使用同一套规则。
 
 提示采用“等级图标 + 提示语”，不增加第二层 description。内容使用现有主题文字与背景，通过图标区分等级，不启用彩色 richColors。长文案可自然换行，不为单行展示裁掉重要反馈。
 
@@ -183,6 +183,6 @@ Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Do
 
 业务模块持有文案、等级、完成条件等状态；不在共用 UI 中加入 Chrome API、下载记录、跨页面通知管理或重复消息包装器。不同页面/Shadow DOM 各自挂载 Toaster，多条提示沿用 Sonner 默认折叠堆叠与关闭行为，互不转发。
 
-Settings 的加载、保存与权限操作失败统一使用根部现有 Toaster 的 toast.error，不在设置行追加错误段落；共用英文文案集中在 src/shared/settings/messages.ts，调用方直接使用官方 API，不包装新的通知服务。Toast 不复制内部异常细节；保留必要的正式异常日志，临时排错日志结束后清理。此规则不改变已有 TG 下载仅成功提示的专属约定。
+Settings 的加载、保存与权限操作失败统一使用根部现有 Toaster 的 toast.error，不在设置行追加错误段落；共用英文文案集中在 src/features/settings/messages.ts，调用方直接使用官方 API，不包装新的通知服务。Toast 不复制内部异常细节；保留必要的正式异常日志，临时排错日志结束后清理。此规则不改变已有 TG 下载仅成功提示的专属约定。
 
 TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标和“下载完成”，不再描述文件名；文件名保留在 Download 记录。开始、进行中、取消和失败不显示 Toast。后续 X 必须复用同一组件和位置，实际触发条件由其独立 Issue 决定，不代表本次已接入。

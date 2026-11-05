@@ -1,5 +1,7 @@
 # Web UI 官方来源与必要差异
 
+2026-11-05 扩展目录迁移：本页既有扩展组件来源记录中的 `src/shared/ui/` 现对应 `apps/extension/src/components/ui/`，品牌组件现归 `components/custom/`，通用工具现归 `lib/`。仅调整文件路径及内部引用，官方版本、主题、样式和交互差异保持原记录；官网的 shared 目录不变。
+
 官网与扩展的通用 Web UI 遵循根 [AGENTS.md](../AGENTS.md#web-ui-选型与风格)。本文记录源码基线与必要差异；主题参数和组合约定分别见 [官网 UI](website/ui.md) 与 [扩展 UI](extension/ui.md)。源码不是随上游自动升级的运行时依赖。
 
 ## 成长与睡眠图表（2026-11-03）

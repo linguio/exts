@@ -13,22 +13,21 @@
 ## 目录职责
 
 - `src/entrypoints/`：WXT 入口；`src/app/`：Home／Studio、Provider 与常驻 Dock 的应用组合。
-- `src/modules/newtab/`：首页布局、书签配置与文件夹；`utils/bookmarks/` 持有解锁判断与标签组打开辅助。
-- `src/modules/dock/`：底部导航、菜单和抽屉入口；`hooks/` 持有入口提示协调。
-- `src/modules/settings/`：Settings Sheet 与 General／Media Download 设置界面编排。
-- `src/modules/history-cleaner/`：可选权限、配置适配、后台清理与 `views/` 设置区域；后台由独立入口注册。
-- `src/modules/media-download/`：`download/telegram/` 保存媒体与请求目录授权，`pages/`、`bridges/`、`background/` 分别接入 MAIN、隔离与后台环境；`stores/` 保存目录句柄和记录读写，`components/`、`views/` 持有菜单、记录行及记录 Sheet；`utils/` 持有定位、文件名、分段读写辅助与记录处理，`types/`、`constants/` 保存共用类型及协议常量。
-- `src/modules/studio/`：Studio 页面、ActivityCard 和日历；日期逻辑、Hook 与类型分别归 utils、hooks、types；通过模块入口供 Home 展示活动卡片。
-- `src/shared/brand/`：共用 BrandIcon 与尺寸类型；`src/shared/bookmarks/`：共用 BookmarkCard 和基础书签类型。
-- `src/shared/settings/`：配置读写和订阅；`src/shared/storage/`：存储工具；`src/shared/theme/`：主题解析与同步。
-- `src/shared/ui/`：通用 UI 控件；`src/shared/lib/`：共用工具；`src/shared/browser/`：扩展资源地址工具。
-- `src/assets/`：品牌 SVG、应用图标与公共字体；`src/styles/`：全局样式。
-- `tests/modules/`：书签、日历、历史清理、TG 下载及记录行为；`tests/shared/`：配置与主题逻辑；`tests/config/`：Manifest 与资源完整性。
-- 根 `wxt.config.ts`、`package.json`：构建与应用配置。
+- `src/app/`：React 顶层装配与页面状态协调。
+- `src/pages/`：Newtab、Dock、Studio、Account、Settings、Download 页面区域和布局组合；`pages/dock/` 组合收藏、账号、下载、设置及 Studio 导航入口，不持有其他 feature 的实现。
+- `src/features/bookmarks/`：书签配置、卡片、文件夹、分组打开与访问判断。
+- `src/features/activity/`：活动卡片、图表、日期计算、类型和固定模拟数据。
+- `src/pages/account/`：Dock 与 Studio 共用的登录对话框和账号菜单；侧栏专用账号入口归 pages/studio。
+- `src/features/account/`：OIDC 客户端、会话、后台协调、用户信息与凭据处理。
+- `src/features/settings/`：跨功能设置的结构、存储、消息、General 设置项与主题同步。
+- `src/features/history-cleaner/`：配置适配、可选权限、后台清理及设置区域。
+- `src/features/media-download/`：总设置与设置区域；`telegram/` 持有页面、桥接、下载菜单和文件保存逻辑，`records/` 持有记录存储、后台和列表；`pages/download/` 持有记录抽屉。
+- `src/components/ui/`：shadcn 来源组件；`src/components/custom/`：自定义公共组件与 IconSize、UiIconName 类型；`src/hooks/`：公共 Hook；`src/lib/`：浏览器资源、存储、主题偏好解析和通用工具，不反向引用业务。
+- `src/assets/`、`src/styles/`：品牌资源、字体与全局样式；env 保留在应用根目录，产物仍输出到根 dist。
+- `tests/features/`：与业务功能对应的行为测试；`tests/lib/`：公共逻辑；`tests/config/`：Manifest 与资源完整性。
+- 根 `wxt.config.ts`、`package.json`：构建与应用配置；`components.json` 的 shadcn 别名指向新的公共目录。
 
-模块保留业务归属，shared 不导入业务模块；只为实际需要创建职责目录。UI 入口与后台、页面脚本入口分开，不通过界面聚合入口加载后台逻辑。
-
-历史清理默认关闭，开启时由浏览器请求 `browsingData` 可选权限；必需的 `storage` 用于本机保存配置。不需要打开 Newtab 才能清理，不申请额外站点访问权限。
+入口、页面和功能各自保持职责；功能内部默认平铺，确有体量时按业务细分，不铺设空目录或多余转导出层。后台与网页脚本直接导入对应功能文件，不通过界面聚合入口加载。
 
 ## 根目录用法
 

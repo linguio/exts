@@ -1,6 +1,6 @@
 # 访问历史自动清理
 
-功能源码位于 apps/extension/src/modules/history-cleaner，与 Newtab 独立；后台不要求打开新标签页。
+功能源码位于 apps/extension/src/features/history-cleaner，与 Newtab 独立；后台不要求打开新标签页。
 
 ## 开启与关闭
 

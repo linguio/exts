@@ -1,6 +1,6 @@
 # Newtab 新标签页
 
-Newtab 是 Exts 扩展的新标签页模块，源码位于 apps/extension/src/modules/newtab。加载扩展后，打开新标签页进入书签页面。
+Newtab 是 Exts 扩展的新标签页模块，源码位于 apps/extension/src/pages/newtab。加载扩展后，打开新标签页进入书签页面。
 
 ## 书签与文件夹
 
@@ -31,18 +31,18 @@ Components 提供工具菜单；原 DevTools 位置为 Download，点击后打�
 - 长名称单行省略并保留来源前缀与扩展名，仅省略时通过 Tooltip 展示完整名称。大小缺失显示 0 MB。空列表在工具栏下方可用区域水平、垂直居中显示“暂无下载记录”；空筛选禁用清空，文件夹保持可用。临时提示沿用共用 Toaster 的视口右下角位置。
 - 清空跟随当前全部/TG/X 筛选。官方 Alert Dialog 在整个页面居中，说明仅清记录、不删文件；取消或清空后保留 Download 抽屉，保存失败保留记录并由 Sonner 报错。
 - 文件夹入口按筛选对应 Exts Downloads、Telegram、X 预设目录；当前尚未接入 Desktop，点击通过 Sonner 提示“暂无法打开文件夹，尚未接入 Exts Desktop”，不检查目录、不打开 Finder、不创建目录。
-- media-download/stores/records 复用公共 storage 工具，数据位于 storage.local.downloads 的 tg.records、x.records。后台串行写入，Newtab 订阅变化，关闭 Newtab 不影响 TG 保存记录。尚未设置自动淘汰上限；存储失败不会改动原记录或已下载文件。
+- features/media-download/records 复用公共 storage 工具，数据位于 storage.local.downloads 的 tg.records、x.records。后台串行写入，Newtab 订阅变化，关闭 Newtab 不影响 TG 保存记录。尚未设置自动淘汰上限；存储失败不会改动原记录或已下载文件。
 - 首轮只接 TG 文件关闭成功后的记录，失败和取消不记成功；成功 Toast 继续显示在 Telegram 页面，Newtab 不重复提示。X 筛选保留但下载尚未接入。
 
 用户验收：重新加载 dist/build/chrome-mv3，刷新 Telegram Web 后成功保存图片或视频，打开 Download 检查实际名称、大小、倒序和刷新持久化；在另一个 Newtab 同时观察记录更新。分别切换全部/TG/X，检查 X 空状态、取消清空保持记录、确认清空只影响筛选范围且本地文件仍在。取消或使文件保存失败不得新增成功记录。检查截断 Tooltip、明暗主题和页面居中确认框；文件夹在有无记录时均显示未接入提示。
 
 ## 右侧卡片
 
-右侧通过 Studio 模块公开入口展示 ActivityCard；业务组件归 `modules/studio/components/activity/`，首页 `views/cards/index.tsx` 只组合展示。Calendar／Chart 图标切换默认 Calendar，日历保留当前周和之前 23 周，活动记录初始为空；Chart 内容留空，切换状态不持久化，不再加载旧 JLPT／Workout 模拟 JSON。
+右侧通过 Studio 模块公开入口展示 ActivityCard；业务组件归 `features/activity/`，首页 `views/cards/index.tsx` 只组合展示。Calendar／Chart 图标切换默认 Calendar，日历保留当前周和之前 23 周，活动记录初始为空；Chart 内容留空，切换状态不持久化，不再加载旧 JLPT／Workout 模拟 JSON。
 
 日历展示与 Tooltip 归 Studio 的 activity 组件，本地日期与等级计算归 `utils/activity/calendar.ts`，跨午夜或切回页面时更新日期的 Hook 归 `hooks/activity/use-local-date.ts`，记录类型归 `types/activity.ts`。
 
-首页 `views/bookmarks/` 组合书签，文件夹组件、文件夹类型和配置仍归 Newtab；解锁判断与标签组辅助归 `utils/bookmarks/`。Newtab 与 Dock 共用 `shared/bookmarks/` 的 BookmarkCard 和基础类型；品牌 SVG 归 `src/assets/brand/`，由 `shared/brand/BrandIcon` 统一展示。Dock 与 Settings 分别由独立模块持有，不再放在首页 views 内。
+首页 `pages/newtab/` 组合书签；文件夹组件、类型、配置、访问判断与标签组辅助统一归 `features/bookmarks/`。Newtab 与 Dock 共用该 feature 的 BookmarkCard 和基础类型；品牌 SVG 归 `src/assets/brand/`，由 `components/custom/brand-icon.tsx` 统一展示。Dock 与 Settings 分别由独立模块持有，不再放在首页 views 内。
 
 ## Settings
 

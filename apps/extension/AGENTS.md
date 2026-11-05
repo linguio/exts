@@ -17,9 +17,9 @@
 ## 通用 UI 与组合
 
 - 官网与扩展全部 Web UI 的选型、来源和风格维护原则遵循根 [AGENTS.md](../../AGENTS.md#web-ui-选型与风格)，不维护组件白名单。
-- `src/shared/ui/` 持有通用组件，不包含书签、Dock、Chrome API 或模块状态；各功能在自己的 `src/modules/<功能>/` 中组合，Newtab 也遵循此边界。
-- 扩展主题由 `src/shared/theme/` 解析 Light/Dark/System，默认跟随系统；实际明暗通过根 `data-theme` 应用，Portal 继承根 Token，不直接依赖 `.dark` 类。偏好保存、同步与首屏初始化不得放进通用 UI。官方源码接入和必要差异见 [Web UI 来源](../../docs/web-ui-sources.md)。
-- 临时提示统一从 `src/shared/ui/sonner.tsx` 导入 Toaster 与 toast，复用 shadcn Sonner 和 Lucide 成功/信息/警告/错误图标，使用图标加提示语、各自页面右下角位置和统一主题；不增加文件名副标题、模块独立配色或位置覆盖。TG 与后续 X 均遵守，业务只负责等级、文案与触发，不建立跨页面通知管理。等级规则见扩展 UI 规范。
+- `src/components/ui/` 持有通用组件，不包含书签、Dock、Chrome API 或模块状态；各功能在自己的 `src/features/<功能>/` 中组合，Newtab 也遵循此边界。
+- 扩展主题由 `src/lib/theme/preference.ts` 解析偏好、`src/features/settings/theme.ts` 同步运行状态 Light/Dark/System，默认跟随系统；实际明暗通过根 `data-theme` 应用，Portal 继承根 Token，不直接依赖 `.dark` 类。偏好保存、同步与首屏初始化不得放进通用 UI。官方源码接入和必要差异见 [Web UI 来源](../../docs/web-ui-sources.md)。
+- 临时提示统一从 `src/components/ui/sonner.tsx` 导入 Toaster 与 toast，复用 shadcn Sonner 和 Lucide 成功/信息/警告/错误图标，使用图标加提示语、各自页面右下角位置和统一主题；不增加文件名副标题、模块独立配色或位置覆盖。TG 与后续 X 均遵守，业务只负责等级、文案与触发，不建立跨页面通知管理。等级规则见扩展 UI 规范。
 - Download 与 Settings 共用试用前的 Sheet：默认右侧 420px、最大不超过视口，保留主题模糊遮罩、浮层阴影、原 Header／标题图标与分隔线、关闭按钮和 200ms／160ms 动画。仅按用户新增批准在共用组件增加左上／左下 rounded-l-[var(--radius)]，复用全局 1rem，右侧保持直角贴边；不新增边缘留白。
 - 应用根只创建一个 `TooltipProvider`。Tooltip 只提供简短名称或帮助说明，不含可交互内容；菜单或 Sheet 打开时其入口不得残留 Tooltip，Sheet 内的主题名称和帮助提示可正常显示。
 - Tooltip、菜单、Sheet、Button 与链接通过 `asChild` 等方式共享唯一真实交互元素，禁止嵌套交互控件。
@@ -29,27 +29,27 @@
 - Studio 采用固定版本 shadcn/ui sidebar-07 作为框架，侧栏可收起为图标，窄屏沿用官方 Sheet；左侧菜单区与右侧内容区均直接组合官方 Empty 的图标、标题和说明，不保留 Overview/Activity、假菜单或自写缺省面板。首页 ActivityCard 仍按原位置使用。品牌头部保留官方 32px Logo 与两行名称比例，以非交互布局展示既有 Exts 资源；Logo 与文字不可点击，只有其右侧独立的官方 Button ghost/icon-sm + Lucide House 返回 Home。折叠时隐藏品牌与左侧 Empty，保留该独立按钮与 Tooltip；窄屏在侧栏内访问。不在正文顶部放 Home 文字按钮或自定义边框；顶部官方触发器与分隔线保留，面包屑只显示 Studio。Studio 不显示 Dock 且不保留其布局空行。每个新标签页仍默认首页，Home／Studio 由 React Activity 保留各自状态。
 - Account 位于 Studio 侧栏底部，保留官方 Dialog/login-03 的未登录结构、样式与文案。GitHub 与 Google 共用标准 oidc-client-ts 3.5.0 的 OIDC 授权码 + S256 PKCE；登录窗口先进入官网认证页，以片段传递本次提供方及标准授权地址，官网仅在窗口 sessionStorage 保存提供方，再跳转固定 Neon 授权端点，不修改授权查询或 Neon 签名查询。官网承载登录中转、授权确认与同源注销页，不保存令牌。identity 窗口由后台协调，插件认证 fetch 省略网页 Cookie，后台串行管理扩展源 IndexedDB 凭据、刷新与撤销，页面消息只返回头像/昵称/邮箱且拒绝内容脚本。退出先撤销刷新令牌，再短暂打开官网同源注销页调用 Neon signOut 并验证会话消失，收到固定插件回跳后删除残留的指定 Neon Cookie，最后删除插件身份；失败保留本地身份供重试且不提示成功。不注销 GitHub/Google 网站账号，不承诺即时使已签发访问令牌失效。再次登录发送 `prompt=consent` 要求 Neon 显示 Exts 授权确认；官网向所选 GitHub/Google 社交登录请求 `prompt=select_account` 供用户选择身份，不强制 GitHub 重复展示其自身应用授权。缺少公开 Client ID 时保持访客，不用占位值发起授权。取消和失败使用共用 Sonner，日志不输出授权码/令牌。保留本地 Settings、书签及下载记录，不增加业务表、管理员或 API；真实 Chrome/Edge 行为由用户验收。
 - Studio 参考 Newtab 按 views、components、stores、types、utils 等职责组织，目录内部按功能分组，只创建实际需要的目录；不预建全局 Store、空功能目录或通用事件总线。
-- ActivityCard 归 `modules/studio/components/activity`，通过 Studio 模块入口导出，Home 仅引入展示；日期 Hook 归 `hooks/activity`，Dock 入口组件归 `components/dock-entry`。默认 Calendar，保留三项视图切换；Calendar 为 24 周完成项数日历，Chart 展示最近 14 天成长/睡眠，Pie 展示周投入及周计划。记录来自 Studio 的固定模拟 JSON，不提供录入或持久化；睡眠仅每日总时长。运动、阅读、学习、创作固定对应全局 --chart-1 至 4，日历 activity-level 仅为其别名，全图表复用同一中性灰主题；实心饼图按分类着色，计划环按每25%完成度分档且不显示左右标题；周计划统一周日至周六。具体组合见扩展 UI 文档；后续数据操作与订阅仍归 Studio，按获批需求再创建。
+- ActivityCard 归 `features/activity`，由 Home 页面直接引入展示；日期 Hook 与类型保留在该 feature，Dock 入口组件归 `pages/dock/studio-entry.tsx`。默认 Calendar，保留三项视图切换；Calendar 为 24 周完成项数日历，Chart 展示最近 14 天成长/睡眠，Pie 展示周投入及周计划。记录来自 Studio 的固定模拟 JSON，不提供录入或持久化；睡眠仅每日总时长。运动、阅读、学习、创作固定对应全局 --chart-1 至 4，日历 activity-level 仅为其别名，全图表复用同一中性灰主题；实心饼图按分类着色，计划环按每25%完成度分档且不显示左右标题；周计划统一周日至周六。具体组合见扩展 UI 文档；后续数据操作与订阅仍归 Studio，按获批需求再创建。
 
 ## 图标职责
 
 - `UiIcon` 只适配 Lucide 通用 UI 图标，统一使用 `currentColor`、已批准的尺寸和线宽；只能显式静态导入实际使用的图标。
-- 状态等级复用 shared/ui/status-icon.tsx 的 StatusIcon：success、neutral、pending、loading、warning、error；等级语义与 Toast 的成功／信息／加载／警告／错误反馈一致，展示组件各自保留已确认图标。图标统一 16px、既有线宽与 muted-foreground，不额外加红绿等等级配色；loading 旋转且遵循减少动画偏好。业务自行判断状态、映射等级并组合官方 Tooltip，Tooltip 与可访问文案不得写入 StatusIcon，不建立全局业务状态管理。
+- 状态等级复用 components/custom/status-icon.tsx 的 StatusIcon：success、neutral、pending、loading、warning、error；等级语义与 Toast 的成功／信息／加载／警告／错误反馈一致，展示组件各自保留已确认图标。图标统一 16px、既有线宽与 muted-foreground，不额外加红绿等等级配色；loading 旋转且遵循减少动画偏好。业务自行判断状态、映射等级并组合官方 Tooltip，Tooltip 与可访问文案不得写入 StatusIcon，不建立全局业务状态管理。
 - 禁止 `import * as Icons from 'lucide-react'`、完整图标注册表、根据任意字符串动态访问 Lucide 全量导出或其他可能将整套图标打入产物的方式。
-- `shared/brand/BrandIcon` 只管理品牌、网站书签和文字 Logo；Newtab 书签及 Dock 收藏随明暗主题切换黑白，不再维护 original、adaptive 或 neutral 配置。普通书签透明单色，浅色黑色、深色白色；Exts 保留正式完整外形，浅色黑底白图、深色白底黑图，沿用现有正式导出资源。品牌唯一源稿与三端应用图标保持原样；不得使用 Lucide 重绘或替换品牌 Logo。
+- `components/custom/brand-icon.tsx` 只管理品牌、网站书签和文字 Logo；Newtab 书签及 Dock 收藏随明暗主题切换黑白，不再维护 original、adaptive 或 neutral 配置。普通书签透明单色，浅色黑色、深色白色；Exts 使用已批准的轻量圆角矢量展示资源，浅色黑底白图、深色白底黑图。品牌唯一源稿与三端应用图标保持原样；不得使用 Lucide 重绘或替换品牌 Logo。
 - 被 Lucide 替代的通用功能 SVG 在完成迁移和验收后必须删除，不得长期保留两套等价资源或运行时实现。
 
 ## 共用能力与职责目录
 
-- `src/assets/brand/` 持有扩展共用品牌 SVG，`src/shared/brand/` 持有 BrandIcon 与尺寸类型；通过 WXT 复制资源到相同相对路径，不更改 SVG 内容或三端品牌源稿。
-- `src/shared/bookmarks/` 持有 Newtab 与 Dock 实际复用的 BookmarkCard 和基础 Bookmark 类型；首页配置、文件夹类型、解锁及打开辅助仍归 Newtab，不把业务放进 shared/ui。
+- `src/assets/brand/` 持有扩展共用品牌 SVG，`src/components/custom/` 持有 BrandIcon 与尺寸类型；通过 WXT 复制资源到相同相对路径，不更改 SVG 内容或三端品牌源稿。
+- `src/features/bookmarks/` 持有 Newtab 与 Dock 实际复用的 BookmarkCard 和基础 Bookmark 类型；首页配置、文件夹类型、解锁及打开辅助同归该 feature，不把业务放进 components/ui。
 - 模块内部按实际职责创建 views、components、hooks、types、constants、utils 等目录，目录内部按功能分组；下载执行、权限和运行环境接入保留明确的业务目录，不统放 utils，不建空目录或全局管理层。
 - 界面消费者使用模块公开界面入口；后台、MAIN 页面和隔离脚本直接引用对应环境入口，不经过导出 React 视图的聚合入口。
 
 ## 模块组合与 Dock 交互
 
-- `src/app/NewtabApp.tsx` 负责 Home／Studio 切换、公共 Provider 与首页 Dock 的组合；Home 布局、测量与书签打开由 `modules/newtab` 持有。Studio 的侧栏、顶部返回及账户登录由 `modules/studio` 持有，不把工作台布局或账户业务放入通用 UI。
-- `modules/dock` 持有 Dock 布局、入口、Actions 菜单和抽屉入口提示协调；收藏由应用组合层传入。Settings Sheet 归 `modules/settings`，Download Sheet 归 `modules/media-download/views/records`；业务模块不得依赖 Dock 内部实现。
+- `src/app/App.tsx` 负责 Home／Studio 切换、公共 Provider 与首页 Dock 的顶层组合；Home 布局与测量由 `pages/newtab` 持有，书签打开逻辑归 `features/bookmarks`，Dock 界面组合归 `pages/dock`。Studio 侧栏与返回入口归 `pages/studio`；Dock 与 Studio 共用 `pages/account` 的账号界面，认证与会话逻辑归 `features/account`，不把页面布局或账户业务放入通用 UI。
+- `pages/dock` 持有 Dock 布局、入口、Actions 菜单和抽屉入口提示协调；收藏由应用组合层传入。Settings Sheet 归 `pages/settings`，Download Sheet 归 `pages/download`；业务模块不得依赖 Dock 内部实现。
 
 
 - Dock 网页入口使用真实链接语义；工具分组使用真实按钮打开 `DropdownMenu`；已批准的 Settings 使用真实按钮打开 `Sheet`。各入口按已批准职责组合，不维护第二套交互实现。
@@ -58,13 +58,13 @@
 - Dock 位于视口底部，DropdownMenu 默认从上方弹出并支持碰撞调整；由用户验证菜单在 `1280×720`、缩放后 CSS 视口 `640×360` 以及 100%、125%、150%、200% 缩放下不被裁剪或移出视口。
 - 用户验收 DropdownMenu 应覆盖 Enter、Space 或 ArrowDown 打开、方向键移动、Enter 激活、Esc 关闭并恢复触发器焦点、外部点击关闭等行为；Portal 必须正确继承明暗主题 Token 和层级。
 - 已废弃的自定义 Popover 不得重新引入；DropdownMenu 与 Tooltip 分别承担菜单和提示职责，不维护双轨实现。
-- Settings 包含 General/Features，使用官方 Card、ItemGroup、Item 和 ItemSeparator 组成圆角边框列表。General 组合主题选择，Features 组合历史清理与 Media Download 总开关和帮助。Settings Sheet 与通用、媒体下载设置界面由 `modules/settings` 持有，Dock 只组合入口；通过公共 settings 数据源读写／订阅；TG、X、Helper 子项由官方 Collapsible 默认收起，只读展示英文状态，不提供独立开关或子项问号，仅主项保留帮助。折叠触发器与总开关独立，不在 Settings 展示下载记录。
+- Settings 包含 General/Features，使用官方 Card、ItemGroup、Item 和 ItemSeparator 组成圆角边框列表。General 组合主题选择，Features 组合历史清理与 Media Download 总开关和帮助。Settings Sheet 由 `pages/settings` 组合，General 设置项归 `features/settings`，媒体下载设置项归 `features/media-download`，Settings 页面只负责抽屉和分区组合，Dock 只组合入口；通过公共 settings 数据源读写／订阅；TG、X、Helper 子项由官方 Collapsible 默认收起，只读展示英文状态，不提供独立开关或子项问号，仅主项保留帮助。折叠触发器与总开关独立，不在 Settings 展示下载记录。
 
 ## Media Download 与记录边界
 
-- `src/modules/media-download/` 统一媒体下载；`components/telegram` 持有网页按钮，`download/telegram` 持有下载执行与目录授权，`pages`／`bridges` 分别接入 MAIN／隔离环境；记录由 `background/records`、`stores/records`、`views/records` 与 `components/records` 持有，纯辅助逻辑归 `utils`，共用类型与协议常量分别归 `types`、`constants`。总开关默认开启，保存在版本化的 `settings.mediaDownload.enabled`，保留旧 Telegram 开关选择；关闭立即屏蔽新下载入口，正在写入的任务继续。X／Helper 当前未接入，不预建空模块或模拟连接状态。
-- 不提供 Popup；完成 Toast 使用 shared/ui 中的官方 Sonner 样式组件，文案与触发由 TG 模块负责。只在文件关闭成功后显示成功图标与“下载完成”，不附加文件名描述；实际文件名保留在下载记录。不提示开始、进度、失败或取消，不修改现有文件名生成规则。
-- 文件关闭成功后，TG 页面仅把实际文件名和字节数通过隔离脚本交给 media-download/background/records 后台；记录模块复用 shared/storage，保留 downloads 顶层对象、来源校验和按筛选清空。Dock 仅提供打开 Media Download Sheet 的一级入口，列表与抽屉归 media-download。记录错误不改变已保存文件或成功 Toast，不传媒体流、目录句柄或真实磁盘路径。X 下载与 Desktop 通信尚未接入，文件夹入口仅提示未接入。
+- `src/features/media-download/` 统一媒体下载；`telegram/` 平铺网页按钮、下载执行、目录授权及 MAIN／隔离环境接入，`records/` 平铺记录后台、存储和列表；`pages/download/` 持有记录抽屉；各业务的辅助逻辑、类型与常量留在对应业务目录。总开关默认开启，保存在版本化的 `settings.mediaDownload.enabled`，保留旧 Telegram 开关选择；关闭立即屏蔽新下载入口，正在写入的任务继续。X／Helper 当前未接入，不预建空模块或模拟连接状态。
+- 不提供 Popup；完成 Toast 使用 components/ui 中的官方 Sonner 样式组件，文案与触发由 TG 模块负责。只在文件关闭成功后显示成功图标与“下载完成”，不附加文件名描述；实际文件名保留在下载记录。不提示开始、进度、失败或取消，不修改现有文件名生成规则。
+- 文件关闭成功后，TG 页面仅把实际文件名和字节数通过隔离脚本交给 features/media-download/records/background 后台；记录模块复用 lib/storage，保留 downloads 顶层对象、来源校验和按筛选清空。Dock 仅提供打开 Media Download Sheet 的一级入口，列表归 features/media-download/records，抽屉组合归 pages/download。记录错误不改变已保存文件或成功 Toast，不传媒体流、目录句柄或真实磁盘路径。X 下载与 Desktop 通信尚未接入，文件夹入口仅提示未接入。
 - 后续 X／Helper 按当前 Issue 获批阶段接入：Helper 独立执行，成功后通知一次，扩展收到后记记录；关闭总开关停止通信但不取消任务。通知丢失可接受，不加确认、重试、补发、恢复同步或历史补拉。
 - 保留 MAIN world 页面取流；目录选择与权限请求在用户手势内直接调用。下载入口使用官方 Button Group：主按钮为下载图标加“下载资源”，横向三点 DropdownMenu 收起“文件另存为”和“选择文件夹”；按钮组外层使用官方 Popover 定位，禁止恢复旧自定义 Popover。首次快速下载选择并记住目录后继续保存，后续直接保存；另存为独立选择本次文件而不更改目录，重新选择只更换后续目录。不限定目录名称、不创建固定子目录。句柄留在 Telegram 同来源 IndexedDB，同名递增避重；目录 API 不可用时快速保存降级为系统另存为。不把媒体流交给 desktop。统一主题 Token 位于 `src/styles/theme.css`，网页菜单与扩展页面共用。
 
@@ -77,6 +77,6 @@
 ## exts 新标签页模块 验收
 
 - 自动化测试覆盖不依赖真实浏览器布局与焦点环境的配置、数据处理、链接安全属性和必要架构边界；不得用假 DOM 模拟 Tooltip、菜单、键盘、焦点或指针交互。
-- 架构测试只用于防止高风险边界回退，例如旧 Popover、Lucide 全量导入或业务逻辑进入 `src/shared/ui/`；不得大量断言源码文本和内部实现形式。
+- 架构测试只用于防止高风险边界回退，例如旧 Popover、Lucide 全量导入或业务逻辑进入 `src/components/ui/`；不得大量断言源码文本和内部实现形式。
 - 每个阶段按根规范完成必要的逻辑测试、类型检查和生产构建。
 - 功能阶段完成后由用户在 Chrome 或 Edge 实际加载稳定开发目录，验证明暗主题、Tooltip、菜单、键盘、焦点恢复和约定缩放场景；用户未明确验收通过前不得进入最终提交准备。
