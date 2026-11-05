@@ -12,7 +12,7 @@
 
 ## 目录职责
 
-- `src/entrypoints/`：WXT 入口；`src/app/`：Home／Studio、Provider 与常驻 Dock 的应用组合。
+- `src/entrypoints/`：WXT 扩展入口。
 - `src/app/`：React 顶层装配与页面状态协调。
 - `src/pages/`：Newtab、Dock、Studio、Account、Settings、Download 页面区域和布局组合；`pages/dock/` 组合收藏、账号、下载、设置及 Studio 导航入口，不持有其他 feature 的实现。
 - `src/features/bookmarks/`：书签配置、卡片、文件夹、分组打开与访问判断。

@@ -83,3 +83,17 @@ docs(repo): 删除暂停的网站图标管理工作项
 ## 最终提交批准
 
 已批准并执行本地代码、文档提交；删除图标管理工作项另笔提交。未推送或部署。
+
+## 完结后文档修正
+
+用户要求“修改下 然后commit”，批准仅修正 apps/extension/README.md 首条重复的 app 职责说明并本地提交；本 Issue 与 Commit 记录同步保留本次补充说明，完成状态不变。当前 2.0.0、Release 正文和 workflow-tests 改名不混入。
+
+本次仅文案去重，未追加测试、类型检查、构建或其他验证。
+
+文件范围：apps/extension/README.md、本 Issue 与本 Commit 记录。完整消息：
+
+```text
+docs(extension): 精简目录职责中的重复说明
+
+- 保留独立的 WXT 入口与应用装配职责说明
+```
