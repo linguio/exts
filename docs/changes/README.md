@@ -79,7 +79,7 @@ docs/
 
 ## 当前 Issue
 
-- 已暂停：[在 Studio 统一管理网站图标与扩展缓存](./issues/2026-11-02-extension-remote-brand-cache-issue.md) · [Commit 记录](./commits/2026-11-02-extension-remote-brand-cache-commit.md)；用户于 2026-11-02 决定暂不实施，后续在 Studio 做管理与查询页，支持增删改查；旧静态发布草案仅供参考，数据库、接口及权限恢复时重新确认；当前仅文档改动尚未提交，未配置 Neon、上传或修改代码，未完结归档。
+无。
 
 ## Issue 队列
 
