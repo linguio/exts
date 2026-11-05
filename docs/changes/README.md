@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [按变更影响范围执行验证](./issues/2026-11-05-repo-scoped-verification-issue.md) · [Commit 记录](./commits/2026-11-05-repo-scoped-verification-commit.md)；用户批准本地提交，tests Skill、分级规范、根规范及工作流入口和官网 Skills 已同步，代码与文档分开提交；官网类型检查与 diff 检查通过，自动 YAML 校验因缺依赖未完成，未全局安装、修改 CI、推送或部署。
+
 - [版本变化后自动生成 Release 草稿](./issues/2026-11-05-repo-auto-release-on-version-issue.md) · [Commit 记录](./commits/2026-11-05-repo-auto-release-on-version-commit.md)；用户要求改完本地提交，配置与文档分开提交；版本变化、版本不变及手动目标的本地脚本检查通过，构建发布逻辑测试 19 项通过；未推送，线上 Actions、ZIP／DMG、Tag 与草稿 Release 待远端验证。
 
 - [准备 1.9.0 版本并更新登录日志](./issues/2026-11-05-repo-v190-auth-changelog-issue.md) · [Commit 记录](./commits/2026-11-05-repo-v190-auth-changelog-commit.md)；用户于 2026-11-05 确认验收通过并要求本地提交，版本和官网改动与文档分开提交；版本读取和 diff 检查通过，官网类型检查与构建因本机依赖缺失及 DNS 失败未完成，未推送或部署。
