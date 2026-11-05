@@ -59,6 +59,11 @@ export const productCategories: readonly ProductCategory[] = [
         description: '观察并记录开发习惯，通过复盘总结改进方向，优化自己的工作流。',
         links: [{ label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/skills/workflow-observer' }],
       },
+      {
+        name: 'tests',
+        description: '按变更影响范围选择必要检查，复用仍有效的验证结果，本地提交不重复运行测试或构建。',
+        links: [{ label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/skills/tests' }],
+      },
     ],
   },
 ];
