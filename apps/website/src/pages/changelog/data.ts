@@ -13,8 +13,27 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
-    id: 'account-login-v190',
+    id: 'architecture-workflow-v200',
     date: '2026-11-05',
+    title: '优化扩展架构与开发流程',
+    groups: [
+      {
+        platform: 'Extension',
+        changes: ['重构扩展整体架构，按页面、业务功能与公共组件组织代码。'],
+      },
+      {
+        platform: 'Skills',
+        changes: ['新增 workflow-tests Skill，按变更影响范围选择检查、复用验证结果，避免重复验证。'],
+      },
+      {
+        platform: 'Build',
+        changes: ['优化部署与发布流程，版本变化时自动生成 Release 草稿。'],
+      },
+    ],
+  },
+  {
+    id: 'account-login-v190',
+    date: '2026-11-04',
     title: '完善账户登录与状态提示',
     groups: [{
       platform: 'Extension',

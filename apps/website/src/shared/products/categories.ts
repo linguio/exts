@@ -60,9 +60,9 @@ export const productCategories: readonly ProductCategory[] = [
         links: [{ label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/skills/workflow-observer' }],
       },
       {
-        name: 'tests',
+        name: 'workflow-tests',
         description: '按变更影响范围选择必要检查，复用仍有效的验证结果，本地提交不重复运行测试或构建。',
-        links: [{ label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/skills/tests' }],
+        links: [{ label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/skills/workflow-tests' }],
       },
     ],
   },

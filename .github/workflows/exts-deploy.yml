@@ -192,7 +192,7 @@ jobs:
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
       - name: Test release behavior
-        run: node --test tests/build-release.test.mjs tests/extension-release.test.mjs apps/desktop/tests/scripts/desk.test.mjs
+        run: node --test tests/build-release.test.mjs tests/extension-release.test.mjs tests/release-notes.test.mjs apps/desktop/tests/scripts/desk.test.mjs
       - name: Test stable extension publication
         run: pnpm --filter @linguio/wxt-stable-output test
       - name: Test extension
@@ -229,19 +229,11 @@ jobs:
           set -euo pipefail
           test -s "$ZIP"
           test -s "$DMG"
+          node scripts/release-notes.mjs > "$RUNNER_TEMP/exts-release-notes.md"
           if ! git show-ref --verify --quiet "refs/tags/$TAG"; then
             git tag "$TAG" "$GITHUB_SHA"
           fi
           git push origin "refs/tags/$TAG"
-          cat > "$RUNNER_TEMP/exts-release-notes.md" <<'NOTES'
-          Exts 包含 Chrome／Edge 浏览器扩展和 macOS 27 桌面应用 Photos。
-
-          下载 exts-chrome.zip 附件，解压后在 Chrome 扩展管理页开启开发者模式，选择“加载已解压的扩展程序”。经实际验收后也可在 Edge 中加载。
-
-          下载 exts-mac.dmg，打开安装窗口，将左侧 Exts 拖到右侧“应用程序”目标，复制完成后从应用程序目录启动。桌面包仅用于本人在 macOS 27 上使用，未接入开发者分发签名或公证，首次启动仍可能需要用户在系统设置中允许。
-
-          两个安装包使用相同产品版本；即使扩展没有功能更新，每次 Release 仍同时包含两包。GitHub 自动生成的 Source code 压缩包是源码，不是安装包。
-          NOTES
           gh release create "$TAG" "$ZIP" "$DMG" --verify-tag --draft \
             --title "Exts $VERSION" --notes-file "$RUNNER_TEMP/exts-release-notes.md"
           gh release view "$TAG" --json url,tagName,isDraft,assets >> "$GITHUB_STEP_SUMMARY"
