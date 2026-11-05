@@ -14,7 +14,7 @@ Exts 是按个人习惯打造的工具集合，包含浏览器扩展、macOS 桌
 | Desktop | 基于 Swift 与 SwiftUI 的 macOS 原生应用，承载需要本机与设备能力的桌面工具。 | [模块文档](docs/desktop/README.md) · [开发入口](apps/desktop/README.md) |
 | Website | 对外展示 Exts 的产品官网，提供产品信息与相关资源入口。 | [模块文档](docs/website/README.md) · [开发入口](apps/website/README.md) |
 | Packages | 面向开发场景的可复用工具包，以及服务仓库的内部工具。 | [工具包文档](packages/wxt-stable-output/README.zh-CN.md) |
-| Skills | 可复用的 AI 开发流程与协作方法，配合代理和项目规范使用。 | [本地变更工作流](skills/workflow-change/SKILL.md) · [开发工作流观察](skills/workflow-observer/SKILL.md) |
+| Skills | 可复用的 AI 开发流程与协作方法，配合代理和项目规范使用。 | [本地变更工作流](.agents/skills/workflow-change/SKILL.md) · [开发工作流观察](.agents/skills/workflow-observer/SKILL.md) · [按影响范围验证](.agents/skills/workflow-tests/SKILL.md) |
 
 桌面当前为 Apple Silicon（arm64），需要 macOS 27.0 或更新版本，未提供 Intel 或旧版 macOS 安装包。各模块的具体功能和使用方式见对应文档。
 
@@ -38,7 +38,7 @@ Exts 是按个人习惯打造的工具集合，包含浏览器扩展、macOS 桌
 
 ### 开发 Skill
 
-Skill 源码位于 `skills/`，需要先接入所用代理的 Skill 发现目录，再通过 `$workflow-change` 或 `$workflow-observer` 调用。可将两个目录分别链接到本机用户的 `.agents/skills/`，保持仓库唯一源稿；克隆仓库本身不等于已安装或生效。适用范围与调用规则见各 Skill 文档。
+Skill 的唯一源码和仓库级发现入口统一位于 `.agents/skills/`，直接维护真实文件，不再使用根 `skills/` 或额外链接。支持项目级 Skill 的代理可通过 `$workflow-change`、`$workflow-observer` 或 `$workflow-tests` 调用；适用范围与调用规则见各 Skill 文档。
 
 ## 本地开发
 
@@ -72,7 +72,7 @@ exts/
 │  ├─ desktop/                  # macOS 原生应用
 │  └─ website/                  # 产品官网
 ├─ packages/                    # 开发工具包与内部复用工具
-├─ skills/                      # AI 开发流程与协作技能
+├─ .agents/skills/              # AI Skill 唯一源码与仓库发现入口
 ├─ docs/                        # 功能、设计及开发文档
 ├─ scripts/                     # 根版本、构建与打包入口
 ├─ assets/                      # 共享品牌资源

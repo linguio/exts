@@ -1,6 +1,6 @@
 # 按变更影响范围验证
 
-本文件维护仓库验证策略。根 AGENTS 保留强制入口；[workflow-tests Skill](../skills/workflow-tests/SKILL.md) 提供检查选择方法，不复制项目命令或建立第二套规则。用户最新明确要求及特定风险的现行要求优先。
+本文件维护仓库验证策略。根 AGENTS 保留强制入口；[workflow-tests Skill](../.agents/skills/workflow-tests/SKILL.md) 提供检查选择方法，不复制项目命令或建立第二套规则。用户最新明确要求及特定风险的现行要求优先。
 
 ## 按改动选择检查
 

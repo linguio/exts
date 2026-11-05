@@ -57,7 +57,7 @@
 - [Commit 记录](../commits/2026-11-05-repo-scoped-verification-commit.md)
 - [工作台](../README.md)
 - [验证规范](../../verification.md)
-- [tests Skill](../../../skills/tests/SKILL.md)
+- [tests Skill](../../../.agents/skills/workflow-tests/SKILL.md)
 
 ## 唯一下一步
 

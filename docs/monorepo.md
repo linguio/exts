@@ -11,14 +11,14 @@ ohmy-exts/
 │  ├─ helpers/          # 扩展配套程序，包括 Swift 等非 Node 项目
 │  └─ website/          # 统一官网与文档
 ├─ packages/            # 被两个及以上项目复用的共享包
-├─ skills/              # 可复用的 AI Skills，不作为 pnpm workspace 包
+├─ .agents/skills/      # AI Skills 唯一源码与发现入口，不作为 pnpm workspace 包
 ├─ docs/                # 架构、开发和迁移文档
 ├─ package.json         # 根命令、Node 和包管理器版本
 ├─ pnpm-workspace.yaml  # Node workspace 范围
 └─ turbo.json           # workspace 任务关系和缓存规则
 ```
 
-项目按产品归类，而不是按技术栈归类。浏览器扩展放在 `apps/extensions`，配套原生程序放在 `apps/helpers`，统一官网放在 `apps/website`。可复用的 npm 包和 AI Skills 分别放在根目录 `packages/` 与 `skills/`；网站可以将它们共同展示为 Toolkits，但仓库不增加 `toolkits/` 物理层级。
+项目按产品归类，而不是按技术栈归类。浏览器扩展放在 `apps/extensions`，配套原生程序放在 `apps/helpers`，统一官网放在 `apps/website`。可复用的 npm 包和 AI Skills 分别放在`packages/` 与 `.agents/skills/`；网站可以将它们共同展示为 Toolkits，但仓库不增加 `toolkits/` 物理层级。
 
 ## Workspace 规则
 

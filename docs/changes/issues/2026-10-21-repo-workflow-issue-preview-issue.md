@@ -37,7 +37,7 @@ TG 工作已先创建 Issue 和 Commit 记录，但未在改代码前向用户�
 
 ## 关联文档
 - [Commit 记录](../commits/2026-10-21-repo-workflow-issue-preview-commit.md)
-- [Skill 源](../../../skills/workflow-change/SKILL.md)
+- [Skill 源](../../../.agents/skills/workflow-change/SKILL.md)
 - [前序体积 Issue](./2026-10-21-extension-bundle-report-issue.md)
 
 ## 唯一下一步
