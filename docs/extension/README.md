@@ -7,6 +7,8 @@ Exts 是面向 Chrome 和 Edge 的浏览器扩展，按独立功能组织模块�
 | 功能 | 状态 | 说明 |
 | --- | --- | --- |
 | [Newtab](./newtab.md) | 已实现 | 新标签页书签、文件夹、Dock、工具入口与 Settings 面板 |
+| [Studio 与 Activity](./ui.md) | 已实现 | 独立工作空间与首页活动展示；活动使用固定模拟数据，不提供录入、持久化或同步 |
+| [账号](./auth-setup.md) | 已接入 | Dock 与 Studio 共用登录框和账号菜单，支持 GitHub、Google 登录及退出 |
 | [历史清理](./history-cleaner.md) | 已实现 | 默认关闭，在 Settings 开启后于启动和最后窗口关闭时清空访问历史 |
 | [Telegram Download](./telegram-download.md) | 已实现 | 默认开启的 Telegram Web 图片/视频下载，支持快速保存和选择文件夹，仅完成时显示折叠 Toast |
 

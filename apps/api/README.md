@@ -8,7 +8,7 @@
 
 Scalar 浏览器资源固定为 `https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.76.4/dist/browser/standalone.js`，需要浏览器可访问 jsDelivr；不使用浮动 CDN 版本。沿用官方默认样式，关闭 Agent 与遥测，不设置请求代理、不预填令牌、不默认持久保存令牌。在线调试请求直接发往当前 API 服务。
 
-本次获批部署后，访问正式根地址 `https://api.exts.linguio.dev/` 将自动跳转至 `/docs`；官网 Header 的 API 文档图标仍直接打开 `https://api.exts.linguio.dev/docs`。本地修改不会自动更新线上页面。
+服务部署后的正式根地址为 `https://api.exts.linguio.dev/`，根路由跳转至 `/docs`；官网页头 API 文档入口直接打开 `https://api.exts.linguio.dev/docs`。本地修改不会自动更新线上页面，部署和实际可用性需分别验证。
 
 ## 本机准备
 

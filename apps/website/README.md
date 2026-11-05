@@ -20,19 +20,20 @@ pnpm --filter @exts/website typecheck
 pnpm web:build
 ```
 
-产物为根 dist/build/exts-web，Vite 缓存在根 dist/.cache/website/vite；只清理网站自己的生产目录。构建通过 scripts/version.mjs 校验根产品版本，不在网站维护第二份 version。GitHub Pages 后续只运行 web:build，不运行 macOS 专用根 build。
+产物为根 dist/build/exts-web，Vite 缓存在根 dist/.cache/website/vite；只清理网站自己的生产目录。构建通过 scripts/version.mjs 校验根产品版本，不在网站维护第二份 version。GitHub Pages 的官网 job 只运行 web:build，不运行 macOS 专用根 build。上面是可用检查命令，实际执行范围遵循 [分级验证规范](../../docs/verification.md)，不要求每次修改全部运行。
 
 ## 工程组织
 
-- 新增 /auth/sign-in/ 与 /auth/consent/ 两个认证托管入口，供插件标准 OIDC/PKCE 流程使用，不在官网首页增加登录要求。使用 @neon/auth 0.8.2 读取网页会话，Neon REST 接口承接原样签名查询；GitHub 密码在 GitHub 官方页面输入。两页不被索引、不发送 referrer，部署/外部配置与实际登录仍需按 [认证配置清单](../../docs/extension/auth-setup.md) 执行。
+- /auth/sign-in/、/auth/consent/ 与 /auth/sign-out/ 是扩展登录、授权和退出的托管入口，不在官网首页增加登录要求。使用 @neon/auth 0.8.2 处理网页会话，认证和同源注销边界见 [认证配置清单](../../docs/extension/auth-setup.md)；不保存扩展令牌，不将编译通过表述为线上授权成功。
 - 认证请求纯逻辑检查：node --test --test-isolation=none apps/website/tests/auth-requests.test.mjs。不得将编译或请求单测通过视为线上授权完成。
 
-- src/entrypoints：产品三页及两个认证托管页的 HTML 和 React 启动入口；产品外部地址仍为 /、/features/、/changelog/，认证页为 /auth/sign-in/、/auth/consent/。
+- src/entrypoints：产品三页及三个认证托管页的 HTML 和 React 启动入口；产品外部地址为 /、/features/、/changelog/，认证页为 /auth/sign-in/、/auth/consent/、/auth/sign-out/。
 - src/pages/home：首页正文及 components 下的文字动效、平台下载入口、展示卡片池等首页专用内容。
 - src/pages/products：产品介绍与 Quick Start；内部目录改名，不改变外部 /features/ 地址或分类 hash。
 - src/pages/changelog：更新日志页面、时间线和 data.ts 日志数据。
 - src/shared/layout：共用 SiteLayout、SiteDocumentLayout、页头和页脚；src/shared/ui：纳入 Git 的官方基础组件。
 - src/shared/products/categories.ts：首页／产品页共用分类数据和 hash 解析；src/shared/config/site.ts：站点文案、GitHub 和固定 latest 下载地址；src/shared/lib/utils.ts：样式合并工具。
+- 产品介绍提供 Quick Start、四类产品和 API 说明；三个工作流 Skill 的唯一源码位于根 .agents/skills，官网源码地址指向对应目录。页头 API 文档入口指向 https://api.exts.linguio.dev/docs，服务实现及使用方式见 [API README](../api/README.md)。
 - src/styles：index.css 统一导入，theme.css 保存原主题声明，layout.css 保存原公共布局和基础样式，声明顺序不变；Tailwind 显式保留原网站扫描范围。
 - src/assets/brand：保留已统一的品牌 SVG，public 保留固定 URL 的正式 Exts 资源、favicon 和许可声明；本轮不移动或清理任何品牌文件。
 - tests/pages/home/showcase 与 tests/shared/products：原卡片池、分类解析行为测试，随职责迁移保留。
@@ -62,7 +63,7 @@ Lucide React 用于通用状态图标，平台与 GitHub 用品牌 SVG。Google 
 
 配置提交并推送到 main 后，官网会自动部署。需要手动重部署时，打开 Actions → Exts Publish → Run workflow，分支选择 main，target 选择 Website。成功后访问 https://exts.linguio.dev/，确认静态资源、页面与原有下载链接。其他分支手动触发会跳过构建和部署。实际网站视觉与交互由用户在 Chrome 或 Edge 验收。
 
-Exts Publish 的 Release 目标由用户从 main 手动触发，生成同一版本的扩展 ZIP、macOS DMG 和一个 Release 草稿；即使扩展没有功能更新也同时生成两包。公开 Release 并设为 Latest 仍由用户验收后操作。自动触发只部署官网；手动触发只执行所选目标。官网依赖固定 latest 下载链接，不需要随产品版本重新部署。
+Exts Publish 推送 main 时比较根产品版本与最新远端产品 Tag，高于或尚无产品 Tag 时同时运行 Release；也支持手动选择 Release。Release 生成同一版本的扩展 ZIP、macOS DMG 和草稿，正文取官网最新 changelog 的更新点无序列表，不含分类、日期或安装说明。普通官网部署不生成正文，公开 Release 并设为 Latest 仍由用户确认；官网固定 latest 下载地址不随产品版本变化。
 
 GitHub Pages 使用 workflow 的 GITHUB_TOKEN 与 OIDC，不需要额外 PAT 或部署密钥。仓库或组织的 Actions 策略及 github-pages 环境规则需要允许所用 Actions 与 main 部署；已有审批规则仍需由用户处理。
 

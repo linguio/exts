@@ -25,11 +25,13 @@ macOS 原生应用，正式 Bundle Identifier 为 `dev.linguio.exts`，开发为
 
 正式与开发共用默认下载目录 `~/Downloads/Exts Downloads/Photos/`，下载结束显示原生结果提示，成功时可在 Finder 中查看；缓存和配置保持隔离，旧下载文件不迁移。完整数据位置见 [Photos 文件与数据](../../docs/desktop/ohmy-photos.md#文件与数据)。不同 Bundle Identifier 的配置独立，开发版可能需要重新授权设备或目录。
 
-[当前 Issue](../../docs/changes/issues/2026-10-19-repo-desktop-first-release-issue.md)
+[首版迁移记录](../../docs/changes/issues/2026-10-19-repo-desktop-first-release-issue.md)
 
 根 `pnpm release` 同时生成本地 `dist/release/exts-chrome.zip` 与 `dist/release/exts-mac.dmg`；开发只使用 `.app`，无需安装 DMG 或配置分发证书。Actions → Exts Publish → Release 从 main 手动生成双包草稿，用户打开 DMG 后，将左侧 Exts 拖到右侧“应用程序”目标，复制完成后从应用程序目录启动。DMG 配置固定图标窗口、浅色背景和箭头说明，不使用 PKG 或自动安装。打包需要可用的 Finder 会话；窗口配置失败时不替换旧包。公开 Release 仍由用户验收后操作。首版仅供本人在 macOS 27 上使用，当前为 arm64，不接入开发者分发签名、公证或旧系统兼容，首次下载运行仍可能需要用户手动允许。完整版本、产物及数据隔离规则见 [构建与分发规范](../../docs/build-release.md)。
 
-## 本轮验证限制
+Release 还可由 main 推送后的版本检查自动触发；草稿正文读取官网最新 changelog 的更新点，不再使用固定安装说明。触发条件与发布操作统一见 [构建与分发规范](../../docs/build-release.md)，本地提交不触发线上打包。
+
+## 历史验证记录与限制
 
 2026-10-19 已通过开发及正式 Xcode 构建和本地双包打包，DMG 镜像校验通过，开发 app 打开命令成功。实际设备、界面、图标、备份、DMG 挂载安装和远程 Actions 由用户验收。
 

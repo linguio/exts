@@ -2,9 +2,9 @@
 
 将想法与能力延伸为实用工具。
 
-Exts 是按个人习惯打造的工具集合，包含浏览器扩展、macOS 桌面应用、产品官网、开发工具包与 AI 开发 Skill。本仓库使用 Monorepo 组织源码，共用品牌资源和产品版本入口。
+Exts 是按个人习惯打造的工具集合，包含浏览器扩展、macOS 桌面应用、产品官网、API 服务、开发工具包与 AI 开发 Skill。本仓库使用 Monorepo 组织源码，共用品牌资源和产品版本入口。
 
-[产品官网](https://exts.linguio.dev/) · [产品介绍与快速开始](https://exts.linguio.dev/features/) · [更新日志](https://exts.linguio.dev/changelog/) · [GitHub Releases](https://github.com/linguio/exts/releases)
+[产品官网](https://exts.linguio.dev/) · [产品介绍与快速开始](https://exts.linguio.dev/features/) · [API 文档](https://api.exts.linguio.dev/docs) · [更新日志](https://exts.linguio.dev/changelog/) · [GitHub Releases](https://github.com/linguio/exts/releases)
 
 ## 模块介绍
 
@@ -13,6 +13,7 @@ Exts 是按个人习惯打造的工具集合，包含浏览器扩展、macOS 桌
 | Extension | 面向 Chrome 和 Edge 的浏览器扩展，按模块集成日常浏览所需的工具。 | [模块文档](docs/extension/README.md) · [开发入口](apps/extension/README.md) |
 | Desktop | 基于 Swift 与 SwiftUI 的 macOS 原生应用，承载需要本机与设备能力的桌面工具。 | [模块文档](docs/desktop/README.md) · [开发入口](apps/desktop/README.md) |
 | Website | 对外展示 Exts 的产品官网，提供产品信息与相关资源入口。 | [模块文档](docs/website/README.md) · [开发入口](apps/website/README.md) |
+| API | 基于 FastAPI 的后端服务，使用 Scalar 展示接口文档，当前尚未开放业务接口。 | [接口文档](https://api.exts.linguio.dev/docs) · [开发入口](apps/api/README.md) |
 | Packages | 面向开发场景的可复用工具包，以及服务仓库的内部工具。 | [工具包文档](packages/wxt-stable-output/README.zh-CN.md) |
 | Skills | 可复用的 AI 开发流程与协作方法，配合代理和项目规范使用。 | [本地变更工作流](.agents/skills/workflow-change/SKILL.md) · [开发工作流观察](.agents/skills/workflow-observer/SKILL.md) · [按影响范围验证](.agents/skills/workflow-tests/SKILL.md) |
 
@@ -53,6 +54,7 @@ pnpm install --frozen-lockfile
 | 官网 | `pnpm web:dev` | `pnpm web:build` |
 | 浏览器扩展 | `pnpm ext:dev` | `pnpm ext:build` |
 | macOS 桌面 | `pnpm desk:dev` | `pnpm desk:build` |
+| API | `pnpm api:dev` | 服务部署方式见 [API 开发文档](apps/api/README.md) |
 
 桌面开发需要 macOS 27.0、Xcode 27.0.0 与 XcodeGen 2.46.0。Windows 可独立开发和构建官网、扩展；根 `pnpm build` 与 `pnpm release` 仅支持 macOS。
 
@@ -62,6 +64,8 @@ pnpm install --frozen-lockfile
 
 根 `pnpm build` 串行构建官网、扩展和桌面；`pnpm release` 构建并生成 `dist/release/exts-chrome.zip` 与 `dist/release/exts-mac.dmg`，不自动公开发布。扩展与桌面共用根 `package.json` 的产品版本，每次 Release 同时包含两个安装包。完整命令、产物、版本及 Actions 说明见[构建与分发规范](docs/build-release.md)。
 
+推送 main 自动部署官网，并检查根版本是否高于最新远端产品 Tag；高于或尚无产品 Tag 时生成双包 Release 草稿，也可手动选择 Release。草稿正文读取官网最新 changelog，仅输出更新点的无序列表；公开发布仍由用户确认。检查按 [分级验证规范](docs/verification.md) 选择影响范围，不因准备本地提交而重复运行。
+
 ## 目录与文档
 
 ```text
@@ -70,7 +74,8 @@ exts/
 ├─ apps/                        # 应用源码
 │  ├─ extension/                # 浏览器扩展
 │  ├─ desktop/                  # macOS 原生应用
-│  └─ website/                  # 产品官网
+│  ├─ website/                  # 产品官网
+│  └─ api/                      # API 服务与 Scalar 接口文档
 ├─ packages/                    # 开发工具包与内部复用工具
 ├─ .agents/skills/              # AI Skill 唯一源码与仓库发现入口
 ├─ docs/                        # 功能、设计及开发文档
@@ -79,7 +84,7 @@ exts/
 └─ dist/                        # 本地产物和缓存，不纳入 Git
 ```
 
-- [扩展文档](docs/extension/README.md)、[桌面文档](docs/desktop/README.md)、[官网文档](docs/website/README.md)
+- [扩展文档](docs/extension/README.md)、[桌面文档](docs/desktop/README.md)、[官网文档](docs/website/README.md)、[API 文档](apps/api/README.md)
 - [构建与分发](docs/build-release.md)
 - [品牌资源](assets/brand/README.md)
 - [历史归档](archive/README.md)
