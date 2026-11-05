@@ -9,13 +9,12 @@ import { AccountDialog } from '@/pages/account/account-dialog';
 import { AccountMenuContent } from '@/pages/account/account-menu-content';
 import { logoutAccount } from '@/features/account/auth-client';
 import { useAccount } from '@/features/account/auth-client';
+import { useDockOverlay } from './use-dock-overlay';
 
 /** 首页账户入口复用共享 Account 登录框，已登录菜单直接在 Dock 展开。 */
 export function DockAccount() {
   const { user, isPending, error, refetch } = useAccount();
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const overlay = useDockOverlay();
   const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
@@ -29,7 +28,7 @@ export function DockAccount() {
       await logoutAccount();
       toast.success('退出成功');
       await refetch();
-      setMenuOpen(false);
+      overlay.overlayProps.onOpenChange(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : '退出失败，请重试');
     } finally {
@@ -44,7 +43,7 @@ export function DockAccount() {
       size="entry"
       className="bookmark-card bookmark-card--dock bookmark-dock__tool"
       aria-label="Account"
-      onPointerDown={() => setTooltipOpen(false)}
+      {...overlay.triggerProps}
     >
       <span className="bookmark-card__icon entry-surface">
         <UiIcon name="user-round" className="entry-glyph" />
@@ -53,14 +52,14 @@ export function DockAccount() {
   );
 
   return (
-    <Tooltip open={tooltipOpen && !dialogOpen && !menuOpen} onOpenChange={setTooltipOpen}>
+    <Tooltip {...overlay.tooltipProps}>
       {user && !error ? (
-        <DropdownMenu open={menuOpen} onOpenChange={open => { setMenuOpen(open); setTooltipOpen(false); }}>
+        <DropdownMenu {...overlay.overlayProps}>
           <TooltipTrigger asChild><DropdownMenuTrigger asChild>{button}</DropdownMenuTrigger></TooltipTrigger>
-          <AccountMenuContent user={user} loggingOut={loggingOut} onLogout={() => { void logout(); }} side="top" sideOffset={12} />
+          <AccountMenuContent user={user} loggingOut={loggingOut} onLogout={() => { void logout(); }} side="top" sideOffset={12} onCloseAutoFocus={overlay.onCloseAutoFocus} />
         </DropdownMenu>
       ) : (
-        <AccountDialog isPending={isPending} refetch={refetch} onOpenChange={open => { setDialogOpen(open); setTooltipOpen(false); }}>
+        <AccountDialog isPending={isPending} refetch={refetch} onOpenChange={overlay.overlayProps.onOpenChange} onCloseAutoFocus={overlay.onCloseAutoFocus}>
           <TooltipTrigger asChild>{button}</TooltipTrigger>
         </AccountDialog>
       )}

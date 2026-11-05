@@ -4,19 +4,20 @@ import { UiIcon } from '../../components/custom/ui-icon';
 import type { AccountUser } from '../../features/account/account-controller';
 
 /** Studio 与 Newtab 使用相同的账户菜单内容。 */
-export function AccountMenuContent({ user, loggingOut, onLogout, side, sideOffset, matchTriggerWidth = false }: {
+export function AccountMenuContent({ user, loggingOut, onLogout, side, sideOffset, matchTriggerWidth = false, onCloseAutoFocus }: {
   user: AccountUser;
   loggingOut: boolean;
   onLogout: () => void;
   side: 'top' | 'bottom' | 'right';
   sideOffset: number;
   matchTriggerWidth?: boolean;
+  onCloseAutoFocus?: (event: Event) => void;
 }) {
   const avatar = user.image?.startsWith('https://') ? user.image : undefined;
   const name = user.name || 'Account';
 
   return (
-    <DropdownMenuContent className={matchTriggerWidth ? 'w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg' : 'min-w-56 rounded-lg'} side={side} align="end" sideOffset={sideOffset}>
+    <DropdownMenuContent className={matchTriggerWidth ? 'w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg' : 'min-w-56 rounded-lg'} side={side} align="end" sideOffset={sideOffset} onCloseAutoFocus={onCloseAutoFocus}>
       <DropdownMenuLabel className="p-0 font-normal">
         <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
           <Avatar className="h-8 w-8 rounded-lg">

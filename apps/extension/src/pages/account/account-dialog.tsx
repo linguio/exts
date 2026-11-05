@@ -10,7 +10,7 @@ import { loginAccount } from '../../features/account/auth-client';
 import type { AccountProvider } from '../../features/account/account-controller';
 
 /** Studio 与 Newtab 共用同一登录表单和认证操作。 */
-export function AccountDialog({ children, isPending, refetch, onOpenChange }: { children: ReactNode | ((open: boolean) => ReactNode); isPending: boolean; refetch: () => Promise<void>; onOpenChange?: (open: boolean) => void }) {
+export function AccountDialog({ children, isPending, refetch, onOpenChange, onCloseAutoFocus }: { children: ReactNode | ((open: boolean) => ReactNode); isPending: boolean; refetch: () => Promise<void>; onOpenChange?: (open: boolean) => void; onCloseAutoFocus?: (event: Event) => void }) {
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState<AccountProvider | null>(null);
 
@@ -22,6 +22,7 @@ export function AccountDialog({ children, isPending, refetch, onOpenChange }: { 
       toast.success('登录成功');
       await refetch();
       setOpen(false);
+      onOpenChange?.(false);
     } catch (error) {
       if (error instanceof Error && error.message === '已取消登录') toast.info(error.message);
       else {
@@ -40,7 +41,7 @@ export function AccountDialog({ children, isPending, refetch, onOpenChange }: { 
       if (nextOpen) void refetch();
     }}>
       <DialogTrigger asChild>{typeof children === 'function' ? children(open) : children}</DialogTrigger>
-      <DialogContent className="gap-0 border-0 bg-transparent p-0 shadow-none sm:max-w-sm">
+      <DialogContent onCloseAutoFocus={onCloseAutoFocus} className="gap-0 border-0 bg-transparent p-0 shadow-none sm:max-w-sm">
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader className="text-center">

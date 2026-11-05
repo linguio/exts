@@ -2,16 +2,16 @@ import { Button } from '../../components/ui/button';
 import { SheetTrigger } from '../../components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
-import { useDockSheetTooltip } from './use-dock-sheet-tooltip';
+import { useDockOverlay } from './use-dock-overlay';
 import { MediaDownloadSheet } from '../download';
 
 /** Dock 只提供一级入口，记录抽屉由媒体下载模块持有。 */
 export function DockDownload() {
-  const sheetTooltip = useDockSheetTooltip();
+  const overlay = useDockOverlay();
 
   return (
-    <MediaDownloadSheet {...sheetTooltip.sheetProps} onCloseAutoFocus={sheetTooltip.onCloseAutoFocus}>
-      <Tooltip {...sheetTooltip.tooltipProps}>
+    <MediaDownloadSheet {...overlay.overlayProps} onCloseAutoFocus={overlay.onCloseAutoFocus}>
+      <Tooltip {...overlay.tooltipProps}>
         <TooltipTrigger asChild>
           <SheetTrigger asChild>
             <Button
@@ -20,7 +20,7 @@ export function DockDownload() {
               size="entry"
               className="bookmark-card bookmark-card--dock bookmark-dock__tool"
               aria-label="Open Media Download"
-              {...sheetTooltip.triggerProps}
+              {...overlay.triggerProps}
             >
               <span className="bookmark-card__icon entry-surface">
                 <UiIcon name="download" className="entry-glyph" />

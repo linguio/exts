@@ -1,10 +1,9 @@
-import { useRef, useState } from 'react';
-
 import { Button } from '../../components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
 import { toast } from '../../components/ui/sonner';
+import { useDockOverlay } from './use-dock-overlay';
 
 const placeholders = [
   { name: 'Placeholder A', icon: 'list' },
@@ -13,24 +12,11 @@ const placeholders = [
 
 /** 操作菜单沿用官方交互，本期选择占位项只显示未接入提示。 */
 export function DockActions() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const pointerDownOutsideRef = useRef(false);
+  const overlay = useDockOverlay();
 
   return (
-    <Tooltip
-      open={tooltipOpen && !menuOpen}
-      onOpenChange={(open) => {
-        if (!menuOpen) setTooltipOpen(open);
-      }}
-    >
-      <DropdownMenu
-        open={menuOpen}
-        onOpenChange={(open) => {
-          setMenuOpen(open);
-          setTooltipOpen(false);
-        }}
-      >
+    <Tooltip {...overlay.tooltipProps}>
+      <DropdownMenu {...overlay.overlayProps}>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
             <Button
@@ -38,12 +24,7 @@ export function DockActions() {
               variant="entry"
               size="entry"
               aria-label="Actions"
-              onPointerDown={() => setTooltipOpen(false)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
-                  setTooltipOpen(false);
-                }
-              }}
+              {...overlay.triggerProps}
             >
               <span className="entry-surface">
                 <UiIcon name="zap" className="entry-glyph" />
@@ -56,16 +37,7 @@ export function DockActions() {
           side="top"
           align="center"
           sideOffset={12}
-          onPointerDownOutside={() => {
-            pointerDownOutsideRef.current = true;
-          }}
-          onCloseAutoFocus={(event) => {
-            if (!pointerDownOutsideRef.current) return;
-            // 保留原菜单的鼠标关闭行为，键盘关闭仍交给官方焦点恢复。
-            event.preventDefault();
-            pointerDownOutsideRef.current = false;
-            if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
-          }}
+          onCloseAutoFocus={overlay.onCloseAutoFocus}
         >
           {placeholders.map((item) => (
             <DropdownMenuItem key={item.name} onSelect={() => { toast.info('暂未接入'); }}>

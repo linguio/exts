@@ -3,15 +3,15 @@ import { SheetTrigger } from '../../components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
 import { SettingsSheet } from '../settings';
-import { useDockSheetTooltip } from './use-dock-sheet-tooltip';
+import { useDockOverlay } from './use-dock-overlay';
 
 /** Dock 只提供设置入口，设置抽屉及分区由设置模块持有。 */
 export function DockSettings() {
-  const sheetTooltip = useDockSheetTooltip();
+  const overlay = useDockOverlay();
 
   return (
-    <SettingsSheet {...sheetTooltip.sheetProps} onCloseAutoFocus={sheetTooltip.onCloseAutoFocus}>
-      <Tooltip {...sheetTooltip.tooltipProps}>
+    <SettingsSheet {...overlay.overlayProps} onCloseAutoFocus={overlay.onCloseAutoFocus}>
+      <Tooltip {...overlay.tooltipProps}>
         <TooltipTrigger asChild>
           <SheetTrigger asChild>
             <Button
@@ -20,7 +20,7 @@ export function DockSettings() {
               size="entry"
               className="bookmark-card bookmark-card--dock bookmark-dock__tool"
               aria-label="Open settings"
-              {...sheetTooltip.triggerProps}
+              {...overlay.triggerProps}
             >
               <span className="bookmark-card__icon entry-surface">
                 <UiIcon name="settings" className="entry-glyph" />
