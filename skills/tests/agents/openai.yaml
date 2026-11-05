@@ -1,4 +1,0 @@
-interface:
-  display_name: "按影响范围测试"
-  short_description: "选择必要检查、复用结果，避免本地提交重复验证"
-  default_prompt: "使用 $tests 根据当前改动和仓库规范选择最少但充分的检查，复用仍有效的结果，并说明未验证事项。"

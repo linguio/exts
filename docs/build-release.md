@@ -97,6 +97,8 @@ project.yml 是原生配置入口，desk 命令先用 XcodeGen 生成工程再�
 
 附件固定为 exts-chrome.zip、exts-mac.dmg，不上传带版本号副本；包内版本仍取根版本；Tag 使用 v<版本>，Release 标题使用 Exts <版本>。从 1.2.0 起每次新 Release 都从同一提交生成两包，即使某端没有功能更新也不跳过该端。
 
+Release 草稿正文由 `node scripts/release-notes.mjs` 读取当前提交中官网 changelog 的第一条记录，按 groups 和 changes 的原顺序展开为 `- 内容` 无序列表；不含日期、标题、分类、安装说明或旧条目。官网数据须保持最新条目在首位；最新条目无内容或更新点格式无效时停止，不创建空正文草稿。生成在 Release job 内、创建和推送 Tag 之前执行，普通官网部署不生成 Release 正文；不调用 GitHub 自动生成说明，也不另维护重复文案。
+
 pnpm ext:release 独立构建扩展，检查 Manifest 版本、新标签页入口及图标资源，生成 ZIP 并校验后发布到根 dist/release。本地允许再次打包，完成暂存生成与校验后替换固定文件，失败保留旧包。Windows 使用系统 PowerShell/.NET ZIP，Linux/macOS 使用 zip/unzip；此命令不构建网站或桌面，不创建 Tag 或上传。
 
 流程 .github/workflows/exts-deploy.yml 展示为 Exts Publish，仅允许 main。推送 main 自动部署官网，并比较推送前后根 package.json 的 version；只有版本值变化时，才自动运行现有 Release。手动运行时仍可通过下拉选择 Website 或 Release，修改 package.json 的其他字段不会触发自动 Release。Release 使用 xcode-27 arm64 runner，显式选择 Xcode 27.0.0 路径，下载并校验固定 XcodeGen 2.46.0，使用 Node.js 24.16.0、pnpm 12.4.2 冻结安装。执行发布与桌面入口逻辑测试、稳定工具和扩展测试、官网及扩展类型检查，以及 Photos 的 MediaGroupingTests、ThumbnailSchedulerTests、AppStoragePathsTests、DownloadCoordinatorTests 四组原生纯逻辑测试；调用现有 pnpm release 完整构建并校验两包，再检查扩展体积。全部通过后创建指向本次构建提交的 v<版本> Tag 与一个草稿 Release，同时附带固定名 ZIP、DMG。已有 Release 拒绝覆盖，已有 Tag 指向不同提交时失败；失败草稿需人工检查，不自动删除或覆盖。

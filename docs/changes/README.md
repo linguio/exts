@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [准备 2.0.0 版本并更新官网日志](./issues/2026-11-05-repo-v200-changelog-issue.md) · [Commit 记录](./commits/2026-11-05-repo-v200-changelog-commit.md)；用户批准剩余内容全部本地提交，代码与文档分开提交；根版本 2.0.0、11 月 5 日三点、原账户条目 11 月 4 日、Release 最新 changelog 无序正文及 workflow-tests 改名已同步；3 项正文测试和官网类型检查通过，未构建、全局安装、推送或部署。
+
 - [按 React 功能模块整理扩展目录](./issues/2026-11-05-extension-feature-structure-issue.md) · [Commit 记录](./commits/2026-11-05-extension-feature-structure-commit.md)；用户确认验收通过并要求本地提交，代码与文档分开提交；102 项测试、类型检查、生产构建和未用变量检查结果保留，后续 Dock 顺序未重跑构建、旧稳定开发目录未更新；未推送。
 
 - [替换扩展轻量圆角矢量 Logo](./issues/2026-11-05-extension-lightweight-logo-issue.md) · [Commit 记录](./commits/2026-11-05-extension-lightweight-logo-commit.md)；用户要求本地提交，资源与文档分开提交；展示 SVG 为 1274 字节，沿用 102 项测试、类型检查与生产构建通过结果，产物 1.71 MB、测量 ZIP 563 KB；浏览器未独立实测，未更新稳定开发产物，其他端及应用图标保留，未推送。

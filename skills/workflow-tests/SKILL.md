@@ -1,5 +1,5 @@
 ---
-name: tests
+name: workflow-tests
 description: Use when choosing or running checks for an approved code, configuration, resource, or documentation change, or deciding whether existing validation can be reused. Do not activate for a request that only asks to commit locally.
 ---
 
