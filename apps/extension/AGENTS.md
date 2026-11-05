@@ -62,7 +62,7 @@
 
 ## Media Download 与记录边界
 
-- `src/features/media-download/` 统一媒体下载；`telegram/` 平铺网页按钮、下载执行、目录授权及 MAIN／隔离环境接入，`records/` 平铺记录后台、存储和列表；`pages/download/` 持有记录抽屉；各业务的辅助逻辑、类型与常量留在对应业务目录。总开关默认开启，保存在版本化的 `settings.mediaDownload.enabled`，保留旧 Telegram 开关选择；关闭立即屏蔽新下载入口，正在写入的任务继续。X／Helper 当前未接入，不预建空模块或模拟连接状态。
+- `src/features/media-download/` 统一媒体下载；`telegram/` 平铺网页按钮、下载执行、目录授权及 MAIN／隔离环境接入，`records/` 平铺记录后台、存储和列表；`pages/download/` 持有记录抽屉；各业务的辅助逻辑、类型与常量留在对应业务目录。总开关默认关闭，保存在版本化的 `settings.mediaDownload.enabled`，保留旧 Telegram 开关选择；关闭立即屏蔽新下载入口，正在写入的任务继续。X／Helper 当前未接入，不预建空模块或模拟连接状态。
 - 不提供 Popup；完成 Toast 使用 components/ui 中的官方 Sonner 样式组件，文案与触发由 TG 模块负责。只在文件关闭成功后显示成功图标与“下载完成”，不附加文件名描述；实际文件名保留在下载记录。不提示开始、进度、失败或取消，不修改现有文件名生成规则。
 - 文件关闭成功后，TG 页面仅把实际文件名和字节数通过隔离脚本交给 features/media-download/records/background 后台；记录模块复用 lib/storage，保留 downloads 顶层对象、来源校验和按筛选清空。Dock 仅提供打开 Media Download Sheet 的一级入口，列表归 features/media-download/records，抽屉组合归 pages/download。记录错误不改变已保存文件或成功 Toast，不传媒体流、目录句柄或真实磁盘路径。X 下载与 Desktop 通信尚未接入，文件夹入口仅提示未接入。
 - 后续 X／Helper 按当前 Issue 获批阶段接入：Helper 独立执行，成功后通知一次，扩展收到后记记录；关闭总开关停止通信但不取消任务。通知丢失可接受，不加确认、重试、补发、恢复同步或历史补拉。
