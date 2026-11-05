@@ -32,6 +32,8 @@
 
 ## 统一外形与同步修改规则
 
+2026-11-05 扩展展示资源验收例外：用户认可轻量纯矢量普通圆角预览，并要求替换扩展查看效果。`apps/extension/src/assets/brand/exts.svg` 复用唯一源稿的主体路径和变换，底板在 1254 画布采用半径 280 的普通圆角，不再封装 PNG；该轮廓不宣称与 Apple 一致。此轮仅调整扩展的 Studio 与 Newtab 展示资源，macOS、网站与各尺寸应用图标保持原资源，不改变下面正式 Apple 导出流程。后续运行生成脚本时须保留该已批准差异。交付与验收以 [对应 Issue](changes/issues/2026-11-05-extension-lightweight-logo-issue.md) 为准。
+
 三端最终外形以 Icon Composer 的 macOS Default 1024px 正式导出 `assets/brand/macos/exts-final.png` 为准，保留 Apple 的圆角、透明边缘与默认边缘材质，不自行猜测圆角。主体的唯一可编辑矢量源稿仍为assets/brand/exts.svg。
 
 - 只改唯一源稿，必须在同一工作项重新生成全部平台和尺寸，禁止直接编辑单端派生图标。
