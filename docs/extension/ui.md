@@ -99,7 +99,7 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - 历史清理区域使用官方基础的 `Switch`，通过 `checked` / `onCheckedChange` 连接状态，保留可访问名称与说明；默认关闭，加载、授权和保存期间禁用重复操作，失败通过共用 toast.error 提示。配置和权限变更同步到已打开页面，不把业务状态放入通用组件或新增全局设置状态。
 - 历史清理开关标题旁的圆圈问号复用 Button/UiIcon/Tooltip，帮助提示完整保留原说明，最大宽度 280px、优先向上显示并支持换行；独立按钮不切换开关，读屏描述通过常驻隐藏文本保留。错误不放进 Tooltip。
 - Sheet 内容、边框与分隔线使用根主题；全屏遮罩使用 blur-overlay，阴影使用项目 Token。打开／关闭动画恢复为 200ms／160ms，减少动态效果遵循全局规则。
-- Tooltip 提供名称或简短帮助说明，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Sheet 打开时 Dock 的 Settings 与 Download 入口不显示 Tooltip，关闭恢复焦点不自动弹出入口提示，后续正常悬停仍可显示；两个入口的状态由 Dock 局部 useDockSheetTooltip 共用，面板内部提示正常使用。关闭自动恢复焦点阶段，入口标记 data-restored-focus 并仅抑制该阶段的描边；不取消默认焦点恢复。入口失焦、指针按下或主动键盘操作后清除标记，正常键盘聚焦仍有描边。
+- Tooltip 提供名称或简短帮助说明，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Dock 的 Account（登录框与账户菜单）、Actions、Settings 与 Download 打开弹出层时不显示入口 Tooltip，关闭恢复焦点不自动弹出入口提示，后续正常悬停仍可显示；四个入口通过 Dock 局部 useDockOverlay 共用处理，面板内部提示正常使用。Settings 与 Download 打开时仍由各自面板将焦点放到标题。关闭自动恢复焦点阶段，入口标记 data-restored-focus 并仅抑制该阶段的描边；不取消默认焦点恢复。入口失焦、指针按下或主动键盘操作后清除标记，正常键盘聚焦仍有描边。
 - 品牌图标由 `components/custom/brand-icon.tsx` 负责；Newtab 书签、Dock 收藏及其复用入口随主题切换黑白，不再按站点配置 original、adaptive 或 neutral。普通书签透明背景、单色主体，浅色显示黑色、深色显示白色。通用图标由 `UiIcon` 显式静态导入。
 - UI 文件夹图标沿用原始几何、viewBox、线宽与留白，移除灰阶和渐变；白色覆盖形成的必要孔洞通过黑白遮罩转成真正透明区域，再统一主题转换，避免整体滤镜压平镂空。不套用 V3 重绘或统一坐标要求，不维护深浅两套源稿。
 - Grok 书签移除固定底板、保留主体路径。Exts 按用户最新确认保留正式完整外形及底板，浅色黑底白图、深色白底黑图；沿用现有内嵌正式 PNG 的 SVG，不重绘外形、不替换为仅含内部主体的源稿，也不对其应用压平对比的 brightness 滤镜。此主题反转仅用于书签，品牌唯一源稿及三端应用图标保持原样。此次交付见[书签单色 Issue](../changes/issues/2026-10-26-extension-bookmark-monochrome-issue.md)。

@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [统一 Dock 弹出层入口交互](./issues/2026-11-05-extension-dock-overlay-hook-issue.md) · [Commit 记录](./commits/2026-11-05-extension-dock-overlay-hook-commit.md)；用户已验收通过并于 2026-11-06 批准本地提交，代码与文档分开提交；沿用类型检查、生产构建和 diff 检查通过结果，保留既有构建警告，未追加验证或推送。
+
 - [默认关闭媒体下载与历史清理](./issues/2026-11-05-extension-features-default-off-issue.md) · [Commit 记录](./commits/2026-11-05-extension-features-default-off-commit.md)；用户批准本地提交完结。设置测试 11 项与类型检查通过，未构建、未独立浏览器验收，保留已有开关选择，未推送。
 
 - [准备 2.0.0 版本并更新官网日志](./issues/2026-11-05-repo-v200-changelog-issue.md) · [Commit 记录](./commits/2026-11-05-repo-v200-changelog-commit.md)；用户批准剩余内容全部本地提交，代码与文档分开提交；根版本 2.0.0、11 月 5 日三点、原账户条目 11 月 4 日、Release 最新 changelog 无序正文及 workflow-tests 改名已同步；3 项正文测试和官网类型检查通过，未构建、全局安装、推送或部署。
