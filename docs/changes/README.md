@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [自动准备 API 开发环境](./issues/2026-11-06-api-dev-environment-issue.md) · [Commit 记录](./commits/2026-11-06-api-dev-environment-commit.md)；用户于 2026-11-06 验收通过并批准代码与文档分开本地提交。启动器自动创建环境、按摘要同步固定依赖及预检配置；11 项测试、语法与 diff 检查、本机配置预检通过。未推送或部署。
+
 - [忽略 Python 运行缓存](./issues/2026-11-06-repo-python-cache-ignore-issue.md) · [Commit 记录](./commits/2026-11-06-repo-python-cache-ignore-commit.md)；根 .gitignore 已排除 __pycache__/ 与 *.pyc，忽略范围核对通过，按用户要求分开本地提交代码和文档，未推送。
 
 - [封装前端请求并接通 Activity 数据](./issues/2026-11-06-extension-activity-api-client-issue.md) · [Commit 记录](./commits/2026-11-06-extension-activity-api-client-commit.md)；用户于 2026-11-06 批准按已展示方案分开提交代码与文档，Axios 1.21.0 与 POST 契约已接入，用户已看到真实数据。沿用扩展 115 项、类型与构建通过和后端 25 项通过/3 项跳过结果；数据库只读路径约 7.3–7.8 秒的性能限制尚未优化，未推送、部署或启动重置。

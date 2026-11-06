@@ -18,31 +18,24 @@ Python 固定为 `.python-version` 中的 3.12.13；应用产品版本仍以根 
 
 生产依赖与其传递依赖直接以精确版本列在 `requirements.txt`，不引用额外约束文件，以避免部署预解析阶段的引用文件错误。`requirements-dev.txt` 引入生产清单并额外固定测试专用依赖；调整依赖时同步维护两份清单，不使用浮动版本。
 
-### macOS / Linux
+### 首次运行
 
-先安装上述固定版本 Python，再执行：
+1. 安装 `.python-version` 指定的 Python 3.12.13，以及根 package.json 指定的 Node.js 与 pnpm。
+2. 在仓库根目录执行 `pnpm install`，安装 Node 依赖。
+3. 参考 `apps/api/.env.example` 手动准备 `apps/api/.env.local`，填写 `DATABASE_URL`、`NEON_AUTH_ISSUER` 和 `API_RESOURCE`；已有文件保留。数据库迁移仍按下文流程单独执行。
+4. 执行 `pnpm api:dev`；需要同时开发全部应用时使用 `pnpm dev`，两者使用相同 API 启动器。
 
-```sh
-python3.12 -m venv dist/.cache/api/venv
-dist/.cache/api/venv/bin/python -m pip install -r apps/api/requirements-dev.txt
-pnpm install
-```
+启动器自动检查精确 Python 版本，在缺少环境时创建根 `dist/.cache/api/venv`，并使用该环境安装 `requirements-dev.txt`（包含生产依赖）。无需手动创建或激活虚拟环境。首次接入本流程的已有环境也会同步依赖，补齐此前未安装的包。
 
-### Windows（PowerShell）
+macOS / Linux 使用 `python3.12` 创建环境，可执行 `python3.12 --version` 确认版本。Windows 使用 Python Launcher 的 `py -3.12`，执行 `py -3.12 --version` 应输出 `Python 3.12.13`。注意：[该版本官方发布说明](https://www.python.org/downloads/release/python-31213/)不提供二进制安装包；新机器需自行准备该精确解释器及可用的 Launcher，WindowsApps 下的执行别名不能代替实际安装。启动器不会安装系统 Python 或改用其他版本。
 
-先准备可用的 Python 3.12.13。注意：[该版本官方发布说明](https://www.python.org/downloads/release/python-31213/)明确不提供二进制安装包，不能直接下载对应的 Windows exe 安装器；无 Python 的机器需要先通过源码构建或另行确认的运行时管理工具准备该精确版本。本项目不自动安装工具或改用其他 Python 版本。
+依赖安装成功后，启动器将 Python 版本及两份依赖清单的 SHA-256 摘要保存在虚拟环境内的 `.exts-dependencies.sha256`。后续启动清单不变则跳过安装；任一清单变化会重新同步。首次安装及清单变化时需要网络访问 Python 包源；安装失败停止启动，不保存新的成功摘要，下次启动会重试。
 
-如果已安装 Windows Python Launcher 且已注册该解释器，执行 `py -3.12 --version`，确认输出为 `Python 3.12.13`；只有 WindowsApps 下的 `python.exe` 应用执行别名并不代表已安装 Python。再从仓库根目录执行：
+若手动移除了已安装的包，可删除该摘要文件后重新启动，强制同步；该摘要不逐次审计环境中每个包。已有环境版本不符时，启动器停止并提示手动重建，不自动删除环境。不要跨系统复制虚拟环境；更换系统时应重新创建。
 
-```powershell
-py -3.12 -m venv dist/.cache/api/venv
-& .\dist\.cache\api\venv\Scripts\python.exe -m pip install -r apps/api/requirements-dev.txt
-pnpm install
-```
+依赖同步后会按 API 相同规则读取 env，检查上述三个必要变量是否非空。缺少时只报告变量名，并停止启动；不会输出凭据、覆盖 env 或自动执行迁移。此检查不验证远端认证、数据库连通性或迁移状态。内部任务的 `CRON_SECRET` 仍需使用任务前另行配置。
 
-无需激活虚拟环境，也无需修改 PowerShell 执行策略。若 `py` 不可用，可用已安装的 Python 3.12.13 的完整解释器路径替代第一条命令中的 `py -3.12`，例如 `& "C:\实际安装目录\python.exe" -m venv dist/.cache/api/venv`；不要将此示例路径直接执行。不要在不同系统之间复制虚拟环境；更换系统后按对应步骤重新创建。
-
-本地运行 API 必须准备 Python；只开发官网或扩展且不启动本地 API 时无需安装。启动脚本不会自动安装 Python 或依赖。
+本地运行 API 必须准备 Python；只开发官网或扩展且不启动本地 API 时无需安装。扩展开发版默认连接本地 API，需要后端数据时应启动本地服务，或明确配置 `VITE_API_BASE_URL` 使用正式 API。
 
 `apps/api/neon.ts` 管理服务，私有 `apps/api/.neon` 绑定项目及分支，Node 配置依赖维护在 `apps/api/package.json`。Neon 命令在 API 目录执行：
 
@@ -65,7 +58,7 @@ CLI 将连接变量拉入 `apps/api/.env.local`，API 目录已有 `.env` 时写
 pnpm api:dev
 ```
 
-启动器按系统自动选择根 `dist/.cache/api/venv` 下的 Windows `Scripts/python.exe` 或 macOS/Linux `bin/python`，固定以 API 目录启动 Uvicorn 并开启 --reload，保存 Python 文件后自动重启服务；浏览器 /docs 页面仍需刷新以重新读取 OpenAPI。首次增加自动重载后要先重启旧进程。缺少虚拟环境时返回非零退出码并提示准备步骤；已有虚拟环境但缺少依赖时，解释器会输出相应错误，需要按本机准备步骤重新安装依赖。按 Ctrl+C 停止服务。
+启动器按系统自动选择根 `dist/.cache/api/venv` 下的 Windows `Scripts/python.exe` 或 macOS/Linux `bin/python`，完成环境准备和配置预检后，以 API 目录启动 Uvicorn 并开启 --reload。保存 Python 文件后自动重启服务；修改 env 后请停止并重新执行启动命令，以重新读取配置；浏览器 /docs 页面需刷新以重新读取 OpenAPI。只有看到 `Application startup complete` 才代表应用启动成功，单独出现监听地址或 reloader 启动信息不足以确认服务可用。按 Ctrl+C 停止服务。
 
 API 监听 `http://127.0.0.1:8000`。打开根地址预期进入 `/docs`；Activity 查询需要先完成迁移及服务端认证配置，文档本身不需要。访问 `/hello` 预期 404。浏览器导航与文档实际加载由用户验收，文档成功不代表数据库业务已验证。
 
