@@ -1,19 +1,41 @@
+import asyncio
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from scalar_fastapi import AgentScalarConfig, get_scalar_api_reference
 
+from core.auth import warm_signing_keys
 from core.config import load_environment
+from core.database import close_pool, warm_pool
 from core.responses import install_responses
 from jobs.activity_days import router as jobs_router
 from modules.activity.router import router as activity_router
 
 load_environment()
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    preparation = asyncio.gather(
+        asyncio.to_thread(warm_pool),
+        asyncio.to_thread(warm_signing_keys),
+    )
+    try:
+        yield
+    finally:
+        try:
+            await preparation
+        finally:
+            close_pool()
+
+
 app = FastAPI(
     title="Exts API",
     docs_url=None,
     redoc_url=None,
     description="Exts 后端接口文档。业务接口使用 Bearer 认证，数据仅属于当前用户。",
+    lifespan=lifespan,
 )
 
 install_responses(app)

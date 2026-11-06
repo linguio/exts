@@ -9,7 +9,7 @@ import psycopg
 from psycopg.rows import dict_row
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from modules.activity.repository import create_daily_rows, list_days
+from modules.activity.repository import create_daily_rows, read_user_days
 from scripts.migrate import load_migrations, migrate
 
 TEST_URL = os.environ.get('API_TEST_DATABASE_URL')
@@ -42,13 +42,14 @@ class PostgresTests(unittest.TestCase):
             'UPDATE public.activity_daily_records SET exercise_minutes=30 WHERE user_id=%s', (USER_A,),
         )
         self.assertEqual(create_daily_rows(self.database, day), 0)
-        self.assertEqual(list_days(self.database, USER_A, day, day)[0]['exercise_minutes'], 30)
-        self.assertIsNone(list_days(self.database, USER_B, day, day)[0]['exercise_minutes'])
-        self.assertEqual(list_days(self.database, USER_A, date(2026, 11, 7), date(2026, 11, 7)), [])
+        self.assertEqual(read_user_days(self.database, USER_A, day, day)[0]['exercise_minutes'], 30)
+        self.assertIsNone(read_user_days(self.database, USER_B, day, day)[0]['exercise_minutes'])
+        self.assertEqual(read_user_days(self.database, USER_A, date(2026, 11, 7), date(2026, 11, 7)), [])
         create_daily_rows(self.database, date(2026, 11, 7))
-        self.assertEqual(len(list_days(self.database, USER_A, None, None)), 2)
-        self.assertEqual(len(list_days(self.database, USER_A, date(2026, 11, 7), None)), 1)
-        self.assertEqual(len(list_days(self.database, USER_A, None, day)), 1)
+        self.assertEqual(len(read_user_days(self.database, USER_A, None, None)), 2)
+        self.assertEqual(len(read_user_days(self.database, USER_A, date(2026, 11, 7), None)), 1)
+        self.assertEqual(len(read_user_days(self.database, USER_A, None, day)), 1)
+        self.assertIsNone(read_user_days(self.database, UUID('00000000-0000-4000-8000-000000000003'), None, None))
 
     def test_constraints_and_update_timestamp(self):
         day = date(2026, 11, 6)
@@ -58,7 +59,7 @@ class PostgresTests(unittest.TestCase):
         with self.assertRaises(psycopg.errors.ForeignKeyViolation), self.database.transaction():
             self.database.execute('INSERT INTO public.activity_daily_records(user_id,date) VALUES (%s,%s)',
                                   (UUID('00000000-0000-4000-8000-000000000003'), day))
-        before = list_days(self.database, USER_A, day, day)[0]
+        before = read_user_days(self.database, USER_A, day, day)[0]
         self.database.execute("UPDATE public.activity_daily_records SET updated_at='2000-01-01' WHERE user_id=%s",
                               (USER_A,))
         row = self.database.execute(

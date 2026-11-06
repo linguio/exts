@@ -1,3 +1,6 @@
+import logging
+import os
+from collections.abc import Iterator
 from dataclasses import dataclass
 from functools import lru_cache
 from typing import Annotated
@@ -8,12 +11,14 @@ from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt import PyJWKClient
 from jwt.exceptions import PyJWKClientConnectionError, PyJWKClientError, PyJWTError
+from psycopg import Connection
 
 from core.config import auth_issuer, required_setting
-from core.database import connection
+from core.database import borrow_connection
 from core.responses import ApiError
 
 bearer = HTTPBearer(auto_error=False)
+logger = logging.getLogger('exts.api')
 
 
 @dataclass(frozen=True)
@@ -32,6 +37,16 @@ def signing_keys(issuer: str) -> PyJWKClient:
     return PyJWKClient(issuer + '/.well-known/jwks.json', lifespan=300, timeout=5)
 
 
+def warm_signing_keys() -> None:
+    if not os.environ.get('NEON_AUTH_ISSUER', '').strip():
+        return
+    try:
+        # 仅提前获取公开密钥，继续使用既有缓存期限和未知密钥刷新逻辑。
+        signing_keys(auth_issuer()).get_signing_keys()
+    except (PyJWTError, ApiError, ValueError):
+        logger.warning('API 验签公钥预取失败，身份验证将按需重试')
+
+
 def verify_access_token(token: str) -> CurrentUser:
     issuer = auth_issuer()
     audience = required_setting('API_RESOURCE')
@@ -48,15 +63,15 @@ def verify_access_token(token: str) -> CurrentUser:
         raise unauthenticated() from None
 
 
-def get_current_user(
+def get_token_user(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)],
 ) -> CurrentUser:
     if credentials is None or credentials.scheme.lower() != 'bearer':
         raise unauthenticated()
-    user = verify_access_token(credentials.credentials)
-    with connection() as database:
-        exists = database.execute('SELECT 1 FROM neon_auth."user" WHERE id = %s',
-                                  (user.id,)).fetchone()
-    if not exists:
-        raise unauthenticated()
-    return user
+    return verify_access_token(credentials.credentials)
+
+
+def get_user_database(user: Annotated[CurrentUser, Depends(get_token_user)]) -> Iterator[Connection]:
+    # 先验证令牌，请求内共享借用连接；事务由具体执行入口管理。
+    with borrow_connection() as database:
+        yield database

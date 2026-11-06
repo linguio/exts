@@ -12,9 +12,9 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from jwt.exceptions import PyJWKClientConnectionError
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from core.auth import get_current_user, verify_access_token
+from core import auth
+from core.auth import verify_access_token
 from core.responses import ApiError
-from fastapi.security import HTTPAuthorizationCredentials
 
 ISSUER = 'https://auth.example.test/auth'
 RESOURCE = 'https://api.exts.linguio.dev'
@@ -73,9 +73,17 @@ class TokenTests(unittest.TestCase):
         self.assertEqual(raised.exception.status, 503)
         self.assertNotIn('private', raised.exception.message)
 
-    def test_deleted_user_is_not_authenticated(self):
-        with patch('core.auth.connection') as connection:
-            connection.return_value.__enter__.return_value.execute.return_value.fetchone.return_value = None
-            with self.assertRaises(ApiError) as raised:
-                get_current_user(HTTPAuthorizationCredentials(scheme='Bearer', credentials=self.token()))
-        self.assertEqual(raised.exception.status, 401)
+
+    def test_warm_public_keys_fetches_without_validating_user(self):
+        auth.warm_signing_keys()
+        self.keys.get_signing_keys.assert_called_once()
+        self.keys.get_signing_key_from_jwt.assert_not_called()
+
+    def test_warm_public_keys_skips_missing_config_and_tolerates_failure(self):
+        with patch.dict(os.environ, {'NEON_AUTH_ISSUER': ''}):
+            auth.warm_signing_keys()
+        self.keys.get_signing_keys.assert_not_called()
+        self.keys.get_signing_keys.side_effect = PyJWKClientConnectionError('private detail')
+        with self.assertLogs('exts.api', level='WARNING') as captured:
+            auth.warm_signing_keys()
+        self.assertNotIn('private detail', ' '.join(captured.output))

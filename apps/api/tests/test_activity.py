@@ -1,15 +1,15 @@
 import sys
 import unittest
-from contextlib import contextmanager
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from uuid import UUID
 from pathlib import Path
 
+import psycopg
 from fastapi.testclient import TestClient
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from app import app
-from core.auth import CurrentUser, get_current_user
+from core.auth import CurrentUser, get_token_user, get_user_database
 from core.responses import ApiError
 from modules.activity import service
 from modules.activity.schemas import ActivityDays
@@ -37,22 +37,19 @@ class ActivityAccessTests(unittest.TestCase):
 class ActivityQueryTests(unittest.TestCase):
     def setUp(self):
         self.user_id = UUID('00000000-0000-4000-8000-000000000001')
-        app.dependency_overrides[get_current_user] = lambda: CurrentUser(self.user_id)
+        app.dependency_overrides[get_token_user] = lambda: CurrentUser(self.user_id)
+        app.dependency_overrides[get_user_database] = lambda: object()
         self.client = TestClient(app)
 
     def tearDown(self):
         app.dependency_overrides.clear()
 
     def test_query_passes_current_user_and_returns_daily_data_with_metadata(self):
-        @contextmanager
-        def database():
-            yield object()
-
         row = dict(user_id=self.user_id, date='2026-11-01', exercise_minutes=0, reading_minutes=None,
                    learning_minutes=60, creation_minutes=None, sleep_minutes=330,
                    created_at='2026-11-06T08:00:00+08:00', updated_at='2026-11-06T09:00:00+08:00')
-        with patch.object(service, 'connection', database), patch.object(
-            service.repository, 'list_days', return_value=[row],
+        with patch.object(
+            service.repository, 'read_user_days', return_value=[row],
         ) as query:
             response = self.client.post('/api/activity/days', json={'startDate': '2026-11-01', 'endDate': '2026-11-06'})
         self.assertEqual(response.status_code, 200)
@@ -67,7 +64,7 @@ class ActivityQueryTests(unittest.TestCase):
         }]}})
 
     def test_invalid_ranges_never_query_database(self):
-        with patch.object(service, 'connection') as connect:
+        with patch.object(service.repository, 'read_user_days') as query_database:
             for query in ({'startDate': '2026-11-02', 'endDate': '2026-11-01'},
                           {'startDate': '2026-02-30', 'endDate': '2026-11-01'},
                           {'startDate': '2026-11-01T00:00:00', 'endDate': '2026-11-01'}):
@@ -75,18 +72,14 @@ class ActivityQueryTests(unittest.TestCase):
                     response = self.client.post('/api/activity/days', json=query)
                     self.assertEqual(response.status_code, 422)
                     self.assertEqual(response.json()['error']['code'], 'INVALID_REQUEST')
-            connect.assert_not_called()
+            query_database.assert_not_called()
 
     def test_dates_are_optional_without_implicit_boundaries(self):
-        @contextmanager
-        def database():
-            yield object()
-
         cases = [(None, None, None), ({}, None, None),
                  ({'startDate': '2026-11-01'}, '2026-11-01', None),
                  ({'endDate': '2026-11-06'}, None, '2026-11-06')]
-        with patch.object(service, 'connection', database), patch.object(
-            service.repository, 'list_days', return_value=[],
+        with patch.object(
+            service.repository, 'read_user_days', return_value=[],
         ) as query:
             for suffix, start, end in cases:
                 with self.subTest(query=suffix):
@@ -113,3 +106,15 @@ class ActivityQueryTests(unittest.TestCase):
         self.assertNotIn('private', response.text)
         self.assertNotIn('data', response.json())
         self.assertEqual(response.json()['error']['requestId'], response.headers['x-request-id'])
+
+
+class ActivityRepositoryTests(unittest.TestCase):
+    def test_missing_user_empty_dates_and_real_rows_remain_distinct(self):
+        user_id = UUID('00000000-0000-4000-8000-000000000001')
+        record = {'date': '2026-11-01', 'exercise_minutes': 0, 'reading_minutes': None}
+        for raw, expected in [([], None), ([{'date': None}], []), ([record], [record])]:
+            with self.subTest(rows=raw):
+                database = MagicMock()
+                database.info.transaction_status = psycopg.pq.TransactionStatus.INTRANS
+                database.execute.return_value.fetchall.return_value = raw
+                self.assertEqual(service.repository.read_user_days(database, user_id, None, None), expected)
