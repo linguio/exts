@@ -83,13 +83,16 @@ docs/
 
 ## Issue 队列
 
-无。
+1. [封装前端请求并接通 Activity 数据](./issues/2026-11-06-extension-activity-api-client-issue.md) · [Commit 记录](./commits/2026-11-06-extension-activity-api-client-commit.md)；等待接口与数据库工作项完结。
+2. [统一登录初始化与退出重置](./issues/2026-11-06-extension-session-reset-issue.md) · [Commit 记录](./commits/2026-11-06-extension-session-reset-commit.md)；等待前端请求与联调工作项完结。
 
 ## 待办
 
 无。
 
 ## 已完成
+
+- [建立 Activity 数据库与只读接口](./issues/2026-11-06-api-activity-read-issue.md) · [Commit 记录](./commits/2026-11-06-api-activity-read-commit.md)；用户于 2026-11-06 批准先本地提交后端完结，代码与文档分开提交；Neon 迁移和上海时区已应用并只读核对，沿用 Python 25 项及启动器 7 项通过结果、隔离实库 3 项跳过。真实联调留至前端接入；未推送、部署或运行定时器。
 
 - [调整 Newtab 标题并修复 Dock 关闭动效](./issues/2026-11-06-extension-newtab-title-issue.md) · [Commit 记录](./commits/2026-11-06-extension-newtab-title-commit.md)；用户于 2026-11-06 批准本地提交完结，代码与文档分开提交；扩展构建和 diff 检查通过，保留既有构建警告，浏览器交互未独立确认、稳定开发目录未更新，未推送。
 
