@@ -122,17 +122,17 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .entry-trigger:is(:hover, :focus-visible) .entry-surface {
+  .entry-trigger:is(:hover, :focus-visible:not([data-restored-focus])) .entry-surface {
     translate: 0 var(--entry-hover-lift);
     box-shadow: var(--shadow-hover);
   }
 
-  .entry-trigger:is(:hover, :focus-visible) .entry-glyph {
+  .entry-trigger:is(:hover, :focus-visible:not([data-restored-focus])) .entry-glyph {
     scale: var(--entry-hover-scale);
   }
 
   /* 无图块的遮罩入口只移动图形，透明遮罩本身保持不动。 */
-  .entry-trigger:is(:hover, :focus-visible) .entry-glyph--lift {
+  .entry-trigger:is(:hover, :focus-visible:not([data-restored-focus])) .entry-glyph--lift {
     translate: 0 var(--entry-hover-lift);
   }
 }
