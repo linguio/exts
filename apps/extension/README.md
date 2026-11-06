@@ -16,9 +16,10 @@
 - `src/app/`：React 顶层装配与页面状态协调。
 - `src/pages/`：Newtab、Dock、Studio、Account、Settings、Download 页面区域和布局组合；`pages/dock/` 组合收藏、账号、下载、设置及 Studio 导航入口，不持有其他 feature 的实现。
 - `src/features/bookmarks/`：书签配置、卡片、文件夹、分组打开与访问判断。
-- `src/features/activity/`：活动卡片、图表、日期计算、类型和固定模拟数据。
+- `src/features/activity/`：真实数据请求、后台消息、运行期 Provider、活动卡片/图表、上海日期计算与接口字段适配。
 - `src/pages/account/`：Dock 与 Studio 共用的登录对话框和账号菜单；侧栏专用账号入口归 pages/studio。
 - `src/features/account/`：OIDC 客户端、会话、后台协调、用户信息与凭据处理。
+- `src/lib/api/`：共用 HTTP 请求、固定 API 地址、超时取消和错误类型；不依赖业务页面或保存结果。
 - `src/features/settings/`：跨功能设置的结构、存储、消息、General 设置项与主题同步。
 - `src/features/history-cleaner/`：配置适配、可选权限、后台清理及设置区域。
 - `src/features/media-download/`：总设置与设置区域；`telegram/` 持有页面、桥接、下载菜单和文件保存逻辑，`records/` 持有记录存储、后台和列表；`pages/download/` 持有记录抽屉。
@@ -46,6 +47,27 @@ Account 使用标准 `oidc-client-ts` 3.5.0 进行 OIDC 授权码 + S256 PKCE �
 Manifest 包含 identity、cookies 与唯一 Neon Auth 主机权限，固定公钥保持不变。所有插件认证请求省略网页 Cookie，后台统一处理授权、令牌刷新及撤销；凭据保存在扩展源 IndexedDB，不返回给页面或内容脚本。配置与部署顺序见 [认证配置清单](../../docs/extension/auth-setup.md)。将同目录 .env.example 复制为 .env.local，填写公开的 VITE_OIDC_CLIENT_ID 后重新构建；不要填写 Client Secret。缺少 Client ID 时保持访客状态并明确提示未配置。
 
 实际验收使用根 dist/build/chrome-mv3；部署网页并配置 Neon public client 后，在 Studio → Account → Login with GitHub 或 Login with Google 发起。成功显示真实账户，取消/拒绝不能成为已登录。刷新及重启恢复仍有效身份，退出先撤销刷新令牌，再短暂打开官网同源注销窗口调用 Neon signOut 并确认网页会话消失，收到固定回跳后清理指定 Cookie 与插件身份；失败保留身份以便重试。详情见认证配置清单；再次登录要求 Neon 显示 Exts 授权确认，官网向所选 GitHub/Google 请求显示账号选择器；第三方自身可能仍沿用已有应用授权。这不注销 GitHub/Google 网站账号，已签发 access token 可能在原有效期内仍有效。本地设置、书签和下载记录不随登录退出清除。真实授权、账号选择、浏览器 Cookie 和恢复/退出尚待用户验收。
+
+## Activity 本地 API 联调
+
+业务请求统一基于 Axios 1.21.0，在 lib/api/client.ts 配置 fetch adapter、POST/JSON、超时取消与标准异常；后台读取会话并执行账号隔离，不写业务缓存、不自动重试。
+
+先在仓库根运行 `pnpm api:dev`，保持本地服务可用。扩展开发默认连接 `http://127.0.0.1:8000`；生产构建默认正式 API。VITE_API_BASE_URL 可显式选择本地或正式地址，OAuth resource 仍使用正式 API 标识，不改受众、不把令牌发给页面或写入环境文件。
+
+本次已生成的 `dist/build/chrome-mv3` 显式绑定本地 API。重新加载该扩展产物并打开新标签页，初始化确认已登录后自动获取本人 Activity，无需从 IndexedDB 复制 token；未登录保留图表的空数据表现，不发业务请求。切换 Check-ins/Trends/Summary 重新请求，Growth/Sleep 只改变展示；Home/Studio 切换、窗口聚焦、跨天或改库不会自动刷新数据。
+
+数据仅保留当前视图运行状态，不写本地存储、不缓存历史查询。切换视图清空并取消上次请求；账号变化时拒绝旧身份/迟到结果。日历、趋势和周图表始终渲染；无数据、未登录、加载和失败均沿用图表本身的空数据表现，不加入 Empty/错误图标/占位文字，失败只调用共用 Sonner toast.error「加载失败」。Growth 分组由前端组合，分钟数 null 与 0 区分；所有范围按上海日期计算，趋势仍排除今天。
+
+业务请求从扩展 Service Worker 发出，新标签页 Network 不一定显示。可在扩展管理页检查 Service Worker 的 Network，或从本地 API 终端观察收到的 POST /api/activity/days。API 终端日志是入站请求；单独启动本地 API 不会自动请求 Activity，也不会启动定时器。
+
+PowerShell 重新生成相同本地联调产物（环境变量仅对当前终端进程有效）：
+
+```powershell
+$env:VITE_API_BASE_URL = 'http://127.0.0.1:8000'
+pnpm --filter @exts/extension build
+```
+
+验收只加载根 `dist/build/chrome-mv3`；若使用开发命令则只加载成功发布的 `dist/dev/chrome-mv3-dev-stable`，本次未更新该稳定开发目录。不能加载构建时清空的缓存目录。生产发布前使用独立终端/移除该环境变量，避免将本地地址带入发布产物。完整退出持久化清理由后续 Issue 实施，此项不改变现有退出存储规则。
 
 ## 固定本地扩展 ID
 
