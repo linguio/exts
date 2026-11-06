@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [忽略 Python 运行缓存](./issues/2026-11-06-repo-python-cache-ignore-issue.md) · [Commit 记录](./commits/2026-11-06-repo-python-cache-ignore-commit.md)；根 .gitignore 已排除 __pycache__/ 与 *.pyc，忽略范围核对通过，按用户要求分开本地提交代码和文档，未推送。
+
 - [封装前端请求并接通 Activity 数据](./issues/2026-11-06-extension-activity-api-client-issue.md) · [Commit 记录](./commits/2026-11-06-extension-activity-api-client-commit.md)；用户于 2026-11-06 批准按已展示方案分开提交代码与文档，Axios 1.21.0 与 POST 契约已接入，用户已看到真实数据。沿用扩展 115 项、类型与构建通过和后端 25 项通过/3 项跳过结果；数据库只读路径约 7.3–7.8 秒的性能限制尚未优化，未推送、部署或启动重置。
 
 - [建立 Activity 数据库与只读接口](./issues/2026-11-06-api-activity-read-issue.md) · [Commit 记录](./commits/2026-11-06-api-activity-read-commit.md)；用户于 2026-11-06 批准先本地提交后端完结，代码与文档分开提交；Neon 迁移和上海时区已应用并只读核对，沿用 Python 25 项及启动器 7 项通过结果、隔离实库 3 项跳过。真实联调留至前端接入；未推送、部署或运行定时器。
