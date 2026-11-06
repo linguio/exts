@@ -19,6 +19,8 @@ xcuserdata/
 .wxt/
 .vite/
 .superpowers/
+__pycache__/
+*.pyc
 archive/apps/helpers/x-download-helper/VendorTools/yt-dlp
 archive/apps/helpers/x-download-helper/VendorTools/ffmpeg
 archive/apps/helpers/x-download-helper/Tools/downloads/
