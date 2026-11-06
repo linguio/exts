@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Body, Depends
 
 from core.auth import CurrentUser, get_current_user
 from core.responses import ERROR_RESPONSES, Success
@@ -17,7 +17,7 @@ example_response = Success[ActivityDays](data=ActivityDays(days=[ActivityDay(
 )])).model_dump(mode='json', by_alias=True)
 
 
-@router.get('/days', response_model=Success[ActivityDays], responses={
+@router.post('/days', response_model=Success[ActivityDays], responses={
                 **ERROR_RESPONSES,
                 200: {'description': '实际响应结构；示例用于展示字段，真实数据请执行请求',
                       'content': {'application/json': {'example': example_response}}},
@@ -25,5 +25,5 @@ example_response = Success[ActivityDays](data=ActivityDays(days=[ActivityDay(
             summary='读取当前用户的每日活动',
             description='日期可选，不传时查询本人全部历史；单独传入时按对应下限或上限筛选，含起止日期。只返回已有记录，升序；NULL 表示未填写，0 表示明确为零。')
 def activity_days(user: Annotated[CurrentUser, Depends(get_current_user)],
-                  period: Annotated[DateRange, Query()]):
+                  period: Annotated[DateRange, Body(default_factory=DateRange)]):
     return Success(data=service.read_days(user.id, period))

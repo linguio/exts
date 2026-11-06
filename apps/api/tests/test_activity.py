@@ -17,9 +17,9 @@ from modules.activity.schemas import ActivityDays
 
 class ActivityAccessTests(unittest.TestCase):
     def test_query_requires_login_and_disables_caching(self):
-        response = TestClient(app).get(
+        response = TestClient(app).post(
             '/api/activity/days',
-            params={'startDate': '2026-11-01', 'endDate': '2026-11-06'},
+            json={'startDate': '2026-11-01', 'endDate': '2026-11-06'},
         )
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.headers['cache-control'], 'no-store')
@@ -28,7 +28,7 @@ class ActivityAccessTests(unittest.TestCase):
         self.assertEqual(response.json()['error']['requestId'], response.headers['x-request-id'])
 
     def test_unknown_api_path_has_standard_error(self):
-        response = TestClient(app).get('/api/not-found')
+        response = TestClient(app).post('/api/not-found')
         self.assertEqual(response.status_code, 404)
         self.assertIn('error', response.json())
         self.assertEqual(response.json()['error']['code'], 'NOT_FOUND')
@@ -54,7 +54,7 @@ class ActivityQueryTests(unittest.TestCase):
         with patch.object(service, 'connection', database), patch.object(
             service.repository, 'list_days', return_value=[row],
         ) as query:
-            response = self.client.get('/api/activity/days?startDate=2026-11-01&endDate=2026-11-06')
+            response = self.client.post('/api/activity/days', json={'startDate': '2026-11-01', 'endDate': '2026-11-06'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(query.call_args.args[1], self.user_id)
         self.assertEqual(str(query.call_args.args[2]), '2026-11-01')
@@ -68,11 +68,11 @@ class ActivityQueryTests(unittest.TestCase):
 
     def test_invalid_ranges_never_query_database(self):
         with patch.object(service, 'connection') as connect:
-            for query in ('?startDate=2026-11-02&endDate=2026-11-01',
-                          '?startDate=2026-02-30&endDate=2026-11-01',
-                          '?startDate=2026-11-01T00:00:00&endDate=2026-11-01'):
+            for query in ({'startDate': '2026-11-02', 'endDate': '2026-11-01'},
+                          {'startDate': '2026-02-30', 'endDate': '2026-11-01'},
+                          {'startDate': '2026-11-01T00:00:00', 'endDate': '2026-11-01'}):
                 with self.subTest(query=query):
-                    response = self.client.get('/api/activity/days' + query)
+                    response = self.client.post('/api/activity/days', json=query)
                     self.assertEqual(response.status_code, 422)
                     self.assertEqual(response.json()['error']['code'], 'INVALID_REQUEST')
             connect.assert_not_called()
@@ -82,14 +82,15 @@ class ActivityQueryTests(unittest.TestCase):
         def database():
             yield object()
 
-        cases = [('', None, None), ('?startDate=2026-11-01', '2026-11-01', None),
-                 ('?endDate=2026-11-06', None, '2026-11-06')]
+        cases = [(None, None, None), ({}, None, None),
+                 ({'startDate': '2026-11-01'}, '2026-11-01', None),
+                 ({'endDate': '2026-11-06'}, None, '2026-11-06')]
         with patch.object(service, 'connection', database), patch.object(
             service.repository, 'list_days', return_value=[],
         ) as query:
             for suffix, start, end in cases:
                 with self.subTest(query=suffix):
-                    response = self.client.get('/api/activity/days' + suffix)
+                    response = self.client.post('/api/activity/days', **({'json': suffix} if suffix is not None else {}))
                     self.assertEqual(response.status_code, 200)
                     self.assertEqual(response.json(), {'data': {'days': []}})
                     self.assertEqual(query.call_args.args[1], self.user_id)
@@ -98,16 +99,16 @@ class ActivityQueryTests(unittest.TestCase):
 
     def test_empty_data_is_success_and_database_failure_is_not_empty(self):
         with patch.object(service, 'read_days', return_value=ActivityDays(days=[])):
-            response = self.client.get('/api/activity/days?startDate=2026-11-01&endDate=2026-11-06')
+            response = self.client.post('/api/activity/days', json={'startDate': '2026-11-01', 'endDate': '2026-11-06'})
         self.assertEqual(response.json(), {'data': {'days': []}})
         with patch.object(service, 'read_days', side_effect=ApiError(503, 'DATABASE_UNAVAILABLE', '数据服务暂不可用')):
-            response = self.client.get('/api/activity/days?startDate=2026-11-01&endDate=2026-11-06')
+            response = self.client.post('/api/activity/days', json={'startDate': '2026-11-01', 'endDate': '2026-11-06'})
         self.assertEqual(response.status_code, 503)
         self.assertEqual(response.json()['error']['code'], 'DATABASE_UNAVAILABLE')
 
     def test_service_failure_is_not_empty_data_or_sensitive_error(self):
         with patch.object(service, 'read_days', side_effect=RuntimeError('private SQL connection token')):
-            response = self.client.get('/api/activity/days?startDate=2026-11-01&endDate=2026-11-06')
+            response = self.client.post('/api/activity/days', json={'startDate': '2026-11-01', 'endDate': '2026-11-06'})
         self.assertEqual(response.status_code, 500)
         self.assertNotIn('private', response.text)
         self.assertNotIn('data', response.json())

@@ -120,4 +120,5 @@ export function registerAccount(api: typeof chrome = chrome) {
     });
     return true;
   });
+  return controller;
 }

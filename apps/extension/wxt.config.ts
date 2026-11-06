@@ -96,7 +96,8 @@ export default defineConfig({
     version: readProjectVersion(),
     description: '将想法与能力延伸为实用工具',
     permissions: ['tabGroups', 'storage', 'identity', 'cookies'],
-    host_permissions: ['https://ep-patient-grass-ak8aymgi.neonauth.c-3.us-west-2.aws.neon.tech/*'],
+    host_permissions: ['https://ep-patient-grass-ak8aymgi.neonauth.c-3.us-west-2.aws.neon.tech/*',
+      'http://127.0.0.1/*', 'https://api.exts.linguio.dev/*'],
     optional_permissions: ['browsingData'],
     icons: actionIcons,
     action: {

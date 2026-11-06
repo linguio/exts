@@ -8,6 +8,7 @@ import { Studio } from '@/pages/studio';
 import { TooltipProvider } from '../components/ui/tooltip';
 import { subscribeTheme } from '../features/settings/theme';
 import { Toaster } from '../components/ui/sonner';
+import { ActivityDataProvider } from '../features/activity/provider';
 
 import '../pages/newtab/newtab.css';
 
@@ -20,6 +21,7 @@ export function App() {
 
   return (
     <TooltipProvider>
+      <ActivityDataProvider>
       <div className="bookmarks-page h-dvh overflow-hidden">
         <Activity mode={studioActive ? 'hidden' : 'visible'}>
           <main className="newtab-page">
@@ -40,6 +42,7 @@ export function App() {
         </Activity>
       </div>
       <Toaster theme={appearance} />
+      </ActivityDataProvider>
     </TooltipProvider>
   );
 }

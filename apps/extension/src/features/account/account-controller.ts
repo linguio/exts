@@ -1,6 +1,6 @@
 export interface AccountUser { id: string; name: string; email: string; image: string | null }
 export type AccountProvider = 'github' | 'google';
-interface StoredUser { expired?: boolean; refresh_token?: string; profile: { sub: string; name?: unknown; email?: unknown; picture?: unknown } }
+interface StoredUser { expired?: boolean; refresh_token?: string; access_token?: string; profile: { sub: string; name?: unknown; email?: unknown; picture?: unknown } }
 interface Manager {
   getUser(): Promise<StoredUser | null>;
   signinPopup(args: { nonce: string; prompt: 'consent'; provider: AccountProvider }): Promise<StoredUser>;
@@ -25,8 +25,7 @@ export function createAccountController(manager: Manager) {
     const { sub, name, email, picture } = user.profile;
     return { id: sub, name: typeof name === 'string' ? name : '', email: typeof email === 'string' ? email : '', image: typeof picture === 'string' && picture.startsWith('https://') ? picture : null };
   }
-  return {
-    get: () => enqueue(async () => {
+  async function readValidUser() {
       let user = await manager.getUser();
       if (user?.expired) {
         if (!user.refresh_token) { await manager.removeUser(); throw new AccountSessionExpiredError(); }
@@ -36,7 +35,15 @@ export function createAccountController(manager: Manager) {
           throw error;
         }
       }
-      return display(user);
+      return user;
+  }
+  return {
+    get: () => enqueue(async () => display(await readValidUser())),
+    // 仅由后台服务调用，不加入页面消息操作白名单。
+    getSession: () => enqueue(async () => {
+      const user = await readValidUser();
+      if (!user || user.expired || !user.access_token) throw new AccountSessionExpiredError();
+      return { userId: user.profile.sub, accessToken: user.access_token };
     }),
     login: (provider: AccountProvider = 'github') => pendingLogin ??= enqueue(async () => {
       const user = display(await manager.signinPopup({ nonce: crypto.randomUUID(), prompt: 'consent', provider }));

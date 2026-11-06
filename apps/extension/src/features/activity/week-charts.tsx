@@ -13,9 +13,9 @@ export function ActivityWeek({ records, today }: { records: ActivityRecords; tod
   return (
     <div className="grid h-24 min-h-0 grid-cols-2 gap-4">
       <div className="relative min-w-0" role="group" aria-label="本周成长投入占比">
-        {week.total ? <ChartContainer config={activityChartConfig} className="h-24 w-full aspect-auto">
-          <PieChart accessibilityLayer>
-            <ChartTooltip cursor={false} content={({ active, payload }) => <ChartTooltipContent
+        <ChartContainer config={activityChartConfig} className="h-24 w-full aspect-auto">
+          <PieChart accessibilityLayer={week.total > 0}>
+            {week.total > 0 ? <ChartTooltip cursor={false} content={({ active, payload }) => <ChartTooltipContent
               active={active}
               label={`W${week.weekNumber} Spent`}
               payload={fullPayload}
@@ -23,10 +23,13 @@ export function ActivityWeek({ records, today }: { records: ActivityRecords; tod
                 name={String(name)} minutes={Number(value)} percent={week.total ? Number(value) / week.total * 100 : 0}
                 highlighted={name === payload?.[0]?.payload?.key}
               />}
-            />} />
-            <Pie data={week.items.filter(item => item.minutes > 0)} dataKey="minutes" nameKey="key" outerRadius={44} startAngle={90} endAngle={-270} />
+            />} /> : null}
+            {/* 无投入时仅用图形权重绘制灰色空圆，不写入记录或参与统计。 */}
+            <Pie data={week.total > 0 ? week.items.filter(item => item.minutes > 0)
+              : [{ key: 'empty', minutes: 1, fill: 'var(--muted)' }]}
+              dataKey="minutes" nameKey="key" outerRadius={44} startAngle={90} endAngle={-270} />
           </PieChart>
-        </ChartContainer> : <div className="flex h-full items-center justify-center text-xs text-muted-foreground">No activity this week</div>}
+        </ChartContainer>
       </div>
       <div className="relative min-w-0" role="group" aria-label="本周成长计划完成度，从内到外为运动、阅读、学习、创作">
         <ChartContainer config={activityChartConfig} className="h-24 w-full aspect-auto">

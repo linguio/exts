@@ -12,7 +12,8 @@ test('统一扩展保留标签组权限并提供完整图标', async () => {
   assert.equal(wxtConfig.manifest.version, readProjectVersion());
   assert.equal(wxtConfig.manifest.action.default_title, 'Exts');
   assert.deepEqual(wxtConfig.manifest.permissions, ['tabGroups', 'storage', 'identity', 'cookies']);
-  assert.deepEqual(wxtConfig.manifest.host_permissions, ['https://ep-patient-grass-ak8aymgi.neonauth.c-3.us-west-2.aws.neon.tech/*']);
+  assert.deepEqual(wxtConfig.manifest.host_permissions, ['https://ep-patient-grass-ak8aymgi.neonauth.c-3.us-west-2.aws.neon.tech/*',
+    'http://127.0.0.1/*', 'https://api.exts.linguio.dev/*']);
   assert.deepEqual(wxtConfig.manifest.optional_permissions, ['browsingData']);
   for (const size of [16, 32, 48, 128]) {
     const icon = wxtConfig.manifest.icons[size];

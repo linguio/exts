@@ -33,6 +33,16 @@ it('恢复过期会话时使用刷新令牌', async () => {
   expect(manager.signinSilent).toHaveBeenCalledTimes(1);
 });
 
+it('后台请求复用有效会话读取和刷新，不影响页面只返回展示资料', async () => {
+  const { controller, manager, user } = setup();
+  manager.getUser.mockResolvedValueOnce({ ...user, expired: true });
+  expect(await controller.getSession()).toEqual({ userId: 'user-1', accessToken: 'fixture-access' });
+  expect(manager.signinSilent).toHaveBeenCalledTimes(1);
+  expect(await controller.get()).not.toHaveProperty('accessToken');
+  manager.getUser.mockResolvedValueOnce(null as never);
+  await expect(controller.getSession()).rejects.toMatchObject({ code: 'session-expired' });
+});
+
 it('没有本地会话时直接返回未登录，不尝试刷新', async () => {
   const { controller, manager } = setup();
   manager.getUser.mockResolvedValueOnce(null as never);

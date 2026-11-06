@@ -5,20 +5,18 @@ import { Button } from '../../components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '../../components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
-import type { ActivityRecords } from './types';
 import { createActivityCalendar } from './calendar';
 import { ActivityCalendar } from './calendar-grid';
 import { useLocalDate } from './use-local-date';
-import mockRecords from './mock-records.json';
+import { useActivityData } from './provider';
 import { ActivityTrend } from './trend-chart';
 import { ActivityWeek } from './week-charts';
 
-/** 活动卡片使用固定本地模拟记录，不提供录入或持久化。 */
+/** 当前视图读取真实接口结果；分类切换只改变字段展示。 */
 export function ActivityCard() {
-  const [view, setView] = useState<'calendar' | 'chart' | 'pie'>('calendar');
+  const { view, setView, records } = useActivityData();
   const [category, setCategory] = useState<'growth' | 'sleep'>('growth');
   const categoryLabel = category === 'growth' ? 'Growth' : 'Sleep';
-  const records: ActivityRecords = mockRecords;
   const today = useLocalDate();
   const days = createActivityCalendar(records, today);
 
