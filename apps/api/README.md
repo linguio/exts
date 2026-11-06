@@ -91,7 +91,11 @@ node --test --test-isolation=none apps/api/tests/dev.test.mjs
 - 成功结构为 data.days；每天包含 userId、date、五项 camelCase 分钟字段、createdAt、updatedAt。时间戳带时区偏移；NULL 与 0 区分，无记录为空数组。不返回用户名/邮箱等资料、时区配置、备注或汇总。
 - 失败结构为 error.code/message/requestId；401 登录失效、422 参数错误、503 上游暂不可用、500 未预期异常。X-Request-ID 对应服务端排错标识，业务与任务响应均 Cache-Control: no-store。
 - NEON_AUTH_ISSUER 必须是对应分支的实际 Auth URL；API_RESOURCE 保持 https://api.exts.linguio.dev，不因 /api 路径而改变。只接受 EdDSA 访问 JWT，验证签名、发行方、受众、期限和 UUID，并核实用户存在。不使用 ID token 或网页 Cookie 代替。
-- 公开验签密钥短时复用，不缓存用户、认证结果或 Activity 数据。密钥服务实际不可达返回 503，不伪装为用户无数据。
+- 启动后后台同时预建数据库连接和预取公开验签公钥，不查用户业务数据，不缓存认证结果或 Activity 响应；公开文档不等待准备完成。公钥继续缓存 300 秒并支持未知密钥刷新。
+- Activity 使用公共连接池及 read_rows，将只读事务准备、用户判断与数据查询、提交一次发送。用户不存在仍为 401，存在但无记录返回空数组。已有事务内读取不擅自提交；每日写入任务继续使用多步事务入口。
+- 用户反馈热请求稳定约 200ms。同轮只读诊断为原方式 558/791ms、合批 210/177ms，响应一致。首次、空闲回收、缓存到期和断线后仍可能等待，不承诺所有请求都在 300ms 内。
+
+连接池参数、事务使用边界、首次准备、身份策略和测量限制统一维护在 [API 连接、身份验证与性能](../../docs/api-performance.md)，避免在 README 重复维护。
 
 ## 本地维护与应用数据库结构
 

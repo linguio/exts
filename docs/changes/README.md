@@ -91,6 +91,8 @@ docs/
 
 ## 已完成
 
+- [减少 Activity 请求的数据库往返](./issues/2026-11-06-api-activity-latency-issue.md) · [Commit 记录](./commits/2026-11-06-api-activity-latency-commit.md)；用户于 2026-11-07 批准代码与文档分开本地提交完结。公共连接复用、启动资源准备及只读事务合批已交付，用户反馈热请求约 200ms，42 项通过/3 项跳过；冷启动与全链路限制见 [API 性能说明](../api-performance.md)，未推送。
+
 - [自动准备 API 开发环境](./issues/2026-11-06-api-dev-environment-issue.md) · [Commit 记录](./commits/2026-11-06-api-dev-environment-commit.md)；用户于 2026-11-06 验收通过并批准代码与文档分开本地提交。启动器自动创建环境、按摘要同步固定依赖及预检配置；11 项测试、语法与 diff 检查、本机配置预检通过。未推送或部署。
 
 - [忽略 Python 运行缓存](./issues/2026-11-06-repo-python-cache-ignore-issue.md) · [Commit 记录](./commits/2026-11-06-repo-python-cache-ignore-commit.md)；根 .gitignore 已排除 __pycache__/ 与 *.pyc，忽略范围核对通过，按用户要求分开本地提交代码和文档，未推送。
