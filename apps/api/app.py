@@ -1,20 +1,24 @@
-from pathlib import Path
-
-from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from scalar_fastapi import AgentScalarConfig, get_scalar_api_reference
 
-api_directory = Path(__file__).resolve().parent
-environment_file = api_directory / ".env"
-load_dotenv(environment_file if environment_file.exists() else api_directory / ".env.local")
+from core.config import load_environment
+from core.responses import install_responses
+from jobs.activity_days import router as jobs_router
+from modules.activity.router import router as activity_router
+
+load_environment()
 
 app = FastAPI(
     title="Exts API",
     docs_url=None,
     redoc_url=None,
-    description="Exts 后端接口文档。当前尚未开放业务接口。",
+    description="Exts 后端接口文档。业务接口使用 Bearer 认证，数据仅属于当前用户。",
 )
+
+install_responses(app)
+app.include_router(activity_router)
+app.include_router(jobs_router)
 
 
 @app.get("/", include_in_schema=False)

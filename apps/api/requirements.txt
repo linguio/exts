@@ -11,6 +11,11 @@ psycopg-binary==3.3.6
 pydantic==2.14.2
 pydantic_core==2.50.2
 python-dotenv==1.2.4
+PyJWT==2.15.1
+cryptography==50.0.2
+cffi==2.1.1
+pycparser==3.12
+tzdata==2026.6
 scalar-fastapi==1.9.1
 starlette==1.10.0
 typing-inspection==0.4.4

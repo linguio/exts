@@ -29,7 +29,7 @@ export function startApi({
     return 1;
   }
 
-  const result = run(python, ['-B', '-m', 'uvicorn', 'app:app', '--host', '127.0.0.1', '--port', '8000'], {
+  const result = run(python, ['-B', '-m', 'uvicorn', 'app:app', '--host', '127.0.0.1', '--port', '8000', '--reload'], {
     cwd: join(root, 'apps', 'api'),
     stdio: 'inherit',
   });

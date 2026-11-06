@@ -8,7 +8,7 @@ for (const [platform, relativePython] of [
   ['darwin', ['bin', 'python']],
   ['linux', ['bin', 'python']],
 ]) {
-  test(`${platform} 使用项目解释器和原有 API 参数并传递失败状态`, () => {
+  test(`${platform} 使用项目解释器启用自动重载并传递失败状态`, () => {
     const root = resolve('临时 项目');
     const python = join(root, 'dist', '.cache', 'api', 'venv', ...relativePython);
     let called = false;
@@ -19,7 +19,7 @@ for (const [platform, relativePython] of [
       run: (command, args, options) => {
         called = true;
         assert.equal(command, python);
-        assert.deepEqual(args, ['-B', '-m', 'uvicorn', 'app:app', '--host', '127.0.0.1', '--port', '8000']);
+        assert.deepEqual(args, ['-B', '-m', 'uvicorn', 'app:app', '--host', '127.0.0.1', '--port', '8000', '--reload']);
         assert.equal(options.cwd, join(root, 'apps', 'api'));
         assert.equal(options.stdio, 'inherit');
         assert.notEqual(options.shell, true);

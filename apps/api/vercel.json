@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/internal/jobs/activity-days",
+      "schedule": "0 16 * * *"
+    }
+  ]
+}
