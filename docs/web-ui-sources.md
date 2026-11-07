@@ -4,6 +4,16 @@
 
 官网与扩展的通用 Web UI 遵循根 [AGENTS.md](../AGENTS.md#web-ui-选型与风格)。本文记录源码基线与必要差异；主题参数和组合约定分别见 [官网 UI](website/ui.md) 与 [扩展 UI](extension/ui.md)。源码不是随上游自动升级的运行时依赖。
 
+## 图表区域 Loading（2026-11-07）
+
+- 用户最终要求撤销加载区域的样式定制，只保留首次 Skeleton、后续 Spinner 的共用组合与自动区分；先前试用的毛玻璃、遮罩透明度、内容模糊及延迟均已移除。
+- Spinner 来源固定为现有 shadcn 基线 `c257f688cf4de7ec10cc1be84cad29cd4631182c` 的 [new-york-v4/ui/spinner.tsx](https://github.com/shadcn-ui/ui/blob/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/registry/new-york-v4/ui/spinner.tsx)，迁入 `apps/extension/src/components/ui/spinner.tsx`；已读取实际源码，沿用 Loader2Icon、role、aria-label、size-4 和 animate-spin，无新增依赖。
+- Skeleton 来源固定为同一 shadcn 基线的 [new-york-v4/ui/skeleton.tsx](https://github.com/shadcn-ui/ui/blob/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/registry/new-york-v4/ui/skeleton.tsx)，迁入 `apps/extension/src/components/ui/skeleton.tsx`；沿用 data-slot、animate-pulse、rounded-md、bg-accent，不自绘图表形状。
+- 两个官方组件仅适配 cn 导入路径与仓库格式，不改默认样式或添加组件专属状态类；减少动画继续由 Extension 现有全局 CSS 处理。
+- `components/custom/loading-region.tsx` 根据调用方提供的 `loading` 与 `hasPreviousResult` 自动选择：无上次成功结果显示一块基础 Skeleton，有结果时保留旧内容并居中显示基础 Spinner。组件只负责必要区域布局、aria-busy 与读屏提示，不包含请求、数据、毛玻璃、透明度参数或全局加载状态，不新增加载专用 Token。
+- Activity Provider 按账号及视图保留上次成功结果，成功空结果也算已加载；切换账号或刷新页面不复用旧数据。日历、趋势各一块，Summary 左右图表各一块，同一请求共享状态；原区域高度、标题/切换入口及失败 Toast 保留。
+- 当前首次 Skeleton、后续 Spinner 的自动切换及明暗主题、布局和减少动画的实际效果仍由用户在 Chrome/Edge 验收。
+
 ## 成长与睡眠图表（2026-11-03）
 
 - Chart 来源固定为既有官方基线 `c257f688cf4de7ec10cc1be84cad29cd4631182c` 的 [new-york-v4/ui/chart.tsx](https://github.com/shadcn-ui/ui/blob/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/registry/new-york-v4/ui/chart.tsx)。保留官方 ChartContainer、响应式容器、ChartStyle、Tooltip/Legend 与配置解析；安装精确版本 Recharts 3.10.1、与现有 React 匹配的 react-is 19.3.0，不升级既有依赖。

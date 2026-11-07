@@ -16,6 +16,21 @@
 
 迁入官方组件保持修改前已确认的视觉效果；小差异沿用官方，明显差异保留必要定制，不逐像素复刻。用户于 2026-10-28 最终要求 Download／Settings 恢复试用前的整套 Sheet 样式，保留 420px 和模糊遮罩，仅新增复用 --radius 的左侧圆角；不保留官方默认视觉试用方案。
 
+## 区域加载反馈
+
+- 共用 Spinner 与 Skeleton 使用固定官方源码，来源及差异见 [Web UI 来源](../web-ui-sources.md)。Spinner 沿用官方图标及旋转，Skeleton 沿用官方 bg-accent、rounded-md 和脉冲动画；两者遵循 prefers-reduced-motion，不硬编码明暗颜色。
+- LoadingRegion 只根据 `loading` 与 `hasPreviousResult` 选择展示：首次无上次成功结果时显示一整块官方基础 Skeleton，有结果时保留旧内容并居中显示官方 Spinner。组件只负责必要区域布局、aria-busy 与读屏提示，不发请求、不创建计时器、不持有业务状态或自定义视觉模式。
+- 当前 Activity 的日历、趋势和 Summary 左右两区均使用自动选择。共享请求时复用状态，不产生重复请求；每个区域独立占位，标题、筛选及原区域高度保留，不使用整页遮罩或全应用加载开关。
+- Activity 请求开始为 loading，成功为 success、失败为 error、未登录为 idle；同一账号各视图的上次成功结果在后续加载时保留，成功空结果也算已有结果。账号变化或页面刷新重新从首次加载开始；旧请求取消后不覆盖新状态。成功空记录与失败 Toast 保留，不新增错误布局。
+- 不新增加载专用 Design Token，也不使用已有毛玻璃 Token；Skeleton 与 Spinner 保持官方默认类名，减少动画由应用现有全局规则处理。
+- 日历、趋势和 Summary 两区分别接入；视觉、布局、主题和交互由用户实际验收，不使用假 DOM、截图或布局测试。
+
+### LoadingRegion 的使用边界
+
+- 适用于有明确尺寸、首次可整块占位的内容区域，例如图表、统计卡片内容或预览区。调用方负责区域尺寸、`loading`、读屏 `label` 和 `hasPreviousResult`；后者仅在当前账号与当前查询条件已有成功结果时为 true，成功空结果也算成功。
+- 不直接放入 `<tbody>`、按钮、输入框或表单内部。表格等有自身语义结构的组件可复用官方 Skeleton/Spinner，由表格决定占位或加载提示的位置；只有整张表都适合被一个区域替换时才考虑在表格外使用 LoadingRegion。
+- 组件不获取数据、不缓存结果，也不提供全应用加载状态。当前仅有 Activity 一组调用方，不增加通用模式、业务配置或表格专用分支；出现具体新场景时先核对现有组合是否适用。
+
 ## 主题与 Token
 
 明暗主题由 `src/lib/theme/preference.ts 与 src/features/settings/theme.ts` 解析：默认 System，通过系统 `prefers-color-scheme` 跟随变化；选择 Light/Dark 后固定为对应主题。根 `data-theme` 持有实际明暗，组件与 Portal 继承原有语义 Token，不独立硬编码配色。Geist 字体、基础界面明暗色值、遮罩透明度与模糊保留；图表中性灰色阶按下文全局规范维护。
