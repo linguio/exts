@@ -2,6 +2,9 @@ import assert from 'node:assert/strict';
 import { test, vi } from 'vitest';
 
 import { getHistoryCleanerEnabled, setHistoryCleanerEnabled } from '../../../src/features/history-cleaner/settings';
+import { rememberSessionGeneration } from '../../../src/features/account/session-client';
+
+rememberSessionGeneration('fixture-generation');
 
 function createApi(value, granted = true) {
   return {
@@ -29,7 +32,7 @@ test('启用时立即申请可选权限，授权后持久化开启', async () =>
   assert.deepEqual(api.permissions.request.mock.calls, [[{ permissions: ['browsingData'] }]]);
   assert.equal(api.storage.local.get.mock.calls.length, 0);
   assert.equal(await pending, true);
-  assert.deepEqual(api.runtime.sendMessage.mock.calls, [[{ type: 'exts:settings:update', patch: { historyCleaner: { enabled: true } } }]]);
+  assert.deepEqual(api.runtime.sendMessage.mock.calls, [[{ type: 'exts:settings:update', patch: { historyCleaner: { enabled: true } }, generation: 'fixture-generation' }]]);
 });
 
 test('拒绝授权不保存开启状态', async () => {
@@ -41,7 +44,7 @@ test('拒绝授权不保存开启状态', async () => {
 test('关闭开关仅持久化 false，不申请权限', async () => {
   const api = createApi(true);
   assert.equal(await setHistoryCleanerEnabled(false, api), false);
-  assert.deepEqual(api.runtime.sendMessage.mock.calls, [[{ type: 'exts:settings:update', patch: { historyCleaner: { enabled: false } } }]]);
+  assert.deepEqual(api.runtime.sendMessage.mock.calls, [[{ type: 'exts:settings:update', patch: { historyCleaner: { enabled: false } }, generation: 'fixture-generation' }]]);
   assert.equal(api.permissions.request.mock.calls.length, 0);
 });
 

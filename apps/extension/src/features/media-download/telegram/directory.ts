@@ -39,4 +39,15 @@ async function access(mode: IDBTransactionMode, value?: DownloadDirectory): Prom
 export const directoryStore = {
   load: () => access('readonly'),
   save: async (directory: DownloadDirectory) => { await access('readwrite', directory); },
+  async clear() {
+    const database = await openDatabase();
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const transaction = database.transaction('directory', 'readwrite');
+        transaction.objectStore('directory').clear();
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = transaction.onabort = () => reject(transaction.error ?? new Error('目录清理失败'));
+      });
+    } finally { database.close(); }
+  },
 };

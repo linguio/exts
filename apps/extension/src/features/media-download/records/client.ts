@@ -2,6 +2,7 @@ import { readObject, subscribeObject } from '../../../lib/storage/object-store';
 import { normalizeDownloads } from './schema';
 import type { Downloads, DownloadFilter, SavedDownload } from './types';
 import { DOWNLOADS_KEY, ADD_TG_DOWNLOAD_MESSAGE, CLEAR_DOWNLOADS_MESSAGE } from './constants';
+import { captureSessionGeneration } from '../../account/session-client';
 
 export function getDownloads(api: Pick<typeof chrome, 'storage'> = chrome): Promise<Downloads> {
   return readObject(DOWNLOADS_KEY, normalizeDownloads, api);
@@ -23,6 +24,7 @@ export function addTelegramDownload(record: SavedDownload, api: Pick<typeof chro
   return send({ type: ADD_TG_DOWNLOAD_MESSAGE, record }, api);
 }
 
-export function clearDownloads(source: DownloadFilter, api: Pick<typeof chrome, 'runtime'> = chrome): Promise<void> {
-  return send({ type: CLEAR_DOWNLOADS_MESSAGE, source }, api);
+export async function clearDownloads(source: DownloadFilter, api: Pick<typeof chrome, 'runtime'> = chrome): Promise<void> {
+  const generation = await captureSessionGeneration(api);
+  return send({ type: CLEAR_DOWNLOADS_MESSAGE, source, generation }, api);
 }

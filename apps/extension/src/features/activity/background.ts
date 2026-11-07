@@ -1,12 +1,14 @@
 import { ApiRequestError, createApiClient, type ApiSession } from '../../lib/api/client';
 import { resolveApiBaseUrl } from '../../lib/api/config';
 import { validActivityDate } from './data';
+import type { SessionReset } from '../account/session-reset';
 
-export function registerActivity(getSession: () => Promise<ApiSession>, api: typeof chrome = chrome) {
+export function registerActivity(getSession: () => Promise<ApiSession>, api: typeof chrome = chrome, session?: SessionReset) {
   const client = createApiClient({
     baseUrl: resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL, import.meta.env.DEV), getSession,
   });
   const pending = new Map<string, AbortController>();
+  session?.onCancel(() => { for (const controller of pending.values()) controller.abort(); });
   api.runtime.onMessage.addListener((message, sender, respond) => {
     if (message?.type !== 'exts:activity') return;
     if (sender.id !== api.runtime.id || sender.url?.split(/[?#]/)[0] !== api.runtime.getURL('newtab.html')) {
@@ -28,12 +30,22 @@ export function registerActivity(getSession: () => Promise<ApiSession>, api: typ
       respond({ ok: false, error: { code: 'INVALID_REQUEST', message: '活动请求参数无效' } });
       return;
     }
+    if (session && !session.accepts(message.generation)) {
+      respond({ ok: false, error: { code: 'SESSION_CHANGED', message: '账号已变更' } });
+      return;
+    }
+    const generation = session?.generation;
     const controller = new AbortController();
     pending.set(key, controller);
     void client.request('/api/activity/days', {
       method: 'POST', json: { startDate: message.startDate, endDate: message.endDate },
       expectedUserId: message.userId, signal: controller.signal,
-    }).then(data => respond({ ok: true, data }), error => {
+    }).then(data => respond(generation && !session?.isCurrent(generation)
+      ? { ok: false, error: { code: 'SESSION_CHANGED', message: '账号已变更' } } : { ok: true, data }), error => {
+      if (generation && !session?.isCurrent(generation)) {
+        respond({ ok: false, error: { code: 'SESSION_CHANGED', message: '账号已变更' } });
+        return;
+      }
       const safe = error instanceof ApiRequestError ? error : new ApiRequestError('REQUEST_FAILED', '活动请求失败');
       if (safe.code !== 'CANCELLED') console.error('Activity 请求失败', { code: safe.code, status: safe.status, requestId: safe.requestId });
       respond({ ok: false, error: { code: safe.code, message: safe.message, status: safe.status, requestId: safe.requestId } });

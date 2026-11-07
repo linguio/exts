@@ -130,6 +130,21 @@ describe('媒体保存', () => {
     expect(menu.completed).toHaveBeenCalledOnce();
   });
 
+  it('会话重置中止下载后不记录完成，并中止未关闭的文件', async () => {
+    const controller = new AbortController();
+    const onSaved = vi.fn();
+    const { menu, writable, dependencies } = setup({ fetch: vi.fn(async (_input, init) => new Promise<Response>((_resolve, reject) => {
+      init?.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')), { once: true });
+    })) });
+    const saving = saveMedia(video, menu, { ...dependencies, onSaved }, controller.signal);
+    await vi.waitFor(() => expect(dependencies.fetch).toHaveBeenCalledOnce());
+    controller.abort();
+    await saving;
+    expect(writable.abort).toHaveBeenCalledOnce();
+    expect(menu.completed).not.toHaveBeenCalled();
+    expect(onSaved).not.toHaveBeenCalled();
+  });
+
   it('无法建立写入流时不请求媒体或提示成功', async () => {
     const { menu, dependencies } = setup({ showSaveFilePicker: async () => ({ createWritable: async () => { throw new Error('磁盘已满'); } }) });
     await saveMedia(video, menu, dependencies);

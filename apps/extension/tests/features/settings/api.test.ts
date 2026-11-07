@@ -21,7 +21,7 @@ it('客户端读取统一配置，写入失败继续报告给设置区域', asyn
     runtime: { sendMessage: vi.fn(async () => ({ ok: false, error: '保存失败' })) },
   };
   expect((await getSettings(api as never)).theme).toBe('dark');
-  await expect(updateSettings({ theme: 'light' }, api as never)).rejects.toThrow('保存失败');
+  await expect(updateSettings({ theme: 'light' }, api as never, 'fixture-generation')).rejects.toThrow('保存失败');
 });
 
 it('后台串行处理来自扩展页面的配置更新，拒绝网页内容脚本写入', async () => {

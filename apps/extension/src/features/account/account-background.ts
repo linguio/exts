@@ -4,6 +4,8 @@ import { createAuthStorage } from './auth-storage';
 import { revokeOAuthToken } from './revoke-oauth-token';
 import { mergeUserInfo, readUserInfo } from './user-info';
 import { removeNeonSessionCookie } from './remove-session-cookie';
+import type { SessionReset } from './session-reset';
+import { withTelegramReset } from '../media-download/telegram/reset-background';
 
 const authority = 'https://ep-patient-grass-ak8aymgi.neonauth.c-3.us-west-2.aws.neon.tech/neondb/auth';
 const clientId = import.meta.env.VITE_OIDC_CLIENT_ID?.trim();
@@ -22,7 +24,7 @@ export function createLogoutStartUrl(redirect: string) {
   return url.href;
 }
 
-export function registerAccount(api: typeof chrome = chrome) {
+export function registerAccount(api: typeof chrome = chrome, session?: SessionReset) {
   const storage = createAuthStorage();
   let loginProvider: AccountProvider = 'github';
   const navigator: INavigator = {
@@ -93,17 +95,49 @@ export function registerAccount(api: typeof chrome = chrome) {
     },
   }) : null;
   api.runtime.onMessage.addListener((message, sender, respond) => {
-    if (message?.type !== 'exts:account') return;
+    if (message?.type !== 'exts:account' && message?.type !== 'exts:session:generation') return;
     if (sender.id !== api.runtime.id || sender.url?.split('?')[0] !== api.runtime.getURL('newtab.html')) { respond({ ok: false, error: '账户请求来源无效' }); return; }
+    if (message.type === 'exts:session:generation') { respond({ ok: true, generation: session?.generation }); return; }
     const action = message.action;
     if (!['get', 'login', 'logout'].includes(action)) { respond({ ok: false, error: '未知账户操作' }); return; }
+    if (session && action !== 'get' && !session.accepts(message.generation)) {
+      respond({ ok: false, error: '会话已变更，请重试' }); return;
+    }
     const provider = message.provider ?? 'github';
     if (action === 'login' && provider !== 'github' && provider !== 'google') { respond({ ok: false, error: '未知登录提供方' }); return; }
-    if (!controller) { respond(action === 'get' ? { ok: true, user: null } : { ok: false, error: '尚未配置 OIDC Client ID，请先完成 Neon 配置并重新构建' }); return; }
-    const operation = action === 'get' ? controller.get : action === 'login' ? () => controller.login(provider) : controller.logout;
+    if (!controller) { respond(action === 'get' ? { ok: true, user: null, generation: session?.generation } : { ok: false, error: '尚未配置 OIDC Client ID，请先完成 Neon 配置并重新构建' }); return; }
+    if (action === 'get' && session?.resetting) { respond({ ok: true, user: null, generation: session.generation }); return; }
+    let resetStarted = false;
+    let resetStage: 'cleanup' | 'auth' = 'cleanup';
+    const resetOperation = async (kind: 'login' | 'logout') => {
+      if (kind === 'login') {
+        try { if (await controller.get()) throw new Error('请先退出当前账户'); }
+        catch (error) { if (!(error instanceof AccountSessionExpiredError)) throw error; }
+      }
+      await session?.begin();
+      resetStarted = true;
+      try {
+        return await withTelegramReset(async () => {
+          await api.storage.local.clear();
+          const cleared = await api.runtime.sendMessage({ type: 'exts:session:clear-theme' });
+          if (!cleared?.ok) throw new Error('主题偏好清理失败');
+          if (kind === 'login') {
+            await storage.clear();
+            resetStage = 'auth';
+            try { return await controller.login(provider); }
+            catch (error) { await storage.clear(); throw error; }
+          }
+          resetStage = 'auth';
+          const result = await controller.logout();
+          await storage.clear();
+          return result;
+        }, api);
+      } finally { session?.finish(); }
+    };
+    const operation = action === 'get' ? controller.get : action === 'login' ? () => resetOperation('login') : () => resetOperation('logout');
     void operation().then(user => {
-      respond({ ok: true, user });
-      if (action !== 'get') void api.runtime.sendMessage({ type: 'exts:account:changed' }).catch(() => {});
+      respond({ ok: true, user, generation: session?.generation });
+      if (action !== 'get') void api.runtime.sendMessage({ type: 'exts:account:changed', reset: true, user, generation: session?.generation }).catch(() => {});
     }, error => {
       // 原始认证错误可能包含授权码或令牌，仅返回固定提示。
       if (action === 'get') {
@@ -112,11 +146,13 @@ export function registerAccount(api: typeof chrome = chrome) {
         respond({ ok: false, code: expired ? 'session-expired' : 'state-unavailable', error: expired ? '登录已失效，请重新登录' : '暂时无法确认账户状态，请重试' });
         return;
       }
+      if (resetStarted) void api.runtime.sendMessage({ type: 'exts:account:changed', reset: true, resetDelayMs: 1500,
+        generation: session?.generation }).catch(() => {});
       const cancelled = error instanceof Error && /cancel|closed|did not approve/i.test(error.message);
       console.error('Studio OIDC 操作失败', { action, category: cancelled ? 'cancelled' : 'request-failed' });
       respond({ ok: false, error: action === 'logout'
         ? '退出未完成，请重试'
-        : (cancelled ? '已取消登录' : '认证请求失败，请重试并检查 OAuth Provider 配置') });
+        : (resetStage === 'cleanup' ? '本地状态清理失败，请重试' : cancelled ? '已取消登录' : '认证请求失败，请重试并检查 OAuth Provider 配置') });
     });
     return true;
   });

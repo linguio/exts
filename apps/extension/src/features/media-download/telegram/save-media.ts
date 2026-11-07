@@ -12,7 +12,7 @@ function defaultDependencies(): SaveMediaDependencies {
   };
 }
 
-export async function saveMedia(media: DownloadableMedia, menu: DownloadMenuController, overrides: Partial<SaveMediaDependencies> = {}): Promise<void> {
+export async function saveMedia(media: DownloadableMedia, menu: DownloadMenuController, overrides: Partial<SaveMediaDependencies> = {}, signal?: AbortSignal): Promise<void> {
   const dependencies = { ...defaultDependencies(), ...overrides };
   const src = media.currentSrc || media.src;
   if (!src || (!dependencies.selectFile && !dependencies.showSaveFilePicker)) { menu.close(); return; }
@@ -25,20 +25,25 @@ export async function saveMedia(media: DownloadableMedia, menu: DownloadMenuCont
     const handle = await (dependencies.selectFile
       ? dependencies.selectFile(suggestedName)
       : dependencies.showSaveFilePicker!({ id: 'telegram-download', startIn: 'desktop', suggestedName }));
+    signal?.throwIfAborted();
     menu.close();
     choosing = false;
     writable = await handle.createWritable();
     let offset = 0;
     let total = 0;
     for (;;) {
-      const response = await dependencies.fetch(src, { credentials: 'include', headers: { Range: `bytes=${offset}-` } });
+      signal?.throwIfAborted();
+      const response = await dependencies.fetch(src, { credentials: 'include', headers: { Range: `bytes=${offset}-` }, signal });
       if (response.status !== 200 && response.status !== 206) throw new Error(`HTTP ${response.status}`);
       const range = parseContentRange(response.headers.get('Content-Range'));
       total = range?.total || Number(response.headers.get('Content-Length')) || total;
       offset = await writeResponse(response, writable, () => {}, offset, total);
+      signal?.throwIfAborted();
       if (response.status === 200 || !range || offset >= range.total) break;
     }
+    signal?.throwIfAborted();
     await writable.close();
+    if (signal?.aborted) return;
     menu.completed(handle.name || suggestedName);
     // 记录通道异常不得把已成功保存的文件误报为失败。
     try { dependencies.onSaved?.({ filename: handle.name || suggestedName, sizeBytes: offset }); }
@@ -47,6 +52,7 @@ export async function saveMedia(media: DownloadableMedia, menu: DownloadMenuCont
     if (choosing) menu.close();
     try { await writable?.abort?.(); }
     catch (abortError) { dependencies.logger.error('TG Download 中止文件写入失败', abortError); }
+    if (signal?.aborted) return;
     if (choosing && error && typeof error === 'object' && 'name' in error && error.name === 'AbortError') return;
     dependencies.logger.error('TG Download 下载失败', error);
     dependencies.onError?.(error);

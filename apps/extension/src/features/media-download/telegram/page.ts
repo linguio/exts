@@ -2,15 +2,22 @@ import { createDownloadMenu } from './download-menu';
 import { findMediaAt, canOpenDownloadMenu } from './media-target';
 import { saveMedia } from './save-media';
 import type { DownloadableMedia } from './types';
-import { TELEGRAM_CONFIG_EVENT, TELEGRAM_READY_EVENT, TELEGRAM_SAVED_EVENT } from './constants';
+import { TELEGRAM_CONFIG_EVENT, TELEGRAM_READY_EVENT, TELEGRAM_SAVED_EVENT, TELEGRAM_RESET_EVENT, TELEGRAM_RESET_DONE_EVENT } from './constants';
 import { createDirectoryTarget } from './directory-target';
 import { normalizeTheme } from '../../../lib/theme/preference';
+import { directoryStore } from './directory';
 
 export function registerTelegramDownloadPage() {
   let enabled = false;
   let selected: DownloadableMedia | undefined;
   let previewObserver: MutationObserver | undefined;
   const directory = createDirectoryTarget();
+  const tasks = new Set<Promise<unknown>>();
+  const controllers = new Set<AbortController>();
+  const track = <T>(task: Promise<T>) => {
+    tasks.add(task);
+    void task.finally(() => tasks.delete(task)).catch(() => {});
+  };
   const clearPreview = () => {
     previewObserver?.disconnect();
     previewObserver = undefined;
@@ -33,9 +40,11 @@ export function registerTelegramDownloadPage() {
   const save = (saveAs = false) => {
     if (!enabled || !selected) { menu.close(); return; }
     const media = selected;
+    const controller = new AbortController();
+    controllers.add(controller);
     // 直接进入 picker 或缓存句柄的权限请求，不先等待 IndexedDB。
-    void saveMedia(media, menu, {
-      onSaved: record => window.dispatchEvent(new CustomEvent(TELEGRAM_SAVED_EVENT, { detail: JSON.stringify(record) })),
+    const task = saveMedia(media, menu, {
+      onSaved: record => { if (!controller.signal.aborted) window.dispatchEvent(new CustomEvent(TELEGRAM_SAVED_EVENT, { detail: JSON.stringify(record) })); },
       ...(!saveAs && directory.available ? {
       selectFile: filename => directory.openFile(filename),
       onError(error) {
@@ -49,7 +58,8 @@ export function registerTelegramDownloadPage() {
         menu.problem(message);
       },
       } : {}),
-    });
+    }, controller.signal).finally(() => controllers.delete(controller));
+    track(task);
   };
   const menu = createDownloadMenu(document, {
     directoryAvailable: directory.available,
@@ -58,7 +68,7 @@ export function registerTelegramDownloadPage() {
     chooseDirectory() {
       if (!enabled) { menu.close(); return; }
       // choose() 在点击栈内立即调用系统目录选择器。
-      void directory.choose().then(() => {
+      const task = directory.choose().then(() => {
         menu.close();
         menu.ready();
         if (!enabled) menu.disable();
@@ -70,6 +80,7 @@ export function registerTelegramDownloadPage() {
         console.error('TG Download 目录选择失败', error);
         menu.problem('无法记住所选文件夹，请重试或选择其他文件夹。');
       });
+      track(task);
     },
   });
   void directory.restore().then(() => {
@@ -85,6 +96,20 @@ export function registerTelegramDownloadPage() {
       menu.theme(normalizeTheme(config.theme));
       if (!enabled) clearPreview();
     } catch { enabled = false; clearPreview(); }
+  });
+  window.addEventListener(TELEGRAM_RESET_EVENT, event => {
+    const { nonce, clear } = JSON.parse((event as CustomEvent<string>).detail) as { nonce: string; clear: boolean };
+    enabled = false;
+    directory.reset();
+    clearPreview();
+    for (const controller of controllers) controller.abort();
+    void Promise.allSettled([...tasks]).then(async () => {
+      if (clear) await directoryStore.clear();
+      window.dispatchEvent(new CustomEvent(TELEGRAM_RESET_DONE_EVENT, { detail: JSON.stringify({ nonce, ok: true }) }));
+    }).catch(error => {
+      window.dispatchEvent(new CustomEvent(TELEGRAM_RESET_DONE_EVENT, { detail: JSON.stringify({ nonce, ok: false,
+        error: error instanceof Error ? error.message : '目录清理失败' }) }));
+    });
   });
   document.addEventListener('contextmenu', event => {
     // 每次打开前同步核对隔离环境，扩展重载后旧页面入口立即停用。

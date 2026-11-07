@@ -6,11 +6,13 @@ import { registerDownloads } from '../features/media-download/records/background
 import { registerAccount } from '../features/account/account-background';
 import { AccountSessionExpiredError } from '../features/account/account-controller';
 import { registerActivity } from '../features/activity/background';
+import { createSessionReset } from '../features/account/session-reset';
 
 export default defineBackground(() => {
-  registerSettings();
-  const account = registerAccount();
-  registerActivity(() => account ? account.getSession() : Promise.reject(new AccountSessionExpiredError()));
-  registerDownloads();
+  const session = createSessionReset();
+  registerSettings(chrome, session);
+  const account = registerAccount(chrome, session);
+  registerActivity(() => account ? account.getSession() : Promise.reject(new AccountSessionExpiredError()), chrome, session);
+  registerDownloads(chrome, session);
   registerHistoryCleaner();
 });

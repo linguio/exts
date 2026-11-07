@@ -1,5 +1,5 @@
 import { getSettings, subscribeSettings, updateSettings } from './index';
-import { readThemePreference, resolveTheme, writeThemePreference, type ThemePreference } from '../../lib/theme/preference';
+import { readThemePreference, resolveTheme, writeThemePreference, THEME_STORAGE_KEY, type ThemePreference } from '../../lib/theme/preference';
 
 const THEME_CHANGE_EVENT = 'exts:theme-change';
 let preferenceInMemory: ThemePreference | undefined;
@@ -9,6 +9,16 @@ export function readTheme(): ThemePreference {
   if (preferenceInMemory) return preferenceInMemory;
   try { return readThemePreference(window.localStorage); }
   catch { return 'system'; }
+}
+
+/** 账号重置时同时丢弃页面内存和首屏偏好，避免旧主题回写。 */
+export function resetTheme(): void {
+  revision++;
+  preferenceInMemory = undefined;
+  try { window.localStorage.removeItem(THEME_STORAGE_KEY); }
+  catch (error) { throw new Error('主题偏好清理失败', { cause: error }); }
+  applyTheme('system');
+  window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
 }
 
 /** head 脚本只同步读取缓存，不向正式配置写回默认值。 */

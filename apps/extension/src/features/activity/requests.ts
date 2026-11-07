@@ -1,5 +1,6 @@
 import { ApiRequestError } from '../../lib/api/client';
 import type { ActivityPeriod } from './data';
+import { captureSessionGeneration } from '../account/session-client';
 
 export async function requestActivity(period: ActivityPeriod, userId: string, signal: AbortSignal): Promise<unknown> {
   const requestId = crypto.randomUUID();
@@ -7,7 +8,9 @@ export async function requestActivity(period: ActivityPeriod, userId: string, si
   signal.throwIfAborted();
   signal.addEventListener('abort', cancel, { once: true });
   try {
-    const result = await chrome.runtime.sendMessage({ type: 'exts:activity', action: 'get', requestId, userId, ...period });
+    const generation = await captureSessionGeneration();
+    signal.throwIfAborted();
+    const result = await chrome.runtime.sendMessage({ type: 'exts:activity', action: 'get', requestId, userId, generation, ...period });
     signal.throwIfAborted();
     if (!result || typeof result.ok !== 'boolean') {
       console.error('Activity 后台消息失败', { reason: 'EMPTY_RESPONSE' });

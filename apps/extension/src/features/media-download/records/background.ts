@@ -1,11 +1,16 @@
 import { ADD_TG_DOWNLOAD_MESSAGE, CLEAR_DOWNLOADS_MESSAGE } from './constants';
 import { isDownloadFilter, validateSavedDownload } from './schema';
 import { createDownloadsRepository } from './repository';
+import type { SessionReset } from '../../account/session-reset';
 
-export function registerDownloads(api: typeof chrome = chrome): void {
+export function registerDownloads(api: typeof chrome = chrome, session?: SessionReset): void {
   const repository = createDownloadsRepository(api.storage.local);
   api.runtime.onMessage.addListener((message, sender, respond) => {
     if (message?.type !== ADD_TG_DOWNLOAD_MESSAGE && message?.type !== CLEAR_DOWNLOADS_MESSAGE) return;
+    const fromExtensionPage = sender.url?.startsWith(api.runtime.getURL('')) === true;
+    if (session && (fromExtensionPage ? !session.accepts(message.generation) : session.resetting)) {
+      respond({ ok: false, error: '会话已变更，请重试' }); return true;
+    }
     const handle = async () => {
       if (sender.id !== api.runtime.id) throw new Error('下载记录请求来源无效');
       if (message.type === ADD_TG_DOWNLOAD_MESSAGE) {
@@ -22,7 +27,7 @@ export function registerDownloads(api: typeof chrome = chrome): void {
       }
       return { ok: true };
     };
-    void handle().then(respond, error => respond({ ok: false, error: error instanceof Error ? error.message : '下载记录保存失败' }));
+    void (session ? session.track(handle) : handle()).then(respond, error => respond({ ok: false, error: error instanceof Error ? error.message : '下载记录保存失败' }));
     return true;
   });
 }

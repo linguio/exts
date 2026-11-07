@@ -26,18 +26,25 @@ function defaultDependencies(): DirectoryDependencies {
 /** 只持有当前 Telegram 来源授权；名称锁覆盖同来源页面的查重与文件占位。 */
 export function createDirectoryTarget(dependencies = defaultDependencies()) {
   let directory: DownloadDirectory | undefined;
+  let generation = 0;
   const choose = async () => {
     if (!dependencies.pick) throw new Error('浏览器不支持选择文件夹');
+    const current = generation;
     // 首个异步操作必须是 picker，避免等待 IndexedDB 导致用户激活过期。
     const selected = await dependencies.pick();
+    if (current !== generation) throw new DOMException('下载已停止', 'AbortError');
     await dependencies.store.save(selected);
+    if (current !== generation) throw new DOMException('下载已停止', 'AbortError');
     directory = selected;
   };
   return {
     get available() { return !!dependencies.pick; },
     get name() { return directory?.name; },
+    reset() { generation++; directory = undefined; },
     async restore() {
+      const current = generation;
       const restored = await dependencies.store.load();
+      if (current !== generation) return;
       if (restored && (typeof restored.requestPermission !== 'function' || typeof restored.getFileHandle !== 'function')) {
         throw new Error('保存的目录不可用，请重新选择');
       }
@@ -54,6 +61,7 @@ export function createDirectoryTarget(dependencies = defaultDependencies()) {
         throw new DOMException('请重新授权，或选择其他文件夹', 'NotAllowedError');
       }
       return dependencies.lock(async () => {
+        if (selected !== directory) throw new DOMException('下载已停止', 'AbortError');
         const destination = selected;
         const dot = suggestedName.lastIndexOf('.');
         const base = dot > 0 ? suggestedName.slice(0, dot) : suggestedName;
