@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '../../components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
+import { LoadingRegion } from '../../components/custom/loading-region';
 import { createActivityCalendar } from './calendar';
 import { ActivityCalendar } from './calendar-grid';
 import { useLocalDate } from './use-local-date';
@@ -14,7 +15,8 @@ import { ActivityWeek } from './week-charts';
 
 /** 当前视图读取真实接口结果；分类切换只改变字段展示。 */
 export function ActivityCard() {
-  const { view, setView, records } = useActivityData();
+  const { view, setView, records, status, hasPreviousResult } = useActivityData();
+  const loading = status === 'loading';
   const [category, setCategory] = useState<'growth' | 'sleep'>('growth');
   const categoryLabel = category === 'growth' ? 'Growth' : 'Sleep';
   const today = useLocalDate();
@@ -71,9 +73,13 @@ export function ActivityCard() {
             <TooltipContent>{categoryLabel}</TooltipContent>
         </Tooltip> : null}
       </header>
-      {view === 'calendar' ? <ActivityCalendar days={days} /> : null}
-      {view === 'chart' ? <ActivityTrend records={records} today={today} category={category} /> : null}
-      {view === 'pie' ? <ActivityWeek records={records} today={today} /> : null}
+      {view === 'calendar' ? <LoadingRegion loading={loading} hasPreviousResult={hasPreviousResult} label="加载活动日历" className="h-24 w-full">
+        <ActivityCalendar days={days} />
+      </LoadingRegion> : null}
+      {view === 'chart' ? <LoadingRegion loading={loading} hasPreviousResult={hasPreviousResult} label="加载活动趋势" className="h-24 w-full">
+        <ActivityTrend records={records} today={today} category={category} />
+      </LoadingRegion> : null}
+      {view === 'pie' ? <ActivityWeek records={records} today={today} loading={loading} hasPreviousResult={hasPreviousResult} /> : null}
     </Card>
   );
 }
