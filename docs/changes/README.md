@@ -75,6 +75,7 @@ docs/
 
 想法只表示可能开展的方向，不代表已经批准创建 Issue 或开始实施。
 
+- API 连接池空闲回收：用户批准将 `max_idle` 从 60 秒试调到 300 秒，保持 `min_size=0`、不加定时保活；待当前登录重置 Issue 完结后独立建档，比较不同空闲间隔的首次请求耗时与连接池状态。
 - 后续 X Download／Helper 接入：Extension 提交任务，Helper 独立下载与整合，成功后只通知一次；允许丢失，不确认、不重试、不补发、不恢复。关闭总开关屏蔽网页入口并停止通信，不终止任务。未来使用 x-download 目录；不纳入本次下载整合或设置两个 Issue。
 
 ## 当前 Issue
@@ -83,13 +84,15 @@ docs/
 
 ## Issue 队列
 
-1. [统一登录初始化与退出重置](./issues/2026-11-06-extension-session-reset-issue.md) · [Commit 记录](./commits/2026-11-06-extension-session-reset-commit.md)；前置接入工作项已本地提交完结，尚未启动。
+无。
 
 ## 待办
 
 无。
 
 ## 已完成
+
+- [统一登录初始化与退出重置](./issues/2026-11-06-extension-session-reset-issue.md) · [Commit 记录](./commits/2026-11-06-extension-session-reset-commit.md)；用户于 2026-11-07 再次明确批准本地提交，代码与文档分开完结。122 项扩展测试、类型检查与构建通过；最终代码的真实浏览器复验未单独记录，未推送。
 
 - [为图表增加共用区域加载状态](./issues/2026-11-07-extension-chart-loading-issue.md) · [Commit 记录](./commits/2026-11-07-extension-chart-loading-commit.md)；用户于 2026-11-07 明确要求代码与文档分开本地提交完结。Activity 四区复用首次 Skeleton、后续 Spinner；20 项 Activity 测试、类型检查与构建通过，浏览器实际验收未单独确认，未推送。
 
