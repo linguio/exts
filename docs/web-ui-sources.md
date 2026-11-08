@@ -26,6 +26,8 @@
 
 ## 通用 DataTable（2026-11-08）
 
+- 配置化查询补充（2026-11-09）：新增 QueryDataTable 组合入口与内部查询 Hook，Toolbar 在原实现上补受控草稿/Query/Reset 模式；文本/选项/日期、列显隐、表头和分页仍复用同一份控件。Daily 已迁入配置入口，body Spinner、布局和主题规则保留；未复制官方原语、未加依赖或改全局 Token。视觉/交互仍待用户验收。
+
 - Daily 数据接入补充：复用现有固定版本 Select、Button 与 Calendar/Popover；业务自行组合日期草稿及 Query/Reset，多字段排序沿用表头默认交互。通用 DataTable 仅增加可选 toolbar 组合入口并公开已有列显隐组合，默认调用方行为不变；不新增依赖或改主题 Token。Daily 表头排序直接请求后端，不另设排序配置区；分页组合通过 Pagination 的 className 取消组合场景不适用的默认全宽与自动外边距，条数和跳转各自成组，不改官方组件源码。按用户第二轮反馈，DataTable 组合层默认居中表头与内容，并将统一 Spinner 放入整个 tbody 中心，不使用首次 Skeleton 或顶部提示行；分页文案英文。表头排序保持普通点击单列、Shift 多列；Daily 前端默认排序为空，日期倒序仅为后端兜底，不占用户字段优先级。浏览器视觉和交互待用户验收。
 
 - 后续 Studio Daily 结构补充：复用官方日期筛选和 Table，业务通过可选 emptyContent 提供官方 Empty，通过 showPagination 隐藏未接入数据时的分页/总数；两项默认行为保持既有通用表格行为，不自绘控件或加入业务字段。

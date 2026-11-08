@@ -2,13 +2,52 @@
 
 本文维护扩展组件的技术接入、示例和 Daily 业务规则。[仓库级表格规范](../table-conventions.md) 为跨应用长期规范，表格交互、列表 API 默认值和数量限制以该规范为准；组件底层具备的即时筛选能力不等于业务默认查询方式。后续共性规则先更新仓库级规范，再同步本文件的调用说明。
 
+## 复用目标与当前落地状态
+
+普通业务表格的目标是仅提供字段、筛选、接口及必要资源元数据，查询与标准 CRUD 的共同流程只维护一份，强制边界见[配置驱动与单一维护原则](../table-conventions.md#配置驱动与单一维护原则)。
+
+扩展已提供 QueryDataTable 作为普通业务查询入口，复用现有 DataTable 渲染。Daily 已迁入该入口，查询状态、生命周期和工具栏统一维护；标准 CRUD 尚未实施。以下 DataTable 低层 API 保留兼容，不代表每张业务表格都应重复实现查询流程。
+
 ## 位置与职责
 
 强制选型和职责边界见 [扩展规范](../../apps/extension/AGENTS.md#共用能力与职责目录)，控件组合约定见 [UI 规范](./ui.md#通用数据表格)，固定源码与适配见 [官方来源](../web-ui-sources.md)。
 
 `apps/extension/src/components/ui/{table,input,checkbox,select,calendar,command,pagination,alert}.tsx` 为固定版本 shadcn 基础组件；`components/custom/data-table` 提供表格、筛选、分页与排序组合。基于 TanStack Table 8.21.3，不包含账号、业务接口或 Chrome 消息。
 
-## 前端模式
+## 普通业务查询入口
+
+```tsx
+import { QueryDataTable, type DataTableFilter } from '@/components/custom/data-table';
+
+const filters: DataTableFilter[] = [
+  { columnId: 'date', label: 'Date range', type: 'date' },
+  { columnId: 'status', label: 'Status', type: 'options',
+    options: [{ label: 'Active', value: 'active' }], defaultValue: ['active'] },
+];
+
+<QueryDataTable columns={columns} filters={filters} queryFn={queryRecords}
+  getRowId={row => row.id} caption="Records" scopeKey={resourceScope} />
+```
+
+- columns、queryFn、getRowId、caption 必填；filters 可省略。scopeKey 用于账号/资源变化时同步隔离全部查询状态，或由父级已存在的重建边界保证；不读取组件内部账号。
+- enabled 默认 true；false 时不发请求并取消在途请求，首次未启用不显示为查询成功空记录。showCaption/emptyContent 保留既有展示能力。
+- filters.defaultValue 仅在查询入口初始化和 Reset 时应用。文本默认值为字符串，选项为字符串数组，日期范围为 {from,to}；默认值不会被编辑草稿污染，父级重渲染不重新应用默认条件。
+- queryFn 接收 {pageIndex,pageSize,sort,filters} 和 signal，返回 Promise<{rows,total}>。sort 已转换为有序 {field,order} 数组；filters 的键为 columnId，值为已经生效的筛选值。筛选不要求对应可见数据列。
+- queryFn 放在资源适配侧，只映射业务字段、调用已有接口并验证响应；将 signal 转交既有请求能力，不再创建表格 AbortController。调用方无需传 data/loading/error/rowCount/remote 或 Query/Reset 处理器。
+- queryFn 引用变化只更新下一次使用的函数，不因普通重渲染再次请求；资源含义变化必须使用 scopeKey，或明确点击 Query/Retry，不能仅靠替换函数引用隐式切换数据范围。
+- 资源侧确认可公开的错误使用公开 DataTableQueryError；未知异常统一显示 Failed to load records. Please retry.，不展示原始错误。公共层验证集合、总数及页记录数量的基本契约，记录内部安全分类日志。
+- 查询、重置、分页、排序、列显隐和 body 加载沿用仓库级规范。Retry 只重试已生效查询，不提交草稿。scopeKey 变化同步重建内容，取消旧请求，首帧不展示旧作用域数据。
+
+### 内部职责
+
+- query-data-table.tsx：公开 QueryDataTable，按 scopeKey 重建私有内容实例，连接内部 Hook、Toolbar 和原 DataTable。
+- use-data-table-query.ts：唯一草稿/生效查询和结果状态，管理请求 Effect、queryFn 最新引用、启用/停用及重试。
+- state.ts：默认值复制、草稿/Query/Reset 状态转换、分页排序参数标准化。
+- query-request.ts：实例级请求执行/取消，丢弃迟到结果并规范化安全错误；供纯异步测试验证，不是全局请求管理器。
+- toolbar.tsx：同一份文本、选项和日期控件渲染；queryControls 模式绑定草稿并显示 Query/Reset，原 DataTable 即时模式保持兼容。
+- 原表头、日期、列显隐及分页组件继续复用，不新增官方原语或改变主题。
+
+## DataTable 低层前端模式
 
 ```tsx
 import { DataTable, type DataTableFilter } from '@/components/custom/data-table';
@@ -42,7 +81,7 @@ function Records({ rows }: { rows: RecordRow[] }) {
 - 搜索是 TanStack 内建全局文本匹配；`search={false}` 关闭。需要排除的列设置 `enableGlobalFilter: false`。
 - `columnVisibility={false}` 关闭列控制；`enableHiding: false` 的列不可隐藏。列显隐使用官方 DropdownMenuCheckboxItem。默认控件保留至少一个数据列；非字符串列标题在列控制中以列 ID 展示，业务应使用可读 ID。
 
-## 服务端模式
+## DataTable 低层服务端模式
 
 ```tsx
 const [query, setQuery] = useState(initialQuery);
@@ -54,7 +93,7 @@ const [query, setQuery] = useState(initialQuery);
 ```
 
 - `query` 包含 `pagination: { pageIndex, pageSize }`、`sorting`、`columnFilters` 和 `globalFilter`。`pageIndex` 从 0 开始，`pageSize` 必须是正整数，`rowCount` 为筛选后的非负总条数；暂不支持未知总数的游标分页。
-- `onQueryChange` 使用 React 状态更新器语义，必须支持函数更新。业务订阅 query 后自行映射到接口、请求数据，处理取消和迟到响应；组件不发请求、不自动重试。
+- 直接使用低层 DataTable 时，onQueryChange 使用 React 状态更新器语义，必须支持函数更新。低层仅展示；普通业务使用 QueryDataTable，由共同查询层接管请求、取消、迟到防护和手动重试，不自行复制生命周期。
 - 返回当前页数据和筛选后的总数。组件不会再次对响应执行本地筛选、排序或切片；后端必须支持业务开放的全部查询条件。
 - 筛选、搜索、排序及每页条数改变会回到首页；普通翻页保持指定页码。总数收缩时，将超出范围的页码回退到末页。加载期间应同时更新 `loading`，避免拿旧总数判断新的分页范围。
 - `hasPreviousResult` 指当前查询范围有可展示的上次结果；首次与刷新统一使用 body 内居中的 Spinner，不使用首次 Skeleton；刷新保留同账号已有记录。账号切换由业务清理旧数据，不能把旧账号结果传作新账号的上次结果。
@@ -71,7 +110,7 @@ const [query, setQuery] = useState(initialQuery);
 - `selection` 默认关闭；开启后支持单行和当前页全选。前端模式可跨页累积选择，服务端模式只维护当前响应范围内的选择，不表达所有查询结果全选。
 - 数据引用、筛选、搜索、`selectionKey` 或选择开关变化时清空选择；服务端换页也清空。切换账号或其他数据作用域时更新 `selectionKey`。
 - `onSelectionChange(ids)` 返回稳定记录 ID；`bulkActions(ids, clear)` 返回业务操作控件，成功后由业务调用 `clear()`。加载或失败时隐藏批量操作。
-- 操作列由业务通过 `ColumnDef.cell` 提供，权限、确认、保存、删除与提示留在业务侧。
+- `ColumnDef.cell` 是现有底层操作列渲染入口。普通资源表格应由统一业务入口按能力配置提供标准操作、确认、提交及刷新流程；资源侧只提供接口与业务权限/校验。当前尚未完成该统一 CRUD 入口，不把底层可渲染能力表述为已完成通用 CRUD。
 
 ## 验收示例
 
@@ -90,7 +129,7 @@ const [query, setQuery] = useState(initialQuery);
 
 ## Daily 真实查询组合
 
-- DataTable 的可选 toolbar(table, disabled) 可替换默认工具栏；不传保持原行为。公开 DataTableColumnVisibility 复用已有列显隐组合，业务不重复维护列菜单；通用组件不引入业务请求、日期草稿或业务字段。
+- Daily 已改用 QueryDataTable，页面只保留 columns、日期 filters、queryFn、行标识、名称和账号作用域配置；不再自行实现 toolbar、Effect、loading/error、草稿或分页状态。资源侧 query.ts 映射 date→startDate/endDate、校验排序字段与 Activity 响应，返回 rows/total；保留原 requestActivity 的后台消息及会话保护。
 - Daily 工具栏左侧日期条件，右侧 Query、Reset、Columns。排序使用已有表头：普通点击切换单列，Shift 点击组合多列，沿用 TanStack 优先级与交互，不另设排序配置区。
 - 日期草稿点击 Query 后生效，保留当前排序并回首页；排序立即查询，但只使用已生效日期，保留草稿。翻页/每页条数使用已生效条件。
 - Reset 同时清空草稿与已生效日期、用户排序，回第一页并立即查询一次；保留每页条数和列显隐。初始化、重置和清空排序时，前端 sorting 为空，发送 sort:[]，由后端默认 date desc；默认日期不占用户排序优先级。手动选择时长时按用户顺序排序，由后端追加 date desc 作为末尾稳定条件；主动选择 Date 时按显式优先级参与。
@@ -128,3 +167,15 @@ const [query, setQuery] = useState(initialQuery);
 - 检查运动时长优先、相同运动时长再比较阅读时长；时长都相同时按日期倒序。
 - 移除全部用户排序或 Reset 后，sort 为 []，后端返回日期倒序；普通点击仍按 TanStack 默认交互切换单列，不改为点击自动累加。
 - 本轮针对默认优先级的 9 项相关逻辑检查、扩展类型检查、本地 API 构建通过；API 未修改，浏览器实际交互仍待用户验收。
+
+## 配置化复用改造验收（2026-11-09）
+
+1. 启动本地 API（仓库根 pnpm api:dev），Chrome/Edge 重新加载 dist/build/chrome-mv3；本次最终构建显式指向 http://127.0.0.1:8000，未部署 API。
+2. 进入 Studio → Activity → Daily，首次自动请求 pageIndex=0/pageSize=20/sort=[]，默认日期倒序来自后端；body 内只有居中 Spinner，表头/工具栏/页脚保留。
+3. 修改日期草稿不请求；普通点击时长表头立即请求旧的已生效日期；草稿保持。Query 后才提交新日期并回第一页。
+4. Shift 点击第二个时长列，按用户选择先后传 sort；翻页保持已生效筛选/排序，修改每页条数回首页；跳转只接受实际存在的页码。
+5. 隐藏一列、每页改为 50、翻页并修改草稿，再 Reset：恢复无日期和空用户排序、第一页，仅请求一次；保留 50 条及隐藏列。
+6. API 暂不可用时 Query，看到错误与 Retry；先编辑草稿再 Retry，仍重试上次生效条件。恢复 API 后再重试，成功显示记录；不会把失败当作成功空结果。
+7. 快速连续查询/排序，最后一次请求生效；退出、换号或同账号重新登录后旧记录不再显示。真实生命周期与跨账号交互仍由用户在浏览器验收。
+8. 对照 daily/daily-records.tsx：应只剩 QueryDataTable 的配置和资源查询函数，查询 Effect、AbortController、手写工具栏及旧 daily/state.ts 已删除；公共流程位于 custom/data-table。
+9. 本次 Daily 实际使用日期筛选；文本/选项查询模式复用既有控件并有配置/状态检查，未新增第二个真实业务表格或执行浏览器视觉验收。

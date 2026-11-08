@@ -36,7 +36,7 @@
 ## 通用数据表格
 
 - [仓库级表格规范](../table-conventions.md) 与本 UI 规范并列，是表格加载、默认布局、筛选查询、排序、分页与列表接口约定的统一事实来源；新建或调整表格必须查阅。本文件不另维护同类默认规则。
-- 扩展复杂表格复用 components/custom/data-table 与既有官方组件/主题；业务列、字段格式、请求、权限和操作留在 feature，不进入通用组件。
+- 扩展普通业务查询使用 components/custom/data-table 的 QueryDataTable，统一草稿/生效查询、请求生命周期和工具栏；低层 DataTable 保留直接使用兼容。复用既有官方组件/主题；业务列、字段格式、请求、权限和操作留在 feature，不进入通用组件。
 - 首次/刷新统一 body 中央无可见文字 Spinner，表格不使用骨架屏；本页上方模块级 LoadingRegion 的首次 Skeleton 规则不适用于表格。其余行为及例外流程以仓库级规范为准。
 - 组件参数与扩展业务接入见 [DataTable 说明](./data-table.md)，官方固定版本及必要适配见 [Web UI 来源](../web-ui-sources.md)。表格规范建立不等于所有现有调用方已按规范改造或通过用户验收。
 
