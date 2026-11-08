@@ -1,5 +1,5 @@
 import type { ActivityRecords, GrowthKey, GrowthMinutes } from './types';
-import { localDateKey } from './calendar';
+import { localDateKey } from './date';
 
 /** 分类、顺序、目标与灰阶在三个视图共用。 */
 export const growthCategories = [

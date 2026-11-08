@@ -1,3 +1,4 @@
+import { clearAccountLocalState } from '../../app/view-preference';
 import { UserManager, WebStorageStateStore, type INavigator } from 'oidc-client-ts';
 import { AccountSessionExpiredError, createAccountController, type AccountProvider } from './account-controller';
 import { createAuthStorage } from './auth-storage';
@@ -117,7 +118,7 @@ export function registerAccount(api: typeof chrome = chrome, session?: SessionRe
       await session?.begin();
       resetStarted = true;
       try {
-          await api.storage.local.clear();
+          await clearAccountLocalState(api.storage.local);
           await markTelegramReset(api);
           const cleared = await api.runtime.sendMessage({ type: 'exts:session:clear-theme' });
           if (!cleared?.ok) throw new Error('主题偏好清理失败');

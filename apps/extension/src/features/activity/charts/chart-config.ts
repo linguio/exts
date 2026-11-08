@@ -1,5 +1,5 @@
-import type { ChartConfig } from '../../components/ui/chart';
-import { growthCategories } from './summary';
+import type { ChartConfig } from '../../../components/ui/chart';
+import { growthCategories } from '../data/summary';
 
 export const activityChartConfig: ChartConfig = {
   ...Object.fromEntries(growthCategories.map(item => [item.key, { label: item.label, color: item.color }])),

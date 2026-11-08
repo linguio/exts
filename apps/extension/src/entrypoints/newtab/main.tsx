@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { browser } from 'wxt/browser';
 
 import { App } from '../../app/App';
+import { readViewPreference } from '../../app/view-preference';
 import { applyTheme, subscribeTheme } from '../../features/settings/theme';
 
 applyTheme();
@@ -32,5 +33,8 @@ if (import.meta.env.DEV && new URLSearchParams(location.search).has('table-demo'
     createRoot(container).render(<Example />);
   });
 } else {
-  createRoot(container).render(<App />);
+  // 恢复本机位置后再挂载，避免先显示 Home 再跳到 Studio。
+  void readViewPreference().then(initialView => {
+    createRoot(container).render(<App initialView={initialView} />);
+  });
 }

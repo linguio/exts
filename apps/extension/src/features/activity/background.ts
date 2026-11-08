@@ -1,7 +1,7 @@
 import { ApiRequestError, createApiClient, type ApiSession } from '../../api/client';
 import { resolveApiBaseUrl } from '../../api/config';
 import { getActivityDays } from '../../api/activity';
-import { validActivityDate } from './data';
+import { validActivityDate } from './data/date';
 import type { SessionReset } from '../account/session-reset';
 
 export function registerActivity(getSession: () => Promise<ApiSession>, api: typeof chrome = chrome, session?: SessionReset) {

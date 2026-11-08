@@ -1,4 +1,5 @@
 // 来自 shadcn/ui 固定版本官方 Breadcrumb；只迁入当前需要的组合项。
+import { ChevronRight } from "lucide-react"
 import * as React from "react"
 import { cn } from "../../lib/utils"
 
@@ -42,4 +43,23 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
   )
 }
 
-export { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage }
+function BreadcrumbSeparator({
+  children,
+  className,
+  ...props
+}: React.ComponentProps<"li">) {
+  return (
+    <li
+      data-slot="breadcrumb-separator"
+      role="presentation"
+      aria-hidden="true"
+      className={cn("[&>svg]:size-3.5", className)}
+      {...props}
+    >
+      {children ?? <ChevronRight />}
+    </li>
+  )
+}
+
+
+export { BreadcrumbSeparator, Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage }

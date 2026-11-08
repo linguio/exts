@@ -1,10 +1,10 @@
 import { Pie, PieChart, PolarAngleAxis, RadialBar, RadialBarChart } from 'recharts';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../../components/ui/chart';
-import type { ActivityRecords } from './types';
-import { createActivityWeek } from './summary';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../../../components/ui/chart';
+import type { ActivityRecords } from '../data/types';
+import { createActivityWeek } from '../data/summary';
 import { activityChartConfig } from './chart-config';
 import { ActivityTooltipValue } from './tooltip-content';
-import { LoadingRegion } from '../../components/custom/loading-region';
+import { LoadingRegion } from '../../../components/custom/loading-region';
 
 export function ActivityWeek({ records, today, loading, hasPreviousResult }: {
   records: ActivityRecords; today: Date; loading: boolean; hasPreviousResult: boolean;

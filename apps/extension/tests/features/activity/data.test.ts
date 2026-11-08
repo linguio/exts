@@ -1,7 +1,8 @@
 import { expect, it } from 'vitest';
-import { activityPeriod, activityRecords, activityToday, nextActivityMidnight } from '../../../src/features/activity/data';
-import { localDateKey } from '../../../src/features/activity/calendar';
-import { createActivityTrend } from '../../../src/features/activity/summary';
+import { activityPeriod, activityRecords } from '../../../src/features/activity/data/chart-data';
+import { activityToday, nextActivityMidnight } from '../../../src/features/activity/data/date';
+import { localDateKey } from '../../../src/features/activity/data/date';
+import { createActivityTrend } from '../../../src/features/activity/data/summary';
 
 const period = { startDate: '2026-11-01', endDate: '2026-11-06' };
 const day = { userId: 'user-1', date: '2026-11-02', exerciseMinutes: null, readingMinutes: 0,

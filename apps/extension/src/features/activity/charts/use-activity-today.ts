@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { activityToday, nextActivityMidnight } from './data';
+import { activityToday, nextActivityMidnight } from '../data/date';
 
 /** 上海业务日期只推进展示，不触发网络请求。 */
-export function useLocalDate() {
+export function useActivityToday() {
   const [today, setToday] = useState(() => activityToday());
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { Bar, BarChart, BarStack, CartesianGrid, ReferenceLine, XAxis } from 'recharts';
-import { CHART_BAR_RADIUS, ChartContainer, ChartTooltip, ChartTooltipContent } from '../../components/ui/chart';
-import type { ActivityRecords } from './types';
-import { createActivityTrend, growthCategories } from './summary';
+import { CHART_BAR_RADIUS, ChartContainer, ChartTooltip, ChartTooltipContent } from '../../../components/ui/chart';
+import type { ActivityRecords } from '../data/types';
+import { createActivityTrend, growthCategories } from '../data/summary';
 import { activityChartConfig } from './chart-config';
 import { ActivityTooltipValue } from './tooltip-content';
 

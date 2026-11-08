@@ -1,7 +1,8 @@
 import { test } from 'vitest';
 import assert from 'node:assert/strict';
-import { createActivityCalendar, formatActivityDuration, formatActivityProgress } from '../../../src/features/activity/calendar';
-import { createActivityTrend, createActivityWeek, sleepLevel } from '../../../src/features/activity/summary';
+import { createActivityCalendar } from '../../../src/features/activity/data/calendar';
+import { formatActivityDuration, formatActivityProgress } from '../../../src/features/activity/data/format';
+import { createActivityTrend, createActivityWeek, sleepLevel } from '../../../src/features/activity/data/summary';
 
 test('日历保留本地24周、周日开始与未来留白，按完成项数分档', () => {
   const days = createActivityCalendar({

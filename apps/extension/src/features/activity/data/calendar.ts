@@ -1,10 +1,7 @@
+import { localDateKey } from './date';
 import type { ActivityDay, ActivityRecords } from './types';
 
 const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'] as const;
-
-export function localDateKey(date: Date) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-}
 
 /** 日期运算使用本地日历，避免 UTC 截日与夏令时导致日期偏移。 */
 export function createActivityCalendar(records: ActivityRecords, today: Date): ActivityDay[] {
@@ -32,14 +29,3 @@ export function createActivityCalendar(records: ActivityRecords, today: Date): A
   });
 }
 
-function activityHours(minutes: number) {
-  return String(Number((minutes / 60).toFixed(1)));
-}
-
-export function formatActivityDuration(minutes: number) {
-  return `${activityHours(minutes)}h`;
-}
-
-export function formatActivityProgress(minutes: number, percent: number, goal?: number) {
-  return `${Math.round(percent)}% / ${formatActivityDuration(goal ?? minutes)}`;
-}

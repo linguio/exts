@@ -1,43 +1,19 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "./shadcn.css";
+@import "./shadcn-theme.css";
 @import "./reset.css";
 @import "./theme.css";
 
-/* Tailwind 工具类只引用语义 token，组件不直接绑定明暗主题的具体色值。 */
+/* 官方明暗变体适配扩展已有主题入口，Portal 同样继承根主题。 */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* 仅维护项目扩展和已确认的圆角覆盖，标准映射统一来自官方主题基线。 */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
-  --color-input: var(--input);
-  --color-border: var(--border);
   --color-border-strong: var(--border-strong);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
   --color-surface-raised: var(--surface-raised);
   --color-overlay: var(--overlay);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--foreground);
-  --color-sidebar-primary: var(--primary);
-  --color-sidebar-primary-foreground: var(--primary-foreground);
-  --color-sidebar-accent: var(--accent);
-  --color-sidebar-accent-foreground: var(--accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--ring);
   --font-sans: var(--font-geist-sans);
   --radius-sm: calc(var(--radius) - 8px);
   --radius-md: calc(var(--radius) - 4px);

@@ -1,14 +1,14 @@
 import { useState } from 'react';
 
-import { Card } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
-import { ToggleGroup, ToggleGroupItem } from '../../components/ui/toggle-group';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
-import { UiIcon } from '../../components/custom/ui-icon';
-import { LoadingRegion } from '../../components/custom/loading-region';
-import { createActivityCalendar } from './calendar';
+import { Card } from '../../../components/ui/card';
+import { Button } from '../../../components/ui/button';
+import { ToggleGroup, ToggleGroupItem } from '../../../components/ui/toggle-group';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
+import { UiIcon } from '../../../components/custom/ui-icon';
+import { LoadingRegion } from '../../../components/custom/loading-region';
+import { createActivityCalendar } from '../data/calendar';
 import { ActivityCalendar } from './calendar-grid';
-import { useLocalDate } from './use-local-date';
+import { useActivityToday } from './use-activity-today';
 import { useActivityData } from './provider';
 import { ActivityTrend } from './trend-chart';
 import { ActivityWeek } from './week-charts';
@@ -19,7 +19,7 @@ export function ActivityCard() {
   const loading = status === 'loading';
   const [category, setCategory] = useState<'growth' | 'sleep'>('growth');
   const categoryLabel = category === 'growth' ? 'Growth' : 'Sleep';
-  const today = useLocalDate();
+  const today = useActivityToday();
   const days = createActivityCalendar(records, today);
 
   return (

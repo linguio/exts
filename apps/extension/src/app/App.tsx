@@ -7,16 +7,24 @@ import { DOCK_FAVORITES } from '../features/bookmarks/defaults';
 import { Studio } from '@/pages/studio';
 import { TooltipProvider } from '../components/ui/tooltip';
 import { subscribeTheme } from '../features/settings/theme';
-import { Toaster } from '../components/ui/sonner';
-import { ActivityDataProvider } from '../features/activity/provider';
+import { Toaster, toast } from '../components/ui/sonner';
+import { saveViewPreference, type AppView } from './view-preference';
+import { ActivityDataProvider } from '../features/activity/charts/provider';
 
 import '../pages/newtab/newtab.css';
 
 const readAppearance = () => document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
 
 /** 首页和工作台各自持有布局；Activity 保留页面状态，Dock 只随首页显示。 */
-export function App() {
-  const [studioActive, setStudioActive] = useState(false);
+export function App({ initialView }: { initialView: AppView }) {
+  const [studioActive, setStudioActive] = useState(initialView === 'studio');
+  function changeStudio(active: boolean) {
+    setStudioActive(active);
+    void saveViewPreference(active ? 'studio' : 'home').catch(() => {
+      console.error('页面位置保存失败');
+      toast.error('Unable to save page preference.');
+    });
+  }
   const appearance = useSyncExternalStore(subscribeTheme, readAppearance);
 
   return (
@@ -32,13 +40,13 @@ export function App() {
               <Dock
                 favorites={DOCK_FAVORITES}
                 studioActive={studioActive}
-                onStudioChange={setStudioActive}
+                onStudioChange={changeStudio}
               />
             </div>
           </main>
         </Activity>
         <Activity mode={studioActive ? 'visible' : 'hidden'}>
-          <Studio onHome={() => setStudioActive(false)} />
+          <Studio onHome={() => changeStudio(false)} />
         </Activity>
       </div>
       <Toaster theme={appearance} />

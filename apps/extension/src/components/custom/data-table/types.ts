@@ -16,11 +16,14 @@ export interface DataTableProps<T> {
   data: T[];
   getRowId: (row: T) => string;
   caption: string;
+  showCaption?: boolean;
   filters?: DataTableFilter[];
   search?: boolean;
   multiSort?: boolean;
   columnVisibility?: boolean;
   pageSizes?: number[];
+  showPagination?: boolean;
+  emptyContent?: ReactNode;
   selection?: boolean;
   selectionKey?: string;
   onSelectionChange?: (ids: string[]) => void;

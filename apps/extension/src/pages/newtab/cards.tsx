@@ -1,4 +1,4 @@
-import { ActivityCard } from '@/features/activity/activity';
+import { ActivityCard } from '../../features/activity/charts/activity-card';
 
 /** 首页只组合展示卡片，活动组件及其业务由 Activity 功能持有。 */
 export function NewtabCards() {

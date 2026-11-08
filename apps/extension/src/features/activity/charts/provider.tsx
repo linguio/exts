@@ -1,11 +1,11 @@
 import { createContext, useContext, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 
-import { readSessionResetVersion, subscribeSessionReset, useAccount } from '../account/auth-client';
-import { ApiRequestError } from '../../api/client';
-import { toast } from '../../components/ui/sonner';
-import { activityPeriod, activityRecords, type ActivityView } from './data';
-import { requestActivity } from './requests';
-import type { ActivityRecords } from './types';
+import { readSessionResetVersion, subscribeSessionReset, useAccount } from '../../account/auth-client';
+import { ApiRequestError } from '../../../api/client';
+import { toast } from '../../../components/ui/sonner';
+import { activityPeriod, activityRecords, type ActivityView } from '../data/chart-data';
+import { requestActivity } from '../requests';
+import type { ActivityRecords } from '../data/types';
 
 interface ActivityState {
   userId: string | null;

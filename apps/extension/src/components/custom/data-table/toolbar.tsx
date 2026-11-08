@@ -11,7 +11,7 @@ import type { DataTableFilter } from './types';
 
 export function DataTableToolbar<T>({ table, filters = [], search, visibility, disabled }: { table: Table<T>; filters?: DataTableFilter[]; search: boolean; visibility: boolean; disabled: boolean }) {
   return <div className="flex flex-wrap items-center gap-2">
-    {search && <Input className="w-64" aria-label="搜索所有列" placeholder="搜索…" value={String(table.getState().globalFilter ?? '')} onChange={e => table.setGlobalFilter(e.target.value)} disabled={disabled} />}
+    {search && <Input className="w-64" aria-label="Search all columns" placeholder="Search…" value={String(table.getState().globalFilter ?? '')} onChange={e => table.setGlobalFilter(e.target.value)} disabled={disabled} />}
     {filters.map(filter => {
       const column = table.getColumn(filter.columnId);
       if (!column) return null;
@@ -19,16 +19,16 @@ export function DataTableToolbar<T>({ table, filters = [], search, visibility, d
       if (filter.type === 'date') return <DataTableDateFilter key={filter.columnId} label={filter.label} value={(column.getFilterValue() ?? {}) as DateFilterRange} onChange={value => column.setFilterValue(value)} disabled={disabled} />;
       const selected = (column.getFilterValue() ?? []) as string[];
       return <Popover key={filter.columnId}><PopoverTrigger asChild><Button type="button" variant="outline" disabled={disabled}>{filter.label}{selected.length ? ` (${selected.length})` : ''}</Button></PopoverTrigger><PopoverContent className="w-64 p-0" align="start">
-        <Command><CommandInput placeholder={`搜索${filter.label}…`} aria-label={`搜索${filter.label}选项`} /><CommandList><CommandEmpty>没有匹配选项</CommandEmpty><CommandGroup>
+        <Command><CommandInput placeholder={`Search ${filter.label}…`} aria-label={`Search ${filter.label} options`} /><CommandList><CommandEmpty>No options found.</CommandEmpty><CommandGroup>
           {filter.options.map(option => <CommandItem key={option.value} value={option.value} keywords={[option.label]} onSelect={() => column.setFilterValue(selected.includes(option.value) ? selected.filter(value => value !== option.value) : [...selected, option.value])}>
-            {selected.includes(option.value) && <><CheckIcon aria-hidden="true" className="size-4" /><span className="sr-only">已选：</span></>}{option.label}
+            {selected.includes(option.value) && <><CheckIcon aria-hidden="true" className="size-4" /><span className="sr-only">Selected: </span></>}{option.label}
           </CommandItem>)}
         </CommandGroup></CommandList></Command>
       </PopoverContent></Popover>;
     })}
-    {(table.getState().columnFilters.length > 0 || table.getState().globalFilter) && <Button type="button" variant="ghost" disabled={disabled} onClick={() => { table.setColumnFilters([]); table.setGlobalFilter(''); }}>重置筛选</Button>}
-    {visibility && <DropdownMenu><DropdownMenuTrigger asChild><Button type="button" variant="outline" disabled={disabled}>显示列</Button></DropdownMenuTrigger><DropdownMenuContent align="end">
-      <DropdownMenuLabel>显示列</DropdownMenuLabel><DropdownMenuSeparator />
+    {(table.getState().columnFilters.length > 0 || table.getState().globalFilter) && <Button type="button" variant="ghost" disabled={disabled} onClick={() => { table.setColumnFilters([]); table.setGlobalFilter(''); }}>Reset filters</Button>}
+    {visibility && <DropdownMenu><DropdownMenuTrigger asChild><Button type="button" variant="outline" disabled={disabled} className="ml-auto">Columns</Button></DropdownMenuTrigger><DropdownMenuContent align="end">
+      <DropdownMenuLabel>Columns</DropdownMenuLabel><DropdownMenuSeparator />
       {table.getAllLeafColumns().filter(column => column.getCanHide()).map(column => <DropdownMenuCheckboxItem key={column.id} checked={column.getIsVisible()} disabled={column.getIsVisible() && table.getVisibleLeafColumns().filter(item => item.id !== '__selection').length <= 1} onCheckedChange={value => column.toggleVisibility(value)}>
         {typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id}
       </DropdownMenuCheckboxItem>)}

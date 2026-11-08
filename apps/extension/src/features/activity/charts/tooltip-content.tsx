@@ -1,6 +1,6 @@
-import { formatActivityDuration, formatActivityProgress } from './calendar';
+import { formatActivityDuration, formatActivityProgress } from '../data/format';
 import { activityChartConfig } from './chart-config';
-import { cn } from '../../lib/utils';
+import { cn } from '../../../lib/utils';
 
 /** 统一数据行，提示容器与标题由官方 ChartTooltipContent 提供。 */
 export function ActivityTooltipValue({ name, minutes, goal, percent, highlighted = false }: { name: string; minutes: number; goal?: number; percent?: number; highlighted?: boolean }) {

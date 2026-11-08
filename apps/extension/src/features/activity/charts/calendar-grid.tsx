@@ -1,8 +1,8 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
-import { ChartTooltipContent } from '../../components/ui/chart';
-import type { ActivityDay } from './types';
-import { formatActivityDuration } from './calendar';
-import { growthCategories } from './summary';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
+import { ChartTooltipContent } from '../../../components/ui/chart';
+import type { ActivityDay } from '../data/types';
+import { formatActivityDuration } from '../data/format';
+import { growthCategories } from '../data/summary';
 import { activityChartConfig } from './chart-config';
 import { ActivityTooltipValue } from './tooltip-content';
 

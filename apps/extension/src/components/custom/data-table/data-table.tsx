@@ -13,9 +13,9 @@ import { DataTablePagination } from './pagination';
 import { dateFilter, initialQuery, optionsFilter, resolveUpdate, updateQuery } from './state';
 import type { DataTableProps, DataTableQuery, RowSelectionState } from './types';
 
-export function DataTable<T>({ columns, data, getRowId, caption, filters = [], search = true, multiSort = true,
+export function DataTable<T>({ columns, data, getRowId, caption, showCaption = true, filters = [], search = true, multiSort = true,
   columnVisibility = true, pageSizes = [10, 20, 50, 100], selection = false, selectionKey, onSelectionChange, bulkActions,
-  loading = false, hasPreviousResult = false, error, onRetry, remote }: DataTableProps<T>) {
+  loading = false, hasPreviousResult = false, error, onRetry, remote, showPagination = true, emptyContent }: DataTableProps<T>) {
   const [localQuery, setLocalQuery] = useState(initialQuery);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const query = remote?.query ?? localQuery;
@@ -68,9 +68,9 @@ export function DataTable<T>({ columns, data, getRowId, caption, filters = [], s
     {loading && hasPreviousResult && <div role="status" className="flex items-center gap-2"><Spinner />正在刷新…</div>}
     {error ? <Alert><AlertTitle>查询失败</AlertTitle><AlertDescription><p>{error}</p>{onRetry && <Button type="button" variant="outline" onClick={onRetry} disabled={loading}>重试</Button>}</AlertDescription></Alert>
       : loading && !hasPreviousResult ? <div role="status"><span className="sr-only">正在加载表格</span><Skeleton className="h-48 w-full" /></div>
-      : <div className="overflow-hidden rounded-md border"><Table><TableCaption>{caption}</TableCaption><TableHeader>{table.getHeaderGroups().map(group => <TableRow key={group.id}>{group.headers.map(header => <TableHead key={header.id} colSpan={header.colSpan} aria-sort={header.column.getIsSorted() === 'asc' ? 'ascending' : header.column.getIsSorted() === 'desc' ? 'descending' : undefined}>{header.isPlaceholder ? null : typeof header.column.columnDef.header === 'string' ? <DataTableColumnHeader column={header.column} title={header.column.columnDef.header} disabled={busy} /> : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>)}</TableRow>)}</TableHeader>
-        <TableBody>{table.getRowModel().rows.length ? table.getRowModel().rows.map(row => <TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>{row.getVisibleCells().map(cell => <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>)}</TableRow>) : <TableRow><TableCell colSpan={Math.max(1, table.getVisibleLeafColumns().length)} className="h-24 text-center"><Empty><EmptyHeader><EmptyTitle>{filtered ? '没有符合条件的记录' : '暂无记录'}</EmptyTitle><EmptyDescription>{filtered ? '请调整筛选条件后重试。' : '数据记录将在此显示。'}</EmptyDescription></EmptyHeader></Empty></TableCell></TableRow>}</TableBody>
+      : <div className="overflow-hidden rounded-md border"><Table aria-label={caption}>{showCaption && <TableCaption>{caption}</TableCaption>}<TableHeader>{table.getHeaderGroups().map(group => <TableRow key={group.id}>{group.headers.map(header => <TableHead key={header.id} colSpan={header.colSpan} aria-sort={header.column.getIsSorted() === 'asc' ? 'ascending' : header.column.getIsSorted() === 'desc' ? 'descending' : undefined}>{header.isPlaceholder ? null : typeof header.column.columnDef.header === 'string' ? <DataTableColumnHeader column={header.column} title={header.column.columnDef.header} disabled={busy} /> : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>)}</TableRow>)}</TableHeader>
+        <TableBody>{table.getRowModel().rows.length ? table.getRowModel().rows.map(row => <TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>{row.getVisibleCells().map(cell => <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>)}</TableRow>) : <TableRow><TableCell colSpan={Math.max(1, table.getVisibleLeafColumns().length)} className="h-24 text-center">{emptyContent ?? <Empty><EmptyHeader><EmptyTitle>{filtered ? '没有符合条件的记录' : '暂无记录'}</EmptyTitle><EmptyDescription>{filtered ? '请调整筛选条件后重试。' : '数据记录将在此显示。'}</EmptyDescription></EmptyHeader></Empty>}</TableCell></TableRow>}</TableBody>
       </Table></div>}
-    <DataTablePagination table={table} pageSizes={pageSizes} disabled={busy} />
+    {showPagination && <DataTablePagination table={table} pageSizes={pageSizes} disabled={busy} />}
   </section>;
 }

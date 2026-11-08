@@ -1,6 +1,12 @@
-:root {
+:root,
+:root[data-theme] {
   /* 官方 Sidebar 复用现有材质与边框，随既有明暗 Token 解析。 */
   --sidebar: var(--surface-raised);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-ring: var(--ring);
   --sidebar-border: var(--border);
   --sidebar-accent: var(--accent);
   /* 这里是 shadcn/ui 兼容的基础 token；全局额外 token 也集中在此处维护。 */
@@ -41,6 +47,8 @@
   --chart-2: oklch(0.50 0 0);
   --chart-3: oklch(0.36 0 0);
   --chart-4: oklch(0.22 0 0);
+  /* 第五档补齐官方契约，尚无业务分类，复用中性灰而不引入彩色。 */
+  --chart-5: var(--muted-foreground);
   /* 日历仅映射全局色源，无记录与图表空轨道共用 muted。 */
   --activity-level-0: var(--muted);
   --activity-level-1: var(--chart-1);
