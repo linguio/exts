@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [集中维护扩展 API](./issues/2026-11-08-extension-api-directory-issue.md) · [Commit 记录](./commits/2026-11-08-extension-api-directory-commit.md)；用户已验收并批准代码与文档分开本地提交完结；客户端与 Activity/Settings HTTP 调用已集中到 src/api，116 项测试、类型检查与构建通过，未推送。
+
 - [将扩展设置统一保存到账号](./issues/2026-11-08-extension-cloud-settings-issue.md) · [Commit 记录](./commits/2026-11-08-extension-cloud-settings-commit.md)；用户已验收并批准本地提交，代码与文档分开完结。未登录使用本机设置，登录后以云端记录或默认值为准，退出清空扩展本地状态；当前 API 数据库迁移已应用，未推送或部署。
 
 - [统一登录初始化与退出重置](./issues/2026-11-06-extension-session-reset-issue.md) · [Commit 记录](./commits/2026-11-06-extension-session-reset-commit.md)；用户于 2026-11-07 再次明确批准本地提交，代码与文档分开完结。122 项扩展测试、类型检查与构建通过；最终代码的真实浏览器复验未单独记录，未推送。

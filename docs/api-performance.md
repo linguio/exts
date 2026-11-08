@@ -6,13 +6,13 @@
 
 | 位置 | 职责 |
 | --- | --- |
-| [扩展请求客户端](../apps/extension/src/lib/api/client.ts) | Axios 实例、认证头、超时、取消、响应与错误解析、账号切换检查 |
-| [扩展地址配置](../apps/extension/src/lib/api/config.ts) | 允许的 API 地址与开发/正式默认地址 |
+| [扩展请求客户端](../apps/extension/src/api/client.ts) | Axios 实例、认证头、超时、取消、响应与错误解析、账号切换检查 |
+| [扩展地址配置](../apps/extension/src/api/config.ts) | 允许的 API 地址与开发/正式默认地址 |
 | [API 数据库模块](../apps/api/core/database.py) | 连接池、借还、事务设置、多步事务、单次只读合批、数据库错误映射 |
 | [API 认证模块](../apps/api/core/auth.py) | JWT 验证、公钥缓存、启动公钥预取、认证后的连接依赖 |
 | [Activity 仓储](../apps/api/modules/activity/repository.py) | 业务 SQL、日期范围、用户存在与空数据的区分 |
 
-扩展客户端随后台实例创建，业务只传端点、参数和取消信号；请求前后检查账号，避免切换账号后展示旧响应。API 的连接和身份能力由应用内公共模块提供；本工作项不建立跨官网、扩展、桌面的额外包或重复请求包装器。
+扩展客户端随后台实例创建，src/api/activity.ts 与 settings.ts 集中维护业务端点和参数，后台模块调用这些接口函数；请求前后检查账号，避免切换账号后展示旧响应。API 的连接和身份能力由应用内公共模块提供；不建立跨官网、扩展、桌面的额外包或重复请求框架。
 
 ## 资源何时准备
 

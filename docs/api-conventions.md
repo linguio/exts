@@ -11,8 +11,8 @@
 
 ## 客户端实现
 
-- 扩展业务 HTTP 请求统一使用 Axios 1.21.0，经 lib/api/client.ts 配置实例；使用 fetch adapter 适配 Service Worker，默认 POST，由 Axios 处理 JSON、超时和取消。不再手写同类机制，不引入缓存、自动重试或通用请求框架。
-- 公共层仅保留可信地址、后台认证头、账号变化检查、统一响应与安全异常映射；业务模块维护参数、返回类型及提示时机。OIDC 登录与令牌刷新仍由现有认证库维护，不迁入业务请求实例。
+- 扩展业务 HTTP 请求统一使用 Axios 1.21.0，经 src/api/client.ts 配置实例；使用 fetch adapter 适配 Service Worker，默认 POST，由 Axios 处理 JSON、超时和取消。不再手写同类机制，不引入缓存、自动重试或通用请求框架。
+- src/api 按业务集中维护接口路径和 HTTP 参数组装，client.ts 仅保留可信地址、后台认证头、账号变化检查、统一响应与安全异常映射；对应 feature 维护响应业务校验、Chrome 消息通信、状态与提示时机。OIDC 登录与令牌刷新仍由现有认证库维护，不迁入业务请求实例。
 - fetchOptions 设置 cache: no-store、redirect: error；withCredentials: false 确保不携带站点 Cookie。
 
 ## 请求与身份

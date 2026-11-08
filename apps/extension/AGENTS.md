@@ -41,6 +41,7 @@
 
 ## 共用能力与职责目录
 
+- `src/api/` 集中维护业务 HTTP 客户端、地址配置与按业务划分的接口函数；Chrome 消息通信、会话、缓存和页面状态留在对应 feature。OIDC 与第三方下载遵循原协议，不迁入业务 API 客户端。
 - `src/assets/brand/` 持有扩展共用品牌 SVG，`src/components/custom/` 持有 BrandIcon 与尺寸类型；通过 WXT 复制资源到相同相对路径，不更改 SVG 内容或三端品牌源稿。
 - `src/features/bookmarks/` 持有 Newtab 与 Dock 实际复用的 BookmarkCard 和基础 Bookmark 类型；首页配置、文件夹类型、解锁及打开辅助同归该 feature，不把业务放进 components/ui。
 - 模块内部按实际职责创建 views、components、hooks、types、constants、utils 等目录，目录内部按功能分组；下载执行、权限和运行环境接入保留明确的业务目录，不统放 utils，不建空目录或全局管理层。
