@@ -34,7 +34,7 @@ class MigrationTests(unittest.TestCase):
         database = MagicMock()
         database.execute.return_value.fetchone.return_value = {'name': None}
         items = migrate.load_migrations()
-        self.assertEqual(migrate.migrate(database, items), [items[0].name])
+        self.assertEqual(migrate.migrate(database, items), [item.name for item in items])
         calls = [call.args[0] for call in database.execute.call_args_list]
         self.assertIn('SET TRANSACTION READ ONLY', calls)
         self.assertFalse(any('CREATE TABLE' in query or 'INSERT INTO' in query for query in calls))

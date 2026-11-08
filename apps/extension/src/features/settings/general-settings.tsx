@@ -32,7 +32,7 @@ export function GeneralSettings() {
               <ToggleGroup type="single" variant="outline" size="sm" spacing={0} value={theme} aria-labelledby={`${id}-label`} onValueChange={(value) => {
                 // 单选主题不能取消成空值，保持最后一个有效选择。
                 if (value !== 'light' && value !== 'dark' && value !== 'system') return;
-                void setTheme(value).catch(() => {
+                void setTheme(value).then(() => toast.success('已保存')).catch(() => {
                   toast.error(settingsMessages.saveFailed);
                 });
               }}>

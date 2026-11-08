@@ -72,6 +72,7 @@ export function HistoryCleanerSettings() {
       const current = await setHistoryCleanerEnabled(next);
       if (mounted.current) {
         setEnabled(current);
+        if (current === next) toast.success('已保存');
         if (next && !current) toast.error(settingsMessages.historyPermissionDenied);
       }
     } catch {

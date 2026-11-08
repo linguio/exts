@@ -36,7 +36,8 @@ class DocumentationTests(unittest.TestCase):
         response = self.client.get("/openapi.json")
         self.assertEqual(response.status_code, 200)
         schema = response.json()
-        self.assertEqual(set(schema['paths']), {'/api/activity/days'})
+        self.assertEqual(set(schema['paths']), {'/api/activity/days', '/api/settings/preferences',
+                                               '/api/settings/preferences/update'})
         operation = schema['paths']['/api/activity/days']['post']
         self.assertNotIn('parameters', operation)
         self.assertFalse(operation['requestBody'].get('required', False))

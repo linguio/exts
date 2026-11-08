@@ -5,7 +5,7 @@ import { revokeOAuthToken } from './revoke-oauth-token';
 import { mergeUserInfo, readUserInfo } from './user-info';
 import { removeNeonSessionCookie } from './remove-session-cookie';
 import type { SessionReset } from './session-reset';
-import { withTelegramReset } from '../media-download/telegram/reset-background';
+import { markTelegramReset } from '../media-download/telegram/reset-background';
 
 const authority = 'https://ep-patient-grass-ak8aymgi.neonauth.c-3.us-west-2.aws.neon.tech/neondb/auth';
 const clientId = import.meta.env.VITE_OIDC_CLIENT_ID?.trim();
@@ -117,8 +117,8 @@ export function registerAccount(api: typeof chrome = chrome, session?: SessionRe
       await session?.begin();
       resetStarted = true;
       try {
-        return await withTelegramReset(async () => {
           await api.storage.local.clear();
+          await markTelegramReset(api);
           const cleared = await api.runtime.sendMessage({ type: 'exts:session:clear-theme' });
           if (!cleared?.ok) throw new Error('主题偏好清理失败');
           if (kind === 'login') {
@@ -131,7 +131,6 @@ export function registerAccount(api: typeof chrome = chrome, session?: SessionRe
           const result = await controller.logout();
           await storage.clear();
           return result;
-        }, api);
       } finally { session?.finish(); }
     };
     const operation = action === 'get' ? controller.get : action === 'login' ? () => resetOperation('login') : () => resetOperation('logout');

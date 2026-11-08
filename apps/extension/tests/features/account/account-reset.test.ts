@@ -20,9 +20,8 @@ vi.mock('oidc-client-ts', () => ({
 }));
 vi.mock('../../../src/features/account/auth-storage', () => ({ createAuthStorage: () => fixture.authStorage }));
 vi.mock('../../../src/features/media-download/telegram/reset-background', () => ({
-  withTelegramReset: async (operation: () => Promise<unknown>) => {
+  markTelegramReset: async () => {
     fixture.order.push('clear-telegram');
-    return operation();
   },
 }));
 
@@ -50,7 +49,7 @@ it('主动登录先清理旧本地状态，再建立新会话；恢复状态不�
   expect(await ask('get')).toMatchObject({ ok: true, user: null });
   expect(fixture.order).toEqual([]);
   expect(await ask('login')).toMatchObject({ ok: true, user: { id: 'same-user' } });
-  expect(fixture.order).toEqual(['clear-telegram', 'clear-local', 'clear-theme', 'clear-auth', 'authenticate']);
+  expect(fixture.order).toEqual(['clear-local', 'clear-telegram', 'clear-theme', 'clear-auth', 'authenticate']);
   expect(session.accepts(oldGeneration)).toBe(false);
 
   const attempts = fixture.manager.signinPopup.mock.calls.length;

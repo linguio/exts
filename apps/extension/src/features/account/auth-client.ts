@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { AccountProvider, AccountUser } from './account-controller';
 import { resetTheme } from '../settings/theme';
+import { refreshSettings } from '../settings';
 import { captureSessionGeneration, rememberSessionGeneration } from './session-client';
 
 let resetVersion = 0;
@@ -51,7 +52,11 @@ async function request(action: 'get' | 'login' | 'logout', provider?: AccountPro
   if (before === resetVersion) rememberSessionGeneration(response.generation);
   return response.user;
 }
-export const loginAccount = (provider: AccountProvider) => request('login', provider);
+export async function loginAccount(provider: AccountProvider) {
+  const user = await request('login', provider);
+  if (user) void refreshSettings().catch(() => {});
+  return user;
+}
 export const logoutAccount = () => request('logout');
 
 export function useAccount() {

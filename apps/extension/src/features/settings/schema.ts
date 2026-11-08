@@ -1,14 +1,14 @@
-import { normalizeTheme, type ThemePreference } from '../../lib/theme/preference';
+import type { ThemePreference } from '../../lib/theme/preference';
 
 export const SETTINGS_KEY = 'settings';
-export const LEGACY_SETTINGS_KEYS = ['exts.theme', 'telegramDownload.enabled', 'historyCleaner.enabled'];
 
 export interface Settings {
-  version: 2;
   theme: ThemePreference;
   mediaDownload: { enabled: boolean };
   historyCleaner: { enabled: boolean };
 }
+
+export interface AccountSettings extends Settings { userId: string }
 
 export type SettingsPatch = {
   theme?: ThemePreference;
@@ -16,41 +16,39 @@ export type SettingsPatch = {
   historyCleaner?: { enabled: boolean };
 };
 
-function object(value: unknown): Record<string, unknown> {
-  return value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
+export const DEFAULT_SETTINGS: Settings = {
+  theme: 'system', mediaDownload: { enabled: false }, historyCleaner: { enabled: false },
+};
+
+function object(value: unknown): Record<string, unknown> | null {
+  return value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : null;
 }
 
-/** 新配置优先，旧键只补齐缺失值；保留已存在的其他字段。 */
-export function normalizeSettings(stored: Record<string, unknown>): Settings {
-  const current = object(stored[SETTINGS_KEY]);
-  if (typeof current.version === 'number' && current.version > 2) throw new Error('当前扩展不支持此配置版本');
-  const { telegramDownload: previousTelegramDownload, ...retained } = current;
-  const telegramDownload = object(previousTelegramDownload);
-  const mediaDownload = object(current.mediaDownload);
-  const historyCleaner = object(current.historyCleaner);
-  return {
-    ...retained,
-    version: 2,
-    theme: normalizeTheme(current.theme ?? stored['exts.theme']),
-    mediaDownload: {
-      ...telegramDownload, ...mediaDownload,
-      enabled: typeof mediaDownload.enabled === 'boolean' ? mediaDownload.enabled
-        : typeof telegramDownload.enabled === 'boolean' ? telegramDownload.enabled
-          : typeof stored['telegramDownload.enabled'] === 'boolean' ? stored['telegramDownload.enabled'] : false,
-    },
-    historyCleaner: { ...historyCleaner, enabled: typeof historyCleaner.enabled === 'boolean' ? historyCleaner.enabled : stored['historyCleaner.enabled'] === true },
-  };
+export function parseSettings(value: unknown): Settings | null {
+  const current = object(value);
+  const mediaDownload = object(current?.mediaDownload);
+  const historyCleaner = object(current?.historyCleaner);
+  if (!current || !mediaDownload || !historyCleaner
+    || (current.theme !== 'light' && current.theme !== 'dark' && current.theme !== 'system')
+    || typeof mediaDownload.enabled !== 'boolean' || typeof historyCleaner.enabled !== 'boolean') return null;
+  return { theme: current.theme, mediaDownload: { enabled: mediaDownload.enabled },
+    historyCleaner: { enabled: historyCleaner.enabled } };
 }
 
-/** 消息输入也必须校验，禁止用无效数据覆盖正式配置。 */
+export function parseAccountSettings(value: unknown, userId: string): Settings | null {
+  const current = object(value);
+  return current?.userId === userId ? parseSettings(current) : null;
+}
+
+/** 设置更新必须是单个已知字段，和服务端的部分更新契约一致。 */
 export function validateSettingsPatch(value: unknown): asserts value is SettingsPatch {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('无效配置更新');
-  for (const [key, entry] of Object.entries(value)) {
-    if (key === 'theme') {
-      if (entry !== 'light' && entry !== 'dark' && entry !== 'system') throw new Error('无效主题');
-    } else if (key === 'mediaDownload' || key === 'historyCleaner') {
-      const section = object(entry);
-      if (typeof section.enabled !== 'boolean' || Object.keys(section).some(field => field !== 'enabled')) throw new Error('无效功能配置');
-    } else throw new Error('未知配置字段');
-  }
+  const patch = object(value);
+  if (!patch || Object.keys(patch).length !== 1) throw new Error('无效配置更新');
+  const [key, entry] = Object.entries(patch)[0]!;
+  if (key === 'theme') {
+    if (entry !== 'light' && entry !== 'dark' && entry !== 'system') throw new Error('无效主题');
+  } else if (key === 'mediaDownload' || key === 'historyCleaner') {
+    const section = object(entry);
+    if (!section || typeof section.enabled !== 'boolean' || Object.keys(section).length !== 1) throw new Error('无效功能配置');
+  } else throw new Error('未知配置字段');
 }

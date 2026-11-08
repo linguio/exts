@@ -1,54 +1,59 @@
 import { expect, it, vi } from 'vitest';
 
-import { getSettings, SETTINGS_KEY, subscribeSettings, updateSettings } from '../../../src/features/settings/index';
+import { getSettings, subscribeSettings, updateSettings } from '../../../src/features/settings/index';
 import { registerSettings } from '../../../src/features/settings/background';
 
-it('订阅 settings 对象变化并在取消后停止通知', () => {
+const settings = { theme: 'dark', mediaDownload: { enabled: true }, historyCleaner: { enabled: false } };
+
+it('本地副本变化通知页面，取消订阅后停止', () => {
   const listeners = new Set<(changes: Record<string, { newValue?: unknown }>, area: string) => void>();
-  const api = { storage: { onChanged: { addListener: (listener: typeof listeners extends Set<infer T> ? T : never) => listeners.add(listener), removeListener: (listener: typeof listeners extends Set<infer T> ? T : never) => listeners.delete(listener) } } };
+  const api = { storage: { onChanged: { addListener: (listener: typeof listeners extends Set<infer T> ? T : never) => listeners.add(listener),
+    removeListener: (listener: typeof listeners extends Set<infer T> ? T : never) => listeners.delete(listener) } } };
   const received: boolean[] = [];
-  const stop = subscribeSettings(settings => received.push(settings.mediaDownload.enabled), api as never);
-  for (const listener of listeners) listener({ settings: { newValue: { mediaDownload: { enabled: false } } } }, 'sync');
-  for (const listener of listeners) listener({ settings: { newValue: { mediaDownload: { enabled: false } } } }, 'local');
-  expect(received).toEqual([false]);
+  const stop = subscribeSettings(value => received.push(value.mediaDownload.enabled), api as never);
+  for (const listener of listeners) listener({ settings: { newValue: { userId: 'account-a', ...settings } } }, 'local');
+  expect(received).toEqual([true]);
   stop();
   expect(listeners.size).toBe(0);
 });
 
-it('客户端读取统一配置，写入失败继续报告给设置区域', async () => {
-  const api = {
-    storage: { local: { get: vi.fn(async () => ({ settings: { theme: 'dark' } })) } },
-    runtime: { sendMessage: vi.fn(async () => ({ ok: false, error: '保存失败' })) },
-  };
-  expect((await getSettings(api as never)).theme).toBe('dark');
+it('客户端读取后台值，保存失败向设置区域报告', async () => {
+  const api = { runtime: { sendMessage: vi.fn(async (message: { action: string }) => message.action === 'get'
+    ? { ok: true, settings } : { ok: false, error: { message: '保存失败' } }) } };
+  expect(await getSettings(api as never)).toEqual(settings);
   await expect(updateSettings({ theme: 'light' }, api as never, 'fixture-generation')).rejects.toThrow('保存失败');
 });
 
-it('后台串行处理来自扩展页面的配置更新，拒绝网页内容脚本写入', async () => {
-  const data: Record<string, unknown> = {};
+it('后台拒绝网页内容脚本写设置', async () => {
   let listener!: (message: unknown, sender: unknown, respond: (response: unknown) => void) => boolean | void;
-  const api = {
-    storage: { local: {
-      get: vi.fn(async () => structuredClone(data)),
-      set: vi.fn(async (values: Record<string, unknown>) => { Object.assign(data, structuredClone(values)); }),
-      remove: vi.fn(async () => {}),
-    } },
-    runtime: {
-      id: 'exts-test', getURL: () => 'chrome-extension://exts-test/',
-      onMessage: { addListener: (callback: typeof listener) => { listener = callback; } },
-    },
-  };
-  registerSettings(api as never);
-  const send = (sender: unknown, patch: unknown) => new Promise<unknown>(resolve => {
-    listener({ type: 'exts:settings:update', patch }, sender, resolve);
+  const api = { storage: { local: { get: vi.fn(), set: vi.fn(), remove: vi.fn() } },
+    runtime: { id: 'exts-test', getURL: () => 'chrome-extension://exts-test/newtab.html',
+      onMessage: { addListener: (callback: typeof listener) => { listener = callback; } } } };
+  registerSettings(async () => ({ userId: 'account-a', accessToken: 'token' }), async () => 'account-a', api as never);
+  const denied = await new Promise<unknown>(resolve => {
+    listener({ type: 'exts:settings', action: 'update', patch: { theme: 'dark' } },
+      { id: 'exts-test', url: 'https://web.telegram.org/' }, resolve);
   });
-  const denied = await send({ id: 'exts-test', url: 'https://web.telegram.org/' }, { theme: 'dark' });
   expect(denied).toMatchObject({ ok: false });
-  const trusted = { id: 'exts-test', url: 'chrome-extension://exts-test/newtab.html' };
-  const results = await Promise.all([
-    send(trusted, { theme: 'dark' }),
-    send(trusted, { mediaDownload: { enabled: false } }),
-  ]);
-  expect(results).toEqual([expect.objectContaining({ ok: true }), expect.objectContaining({ ok: true })]);
-  expect(data[SETTINGS_KEY]).toMatchObject({ theme: 'dark', mediaDownload: { enabled: false } });
+});
+
+it('未登录时读默认值并在本机保存，不请求云端', async () => {
+  let listener!: (message: unknown, sender: unknown, respond: (response: any) => void) => boolean | void;
+  const values: Record<string, unknown> = {};
+  const api = { storage: { local: {
+    get: vi.fn(async () => structuredClone(values)),
+    set: vi.fn(async (next: Record<string, unknown>) => { Object.assign(values, next); }),
+  } }, runtime: { id: 'exts-test', getURL: () => 'chrome-extension://exts-test/newtab.html',
+    onMessage: { addListener: (callback: typeof listener) => { listener = callback; } } } };
+  const getSession = vi.fn(async () => { throw new Error('未登录不应请求云端'); });
+  registerSettings(getSession, async () => null, api as never);
+  const sender = { id: 'exts-test', url: 'chrome-extension://exts-test/newtab.html' };
+  const ask = (action: string, patch?: unknown) => new Promise<any>(resolve => {
+    listener({ type: 'exts:settings', action, patch }, sender, resolve);
+  });
+  expect((await ask('get')).settings).toMatchObject({ theme: 'system', mediaDownload: { enabled: false } });
+  expect((await ask('update', { theme: 'dark' })).settings.theme).toBe('dark');
+  expect((await ask('get')).settings.theme).toBe('dark');
+  expect(values.settings).toMatchObject({ theme: 'dark' });
+  expect(getSession).not.toHaveBeenCalled();
 });

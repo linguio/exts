@@ -39,6 +39,8 @@ export function createAccountController(manager: Manager) {
   }
   return {
     get: () => enqueue(async () => display(await readValidUser())),
+    // 后台关窗事件只核对已存账号，不在此时触发网络续期。
+    getStoredUserId: () => enqueue(async () => (await manager.getUser())?.profile.sub ?? null),
     // 仅由后台服务调用，不加入页面消息操作白名单。
     getSession: () => enqueue(async () => {
       const user = await readValidUser();

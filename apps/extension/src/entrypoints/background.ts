@@ -10,9 +10,10 @@ import { createSessionReset } from '../features/account/session-reset';
 
 export default defineBackground(() => {
   const session = createSessionReset();
-  registerSettings(chrome, session);
   const account = registerAccount(chrome, session);
-  registerActivity(() => account ? account.getSession() : Promise.reject(new AccountSessionExpiredError()), chrome, session);
+  const getSession = () => account ? account.getSession() : Promise.reject(new AccountSessionExpiredError());
+  const settings = registerSettings(getSession, () => account ? account.getStoredUserId() : Promise.resolve(null), chrome, session);
+  registerActivity(getSession, chrome, session);
   registerDownloads(chrome, session);
-  registerHistoryCleaner();
+  registerHistoryCleaner(chrome, settings);
 });

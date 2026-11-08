@@ -17,7 +17,11 @@ function setup({ enabled = true, granted = true, windows = [] } = {}) {
     permissions: { contains: vi.fn(async () => granted) },
     browsingData: { removeHistory: vi.fn(async () => {}) },
   };
-  registerHistoryCleaner(api);
+  const settings = {
+    current: async () => ({ historyCleaner: { enabled: (await api.storage.local.get()).settings.historyCleaner.enabled } }),
+    refresh: async () => ({}),
+  };
+  registerHistoryCleaner(api, settings);
   return { api, listeners };
 }
 
