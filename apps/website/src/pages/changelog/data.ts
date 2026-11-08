@@ -13,6 +13,38 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'daily-activity-query-v210',
+    date: '2026-11-09',
+    title: '新增 Daily 活动记录查询',
+    groups: [{
+      platform: 'Extension',
+      changes: [
+        '在 Studio 中查看每日活动记录，支持日期范围查询。',
+        '支持分页、每页条数、页码跳转、单列及多字段排序。',
+        '统一查询、重置、列显隐与加载反馈，完善失败重试体验。',
+      ],
+    }, {
+      platform: 'API',
+      changes: [],
+    }],
+  },
+  {
+    id: 'settings-studio-experience',
+    date: '2026-11-08',
+    title: '完善设置同步与 Studio 体验',
+    groups: [{
+      platform: 'Extension',
+      changes: [
+        '支持登录后同步云端设置，未登录时使用本机设置。',
+        '完善退出与重新登录时的状态清理，避免旧数据和请求影响当前账号。',
+        '优化 Studio 登录提示与活动入口，支持恢复本机上次使用的 Home／Studio 视图。',
+      ],
+    }, {
+      platform: 'API',
+      changes: [],
+    }],
+  },
+  {
     id: 'architecture-workflow-v200',
     date: '2026-11-05',
     title: '优化扩展架构与开发流程',
