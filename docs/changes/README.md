@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [修复 DMG 窗口关闭与清理失败](./issues/2026-11-09-repo-dmg-window-cleanup-issue.md) · [Commit 记录](./commits/2026-11-09-repo-dmg-window-cleanup-commit.md)；用户明确要求提交并推送，代码与文档分开完结。发布相关 29 项测试及 JS 语法检查通过；AppleScript 编译受本机 Finder 服务异常阻挡，真实 Release 和安装行为待验证。
+
 - [更新官网近期功能日志与产品版本](./issues/2026-11-09-website-changelog-recent-updates-issue.md) · [Commit 记录](./commits/2026-11-09-website-changelog-recent-updates-commit.md)；2026-11-09 用户验收通过并批准代码、文档两笔本地提交完结；8 日/9 日两条各三点，均带 Extension/API 标签，根版本 2.1.0；数据及 Release 提取检查通过，官网类型/构建因依赖不完整未完成，限制保留，未推送或发布。
 
 - [优化配置驱动的业务查询表格](./issues/2026-11-09-extension-data-table-reuse-issue.md) · [Commit 记录](./commits/2026-11-09-extension-data-table-reuse-commit.md)；2026-11-09 用户验收通过并批准代码、文档两笔本地提交完结；QueryDataTable 与 Daily 迁移已交付，扩展 140 项、类型检查及本地 API 构建通过，保留未验证限制，未推送或部署。
