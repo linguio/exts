@@ -1,41 +1,34 @@
-import { createTable, getCoreRowModel } from '@tanstack/react-table';
-import { resolveUpdate, updateQuery } from '../../../src/components/custom/data-table/state';
-import { expect, it } from 'vitest';
-import { dailyRequest, defaultDailyQuery, applyDailyDates, resetDailyQuery } from '../../../src/features/activity/daily/state';
-import { parseActivityDays } from '../../../src/features/activity/data/response';
+import { beforeEach, expect, it, vi } from 'vitest';
+import { ApiRequestError } from '../../../src/api/client';
+import { requestActivity } from '../../../src/features/activity/requests';
+import { dailyActivityRequest, queryDailyRecords } from '../../../src/features/activity/daily/query';
 
-it('排序只使用已查询日期，查询应用日期，重置恢复默认但保留每页条数', () => {
-  const initial = defaultDailyQuery();
-  const applied = applyDailyDates(initial, { from: '2026-11-01', to: '2026-11-08' });
-  const sorted = resolveUpdate(previous => ({ ...previous, sorting: [{ id: 'readingMinutes', desc: false }], pagination: { ...previous.pagination, pageIndex: 0 } }), { ...applied, pagination: { pageIndex: 3, pageSize: 50 } });
-  expect(dailyRequest(sorted)).toEqual({ startDate: '2026-11-01', endDate: '2026-11-08', pageIndex: 0, pageSize: 50,
-    sort: [{ field: 'readingMinutes', order: 'asc' }] });
-  expect(dailyRequest(resetDailyQuery(sorted))).toEqual({ pageIndex: 0, pageSize: 50, sort: [] });
+vi.mock('../../../src/features/activity/requests', () => ({ requestActivity: vi.fn() }));
+beforeEach(() => vi.mocked(requestActivity).mockReset());
+const request = { pageIndex: 0, pageSize: 20, sort: [{ field: 'readingMinutes', order: 'asc' as const }],
+  filters: { date: { from: '2026-11-01', to: '2026-11-09' } } };
+
+it('资源适配仅映射业务日期和已标准化排序，不再持有查询状态', () => {
+  expect(dailyActivityRequest(request)).toEqual({ pageIndex: 0, pageSize: 20, sort: request.sort,
+    startDate: '2026-11-01', endDate: '2026-11-09' });
+  expect(dailyActivityRequest({ ...request, sort: [], filters: {} })).toEqual({ pageIndex: 0, pageSize: 20, sort: [] });
+  expect(() => dailyActivityRequest({ ...request, sort: [{ field: 'invalid', order: 'asc' }] })).toThrow();
 });
 
-it('拒绝截断的非分页图表响应与不匹配的分页元数据', () => {
-  expect(() => parseActivityDays({ days: [], total: 1, pageIndex: null, pageSize: null }, 'user-1',
-    { startDate: '2026-11-01', endDate: '2026-11-08' })).toThrow();
-  expect(() => parseActivityDays({ days: [], total: 0, pageIndex: 1, pageSize: 20 }, 'user-1',
-    { pageIndex: 0, pageSize: 20 })).toThrow();
+it('通过已有消息请求转交取消信号，校验后统一返回 rows 和 total', async () => {
+  const day = { userId: 'user-1', date: '2026-11-02', exerciseMinutes: null, readingMinutes: 0,
+    learningMinutes: 60, creationMinutes: null, sleepMinutes: null,
+    createdAt: '2026-11-02T00:00:00+08:00', updatedAt: '2026-11-02T09:00:00+08:00' };
+  vi.mocked(requestActivity).mockResolvedValue({ days: [day], total: 1, pageIndex: 0, pageSize: 20 });
+  const signal = new AbortController().signal;
+  await expect(queryDailyRecords(request, 'user-1', signal)).resolves.toEqual({ rows: [day], total: 1 });
+  expect(requestActivity).toHaveBeenCalledWith(dailyActivityRequest(request), 'user-1', signal);
 });
 
-it('默认日期仅由后端兜底，首个时长排序不会落在唯一日期之后', () => {
-  let query = defaultDailyQuery();
-  expect(dailyRequest(query).sort).toEqual([]);
-  const table = createTable({ data: [], columns: [{ accessorKey: 'date' }, { accessorKey: 'exerciseMinutes' }, { accessorKey: 'readingMinutes' }],
-    state: query, onStateChange: () => {}, renderFallbackValue: null,
-    manualSorting: true, enableMultiSort: true, getCoreRowModel: getCoreRowModel(),
-    onSortingChange: update => {
-      query = updateQuery(query, 'sorting', update);
-      table.setOptions(previous => ({ ...previous, state: query }));
-    } });
-  table.getColumn('exerciseMinutes')!.toggleSorting(true, true);
-  table.getColumn('readingMinutes')!.toggleSorting(false, true);
-  expect(dailyRequest(query).sort).toEqual([
-    { field: 'exerciseMinutes', order: 'desc' }, { field: 'readingMinutes', order: 'asc' },
-  ]);
-  table.resetSorting(true);
-  expect(dailyRequest(query).sort).toEqual([]);
-  expect(dailyRequest(resetDailyQuery(query)).sort).toEqual([]);
+it('保留接口安全错误，拒绝不完整响应', async () => {
+  const signal = new AbortController().signal;
+  vi.mocked(requestActivity).mockRejectedValueOnce(new ApiRequestError('UNAUTHENTICATED', 'Please sign in'));
+  await expect(queryDailyRecords(request, 'user-1', signal)).rejects.toMatchObject({ name: 'DataTableQueryError', message: 'Please sign in' });
+  vi.mocked(requestActivity).mockResolvedValueOnce({ days: [], total: 1, pageIndex: 0, pageSize: 20 });
+  await expect(queryDailyRecords(request, 'user-1', signal)).rejects.toMatchObject({ name: 'DataTableQueryError', message: '活动数据格式无效' });
 });

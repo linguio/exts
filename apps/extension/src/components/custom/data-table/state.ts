@@ -1,5 +1,5 @@
 import type { FilterFn, Updater } from '@tanstack/react-table';
-import type { DataTableQuery } from './types';
+import type { DataTableQuery, DataTableFilter, DataTableFilterValue, DataTableFilterValues, DataTableQueryRequest } from './types';
 
 export const initialQuery = (): DataTableQuery => ({ pagination: { pageIndex: 0, pageSize: 20 }, sorting: [], columnFilters: [], globalFilter: '' });
 export const resolveUpdate = <T,>(update: Updater<T>, previous: T): T => typeof update === 'function' ? (update as (value: T) => T)(previous) : update;
@@ -43,4 +43,48 @@ export function paginationItems(pageIndex: number, pageCount: number): (number |
     result.push(visible[index]!);
   }
   return result;
+}
+
+export interface QueryTableState { query: DataTableQuery; draft: DataTableFilterValues; revision: number }
+export type QueryTableAction =
+  | { type: 'draft'; id: string; value: DataTableFilterValue }
+  | { type: 'query' } | { type: 'retry' }
+  | { type: 'reset'; defaults: DataTableFilterValues }
+  | { type: 'table'; update: Updater<DataTableQuery> };
+
+function copyFilterValues(values: DataTableFilterValues): DataTableFilterValues {
+  return Object.fromEntries(Object.entries(values).map(([id, value]) => [id,
+    Array.isArray(value) ? [...value] : value && typeof value === 'object' ? { ...value } : value]));
+}
+export function defaultFilterValues(filters: DataTableFilter[]): DataTableFilterValues {
+  return copyFilterValues(Object.fromEntries(filters.filter(filter => filter.defaultValue !== undefined)
+    .map(filter => [filter.columnId, filter.defaultValue])));
+}
+function appliedFilters(values: DataTableFilterValues): DataTableQuery['columnFilters'] {
+  return Object.entries(copyFilterValues(values)).filter(([, value]) => {
+    if (typeof value === 'string' || Array.isArray(value)) return value.length > 0;
+    return !!value && !!(value.from || value.to);
+  }).map(([id, value]) => ({ id, value }));
+}
+export function createQueryTableState(filters: DataTableFilter[]): QueryTableState {
+  const draft = defaultFilterValues(filters);
+  return { query: { ...initialQuery(), columnFilters: appliedFilters(draft) }, draft, revision: 0 };
+}
+export function queryTableReducer(state: QueryTableState, action: QueryTableAction): QueryTableState {
+  switch (action.type) {
+    case 'draft': return { ...state, draft: { ...state.draft, [action.id]: action.value } };
+    case 'table': return { ...state, query: resolveUpdate(action.update, state.query) };
+    case 'retry': return { ...state, revision: state.revision + 1 };
+    case 'query': return { ...state, query: { ...state.query, columnFilters: appliedFilters(state.draft),
+      pagination: { ...state.query.pagination, pageIndex: 0 } }, revision: state.revision + 1 };
+    case 'reset': {
+      const draft = copyFilterValues(action.defaults);
+      return { draft, revision: state.revision + 1, query: { ...initialQuery(), columnFilters: appliedFilters(draft),
+        pagination: { pageIndex: 0, pageSize: state.query.pagination.pageSize } } };
+    }
+  }
+}
+export function toQueryTableRequest(query: DataTableQuery): DataTableQueryRequest {
+  return { ...query.pagination, sort: query.sorting.map(item => ({ field: item.id, order: item.desc ? 'desc' : 'asc' })),
+    filters: copyFilterValues(Object.fromEntries(query.columnFilters.map(filter => [filter.id, filter.value as DataTableFilterValue]))) };
 }
