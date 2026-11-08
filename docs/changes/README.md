@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [更新官网近期功能日志与产品版本](./issues/2026-11-09-website-changelog-recent-updates-issue.md) · [Commit 记录](./commits/2026-11-09-website-changelog-recent-updates-commit.md)；2026-11-09 用户验收通过并批准代码、文档两笔本地提交完结；8 日/9 日两条各三点，均带 Extension/API 标签，根版本 2.1.0；数据及 Release 提取检查通过，官网类型/构建因依赖不完整未完成，限制保留，未推送或发布。
+
 - [优化配置驱动的业务查询表格](./issues/2026-11-09-extension-data-table-reuse-issue.md) · [Commit 记录](./commits/2026-11-09-extension-data-table-reuse-commit.md)；2026-11-09 用户验收通过并批准代码、文档两笔本地提交完结；QueryDataTable 与 Daily 迁移已交付，扩展 140 项、类型检查及本地 API 构建通过，保留未验证限制，未推送或部署。
 
 - [接入每日活动分页与排序查询](./issues/2026-11-08-activity-days-pagination-issue.md) · [Commit 记录](./commits/2026-11-08-activity-days-pagination-commit.md)；2026-11-09 用户验收通过并批准 API、扩展、文档三笔本地提交完结；已建立仓库级表格规范，API 51 项通过、5 项隔离数据库测试跳过；扩展曾完整 133 项通过，最新排序改动后相关 9 项、类型检查及本地 API 构建通过，既有未验证限制保留，未推送或部署。
