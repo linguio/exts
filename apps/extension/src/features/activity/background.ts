@@ -1,7 +1,7 @@
 import { ApiRequestError, createApiClient, type ApiSession } from '../../api/client';
 import { resolveApiBaseUrl } from '../../api/config';
 import { getActivityDays } from '../../api/activity';
-import { validActivityDate } from './data/date';
+import { validActivityQuery } from './data/query';
 import type { SessionReset } from '../account/session-reset';
 
 export function registerActivity(getSession: () => Promise<ApiSession>, api: typeof chrome = chrome, session?: SessionReset) {
@@ -26,8 +26,7 @@ export function registerActivity(getSession: () => Promise<ApiSession>, api: typ
       respond({ ok: true });
       return;
     }
-    if (message.action !== 'get' || !validActivityDate(message.startDate) || !validActivityDate(message.endDate)
-      || message.startDate > message.endDate || typeof message.userId !== 'string' || pending.has(key)) {
+    if (message.action !== 'get' || !validActivityQuery(message) || typeof message.userId !== 'string' || pending.has(key)) {
       respond({ ok: false, error: { code: 'INVALID_REQUEST', message: '活动请求参数无效' } });
       return;
     }
@@ -38,7 +37,7 @@ export function registerActivity(getSession: () => Promise<ApiSession>, api: typ
     const generation = session?.generation;
     const controller = new AbortController();
     pending.set(key, controller);
-    void getActivityDays(client, { startDate: message.startDate, endDate: message.endDate }, message.userId, controller.signal).then(data => respond(generation && !session?.isCurrent(generation)
+    void getActivityDays(client, { startDate: message.startDate, endDate: message.endDate, pageIndex: message.pageIndex, pageSize: message.pageSize, sort: message.sort }, message.userId, controller.signal).then(data => respond(generation && !session?.isCurrent(generation)
       ? { ok: false, error: { code: 'SESSION_CHANGED', message: '账号已变更' } } : { ok: true, data }), error => {
       if (generation && !session?.isCurrent(generation)) {
         respond({ ok: false, error: { code: 'SESSION_CHANGED', message: '账号已变更' } });

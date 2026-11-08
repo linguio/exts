@@ -9,9 +9,9 @@ const durationCell = ({ getValue }: CellContext<DailyActivityRow, unknown>) => {
 
 export const dailyColumns: ColumnDef<DailyActivityRow>[] = [
   { accessorKey: 'date', header: 'Date', enableHiding: false, sortDescFirst: true },
-  { accessorKey: 'exerciseMinutes', header: 'Exercise', cell: durationCell },
-  { accessorKey: 'readingMinutes', header: 'Reading', cell: durationCell },
-  { accessorKey: 'learningMinutes', header: 'Learning', cell: durationCell },
-  { accessorKey: 'creationMinutes', header: 'Creation', cell: durationCell },
-  { accessorKey: 'sleepMinutes', header: 'Sleep', cell: durationCell },
+  { accessorKey: 'exerciseMinutes', header: 'Exercise', sortDescFirst: true, cell: durationCell },
+  { accessorKey: 'readingMinutes', header: 'Reading', sortDescFirst: true, cell: durationCell },
+  { accessorKey: 'learningMinutes', header: 'Learning', sortDescFirst: true, cell: durationCell },
+  { accessorKey: 'creationMinutes', header: 'Creation', sortDescFirst: true, cell: durationCell },
+  { accessorKey: 'sleepMinutes', header: 'Sleep', sortDescFirst: true, cell: durationCell },
 ];

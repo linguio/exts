@@ -1,8 +1,8 @@
 import { ApiRequestError } from '../../api/client';
-import type { ActivityPeriod } from '../../api/activity';
+import type { ActivityQuery } from '../../api/activity';
 import { captureSessionGeneration } from '../account/session-client';
 
-export async function requestActivity(period: ActivityPeriod, userId: string, signal: AbortSignal): Promise<unknown> {
+export async function requestActivity(period: ActivityQuery, userId: string, signal: AbortSignal): Promise<unknown> {
   const requestId = crypto.randomUUID();
   const cancel = () => { void chrome.runtime.sendMessage({ type: 'exts:activity', action: 'cancel', requestId }).catch(() => {}); };
   signal.throwIfAborted();

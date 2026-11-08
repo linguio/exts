@@ -20,21 +20,21 @@ export function DataTablePagination<T>({ table, pageSizes, disabled }: { table: 
   const noPrevious = disabled || !table.getCanPreviousPage();
   const noNext = disabled || !table.getCanNextPage();
   return <div className="flex flex-wrap items-center justify-between gap-4">
-    <span className="text-sm text-muted-foreground">共 {table.getRowCount()} 条 · 第 {pages ? pageIndex + 1 : 0} / {pages} 页</span>
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="text-sm">每页</span><Select value={String(pageSize)} onValueChange={value => table.setPageSize(Number(value))} disabled={disabled}><SelectTrigger aria-label="每页条数"><SelectValue /></SelectTrigger><SelectContent>{sizes.map(size => <SelectItem key={size} value={String(size)}>{size}</SelectItem>)}</SelectContent></Select>
-      <Pagination aria-label="表格分页"><PaginationContent>
-        <PaginationItem><PaginationLink size="default" {...linkProps(0, noPrevious)}>首页</PaginationLink></PaginationItem>
+    <span className="shrink-0 text-sm whitespace-nowrap text-muted-foreground">{table.getRowCount()} records · Page {pages ? pageIndex + 1 : 0} of {pages}</span>
+    <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-4">
+      <div className="flex shrink-0 items-center gap-2 whitespace-nowrap"><span className="text-sm">Rows per page</span><Select value={String(pageSize)} onValueChange={value => table.setPageSize(Number(value))} disabled={disabled}><SelectTrigger aria-label="Rows per page"><SelectValue /></SelectTrigger><SelectContent>{sizes.map(size => <SelectItem key={size} value={String(size)}>{size}</SelectItem>)}</SelectContent></Select></div>
+      <Pagination aria-label="Table pagination" className="mx-0 w-auto shrink-0"><PaginationContent>
+        <PaginationItem><PaginationLink size="default" {...linkProps(0, noPrevious)}>First</PaginationLink></PaginationItem>
         <PaginationItem><PaginationPrevious {...linkProps(Math.max(0, pageIndex - 1), noPrevious)} /></PaginationItem>
         {paginationItems(pageIndex, pages).map((page, index) => <PaginationItem key={page === 'ellipsis' ? `gap-${index}` : page}>
-          {page === 'ellipsis' ? <PaginationEllipsis /> : <PaginationLink isActive={page === pageIndex} aria-label={`第 ${page + 1} 页`} {...linkProps(page, disabled)}>{page + 1}</PaginationLink>}
+          {page === 'ellipsis' ? <PaginationEllipsis /> : <PaginationLink isActive={page === pageIndex} aria-label={`Page ${page + 1}`} {...linkProps(page, disabled)}>{page + 1}</PaginationLink>}
         </PaginationItem>)}
         <PaginationItem><PaginationNext {...linkProps(Math.min(Math.max(0, pages - 1), pageIndex + 1), noNext)} /></PaginationItem>
-        <PaginationItem><PaginationLink size="default" {...linkProps(Math.max(0, pages - 1), noNext)}>末页</PaginationLink></PaginationItem>
+        <PaginationItem><PaginationLink size="default" {...linkProps(Math.max(0, pages - 1), noNext)}>Last</PaginationLink></PaginationItem>
       </PaginationContent></Pagination>
-      <form className="flex items-center gap-2" onSubmit={e => { e.preventDefault(); const page = Number(target); if (Number.isSafeInteger(page) && page >= 1 && page <= pages) table.setPageIndex(page - 1); }}>
-        <Input className="w-20" type="number" aria-label="跳转页码" min={1} max={Math.max(1, pages)} value={target} disabled={disabled || !pages} onChange={e => setTarget(e.target.value)} />
-        <Button type="submit" variant="outline" size="sm" disabled={disabled || !pages}>跳转</Button>
+      <form className="flex shrink-0 items-center gap-2 whitespace-nowrap" onSubmit={e => { e.preventDefault(); const page = Number(target); if (Number.isSafeInteger(page) && page >= 1 && page <= pages) table.setPageIndex(page - 1); }}>
+        <Input className="w-20" type="number" aria-label="Go to page" min={1} max={Math.max(1, pages)} value={target} disabled={disabled || !pages} onChange={e => setTarget(e.target.value)} />
+        <Button type="submit" variant="outline" size="sm" disabled={disabled || !pages}>Go</Button>
       </form>
     </div>
   </div>;

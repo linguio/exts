@@ -41,7 +41,7 @@ export function ActivityDataProvider({ children }: { children: ReactNode }) {
     const period = activityPeriod(view);
     const cached = previous.current.views.get(view);
     setState({ userId, version: resetVersion, view, records: cached ?? {}, status: 'loading', hasPreviousResult: cached !== undefined });
-    void requestActivity(period, userId, controller.signal).then(data => {
+    void requestActivity({ ...period, sort: [{ field: 'date', order: 'asc' }] }, userId, controller.signal).then(data => {
       if (controller.signal.aborted) return;
       const records = activityRecords(data, userId, period);
       previous.current.views.set(view, records);

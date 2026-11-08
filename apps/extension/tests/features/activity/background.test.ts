@@ -69,3 +69,19 @@ it('拒绝非法日期，取消仅影响同一发送页面的在途请求', asyn
   listener({ type: 'exts:activity', action: 'cancel', requestId: 'request-1' }, sender, vi.fn());
   await vi.waitFor(() => expect(respond).toHaveBeenLastCalledWith(expect.objectContaining({ ok: false, error: expect.objectContaining({ code: 'CANCELLED' }) })));
 });
+
+it('分页与多字段排序只转发白名单业务参数，非法参数不请求 HTTP', async () => {
+  const { listener, sender, fetcher } = setup();
+  const respond = vi.fn();
+  listener({ ...request, startDate: undefined, endDate: undefined, pageIndex: 1, pageSize: 20,
+    sort: [{ field: 'exerciseMinutes', order: 'desc' }, { field: 'date', order: 'asc' }] }, sender, respond);
+  await vi.waitFor(() => expect(fetcher).toHaveBeenCalledTimes(1));
+  expect(await (fetcher.mock.calls[0]![0] as Request).clone().json()).toEqual({ pageIndex: 1, pageSize: 20,
+    sort: [{ field: 'exerciseMinutes', order: 'desc' }, { field: 'date', order: 'asc' }] });
+  for (const invalid of [{ pageIndex: 0 }, { pageIndex: 0, pageSize: 101 },
+    { sort: [{ field: 'userId', order: 'asc' }] }, { sort: [{ field: 'date', order: 'asc' }, { field: 'date', order: 'desc' }] }]) {
+    listener({ ...request, requestId: 'invalid', ...invalid }, sender, respond);
+    expect(respond).toHaveBeenLastCalledWith(expect.objectContaining({ ok: false }));
+  }
+  expect(fetcher).toHaveBeenCalledTimes(1);
+});

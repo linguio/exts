@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { ColumnDef, ColumnFiltersState, PaginationState, SortingState, RowSelectionState, OnChangeFn } from '@tanstack/react-table';
+import type { Table, ColumnDef, ColumnFiltersState, PaginationState, SortingState, RowSelectionState, OnChangeFn } from '@tanstack/react-table';
 
 export interface DataTableQuery {
   pagination: PaginationState;
@@ -13,6 +13,7 @@ export type DataTableFilter = {
 } & ({ type: 'text' } | { type: 'options'; options: { label: string; value: string }[] } | { type: 'date' });
 export interface DataTableProps<T> {
   columns: ColumnDef<T, any>[];
+  toolbar?: (table: Table<T>, disabled: boolean) => ReactNode;
   data: T[];
   getRowId: (row: T) => string;
   caption: string;

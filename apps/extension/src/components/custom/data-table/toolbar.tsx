@@ -27,11 +27,15 @@ export function DataTableToolbar<T>({ table, filters = [], search, visibility, d
       </PopoverContent></Popover>;
     })}
     {(table.getState().columnFilters.length > 0 || table.getState().globalFilter) && <Button type="button" variant="ghost" disabled={disabled} onClick={() => { table.setColumnFilters([]); table.setGlobalFilter(''); }}>Reset filters</Button>}
-    {visibility && <DropdownMenu><DropdownMenuTrigger asChild><Button type="button" variant="outline" disabled={disabled} className="ml-auto">Columns</Button></DropdownMenuTrigger><DropdownMenuContent align="end">
+    {visibility && <DataTableColumnVisibility table={table} disabled={disabled} />}
+  </div>;
+}
+
+export function DataTableColumnVisibility<T>({ table, disabled }: { table: Table<T>; disabled: boolean }) {
+  return <DropdownMenu><DropdownMenuTrigger asChild><Button type="button" variant="outline" disabled={disabled} className="ml-auto">Columns</Button></DropdownMenuTrigger><DropdownMenuContent align="end">
       <DropdownMenuLabel>Columns</DropdownMenuLabel><DropdownMenuSeparator />
       {table.getAllLeafColumns().filter(column => column.getCanHide()).map(column => <DropdownMenuCheckboxItem key={column.id} checked={column.getIsVisible()} disabled={column.getIsVisible() && table.getVisibleLeafColumns().filter(item => item.id !== '__selection').length <= 1} onCheckedChange={value => column.toggleVisibility(value)}>
         {typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id}
       </DropdownMenuCheckboxItem>)}
-    </DropdownMenuContent></DropdownMenu>}
-  </div>;
+    </DropdownMenuContent></DropdownMenu>;
 }
