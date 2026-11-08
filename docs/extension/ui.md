@@ -31,7 +31,34 @@
 - 不直接放入 `<tbody>`、按钮、输入框或表单内部。表格等有自身语义结构的组件可复用官方 Skeleton/Spinner，由表格决定占位或加载提示的位置；只有整张表都适合被一个区域替换时才考虑在表格外使用 LoadingRegion。
 - 组件不获取数据、不缓存结果，也不提供全应用加载状态。当前仅有 Activity 一组调用方，不增加通用模式、业务配置或表格专用分支；出现具体新场景时先核对现有组合是否适用。
 
+## 通用数据表格
+
+- 复杂表格统一复用 `components/custom/data-table`，官方基础控件放在 `components/ui`。业务列、字段格式、数据请求、权限与行操作属于对应 feature，不进入通用表格。
+- 日期范围用 Calendar + Popover；选项筛选用 Command + Popover；列显隐用 DropdownMenu；分页用 Pagination 配合 Select/Input；空状态用 Empty；错误用 Alert；加载用官方 Skeleton/Spinner。沿用官方默认结构、状态、交互与现有主题，不为控件数量或维护方便改用原生日期面板或自绘控件。
+- 仅在官方组件及组合存在无法解决的实际问题时，记录具体证据并等待用户决定，不自行替代或宣称差异已获验收。
+- 通用表格支持前端处理与服务端受控模式；后者由业务维护请求、总数和迟到响应防护，组件不请求 API，不只对当前页执行全量筛选或排序。
+- API 与用法见 [DataTable 接入说明](./data-table.md)；固定来源与必要适配见 [Web UI 来源](../web-ui-sources.md)。本页只维护用途与组合约定，不复制组件 API 或源码。
+
+## Studio 内容与会话边界
+
+- chrome.storage.local.ui.view 只保存 home/studio 本机位置，刷新、重开浏览器和新标签页恢复最后选择；启动读取后再挂载，避免闪现 Home。已打开的其他标签页不因偏好更新自动跳转。账号重置保留 ui，业务内容、Daily 选择及表格条件仍重置；不把位置同步云端。
+
+- Studio 未登录时左侧菜单区复用官方 Empty，显示 Not signed in / Sign in to see your pages.，登录后替换为业务菜单；身份确认或读取失败不显示这个访客提示。
+
+
+- 菜单由 pages/studio/menu.ts 的静态分组和页面配置维护，当前为 Activity → Daily，分别使用 ChartColumn 与 NotebookText。菜单仅在确认登录后可见，登录后不自动选择/打开页面，右侧使用官方 Empty 显示 Select a page；Activity 为 SidebarGroupLabel 文字标题，Daily 为带图标的 SidebarMenuButton 平铺项，按用户截图采用 dashboard-01 Documents 结构，不包含折叠箭头或子菜单缩进。
+- Studio 统一处理账号状态：首次读取显示 Spinner；普通读取失败显示 Alert 和 Retry；未登录或会话过期显示 Empty、Sign in to Studio、Sign in to access your personal workspace. 和 Sign in 按钮，复用现有 AccountDialog。登录后才挂载当前业务页面，不按表格、图表或表单分别实现登录提示。
+- 受保护内容以账号 ID 和既有会话重置版本作为 React key，退出、换号及同账号重新登录均使旧页面局部状态失效；Home/Studio 的 React Activity 保留不跨越账号内容边界。异步取消与迟到结果防护、边界外 Provider/后台/持久化状态仍由既有模块负责，不另建重置总线或按菜单增加清理分支。
+- Daily 当前展示 Daily Activity、日期范围、六列表头与官方 Empty；空状态说明没有记录且数据尚未接入。日期条件只维护本地状态，不请求接口或放模拟数据，不显示统计与分页。
+
 ## 主题与 Token
+
+- 基础层已按固定官方版本一次性对齐：`shadcn.css` 保存完整官网 Tailwind 扩展，`shadcn-theme.css` 保存完整标准主题骨架；两者来源与必要差异见 [来源记录](../web-ui-sources.md#一次性对齐-shadcn-基础层2026-11-08)。
+- `theme.css` 是项目个性化取值的覆盖位置；`index.css` 负责导入顺序、data-theme 变体、项目额外映射与已确认圆角公式。标准 Token 映射不在多处重复维护，不能把官方默认值当成项目覆盖直接修改。
+- 标准 chart-5 槽已补齐，以 muted-foreground 保持中性灰契约；不增加实际业务分类或改变 chart-1 至 4。新 2xl/3xl/4xl 圆角沿用固定基线公式，原有 sm/md/lg/xl 的项目公式保留。
+
+- 官网组件迁入需一并核对源码、组合、基础 CSS、动画和 Token 依赖，不能只复制 JSX。全局 base 层采用官方 border-border/outline-ring 默认规则，dark 变体适配根 data-theme；tw-animate-css 提供实际使用的官方动画类。
+- 核对并补齐实际依赖的 Token 契约，优先映射现有主题；不整套覆盖已确认的图表灰阶、材质或其他 Token 值。只有现有 Token 无法表达实际用途时才补必要个性化 Token，统一维护，避免业务调用方补颜色。
 
 明暗主题由 `src/lib/theme/preference.ts 与 src/features/settings/theme.ts` 解析：默认 System，通过系统 `prefers-color-scheme` 跟随变化；选择 Light/Dark 后固定为对应主题。根 `data-theme` 持有实际明暗，组件与 Portal 继承原有语义 Token，不独立硬编码配色。Geist 字体、基础界面明暗色值、遮罩透明度与模糊保留；图表中性灰色阶按下文全局规范维护。
 
@@ -119,8 +146,8 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - UI 文件夹图标沿用原始几何、viewBox、线宽与留白，移除灰阶和渐变；白色覆盖形成的必要孔洞通过黑白遮罩转成真正透明区域，再统一主题转换，避免整体滤镜压平镂空。不套用 V3 重绘或统一坐标要求，不维护深浅两套源稿。
 - Grok 书签移除固定底板、保留主体路径。Exts 按用户最新确认保留正式完整外形及底板，浅色黑底白图、深色白底黑图；沿用现有内嵌正式 PNG 的 SVG，不重绘外形、不替换为仅含内部主体的源稿，也不对其应用压平对比的 brightness 滤镜。此主题反转仅用于书签，品牌唯一源稿及三端应用图标保持原样。此次交付见[书签单色 Issue](../changes/issues/2026-10-26-extension-bookmark-monochrome-issue.md)。
 - Dock 左侧保持 favorites，右侧 tools 顺序为 Studio、Actions、Download、Settings。Studio 复用官方 Toggle：固定 PanelsTopLeft，首页提示 Switch to Studio、工作台提示 Back to Home；选中反馈使用官方 accent/accent-foreground，通过 aria-pressed 应用到 entry-surface，避免 Tooltip 的 data-state 覆盖及内部图块盖住反馈。不切换图标、不加 fill，不新增选中状态管理。
-- Studio 是独立模块，采用固定官方 sidebar-07 的可折叠侧栏、SidebarInset 与顶部导航；Home／Studio 继续由 React Activity 保留状态和 DOM。Dock 与原下载/设置入口随 Home 显示，Studio 独占视口，不保留 Dock 空行或 Home 外圈留白；每个新标签页仍默认 Home，不保存视图偏好。左侧菜单区使用官方 Empty，List 图标、No pages yet 与说明；右侧内容区同样用官方 Empty，PanelsTopLeft 图标、No content yet 与说明，沿用默认 icon variant、布局及字号，不加额外颜色、描边或缺省面板封装。不显示 Overview、Studio Activity、示例团队、假用户或未实现功能菜单；Home 原 Activity 保留。
-- 品牌头部保留官方示例 32px 标识与两行文字比例，Exts SVG 与 Exts/Studio 使用普通非交互排版，不重绘或叠加底板，不带链接、点击事件或按钮角色。右侧独立使用官方 Button ghost/icon-sm、House 与 Tooltip 作为唯一返回入口，Logo 不可点击；折叠时隐藏品牌与左侧 Empty 文字区，保留 House 按钮，窄屏先打开侧栏后访问同一按钮。正文顶部只保留官方 SidebarTrigger、Separator 和 Studio 当前页，不保留 Home 文字按钮、Overview 层级或额外边框。
+- Studio 采用官方 dashboard-01 的 inset/offcanvas 侧栏、SidebarInset 与顶部导航；Home／Studio 继续由 React Activity 保留状态和 DOM。Dock 只随 Home 显示，Studio 独占视口，没有有效本机偏好时默认 Home，新标签页可恢复 ui.view 保存的 Home/Studio 位置。左侧仅登录后展示 Activity → Daily；右侧按上述共用账号边界显示登录提示或 Daily 缺省页。Home 原 ActivityCard 的数据、外观和行为保留。
+- 品牌头部保留官方示例 32px 标识与两行文字比例，Exts SVG 与 Exts/Studio 使用普通非交互排版，不重绘或叠加底板，不带链接、点击事件或按钮角色。右侧独立使用官方 Button ghost/icon-sm、House 与 Tooltip 作为唯一返回入口，Logo 不可点击；收起时沿用官方 offcanvas，品牌和 Home 随侧栏一起隐藏，窄屏先打开侧栏后访问同一按钮。正文顶部只保留官方 SidebarTrigger、Separator 和 Studio / Activity / Daily 面包屑，不保留 Home 文字按钮、Overview 层级或额外边框。
 - Account 未登录时显示 UserRound / Account / Not signed in；点击打开官方 Dialog，登录内容来自简化 login-03，首行不显示 Logo/Exts 品牌，采用官方 Welcome back 标题与 CardHeader text-center，说明为用户指定的 Login with your Github or Google account。仅保留 Login with GitHub / Login with Google，不包含邮箱、密码、注册、其他方式或无效条款链接，不自行改写官方标题或增加品牌行。GitHub 通过 Neon 官方 SDK 与 identity 窗口授权，期间按钮显示 Signing in… 并阻止重复操作；Google 仍可点击并 toast.info 提示暂未接入。会话初次读取显示 Checking account…；成功后侧栏显示真实头像和昵称/邮箱，账户 Dialog 沿用 Card/Title/Description 组合显示账户与 Sign out，退出期间显示 Signing out…。加载、登录与退出失败直接使用共用 Sonner，取消为信息提示，不插入内联错误或另建通知层。未登录进入 Studio 不受阻，关闭框继续使用原 Studio；账户 Tooltip 在框打开时隐藏，弹框焦点与关闭由官方 Radix Dialog 管理。真实登录与会话行为由用户在 Chrome/Edge 验收，不将自动化结果视为实际授权通过。
 - Sidebar 主题语义映射现有 surface-raised、foreground、accent、border、ring 和 primary，不另设深浅主题；官方内部滚动、图标折叠及 768px 移动端断点沿用。SidebarProvider 不重复挂载 TooltipProvider，不写入示例 cookie，折叠状态仅在当前页面内保留；当前正文为官方 Empty。Account 使用官方 32px Avatar/Fallback、双行文字及尾部 ChevronsUpDown，副标题和间距沿用官方；Fallback 内为静态 UserRound，无假用户头像。登录表单恢复官方 FieldGroup/Field、CardTitle/Description，Card 保留默认边框、背景与 shadow-sm；Dialog 定位外壳透明无阴影，保留可访问语义、关闭按钮和全局 blur-overlay，避免重复卡片材质。Button outline 在共用组件显式使用既有 border-border，不在登录处重复覆盖颜色，不改变主题变量值。
 - Actions 沿用向上的官方 DropdownMenu，只有带 List / FolderOpen 的 Placeholder A / B；复用官方 Hover、焦点、键盘与选中关闭行为，onSelect 仅调用 toast.info 显示「暂未接入」，不执行业务功能。Media Download、Settings、Actions 的代码与入口未迁入 Studio。Newtab 根部仍只挂一份复用主题的右下角 Toaster，供菜单、静态账户和下载面板共用，业务继续决定提示文案，不新增通知管理层。Components 旧菜单已移除，资源收藏只保留在 UI 文件夹。

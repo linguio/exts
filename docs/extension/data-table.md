@@ -2,6 +2,8 @@
 
 ## 位置与职责
 
+强制选型和职责边界见 [扩展规范](../../apps/extension/AGENTS.md#共用能力与职责目录)，控件组合约定见 [UI 规范](./ui.md#通用数据表格)，固定源码与适配见 [官方来源](../web-ui-sources.md)。
+
 `apps/extension/src/components/ui/{table,input,checkbox,select,calendar,command,pagination,alert}.tsx` 为固定版本 shadcn 基础组件；`components/custom/data-table` 提供表格、筛选、分页与排序组合。基于 TanStack Table 8.21.3，不包含账号、业务接口或 Chrome 消息。
 
 ## 前端模式
@@ -54,6 +56,13 @@ const [query, setQuery] = useState(initialQuery);
 - 返回当前页数据和筛选后的总数。组件不会再次对响应执行本地筛选、排序或切片；后端必须支持业务开放的全部查询条件。
 - 筛选、搜索、排序及每页条数改变会回到首页；普通翻页保持指定页码。总数收缩时，将超出范围的页码回退到末页。加载期间应同时更新 `loading`，避免拿旧总数判断新的分页范围。
 - `hasPreviousResult` 指当前查询范围有可展示的上次结果；首次加载展示 Skeleton，刷新保留内容并展示 Spinner。账号切换由业务清理旧数据，不能把旧账号结果传作新账号的上次结果。
+
+## 可选展示内容
+
+- showCaption 默认为 true；false 不渲染可见 TableCaption，caption 继续作为表格与区域的无障碍名称。Daily 按用户要求隐藏可见说明，其他调用方默认不变。
+
+- emptyContent 可传入业务需要的官方 Empty 组合，替换默认空结果提示；不传时保留原有无记录/筛选无结果文案。通用组件不内置 Daily 等业务文案。
+- showPagination 默认为 true；false 只隐藏分页与总数区域，不改变已有数据处理模式或页大小。Daily 未接入数据时传空数组并隐藏此区域，避免把页面结构当成真实查询统计。
 
 ## 行选择和业务操作
 

@@ -4,7 +4,29 @@
 
 官网与扩展的通用 Web UI 遵循根 [AGENTS.md](../AGENTS.md#web-ui-选型与风格)。本文记录源码基线与必要差异；主题参数和组合约定分别见 [官网 UI](website/ui.md) 与 [扩展 UI](extension/ui.md)。源码不是随上游自动升级的运行时依赖。
 
+## 一次性对齐 shadcn 基础层（2026-11-08）
+
+- 用户明确要求补入当前工作项，一次性对齐基础层。基线固定为 `c257f688cf4de7ec10cc1be84cad29cd4631182c`，主题来自 [theming.mdx 的 Default Theme CSS](https://github.com/shadcn-ui/ui/blob/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/content/docs/%28root%29/theming.mdx)，扩展样式来自 [packages/shadcn/src/tailwind.css](https://github.com/shadcn-ui/ui/blob/c257f688cf4de7ec10cc1be84cad29cd4631182c/packages/shadcn/src/tailwind.css)。不随 main 漂移，不批量安装组件或更换组件库版本。
+- 完整主题骨架迁至 `apps/extension/src/styles/shadcn-theme.css`：包含官方全套标准语义 Token、明暗默认值、Tailwind 映射、chart-5、Sidebar 各项和 radius-sm 至 4xl；与官方骨架核对共 70 个不同的变量定义/映射名称，全部保留。该数量不是颜色数量。
+- 官方 Tailwind 扩展完整迁至 `styles/shadcn.css`，不为这份 CSS 安装整个 shadcn CLI。仅翻译注释，保留其状态变体、关键帧和官方工具声明。新工具按 Tailwind 使用情况生成，不提前引入其对应业务组件。
+- `index.css` 统一按 Tailwind、tw-animate-css、官方扩展、官方主题、reset、项目 theme 顺序导入；明暗选择器适配 data-theme，官方 base 层 border/outline/body 规则保留。动画依赖为已固定的 tw-animate-css 1.4.0。
+- 保留项目覆盖：theme.css 的覆盖同时匹配 :root 与 :root[data-theme]，使项目覆盖在暗色模式也优先于官网暗色默认值；原有颜色、四档图表中性灰、Sidebar 材质、焦点、阴影、模糊、字体及基础圆角值不变；index.css 只留项目额外映射和既有 sm/md/lg/xl 圆角公式，不重复维护标准映射。
+- Sidebar 标准语义变量通过别名映射原有主题，保持已有取值；新增 chart-5 契约以 muted-foreground 中性灰作为未使用的第五槽，不引入橙色或第五业务分类。官方新增 radius-2xl/3xl/4xl 使用基线公式，当前业务未使用，不改已确认的现有圆角。
+- 差异是明确的主题覆盖与 data-theme 适配，不宣称与官网默认主题视觉完全一致。后续迁入仍需核对组件专属依赖，但不得遗漏本基础层；升级官方基线须重新对照本记录。
+
+## Studio dashboard-01 侧栏（2026-11-08）
+
+- 用户指定 npx shadcn@latest add dashboard-01 的侧栏风格。已读取 [官方 registry](https://ui.shadcn.com/r/styles/new-york-v4/dashboard-01.json) 的 app-sidebar.tsx、nav-main.tsx、page.tsx；本次固定该 registry 快照 SHA-256：`ec8e10eb0dc64e8c2a3077ca6abb771efc03c8499aa8044811f7a8525141ec0d`，不声称使用了固定 Git commit 或执行了整块 CLI 安装。
+- 采用官方 inset/offcanvas、SidebarHeader 内的 SidebarMenu/Item/Button 品牌行、SidebarGroupContent flex-col/gap-2、Footer 账号布局，以及页面 --sidebar-width=calc(var(--spacing)*72)、--header-height=calc(var(--spacing)*12)。基础 Sidebar 继续沿用仓库固定基线 c257f688cf4de7ec10cc1be84cad29cd4631182c；本次从同一固定基线补齐 SidebarGroup、SidebarGroupLabel、BreadcrumbSeparator、EmptyContent，保留官方类名和现有主题适配。
+- 已批准业务适配：Acme 改为 Exts，保留非交互品牌和独立 Home；账号继续复用已有 AccountLogin（已基于 dashboard-01 nav-user），不引入假用户、示例 Quick Create/Inbox、Documents、其他业务菜单或无关图表/表格。图标通过已有 Lucide UiIcon 静态映射，不新增 Tabler 或整块依赖。
+- 按用户最新截图采用 dashboard-01 nav-documents 的 SidebarGroup → SidebarGroupLabel → SidebarMenu/Item/Button 结构，Activity 为文字标题、Daily 为图标菜单；不迁入示例行操作、其他菜单或 More。已移除旧 Collapsible 和子菜单缩进，并撤回本工作项新增但不再使用的 Sub/GroupContent 组件及 ChevronRight 映射。沿用官方分组标题和菜单默认样式；访客显示已约定的官方 Empty。
+- Studio 菜单与内容共享一次 useAccount 读取；选择只属于当前账号 ID 和重置版本。登录后显示官方 Empty 选择页面提示，主动选择才挂载 Daily；账号提示仍复用 Empty/EmptyContent、Button、Spinner、Alert 与原 AccountDialog。
+- 补齐 [官网安装指南的基础样式](https://ui.shadcn.com/docs/installation/manual#configure-styles)：全局 base 层默认 border-border、outline-ring/50，dark 变体适配现有 data-theme；原 body 背景/文字已映射现有 Token，沿用而不重复覆盖。加入 tw-animate-css 1.4.0 及 CSS 导入，支持迁入控件的官方动画类。现有 Token 均复用，不新造颜色或改变已确认值。
+- 保留 Home 图表的既有业务行为。实际视觉与交互由用户在 Chrome/Edge 验收，不宣称与官方整块视觉完全一致。
+
 ## 通用 DataTable（2026-11-08）
+
+- 后续 Studio Daily 结构补充：复用官方日期筛选和 Table，业务通过可选 emptyContent 提供官方 Empty，通过 showPagination 隐藏未接入数据时的分页/总数；两项默认行为保持既有通用表格行为，不自绘控件或加入业务字段。
 
 - Table、Input、Checkbox、Select、Calendar、Command、Pagination、Alert 使用既有固定源码基线 `c257f688cf4de7ec10cc1be84cad29cd4631182c` 的 [new-york-v4/ui](https://github.com/shadcn-ui/ui/tree/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/registry/new-york-v4/ui)，已读取实际源码，分别迁至扩展 `src/components/ui`；非重新仿写。Command 依赖的 DialogHeader 和列显隐需要的 DropdownMenuCheckboxItem 从同一基线补齐，已有组件其余实现保留。
 - 必要适配：cn 改为本地 lib/utils；Input/Checkbox/Select/Calendar 的 dark 变体改为祖先 data-theme=dark 选择器，符合扩展已有主题机制。其他官方结构、尺寸、状态、默认类名保留，不修改全局 Token。Table 与 Select 内部滚动沿用官方实现。
