@@ -2,6 +2,10 @@
 
 本规范约束各应用与自有 API 的业务通信。接口实现位于 apps/api，公开 /docs 与 /openapi.json 由 FastAPI 的实际模型生成；示例必须与真实响应模型一致。
 
+## 与表格规范的职责边界
+
+[表格规范](./table-conventions.md) 与本文件同为仓库级规范，维护列表查询的分页/排序参数、返回字段、默认查询、稳定排序及数量上限；本文件维护所有业务接口的通信、身份和异常契约。新增或修改列表接口时必须同时查阅，两处不分别定义不同的通用默认值。以下 Activity 内容为该资源的具体契约，不推广为所有业务字段。
+
 ## 方法与路径
 
 - 所有业务接口统一 POST，包含查询和未来新增、修改、删除操作；参数使用 application/json 请求体。查询使用 POST 不改变其只读语义。
@@ -20,16 +24,18 @@
 - JSON 字段使用 camelCase；日期 YYYY-MM-DD，时间戳包含时区偏移。Activity 业务日期统一 Asia/Shanghai，不增加用户时区配置。
 - 认证业务请求发送 Authorization: Bearer <accessToken>、Accept: application/json；存在 JSON 请求体时发送 Content-Type: application/json。服务端通过已验证身份限定数据归属，不接受请求中的 userId 作为授权依据。
 - 扩展在后台读取访问令牌、发出业务 HTTP 请求；页面消息不能指定任意 URL、方法或请求头，令牌不传给页面、不输出日志。
-- Activity 的 startDate/endDate 都可选；不传请求体或传 {} 查询本人全部历史。单边日期按相应边界筛选；双边日期含首尾，开始不得晚于结束。不传日期不添加隐式限制。当前不分页。
+- Activity 必须传 JSON 对象。pageIndex/pageSize 同传启用分页：页码从 0 开始，每页 1–100 条，仅接受整数；日期可选，支持单边筛选或不限定日期。不分页时省略两项，必须提供 startDate/endDate，匹配最多 500 条，超过返回 422，提示缩小日期范围或分页，不截断。日期含首尾，开始不得晚于结束；原无请求体或 {} 查询全部历史的契约已取消。
+- Activity sort 为有序数组，每项 {field,order}；field 仅接受 date、exerciseMinutes、readingMinutes、learningMinutes、creationMinutes、sleepMinutes，order 为 asc/desc，重复或非法字段/方向返回 422。数组先后代表优先级；省略或空数组默认 date desc，未包含 date 时追加 date desc。时长 NULL 无论升降序始终最后，0 正常参与比较。后端先筛选排序，再分页，计数与记录来自同一 SQL 快照。
+- 图表传完整日期范围及 sort:[{field:"date",order:"asc"}]，不传分页；Daily 传分页和用户排序。排序独立于分页。
 - Settings 读取使用空 JSON 对象；更新仅接受 theme、mediaDownload.enabled 或 historyCleaner.enabled 中的一项，不接收 userId。用户没有设置行时返回 system/false/false 默认值，首次成功更新时才建行；旧本地配置不迁移。
 
 ```json
-{"startDate":"2026-11-01","endDate":"2026-11-06"}
+{"startDate":"2026-11-01","endDate":"2026-11-06","pageIndex":0,"pageSize":20,"sort":[{"field":"date","order":"desc"}]}
 ```
 
 ## 响应与异常
 
-- 成功响应统一 {"data": ...}；Activity 为 {"data":{"days":[...]}}。每条记录包含 userId、date、exerciseMinutes、readingMinutes、learningMinutes、creationMinutes、sleepMinutes、createdAt、updatedAt。
+- 成功响应统一 {"data": ...}；Activity 为 {"data":{"days":[...],"total":87,"pageIndex":0,"pageSize":20}}；total 为日期筛选后的本人记录总数，空页保留真实 total；不分页的 pageIndex/pageSize 为 null。每条记录包含 userId、date、exerciseMinutes、readingMinutes、learningMinutes、creationMinutes、sleepMinutes、createdAt、updatedAt。
 - Settings 读取与更新均返回 {"data":{"theme":"system","mediaDownload":{"enabled":false},"historyCleaner":{"enabled":false}}}；数据库使用 user_id 与独立列，本地副本另存当前 userId，不在接口返回中暴露。
 - 失败响应统一 {"error":{"code":"...","message":"...","requestId":"..."}}，同时保留真实 HTTP 状态；不使用 200 掩盖失败。X-Request-ID 与响应中的 requestId 对应。
 - 401 表示未登录或凭据失效，403 表示禁止访问，422 表示参数错误，500 表示未预期异常，503 表示依赖暂不可用。空记录返回成功空数组；连接失败不能返回空数据冒充成功。

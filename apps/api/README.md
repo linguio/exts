@@ -87,10 +87,10 @@ node --test --test-isolation=none apps/api/tests/dev.test.mjs
 跨应用契约见 [业务 API 规范](../../docs/api-conventions.md)，实现约束见 [API 项目规范](AGENTS.md)。业务接口统一 POST。
 
 - app.py 只装配；core 持有配置、认证、响应和数据库事务；modules/activity 内路由 → 业务 → 仓储，SQL 只在仓储和迁移中维护。
-- POST /api/activity/days：JSON 请求体中的 startDate/endDate 都可选，不传时查询当前用户全部历史；仅传 startDate 或 endDate 时按对应下限或上限筛选。两端都传时包含首尾且开始不得晚于结束，升序、无分页，只返回本人已有的行。示例请求体：`{"startDate":"2026-11-01","endDate":"2026-11-06"}`；无请求体或 `{}` 都查询本人全部历史。
+- POST /api/activity/days：JSON 对象必传。pageIndex/pageSize 同传启用分页（0 起始，每页 1–100），日期可选；不分页必须完整起止日期，最多 500 条，超过返回 422，不截断。sort:[{field,order}] 按数组优先级执行；日期与五项时长白名单，方向 asc/desc，不允许重复字段；默认日期倒序，未含日期自动追加日期倒序，NULL 始终最后。后端先筛选排序再分页，同一 SQL 快照获取总数与记录。图表不分页并明确日期升序。完整契约见 [业务 API 规范](../../docs/api-conventions.md)。
 - POST /api/settings/preferences：读取本人 Theme、Media Download、Clear History 三项设置；无行时返回 `system`、`false`、`false`，不写入数据库。
 - POST /api/settings/preferences/update：每次只提交一个设置字段，成功后返回完整设置；首次保存创建本人记录，其他字段沿用既有值或数据库默认值。用户身份从令牌取得，不接受客户端 userId。
-- 成功结构为 data.days；每天包含 userId、date、五项 camelCase 分钟字段、createdAt、updatedAt。时间戳带时区偏移；NULL 与 0 区分，无记录为空数组。不返回用户名/邮箱等资料、时区配置、备注或汇总。
+- 成功结构为 data: {days,total,pageIndex,pageSize}，非分页两个分页字段为 null；每天包含 userId、date、五项 camelCase 分钟字段、createdAt、updatedAt。时间戳带时区偏移；NULL 与 0 区分，无记录为空数组。不返回用户名/邮箱等资料、时区配置、备注或汇总。
 - 失败结构为 error.code/message/requestId；401 登录失效、422 参数错误、503 上游暂不可用、500 未预期异常。X-Request-ID 对应服务端排错标识，业务与任务响应均 Cache-Control: no-store。
 - NEON_AUTH_ISSUER 必须是对应分支的实际 Auth URL；API_RESOURCE 保持 https://api.exts.linguio.dev，不因 /api 路径而改变。只接受 EdDSA 访问 JWT，验证签名、发行方、受众、期限和 UUID，并核实用户存在。不使用 ID token 或网页 Cookie 代替。
 - 启动后后台同时预建数据库连接和预取公开验签公钥，不查用户业务数据，不缓存认证结果或 Activity 响应；公开文档不等待准备完成。公钥继续缓存 300 秒并支持未知密钥刷新。

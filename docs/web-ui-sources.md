@@ -26,15 +26,19 @@
 
 ## 通用 DataTable（2026-11-08）
 
+- Daily 数据接入补充：复用现有固定版本 Select、Button 与 Calendar/Popover；业务自行组合日期草稿及 Query/Reset，多字段排序沿用表头默认交互。通用 DataTable 仅增加可选 toolbar 组合入口并公开已有列显隐组合，默认调用方行为不变；不新增依赖或改主题 Token。Daily 表头排序直接请求后端，不另设排序配置区；分页组合通过 Pagination 的 className 取消组合场景不适用的默认全宽与自动外边距，条数和跳转各自成组，不改官方组件源码。按用户第二轮反馈，DataTable 组合层默认居中表头与内容，并将统一 Spinner 放入整个 tbody 中心，不使用首次 Skeleton 或顶部提示行；分页文案英文。表头排序保持普通点击单列、Shift 多列；Daily 前端默认排序为空，日期倒序仅为后端兜底，不占用户字段优先级。浏览器视觉和交互待用户验收。
+
 - 后续 Studio Daily 结构补充：复用官方日期筛选和 Table，业务通过可选 emptyContent 提供官方 Empty，通过 showPagination 隐藏未接入数据时的分页/总数；两项默认行为保持既有通用表格行为，不自绘控件或加入业务字段。
 
 - Table、Input、Checkbox、Select、Calendar、Command、Pagination、Alert 使用既有固定源码基线 `c257f688cf4de7ec10cc1be84cad29cd4631182c` 的 [new-york-v4/ui](https://github.com/shadcn-ui/ui/tree/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/registry/new-york-v4/ui)，已读取实际源码，分别迁至扩展 `src/components/ui`；非重新仿写。Command 依赖的 DialogHeader 和列显隐需要的 DropdownMenuCheckboxItem 从同一基线补齐，已有组件其余实现保留。
 - 必要适配：cn 改为本地 lib/utils；Input/Checkbox/Select/Calendar 的 dark 变体改为祖先 data-theme=dark 选择器，符合扩展已有主题机制。其他官方结构、尺寸、状态、默认类名保留，不修改全局 Token。Table 与 Select 内部滚动沿用官方实现。
 - 通用 DataTable 参考官方组合思路，采用精确依赖 @tanstack/react-table 8.21.3（table-core 同版），保持与该固定源码时期的 v8 示例 API 对齐；没有升级其他依赖。它是项目组合，不宣称与当前官方示例视觉一致，也不是迁入完整官方 DataTable 示例。
-- `custom/data-table` 提供文本/选项/日期筛选、列标题排序、分页、列显隐、可选行选择与状态展示；复用既有 Button、Popover、Skeleton、Spinner，新增的 Input/Checkbox/Select 均为实际使用控件。日期范围采用官方 Calendar + Popover，选项多选采用 Command + Popover，列显隐采用 DropdownMenuCheckboxItem，分页采用 Pagination 配合 Select/Input，空状态采用现有 Empty，错误采用 Alert；不另维护控件样式或颜色方案。新增精确依赖 react-day-picker 9.11.1、cmdk 1.1.1，锁文件已同步。官方 PaginationLink 没有 disabled 属性，组合层仅补充 aria-disabled、不可用时的 tabIndex 和点击拦截，保留官方样式；这是翻页边界所需的语义接入，并非替代官方控件。
+- `custom/data-table` 提供文本/选项/日期筛选、列标题排序、分页、列显隐、可选行选择与状态展示；复用既有 Button、Popover、Spinner，新增的 Input/Checkbox/Select 均为实际使用控件。日期范围采用官方 Calendar + Popover，选项多选采用 Command + Popover，列显隐采用 DropdownMenuCheckboxItem，分页采用 Pagination 配合 Select/Input，空状态采用现有 Empty，错误采用 Alert；不另维护控件样式或颜色方案。新增精确依赖 react-day-picker 9.11.1、cmdk 1.1.1，锁文件已同步。官方 PaginationLink 没有 disabled 属性，组合层仅补充 aria-disabled、不可用时的 tabIndex 和点击拦截，保留官方样式；这是翻页边界所需的语义接入，并非替代官方控件。
 - 开发示例通过 newtab 的 DEV 条件查询参数 table-demo 按需加载，无正式导航入口，不进入生产构建；服务端模式仅内存模拟。接入边界与用户验收见 [DataTable 说明](extension/data-table.md)。实际视觉和交互尚待用户验收。
 
 ## 图表区域 Loading（2026-11-07）
+
+- 范围澄清（2026-11-09）：以下首次 Skeleton、后续 Spinner 规则仅适用于模块级内容区域；DataTable 独立采用首次/刷新统一 Spinner，在整个 body 居中，沿用同一官方 Spinner，不改模块级 LoadingRegion 实现。
 
 - 用户最终要求撤销加载区域的样式定制，只保留首次 Skeleton、后续 Spinner 的共用组合与自动区分；先前试用的毛玻璃、遮罩透明度、内容模糊及延迟均已移除。
 - Spinner 来源固定为现有 shadcn 基线 `c257f688cf4de7ec10cc1be84cad29cd4631182c` 的 [new-york-v4/ui/spinner.tsx](https://github.com/shadcn-ui/ui/blob/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/registry/new-york-v4/ui/spinner.tsx)，迁入 `apps/extension/src/components/ui/spinner.tsx`；已读取实际源码，沿用 Loader2Icon、role、aria-label、size-4 和 animate-spin，无新增依赖。

@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [接入每日活动分页与排序查询](./issues/2026-11-08-activity-days-pagination-issue.md) · [Commit 记录](./commits/2026-11-08-activity-days-pagination-commit.md)；2026-11-09 用户验收通过并批准 API、扩展、文档三笔本地提交完结；已建立仓库级表格规范，API 51 项通过、5 项隔离数据库测试跳过；扩展曾完整 133 项通过，最新排序改动后相关 9 项、类型检查及本地 API 构建通过，既有未验证限制保留，未推送或部署。
+
 - [完善 Studio 登录提示与活动入口](./issues/2026-11-08-extension-studio-activity-menu-issue.md) · [Commit 记录](./commits/2026-11-08-extension-studio-activity-menu-commit.md)；用户批准代码与文档分开本地提交完结，Studio 共用账号提示、Activity / Daily 缺省页、Activity 目录整理、Table 规范及官网基础层一次性对齐已交付；129 项测试、类型检查和构建通过，新增 ui.view 本机恢复与账号清理保留规则，不接 Daily 接口，未推送。
 
 - [实现可复用的通用数据表格](./issues/2026-11-08-extension-data-table-issue.md) · [Commit 记录](./commits/2026-11-08-extension-data-table-commit.md)；用户已验收并批准代码与文档分开本地提交完结，通用 DataTable 已按要求统一官方组件，开发示例已实现，122 项测试、类型检查与构建通过；未接入 Activity，未推送。

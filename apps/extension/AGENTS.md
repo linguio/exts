@@ -16,6 +16,8 @@
 
 ## 通用 UI 与组合
 
+- 表格及列表查询接口遵循与 UI/API 并列的仓库级[表格规范](../../docs/table-conventions.md)；扩展组件接入说明不能代替该规范，后续共性规则同步维护仓库级文档。
+
 - 官网与扩展全部 Web UI 的选型、来源和风格维护原则遵循根 [AGENTS.md](../../AGENTS.md#web-ui-选型与风格)，不维护组件白名单。
 - `src/components/ui/` 持有通用组件，不包含书签、Dock、Chrome API 或模块状态；各功能在自己的 `src/features/<功能>/` 中组合，Newtab 也遵循此边界。
 - 扩展主题由 `src/lib/theme/preference.ts` 解析偏好、`src/features/settings/theme.ts` 同步运行状态 Light/Dark/System，默认跟随系统；实际明暗通过根 `data-theme` 应用，Portal 继承根 Token，不直接依赖 `.dark` 类。偏好保存、同步与首屏初始化不得放进通用 UI。官方源码接入和必要差异见 [Web UI 来源](../../docs/web-ui-sources.md)。
@@ -24,12 +26,14 @@
 - 应用根只创建一个 `TooltipProvider`。Tooltip 只提供简短名称或帮助说明，不含可交互内容；菜单或 Sheet 打开时其入口不得残留 Tooltip，Sheet 内的主题名称和帮助提示可正常显示。
 - Tooltip、菜单、Sheet、Button 与链接通过 `asChild` 等方式共享唯一真实交互元素，禁止嵌套交互控件。
 
+- 模块级内容区域遵循 LoadingRegion 的首次 Skeleton、后续 Spinner 规则；DataTable 不套用该规则，首次与刷新统一使用整个 body 内居中的官方 Spinner，保留表头，刷新保留已有记录。具体组合与边界见 docs/extension/ui.md。
+
 ## Studio 功能归属
 
-- Studio 侧栏采用 shadcn/ui dashboard-01 的 inset/offcanvas 结构，窄屏沿用官方 Sheet；左侧仅在确认登录后用官方 SidebarGroupLabel 与 SidebarMenu 展示前端固定的 Activity → Daily；右侧由 Studio 内容边界统一处理账号加载、错误、未登录提示及受保护页面，不在各业务页面重复。Daily 使用已有 DataTable 展示日期条件、六列表头和明确未接入的 Empty，不调用接口或放模拟数据，暂不显示统计与分页。首页 ActivityCard 仍按原位置使用。品牌头部保留官方 32px Logo 与两行名称比例，以非交互布局展示既有 Exts 资源；Logo 与文字不可点击，只有其右侧独立的官方 Button ghost/icon-sm + Lucide House 返回 Home。收起侧栏采用官方 offcanvas，不保留图标轨道；窄屏在侧栏内访问。不在正文顶部放 Home 文字按钮或自定义边框；顶部官方触发器与分隔线保留，登录后不自动选择/打开页面，分组标题不折叠，右侧显示选择页面缺省提示；面包屑仅在用户主动选择 Daily 后显示 Studio / Activity / Daily，否则只显示 Studio。Studio 不显示 Dock 且不保留其布局空行。无本机视图偏好时默认首页，已有 ui.view 时新标签页恢复保存位置，Home／Studio 由 React Activity 保留各自状态。
+- Studio 侧栏采用 shadcn/ui dashboard-01 的 inset/offcanvas 结构，窄屏沿用官方 Sheet；左侧仅在确认登录后用官方 SidebarGroupLabel 与 SidebarMenu 展示前端固定的 Activity → Daily；右侧由 Studio 内容边界统一处理账号加载、错误、未登录提示及受保护页面，不在各业务页面重复。Daily 使用已有 DataTable 接入 days 服务端分页与多字段排序；日期条件点击 Query 生效，排序即时生效，Reset 包含日期与排序且保留每页条数及列显隐，采用表头普通点击单列、Shift 点击多列排序，具体规则与验收见 docs/extension/data-table.md。首页 ActivityCard 仍按原位置使用。品牌头部保留官方 32px Logo 与两行名称比例，以非交互布局展示既有 Exts 资源；Logo 与文字不可点击，只有其右侧独立的官方 Button ghost/icon-sm + Lucide House 返回 Home。收起侧栏采用官方 offcanvas，不保留图标轨道；窄屏在侧栏内访问。不在正文顶部放 Home 文字按钮或自定义边框；顶部官方触发器与分隔线保留，登录后不自动选择/打开页面，分组标题不折叠，右侧显示选择页面缺省提示；面包屑仅在用户主动选择 Daily 后显示 Studio / Activity / Daily，否则只显示 Studio。Studio 不显示 Dock 且不保留其布局空行。无本机视图偏好时默认首页，已有 ui.view 时新标签页恢复保存位置，Home／Studio 由 React Activity 保留各自状态。
 - Account 位于 Studio 侧栏底部，保留官方 Dialog/login-03 的未登录结构、样式与文案。GitHub 与 Google 共用标准 oidc-client-ts 3.5.0 的 OIDC 授权码 + S256 PKCE；登录窗口先进入官网认证页，以片段传递本次提供方及标准授权地址，官网仅在窗口 sessionStorage 保存提供方，再跳转固定 Neon 授权端点，不修改授权查询或 Neon 签名查询。官网承载登录中转、授权确认与同源注销页，不保存令牌。identity 窗口由后台协调，插件认证 fetch 省略网页 Cookie，后台串行管理扩展源 IndexedDB 凭据、刷新与撤销，页面消息只返回头像/昵称/邮箱且拒绝内容脚本。退出先撤销刷新令牌，再短暂打开官网同源注销页调用 Neon signOut 并验证会话消失，收到固定插件回跳后删除残留的指定 Neon Cookie，最后删除插件身份；失败保留本地身份供重试且不提示成功。不注销 GitHub/Google 网站账号，不承诺即时使已签发访问令牌失效。再次登录发送 `prompt=consent` 要求 Neon 显示 Exts 授权确认；官网向所选 GitHub/Google 社交登录请求 `prompt=select_account` 供用户选择身份，不强制 GitHub 重复展示其自身应用授权。缺少公开 Client ID 时保持访客，不用占位值发起授权。取消和失败使用共用 Sonner，日志不输出授权码/令牌。退出和主动重新登录按当前会话重置工作项清理扩展自有设置、下载记录、目录句柄与运行状态；已下载文件和浏览器管理的数据不清理。不增加业务表、管理员或 API；真实 Chrome/Edge 行为由用户验收。
 - Studio 参考 Newtab 按 views、components、stores、types、utils 等职责组织，目录内部按功能分组，只创建实际需要的目录；不预建全局 Store、空功能目录或通用事件总线。
-- ActivityCard 归 `features/activity/charts`，由 Home 页面直接引入展示；纯类型、日期/时长转换与统计计算归 `features/activity/data`，Daily 缺省内容归 `features/activity/daily`；日期 Hook 为 charts/use-activity-today.ts，Dock 入口组件归 `pages/dock/studio-entry.tsx`。默认 Calendar，保留三项视图切换；Calendar 为 24 周完成项数日历，Chart 展示最近 14 天成长/睡眠，Pie 展示周投入及周计划。记录由扩展后台认证请求 API 获取，不再使用模拟 JSON，不提供页面录入、持久化或查询缓存；Provider 在 Home/Studio 隐藏边界外保留当前展示数据，登录初始化和三项视图切换才请求，Growth/Sleep 只切换字段，日期统一 Asia/Shanghai。睡眠仅每日总时长。运动、阅读、学习、创作固定对应全局 --chart-1 至 4，日历 activity-level 仅为其别名，全图表复用同一中性灰主题；实心饼图按分类着色，计划环按每25%完成度分档且不显示左右标题；周计划统一周日至周六。具体组合见扩展 UI 文档；退出与主动重新登录按当前会话重置工作项使旧 Activity 请求和展示数据失效，后续数据操作仍按获批范围推进。
+- ActivityCard 归 `features/activity/charts`，由 Home 页面直接引入展示；纯类型、日期/时长转换与统计计算归 `features/activity/data`，Daily 查询与记录归 `features/activity/daily`；日期 Hook 为 charts/use-activity-today.ts，Dock 入口组件归 `pages/dock/studio-entry.tsx`。默认 Calendar，保留三项视图切换；Calendar 为 24 周完成项数日历，Chart 展示最近 14 天成长/睡眠，Pie 展示周投入及周计划。记录由扩展后台认证请求 API 获取，不再使用模拟 JSON，不提供页面录入、持久化或查询缓存；Provider 在 Home/Studio 隐藏边界外保留当前展示数据，登录初始化和三项视图切换才请求，Growth/Sleep 只切换字段，日期统一 Asia/Shanghai。睡眠仅每日总时长。运动、阅读、学习、创作固定对应全局 --chart-1 至 4，日历 activity-level 仅为其别名，全图表复用同一中性灰主题；实心饼图按分类着色，计划环按每25%完成度分档且不显示左右标题；周计划统一周日至周六。具体组合见扩展 UI 文档；退出与主动重新登录按当前会话重置工作项使旧 Activity 请求和展示数据失效，后续数据操作仍按获批范围推进。
 
 ## 图标职责
 

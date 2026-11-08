@@ -1,6 +1,7 @@
 # 官网应用约束
 
 - 通用开发与操作规则遵循根 [AGENTS.md](../../AGENTS.md)。
+- 业务表格与列表查询接口遵循仓库级[表格规范](../../docs/table-conventions.md)，与官网 UI、业务 API 规范共同适用；后续确认的共性规则同步更新该规范。
 - 官网视觉规则统一维护在 [docs/website/ui.md](../../docs/website/ui.md)，本文件不复制字号、颜色或布局数值。规范草案待确认时，不把草案当作已实施事实。
 - 页面和共享组件按已批准规范实施；交付范围与验收状态以当前 Issue 为准。
 - /auth/sign-in/、/auth/consent/ 与 /auth/sign-out/ 为插件认证托管页，不改变官网首页或要求访客登录；保留 Neon 原始签名查询，由认证服务完成校验，不在页面重建 OAuth 服务或记录授权参数。GitHub/Google 社交登录向所选第三方请求账号选择；此参数属于社交登录请求，不改写插件发给 Neon 的 OIDC 请求。插件先以 URL 片段进入同一登录页，页面仅在当前窗口 sessionStorage 记住提供方并跳转固定 Neon HTTPS 授权端点；缺少引导片段的旧入口默认 GitHub。退出页只接受固定插件 logout 回跳，调用 Neon SDK signOut 并确认会话消失后才跳回；片段不是身份凭据，不将令牌写入网页存储。使用既有主题和官方 Button，页面设置 no-referrer/noindex，客户端名称不视为可信身份。

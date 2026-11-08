@@ -1,5 +1,7 @@
 # API 项目规范
 
+- 列表查询接口同时遵循仓库级[表格规范](../../docs/table-conventions.md)，分页/排序参数、总数、默认查询与数量上限不在各模块重新发明；具体字段和业务差异写入资源契约。
+
 - 跨应用接口契约遵循 [业务 API 规范](../../docs/api-conventions.md)；所有业务路由使用 POST，公开文档及内部调度入口按该规范保留独立方法和认证。
 - app.py 只负责应用装配；core 维护公共配置、认证、响应和数据库事务；modules/<模块> 按 router、schemas、service、repository 分工。
 - router 负责参数、身份依赖和响应模型；service 编排业务；repository 维护参数化 SQL 与查询条件，不能从客户端传入表名或 SQL。已验证用户身份必须进入数据归属过滤。
