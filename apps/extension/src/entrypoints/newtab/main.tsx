@@ -26,4 +26,11 @@ if (!container) {
   throw new Error('exts React 根节点不存在。');
 }
 
-createRoot(container).render(<App />);
+if (import.meta.env.DEV && new URLSearchParams(location.search).has('table-demo')) {
+  // 仅开发模式加载通用组件示例，不进入正式导航和发布包。
+  void import('../../components/custom/data-table/example').then(({ default: Example }) => {
+    createRoot(container).render(<Example />);
+  });
+} else {
+  createRoot(container).render(<App />);
+}
