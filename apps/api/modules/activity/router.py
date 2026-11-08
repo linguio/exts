@@ -10,7 +10,7 @@ from modules.activity.schemas import ActivityDay, ActivityDays, DateRange
 
 router = APIRouter(prefix='/api/activity', tags=['Activity'])
 
-example_response = Success[ActivityDays](data=ActivityDays(days=[ActivityDay(
+example_response = Success[ActivityDays](data=ActivityDays(total=1, page_index=0, page_size=20, days=[ActivityDay(
     user_id='00000000-0000-4000-8000-000000000001', date='2026-11-06',
     exercise_minutes=30, reading_minutes=0, learning_minutes=60,
     creation_minutes=0, sleep_minutes=330,
@@ -24,8 +24,8 @@ example_response = Success[ActivityDays](data=ActivityDays(days=[ActivityDay(
                       'content': {'application/json': {'example': example_response}}},
             },
             summary='读取当前用户的每日活动',
-            description='日期可选，不传时查询本人全部历史；单独传入时按对应下限或上限筛选，含起止日期。只返回已有记录，升序；NULL 表示未填写，0 表示明确为零。')
+            description='支持可选分页及多字段排序，默认日期倒序。分页查询日期可选；不分页必须提供完整日期范围，最多 500 条，超出返回 422。日期含首尾，NULL 始终排最后，0 表示明确为零。')
 def activity_days(user: Annotated[CurrentUser, Depends(get_token_user)],
                   database: Annotated[Connection, Depends(get_user_database, scope='function')],
-                  period: Annotated[DateRange, Body(default_factory=DateRange)]):
+                  period: Annotated[DateRange, Body()]):
     return Success(data=service.read_days(user.id, period, database))

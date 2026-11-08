@@ -12,7 +12,7 @@ from app import app
 from core.auth import CurrentUser, get_token_user, get_user_database
 from core.responses import ApiError
 from modules.activity import service
-from modules.activity.schemas import ActivityDays
+from modules.activity.schemas import ActivityDays, DateRange
 
 
 class ActivityAccessTests(unittest.TestCase):
@@ -49,14 +49,14 @@ class ActivityQueryTests(unittest.TestCase):
                    learning_minutes=60, creation_minutes=None, sleep_minutes=330,
                    created_at='2026-11-06T08:00:00+08:00', updated_at='2026-11-06T09:00:00+08:00')
         with patch.object(
-            service.repository, 'read_user_days', return_value=[row],
+            service.repository, 'read_user_days', return_value=([row], 1),
         ) as query:
             response = self.client.post('/api/activity/days', json={'startDate': '2026-11-01', 'endDate': '2026-11-06'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(query.call_args.args[1], self.user_id)
-        self.assertEqual(str(query.call_args.args[2]), '2026-11-01')
-        self.assertEqual(str(query.call_args.args[3]), '2026-11-06')
-        self.assertEqual(response.json(), {'data': {'days': [{
+        self.assertEqual(str(query.call_args.args[2].start_date), '2026-11-01')
+        self.assertEqual(str(query.call_args.args[2].end_date), '2026-11-06')
+        self.assertEqual(response.json(), {'data': {'total': 1, 'pageIndex': None, 'pageSize': None, 'days': [{
             'date': '2026-11-01', 'exerciseMinutes': 0, 'readingMinutes': None,
             'learningMinutes': 60, 'creationMinutes': None, 'sleepMinutes': 330,
             'userId': str(self.user_id), 'createdAt': '2026-11-06T08:00:00+08:00',
@@ -74,26 +74,23 @@ class ActivityQueryTests(unittest.TestCase):
                     self.assertEqual(response.json()['error']['code'], 'INVALID_REQUEST')
             query_database.assert_not_called()
 
-    def test_dates_are_optional_without_implicit_boundaries(self):
-        cases = [(None, None, None), ({}, None, None),
-                 ({'startDate': '2026-11-01'}, '2026-11-01', None),
+    def test_dates_are_optional_for_paged_queries(self):
+        cases = [({}, None, None), ({'startDate': '2026-11-01'}, '2026-11-01', None),
                  ({'endDate': '2026-11-06'}, None, '2026-11-06')]
-        with patch.object(
-            service.repository, 'read_user_days', return_value=[],
-        ) as query:
-            for suffix, start, end in cases:
-                with self.subTest(query=suffix):
-                    response = self.client.post('/api/activity/days', **({'json': suffix} if suffix is not None else {}))
+        with patch.object(service.repository, 'read_user_days', return_value=([], 0)) as query:
+            for dates, start, end in cases:
+                with self.subTest(query=dates):
+                    response = self.client.post('/api/activity/days', json={**dates, 'pageIndex': 0, 'pageSize': 20})
                     self.assertEqual(response.status_code, 200)
-                    self.assertEqual(response.json(), {'data': {'days': []}})
+                    self.assertEqual(response.json(), {'data': {'days': [], 'total': 0, 'pageIndex': 0, 'pageSize': 20}})
                     self.assertEqual(query.call_args.args[1], self.user_id)
-                    self.assertEqual(str(query.call_args.args[2]) if start else query.call_args.args[2], start)
-                    self.assertEqual(str(query.call_args.args[3]) if end else query.call_args.args[3], end)
+                    self.assertEqual(str(query.call_args.args[2].start_date) if start else None, start)
+                    self.assertEqual(str(query.call_args.args[2].end_date) if end else None, end)
 
     def test_empty_data_is_success_and_database_failure_is_not_empty(self):
-        with patch.object(service, 'read_days', return_value=ActivityDays(days=[])):
+        with patch.object(service, 'read_days', return_value=ActivityDays(days=[], total=0)):
             response = self.client.post('/api/activity/days', json={'startDate': '2026-11-01', 'endDate': '2026-11-06'})
-        self.assertEqual(response.json(), {'data': {'days': []}})
+        self.assertEqual(response.json(), {'data': {'days': [], 'total': 0, 'pageIndex': None, 'pageSize': None}})
         with patch.object(service, 'read_days', side_effect=ApiError(503, 'DATABASE_UNAVAILABLE', '数据服务暂不可用')):
             response = self.client.post('/api/activity/days', json={'startDate': '2026-11-01', 'endDate': '2026-11-06'})
         self.assertEqual(response.status_code, 503)
@@ -111,10 +108,10 @@ class ActivityQueryTests(unittest.TestCase):
 class ActivityRepositoryTests(unittest.TestCase):
     def test_missing_user_empty_dates_and_real_rows_remain_distinct(self):
         user_id = UUID('00000000-0000-4000-8000-000000000001')
-        record = {'date': '2026-11-01', 'exercise_minutes': 0, 'reading_minutes': None}
-        for raw, expected in [([], None), ([{'date': None}], []), ([record], [record])]:
+        record = {'total': 1, 'date': '2026-11-01', 'exercise_minutes': 0, 'reading_minutes': None}
+        for raw, expected in [([], None), ([{'date': None, 'total': 0}], ([], 0)), ([record], ([record], 1))]:
             with self.subTest(rows=raw):
                 database = MagicMock()
                 database.info.transaction_status = psycopg.pq.TransactionStatus.INTRANS
                 database.execute.return_value.fetchall.return_value = raw
-                self.assertEqual(service.repository.read_user_days(database, user_id, None, None), expected)
+                self.assertEqual(service.repository.read_user_days(database, user_id, DateRange.model_validate({'pageIndex': 0, 'pageSize': 20})), expected)

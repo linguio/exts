@@ -36,7 +36,7 @@ class RequestConnectionTests(unittest.TestCase):
                 self.parameters.append(parameters[3:])
                 if self.failure:
                     raise psycopg.OperationalError('private database error')
-                self.setup_cursor.fetchall.return_value = [{'date': None}] if self.exists else []
+                self.setup_cursor.fetchall.return_value = [{'date': None, 'total': 0}] if self.exists else []
         self.setup_cursor.execute.side_effect = execute
         self.connect = patch('core.database.get_pool')
         self.mock_connect = self.connect.start()
@@ -53,7 +53,7 @@ class RequestConnectionTests(unittest.TestCase):
     def test_valid_user_shares_one_connection_and_keeps_user_filter(self):
         response = self.request()
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {'data': {'days': []}})
+        self.assertEqual(response.json(), {'data': {'days': [], 'total': 0, 'pageIndex': None, 'pageSize': None}})
         self.mock_connect.assert_called_once()
         self.mock_verify.assert_called_once_with('test')
         self.assertEqual(len(self.parameters), 1)

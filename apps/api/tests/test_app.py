@@ -40,10 +40,10 @@ class DocumentationTests(unittest.TestCase):
                                                '/api/settings/preferences/update'})
         operation = schema['paths']['/api/activity/days']['post']
         self.assertNotIn('parameters', operation)
-        self.assertFalse(operation['requestBody'].get('required', False))
+        self.assertTrue(operation['requestBody'].get('required', False))
         self.assertIn('application/json', operation['requestBody']['content'])
         period = schema['components']['schemas']['DateRange']
-        self.assertEqual(set(period['properties']), {'startDate', 'endDate'})
+        self.assertEqual(set(period['properties']), {'startDate', 'endDate', 'pageIndex', 'pageSize', 'sort'})
         self.assertFalse(period.get('required'))
         self.assertEqual(self.client.get('/api/activity/days').status_code, 405)
         self.assertIn('securitySchemes', schema['components'])

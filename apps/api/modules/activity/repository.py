@@ -5,36 +5,50 @@ from psycopg import Connection
 from psycopg import sql
 
 from core.database import read_rows
+from modules.activity.schemas import DateRange, UNPAGED_LIMIT
 
 
-def read_user_days(
-    database: Connection, user_id: UUID, start: date | None, end: date | None,
-) -> list[dict] | None:
+SORT_COLUMNS = {
+    'date': 'date', 'exerciseMinutes': 'exercise_minutes', 'readingMinutes': 'reading_minutes',
+    'learningMinutes': 'learning_minutes', 'creationMinutes': 'creation_minutes', 'sleepMinutes': 'sleep_minutes',
+}
+
+
+def read_user_days(database: Connection, user_id: UUID, query: DateRange) -> tuple[list[dict], int] | None:
     conditions = [sql.SQL('days.user_id = request_user.id')]
     parameters = [user_id]
-    if start is not None:
+    if query.start_date is not None:
         conditions.append(sql.SQL('days.date >= %s'))
-        parameters.append(start)
-    if end is not None:
+        parameters.append(query.start_date)
+    if query.end_date is not None:
         conditions.append(sql.SQL('days.date <= %s'))
-        parameters.append(end)
-    rows = read_rows(
-        database,
-        sql.SQL('''WITH request_user AS (
-               SELECT id FROM neon_auth."user" WHERE id = %s
-           )
-           SELECT days.user_id, days.date, days.exercise_minutes, days.reading_minutes,
-                  days.learning_minutes, days.creation_minutes, days.sleep_minutes,
-                  days.created_at, days.updated_at
-           FROM request_user
-           LEFT JOIN public.activity_daily_records AS days ON {}
-           ORDER BY days.date ASC''').format(sql.SQL(' AND ').join(conditions)),
-        parameters,
+        parameters.append(query.end_date)
+    ordering = [(item.field, item.order) for item in query.sort]
+    if not any(field == 'date' for field, _ in ordering):
+        ordering.append(('date', 'desc'))
+    order = sql.SQL(', ').join(
+        sql.SQL('{} {} NULLS LAST').format(sql.Identifier(SORT_COLUMNS[field]),
+                                         sql.SQL('ASC' if direction == 'asc' else 'DESC'))
+        for field, direction in ordering
     )
-    # 没有用户时无行；用户存在但没有日期记录时，外连接保留一行空日期。
+    limit = query.page_size if query.page_size is not None else UNPAGED_LIMIT + 1
+    offset = query.page_index * limit if query.page_index is not None else 0
+    parameters.extend([limit, offset])
+    rows = read_rows(database, sql.SQL('''WITH request_user AS (
+        SELECT id FROM neon_auth."user" WHERE id = %s
+    ), filtered AS MATERIALIZED (
+        SELECT days.* FROM public.activity_daily_records days
+        JOIN request_user ON {}
+    ), page AS (
+        SELECT * FROM filtered ORDER BY {} LIMIT %s OFFSET %s
+    )
+    SELECT (SELECT count(*) FROM filtered) AS total, page.*
+    FROM request_user LEFT JOIN page ON true
+    ORDER BY {}''').format(sql.SQL(' AND ').join(conditions), order, order), parameters)
+    # 外连接保留空页与总数；无用户时完全无行，不把删除账号误判为无记录。
     if not rows:
         return None
-    return [] if rows[0]['date'] is None else rows
+    return ([row for row in rows if row['date'] is not None], rows[0]['total'])
 
 
 def create_daily_rows(database: Connection, day: date) -> int:

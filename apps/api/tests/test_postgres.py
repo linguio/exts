@@ -9,6 +9,7 @@ import psycopg
 from psycopg.rows import dict_row
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from modules.activity.schemas import DateRange
 from modules.activity.repository import create_daily_rows, read_user_days
 from scripts.migrate import load_migrations, migrate
 
@@ -42,14 +43,44 @@ class PostgresTests(unittest.TestCase):
             'UPDATE public.activity_daily_records SET exercise_minutes=30 WHERE user_id=%s', (USER_A,),
         )
         self.assertEqual(create_daily_rows(self.database, day), 0)
-        self.assertEqual(read_user_days(self.database, USER_A, day, day)[0]['exercise_minutes'], 30)
-        self.assertIsNone(read_user_days(self.database, USER_B, day, day)[0]['exercise_minutes'])
-        self.assertEqual(read_user_days(self.database, USER_A, date(2026, 11, 7), date(2026, 11, 7)), [])
+        self.assertEqual(read_user_days(self.database, USER_A, DateRange.model_validate({'startDate': str(day), 'endDate': str(day)}))[0][0]['exercise_minutes'], 30)
+        self.assertIsNone(read_user_days(self.database, USER_B, DateRange.model_validate({'startDate': str(day), 'endDate': str(day)}))[0][0]['exercise_minutes'])
+        self.assertEqual(read_user_days(self.database, USER_A, DateRange.model_validate({'startDate': '2026-11-07', 'endDate': '2026-11-07'})), ([], 0))
         create_daily_rows(self.database, date(2026, 11, 7))
-        self.assertEqual(len(read_user_days(self.database, USER_A, None, None)), 2)
-        self.assertEqual(len(read_user_days(self.database, USER_A, date(2026, 11, 7), None)), 1)
-        self.assertEqual(len(read_user_days(self.database, USER_A, None, day)), 1)
-        self.assertIsNone(read_user_days(self.database, UUID('00000000-0000-4000-8000-000000000003'), None, None))
+        self.assertEqual(len(read_user_days(self.database, USER_A, DateRange.model_validate({'pageIndex': 0, 'pageSize': 20}))[0]), 2)
+        self.assertEqual(len(read_user_days(self.database, USER_A, DateRange.model_validate({'startDate': '2026-11-07', 'pageIndex': 0, 'pageSize': 20}))[0]), 1)
+        self.assertEqual(len(read_user_days(self.database, USER_A, DateRange.model_validate({'endDate': str(day), 'pageIndex': 0, 'pageSize': 20}))[0]), 1)
+        self.assertIsNone(read_user_days(self.database, UUID('00000000-0000-4000-8000-000000000003'), DateRange.model_validate({'pageIndex': 0, 'pageSize': 20})))
+
+    def test_sort_priority_nulls_totals_and_empty_pages(self):
+        for day, exercise, reading in [('2026-11-01', 30, 20), ('2026-11-02', 30, 50),
+                                       ('2026-11-03', 60, 0), ('2026-11-04', None, None)]:
+            self.database.execute(
+                'INSERT INTO public.activity_daily_records (user_id,date,exercise_minutes,reading_minutes) VALUES (%s,%s,%s,%s)',
+                (USER_A, day, exercise, reading))
+        payload = {'pageIndex': 0, 'pageSize': 2, 'sort': [
+            {'field': 'exerciseMinutes', 'order': 'desc'}, {'field': 'readingMinutes', 'order': 'desc'}]}
+        rows, total = read_user_days(self.database, USER_A, DateRange.model_validate(payload))
+        self.assertEqual(total, 4)
+        self.assertEqual([str(row['date']) for row in rows], ['2026-11-03', '2026-11-02'])
+        rows, total = read_user_days(self.database, USER_A, DateRange.model_validate({**payload, 'pageIndex': 1}))
+        self.assertEqual([str(row['date']) for row in rows], ['2026-11-01', '2026-11-04'])
+        self.assertEqual(read_user_days(self.database, USER_A, DateRange.model_validate({**payload, 'pageIndex': 2})), ([], 4))
+        rows, _ = read_user_days(self.database, USER_A, DateRange.model_validate({**payload, 'pageSize': 20,
+            'sort': [{'field': 'exerciseMinutes', 'order': 'asc'}]}))
+        self.assertEqual([str(row['date']) for row in rows], ['2026-11-02', '2026-11-01', '2026-11-03', '2026-11-04'])
+
+    def test_unpaged_500_records_succeed_and_501_are_rejected(self):
+        from modules.activity.service import read_days
+        from core.responses import ApiError
+        self.database.execute(
+            "INSERT INTO public.activity_daily_records(user_id,date) SELECT %s, '2020-01-01'::date + n FROM generate_series(0,499) n", (USER_A,))
+        query = DateRange.model_validate({'startDate': '2020-01-01', 'endDate': '2026-11-08'})
+        self.assertEqual(len(read_days(USER_A, query, self.database).days), 500)
+        self.database.execute("INSERT INTO public.activity_daily_records(user_id,date) VALUES (%s,'2026-11-08')", (USER_A,))
+        with self.assertRaises(ApiError) as error:
+            read_days(USER_A, query, self.database)
+        self.assertEqual(error.exception.status, 422)
 
     def test_constraints_and_update_timestamp(self):
         day = date(2026, 11, 6)
@@ -59,7 +90,7 @@ class PostgresTests(unittest.TestCase):
         with self.assertRaises(psycopg.errors.ForeignKeyViolation), self.database.transaction():
             self.database.execute('INSERT INTO public.activity_daily_records(user_id,date) VALUES (%s,%s)',
                                   (UUID('00000000-0000-4000-8000-000000000003'), day))
-        before = read_user_days(self.database, USER_A, day, day)[0]
+        before = read_user_days(self.database, USER_A, DateRange.model_validate({'startDate': str(day), 'endDate': str(day)}))[0][0]
         self.database.execute("UPDATE public.activity_daily_records SET updated_at='2000-01-01' WHERE user_id=%s",
                               (USER_A,))
         row = self.database.execute(
