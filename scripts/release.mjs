@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync, linkSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync } from 'node:fs';
+import { existsSync, linkSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, renameSync, rmSync } from 'node:fs';
 import { isAbsolute, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildAll } from './build.mjs';
@@ -159,19 +159,41 @@ export function releaseAll({
     mkdirSync(mountDirectory);
     execute('生成可写 DMG', '/usr/bin/hdiutil', ['create', '-volname', `Exts ${version}`, '-srcfolder', imageDirectory, '-format', 'UDRW', writableDmg]);
     execute('挂载安装镜像', '/usr/bin/hdiutil', ['attach', '-readwrite', '-nobrowse', '-mountpoint', mountDirectory, writableDmg]);
+    let layoutError;
     try {
       execute('配置安装窗口', '/usr/bin/osascript', [join(repositoryDirectory, 'apps/desktop/scripts/dmg-layout.applescript'), mountDirectory], { timeout: 30000 });
       if (!existsSync(join(mountDirectory, '.DS_Store'))) throw new Error('安装窗口配置未保存，停止发布 DMG');
-    } finally {
+    } catch (error) {
+      layoutError = error;
+    }
+    try {
+      execute('推出安装镜像', '/usr/bin/hdiutil', ['detach', mountDirectory]);
+    } catch (detachError) {
+      let detached = false;
+      let stateError;
       try {
-        execute('推出安装镜像', '/usr/bin/hdiutil', ['detach', mountDirectory]);
+        const plist = execute('读取镜像挂载状态', '/usr/bin/hdiutil', ['info', '-plist'], { stdio: 'pipe', encoding: 'utf8', timeout: 10000 });
+        const json = execute('解析镜像挂载状态', '/usr/bin/plutil', ['-convert', 'json', '-o', '-', '-'], { input: plist, stdio: 'pipe', encoding: 'utf8', timeout: 10000 });
+        const { images } = JSON.parse(json);
+        if (!Array.isArray(images)) throw new Error('镜像挂载状态缺少 images');
+        const target = realpathSync(writableDmg);
+        // 路径无法确认时停止清理，避免符号链接或异常状态造成误判。
+        detached = !images.some((image) => {
+          if (typeof image['image-path'] !== 'string' || !isAbsolute(image['image-path'])) throw new Error('镜像挂载状态缺少有效路径');
+          return realpathSync(image['image-path']) === target
+            || image['system-entities']?.some((entity) => entity['mount-point'] === mountDirectory);
+        });
       } catch (error) {
-        // 推出失败时保留挂载点和暂存，避免递归清理仍挂载的镜像。
+        stateError = error;
+      }
+      if (!detached) {
+        const errors = [layoutError, detachError, stateError].filter(Boolean);
+        const error = new AggregateError(errors, `${layoutError ? `${layoutError.message}；` : ''}${detachError.message}，暂存与挂载点保留在：${stagingDirectory}`);
         error.recoveryDirectory = stagingDirectory;
-        error.message += `，暂存与挂载点保留在：${stagingDirectory}`;
         throw error;
       }
     }
+    if (layoutError) throw layoutError;
     execute('生成 DMG', '/usr/bin/hdiutil', ['convert', writableDmg, '-format', 'UDZO', '-o', stagedDmg]);
     execute('校验 DMG', '/usr/bin/hdiutil', ['verify', stagedDmg]);
     readProjectVersion(version);

@@ -19,7 +19,12 @@ on run arguments
             set position of item "应用程序" of diskFolder to {470, 200}
             update diskFolder without registering applications
             delay 2
-            close installWindow
+            try
+                close installWindow
+            on error errorMessage number errorNumber
+                -- 关闭时窗口可能已经消失，其他错误仍交给发布流程处理。
+                if errorNumber is not -1728 then error errorMessage number errorNumber
+            end try
         end tell
     end timeout
 end run

@@ -203,8 +203,8 @@ test('应用签名失败时不生成 DMG，并保留旧的两包', async () => {
 test('DMG 发布拖拽安装内容，布局配置或镜像校验失败保留旧包', async (context) => {
   const { releaseAll } = await import(releaseModule);
   const { readProjectVersion } = await import(versionModule);
-  for (const failure of ['none', 'layout', 'dmg']) {
-    await context.test({ none: '发布拖拽安装 DMG', layout: '布局配置失败', dmg: 'DMG 校验失败' }[failure], () => {
+  for (const failure of ['none', 'layout', 'dmg', 'detached', 'layout-detached', 'mounted', 'layout-mounted', 'unknown']) {
+    await context.test(failure, () => {
       const root = mkdtempSync(join(tmpdir(), 'exts-release-flow-'));
       const version = readProjectVersion();
       const releaseDirectory = join(root, 'release');
@@ -241,18 +241,30 @@ test('DMG 发布拖拽安装内容，布局配置或镜像校验失败保留旧�
               mkdirSync(join(args[args.indexOf('-mountpoint') + 1], '.background'), { recursive: true });
             }
             if (command.endsWith('/osascript')) {
-              if (failure === 'layout') return { status: 8 };
+              if (failure.startsWith('layout')) return { status: 8 };
               writeFileSync(join(args.at(-1), '.DS_Store'), 'finder-config-fixture');
+            }
+            if (command.endsWith('/hdiutil') && args[0] === 'detach' && !['none', 'layout', 'dmg'].includes(failure)) return { status: 1 };
+            if (command.endsWith('/hdiutil') && args[0] === 'info') return { status: 0, stdout: 'plist-fixture' };
+            if (command.endsWith('/plutil')) {
+              if (failure === 'unknown') return { status: 1 };
+              const staging = readdirSync(releaseDirectory).find((name) => name.startsWith('.exts-staging-'));
+              return { status: 0, stdout: JSON.stringify({ images: failure.includes('mounted') ? [{ 'image-path': join(releaseDirectory, staging, 'writable.dmg') }] : [] }) };
             }
             if (command.endsWith('/hdiutil') && args[0] === 'convert') writeFileSync(args.at(-1), 'dmg-fixture');
             return { status: failure === 'dmg' && command.endsWith('/hdiutil') && args[0] === 'verify' ? 9 : 0 };
           },
         };
-        if (failure !== 'none') {
-          assert.throws(() => releaseAll(options), failure === 'layout' ? /配置安装窗口.*8/ : /校验 DMG.*9/);
+        if (!['none', 'detached'].includes(failure)) {
+          const retained = failure.includes('mounted') || failure === 'unknown';
+          assert.throws(() => releaseAll(options), (error) => {
+            assert.match(error.message, failure.startsWith('layout') ? /配置安装窗口.*8/ : failure === 'dmg' ? /校验 DMG.*9/ : /推出安装镜像/);
+            assert.equal(Boolean(error.recoveryDirectory), retained);
+            return true;
+          });
           assert.equal(readFileSync(join(releaseDirectory, 'exts-chrome.zip'), 'utf8'), 'old-zip');
           assert.equal(readFileSync(join(releaseDirectory, 'exts-mac.dmg'), 'utf8'), 'old-dmg');
-          assert.deepEqual(readdirSync(releaseDirectory).sort(), ['exts-chrome.zip', 'exts-mac.dmg']);
+          assert.equal(readdirSync(releaseDirectory).length, retained ? 3 : 2);
         } else {
           const output = releaseAll(options);
           assert.equal(output.version, version);
