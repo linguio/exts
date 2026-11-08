@@ -1,5 +1,6 @@
-import { ApiRequestError, createApiClient, type ApiSession } from '../../lib/api/client';
-import { resolveApiBaseUrl } from '../../lib/api/config';
+import { ApiRequestError, createApiClient, type ApiSession } from '../../api/client';
+import { resolveApiBaseUrl } from '../../api/config';
+import { getSettingsPreferences, updateSettingsPreferences } from '../../api/settings';
 import { SETTINGS_MESSAGE } from './index';
 import { DEFAULT_SETTINGS, parseSettings, validateSettingsPatch, type Settings, type SettingsPatch } from './schema';
 import { createSettingsRepository } from './store';
@@ -38,7 +39,7 @@ export function registerSettings(getSession: () => Promise<ApiSession>, getStore
       const currentKey = key(auth.userId);
       const saved = await repository.get(auth.userId);
       if (!force && refreshedKey === currentKey && saved) return saved;
-      const value = await client.request<unknown>('/api/settings/preferences', { expectedUserId: auth.userId });
+      const value = await getSettingsPreferences(client, auth.userId);
       const settings = parseSettings(value);
       if (!settings) throw new ApiRequestError('INVALID_RESPONSE', '接口设置格式无效');
       if (generation && !session?.isCurrent(generation)) throw new ApiRequestError('SESSION_CHANGED', '账号已变更');
@@ -62,9 +63,7 @@ export function registerSettings(getSession: () => Promise<ApiSession>, getStore
       }
       const auth = await getSession();
       const generation = session?.generation;
-      const value = await client.request<unknown>('/api/settings/preferences/update', {
-        expectedUserId: auth.userId, json: patch,
-      });
+      const value = await updateSettingsPreferences(client, auth.userId, patch);
       const settings = parseSettings(value);
       if (!settings) throw new ApiRequestError('INVALID_RESPONSE', '接口设置格式无效');
       if (generation && !session?.isCurrent(generation)) throw new ApiRequestError('SESSION_CHANGED', '账号已变更');

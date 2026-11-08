@@ -1,5 +1,6 @@
-import { ApiRequestError, createApiClient, type ApiSession } from '../../lib/api/client';
-import { resolveApiBaseUrl } from '../../lib/api/config';
+import { ApiRequestError, createApiClient, type ApiSession } from '../../api/client';
+import { resolveApiBaseUrl } from '../../api/config';
+import { getActivityDays } from '../../api/activity';
 import { validActivityDate } from './data';
 import type { SessionReset } from '../account/session-reset';
 
@@ -37,10 +38,7 @@ export function registerActivity(getSession: () => Promise<ApiSession>, api: typ
     const generation = session?.generation;
     const controller = new AbortController();
     pending.set(key, controller);
-    void client.request('/api/activity/days', {
-      method: 'POST', json: { startDate: message.startDate, endDate: message.endDate },
-      expectedUserId: message.userId, signal: controller.signal,
-    }).then(data => respond(generation && !session?.isCurrent(generation)
+    void getActivityDays(client, { startDate: message.startDate, endDate: message.endDate }, message.userId, controller.signal).then(data => respond(generation && !session?.isCurrent(generation)
       ? { ok: false, error: { code: 'SESSION_CHANGED', message: '账号已变更' } } : { ok: true, data }), error => {
       if (generation && !session?.isCurrent(generation)) {
         respond({ ok: false, error: { code: 'SESSION_CHANGED', message: '账号已变更' } });

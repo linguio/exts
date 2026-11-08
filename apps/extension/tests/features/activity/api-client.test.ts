@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
-import { createApiClient } from '../../../src/lib/api/client';
-import { resolveApiBaseUrl } from '../../../src/lib/api/config';
+import { createApiClient } from '../../../src/api/client';
+import { resolveApiBaseUrl } from '../../../src/api/config';
 
 const session = { userId: 'user-1', accessToken: 'fixture-access' };
 const options = { expectedUserId: 'user-1' };

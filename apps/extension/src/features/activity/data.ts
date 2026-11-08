@@ -1,9 +1,9 @@
-import { ApiRequestError } from '../../lib/api/client';
+import { ApiRequestError } from '../../api/client';
+import type { ActivityPeriod } from '../../api/activity';
 import { localDateKey } from './calendar';
 import type { ActivityRecords, GrowthMinutes } from './types';
 
 export type ActivityView = 'calendar' | 'chart' | 'pie';
-export interface ActivityPeriod { startDate: string; endDate: string }
 
 const shanghai = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit',

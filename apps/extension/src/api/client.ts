@@ -76,3 +76,5 @@ export function createApiClient({ baseUrl, getSession, timeoutMs = 15_000 }: {
     },
   };
 }
+
+export type ApiClient = ReturnType<typeof createApiClient>;

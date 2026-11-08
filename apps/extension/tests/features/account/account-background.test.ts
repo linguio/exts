@@ -4,7 +4,7 @@ afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
 
 async function setup(clientId: string) {
   vi.stubEnv('VITE_OIDC_CLIENT_ID', clientId);
-  const { registerAccount } = await import('../../../src/features/account/account-background');
+  const { registerAccount } = await import('../../../src/features/account/background');
   const addListener = vi.fn();
   const api = {
     runtime: { id: 'exts', getURL: (path: string) => `chrome-extension://exts/${path}`, onMessage: { addListener } },
@@ -39,7 +39,7 @@ it('拒绝未知登录提供方，不把任意页面输入传入授权流程', a
 });
 
 it('登录引导通过官网片段传递提供方和标准授权地址，不改写授权查询', async () => {
-  const { createLoginStartUrl } = await import('../../../src/features/account/account-background');
+  const { createLoginStartUrl } = await import('../../../src/features/account/background');
   const authorize = 'https://ep-patient-grass-ak8aymgi.neonauth.c-3.us-west-2.aws.neon.tech/neondb/auth/oauth2/authorize?state=a%2Bb&code_challenge=fixture';
   const url = new URL(createLoginStartUrl(authorize, 'google'));
   expect(url.origin + url.pathname).toBe('https://exts.linguio.dev/auth/sign-in/');
@@ -50,7 +50,7 @@ it('登录引导通过官网片段传递提供方和标准授权地址，不改�
 });
 
 it('退出引导只携带插件固定 logout 回跳', async () => {
-  const { createLogoutStartUrl } = await import('../../../src/features/account/account-background');
+  const { createLogoutStartUrl } = await import('../../../src/features/account/background');
   const url = new URL(createLogoutStartUrl('https://gclkjdfiiibgahheiejgbmkglebbbgeh.chromiumapp.org/logout'));
   expect(url.origin + url.pathname).toBe('https://exts.linguio.dev/auth/sign-out/');
   expect(new URLSearchParams(url.hash.slice(1)).get('return')).toBe('https://gclkjdfiiibgahheiejgbmkglebbbgeh.chromiumapp.org/logout');

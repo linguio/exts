@@ -1,5 +1,5 @@
-import { ApiRequestError } from '../../lib/api/client';
-import type { ActivityPeriod } from './data';
+import { ApiRequestError } from '../../api/client';
+import type { ActivityPeriod } from '../../api/activity';
 import { captureSessionGeneration } from '../account/session-client';
 
 export async function requestActivity(period: ActivityPeriod, userId: string, signal: AbortSignal): Promise<unknown> {

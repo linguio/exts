@@ -27,7 +27,7 @@ vi.mock('../../../src/features/media-download/telegram/reset-background', () => 
 
 it('主动登录先清理旧本地状态，再建立新会话；恢复状态不清理', async () => {
   vi.stubEnv('VITE_OIDC_CLIENT_ID', 'test-public-client');
-  const { registerAccount } = await import('../../../src/features/account/account-background');
+  const { registerAccount } = await import('../../../src/features/account/background');
   const listeners: ((message: any, sender: any, respond: (value: any) => void) => void)[] = [];
   const api = {
     runtime: { id: 'exts', getURL: (path: string) => `chrome-extension://exts/${path}`,
