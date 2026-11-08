@@ -4,6 +4,14 @@
 
 官网与扩展的通用 Web UI 遵循根 [AGENTS.md](../AGENTS.md#web-ui-选型与风格)。本文记录源码基线与必要差异；主题参数和组合约定分别见 [官网 UI](website/ui.md) 与 [扩展 UI](extension/ui.md)。源码不是随上游自动升级的运行时依赖。
 
+## 通用 DataTable（2026-11-08）
+
+- Table、Input、Checkbox、Select、Calendar、Command、Pagination、Alert 使用既有固定源码基线 `c257f688cf4de7ec10cc1be84cad29cd4631182c` 的 [new-york-v4/ui](https://github.com/shadcn-ui/ui/tree/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/registry/new-york-v4/ui)，已读取实际源码，分别迁至扩展 `src/components/ui`；非重新仿写。Command 依赖的 DialogHeader 和列显隐需要的 DropdownMenuCheckboxItem 从同一基线补齐，已有组件其余实现保留。
+- 必要适配：cn 改为本地 lib/utils；Input/Checkbox/Select/Calendar 的 dark 变体改为祖先 data-theme=dark 选择器，符合扩展已有主题机制。其他官方结构、尺寸、状态、默认类名保留，不修改全局 Token。Table 与 Select 内部滚动沿用官方实现。
+- 通用 DataTable 参考官方组合思路，采用精确依赖 @tanstack/react-table 8.21.3（table-core 同版），保持与该固定源码时期的 v8 示例 API 对齐；没有升级其他依赖。它是项目组合，不宣称与当前官方示例视觉一致，也不是迁入完整官方 DataTable 示例。
+- `custom/data-table` 提供文本/选项/日期筛选、列标题排序、分页、列显隐、可选行选择与状态展示；复用既有 Button、Popover、Skeleton、Spinner，新增的 Input/Checkbox/Select 均为实际使用控件。日期范围采用官方 Calendar + Popover，选项多选采用 Command + Popover，列显隐采用 DropdownMenuCheckboxItem，分页采用 Pagination 配合 Select/Input，空状态采用现有 Empty，错误采用 Alert；不另维护控件样式或颜色方案。新增精确依赖 react-day-picker 9.11.1、cmdk 1.1.1，锁文件已同步。官方 PaginationLink 没有 disabled 属性，组合层仅补充 aria-disabled、不可用时的 tabIndex 和点击拦截，保留官方样式；这是翻页边界所需的语义接入，并非替代官方控件。
+- 开发示例通过 newtab 的 DEV 条件查询参数 table-demo 按需加载，无正式导航入口，不进入生产构建；服务端模式仅内存模拟。接入边界与用户验收见 [DataTable 说明](extension/data-table.md)。实际视觉和交互尚待用户验收。
+
 ## 图表区域 Loading（2026-11-07）
 
 - 用户最终要求撤销加载区域的样式定制，只保留首次 Skeleton、后续 Spinner 的共用组合与自动区分；先前试用的毛玻璃、遮罩透明度、内容模糊及延迟均已移除。
