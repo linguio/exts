@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [将扩展设置统一保存到账号](./issues/2026-11-08-extension-cloud-settings-issue.md) · [Commit 记录](./commits/2026-11-08-extension-cloud-settings-commit.md)；用户已验收并批准本地提交，代码与文档分开完结。未登录使用本机设置，登录后以云端记录或默认值为准，退出清空扩展本地状态；当前 API 数据库迁移已应用，未推送或部署。
+
 - [统一登录初始化与退出重置](./issues/2026-11-06-extension-session-reset-issue.md) · [Commit 记录](./commits/2026-11-06-extension-session-reset-commit.md)；用户于 2026-11-07 再次明确批准本地提交，代码与文档分开完结。122 项扩展测试、类型检查与构建通过；最终代码的真实浏览器复验未单独记录，未推送。
 
 - [为图表增加共用区域加载状态](./issues/2026-11-07-extension-chart-loading-issue.md) · [Commit 记录](./commits/2026-11-07-extension-chart-loading-commit.md)；用户于 2026-11-07 明确要求代码与文档分开本地提交完结。Activity 四区复用首次 Skeleton、后续 Spinner；20 项 Activity 测试、类型检查与构建通过，浏览器实际验收未单独确认，未推送。

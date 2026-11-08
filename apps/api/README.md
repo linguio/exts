@@ -1,10 +1,10 @@
 # Exts API
 
-FastAPI 后端。`GET /` 通过 307 临时重定向跳转到 `/docs`，文档无需令牌、不连接数据库。业务接口为当前用户的 Activity 日期查询；临时 `/hello` 已移除。本地源码不代表已部署或已执行 Neon 迁移。
+FastAPI 后端。`GET /` 通过 307 临时重定向跳转到 `/docs`，文档无需令牌、不连接数据库。业务接口包含当前用户的 Activity 日期查询与账号设置读取、更新；临时 `/hello` 已移除。本地源码不代表已部署或已执行 Neon 迁移。
 
 ## 接口文档
 
-`/docs` 使用官方 `scalar-fastapi==1.9.1`，读取当前服务的 `/openapi.json`。默认 Swagger 与 ReDoc 页面关闭，只保留这一份文档入口。列表展示 Activity 只读接口及 Bearer 认证，根路由、文档与内部定时任务不加入业务接口列表。
+`/docs` 使用官方 `scalar-fastapi==1.9.1`，读取当前服务的 `/openapi.json`。默认 Swagger 与 ReDoc 页面关闭，只保留这一份文档入口。列表展示 Activity 与 Settings 业务接口及 Bearer 认证，根路由、文档与内部定时任务不加入业务接口列表。
 
 Scalar 浏览器资源固定为 `https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.76.4/dist/browser/standalone.js`，需要浏览器可访问 jsDelivr；不使用浮动 CDN 版本。沿用官方默认样式，关闭 Agent 与遥测，不设置请求代理、不预填令牌、不默认持久保存令牌。在线调试请求直接发往当前 API 服务。
 
@@ -82,12 +82,14 @@ node --test --test-isolation=none apps/api/tests/dev.test.mjs
 
 逻辑测试覆盖文档回归、JWT 安全边界、日期/空值、统一响应、任务认证与迁移行为。实库测试只读取进程显式提供的 API_TEST_DATABASE_URL，要求隔离空 PostgreSQL 库，所有夹具和 DDL 在结束时回滚；不配置就跳过，不回退使用生产连接。
 
-## 分层与只读接口
+## 分层与业务接口
 
 跨应用契约见 [业务 API 规范](../../docs/api-conventions.md)，实现约束见 [API 项目规范](AGENTS.md)。业务接口统一 POST。
 
 - app.py 只装配；core 持有配置、认证、响应和数据库事务；modules/activity 内路由 → 业务 → 仓储，SQL 只在仓储和迁移中维护。
 - POST /api/activity/days：JSON 请求体中的 startDate/endDate 都可选，不传时查询当前用户全部历史；仅传 startDate 或 endDate 时按对应下限或上限筛选。两端都传时包含首尾且开始不得晚于结束，升序、无分页，只返回本人已有的行。示例请求体：`{"startDate":"2026-11-01","endDate":"2026-11-06"}`；无请求体或 `{}` 都查询本人全部历史。
+- POST /api/settings/preferences：读取本人 Theme、Media Download、Clear History 三项设置；无行时返回 `system`、`false`、`false`，不写入数据库。
+- POST /api/settings/preferences/update：每次只提交一个设置字段，成功后返回完整设置；首次保存创建本人记录，其他字段沿用既有值或数据库默认值。用户身份从令牌取得，不接受客户端 userId。
 - 成功结构为 data.days；每天包含 userId、date、五项 camelCase 分钟字段、createdAt、updatedAt。时间戳带时区偏移；NULL 与 0 区分，无记录为空数组。不返回用户名/邮箱等资料、时区配置、备注或汇总。
 - 失败结构为 error.code/message/requestId；401 登录失效、422 参数错误、503 上游暂不可用、500 未预期异常。X-Request-ID 对应服务端排错标识，业务与任务响应均 Cache-Control: no-store。
 - NEON_AUTH_ISSUER 必须是对应分支的实际 Auth URL；API_RESOURCE 保持 https://api.exts.linguio.dev，不因 /api 路径而改变。只接受 EdDSA 访问 JWT，验证签名、发行方、受众、期限和 UUID，并核实用户存在。不使用 ID token 或网页 Cookie 代替。
@@ -99,7 +101,7 @@ node --test --test-isolation=none apps/api/tests/dev.test.mjs
 
 ## 本地维护与应用数据库结构
 
-结构唯一来源为 migrations 下的版本化 SQL。修改已有云端结构时新增迁移，不改已执行文件；校验和按 UTF-8 与 LF 规范化，避免 Windows 换行造成差异。查询和 API 启动均不自动建表。
+结构唯一来源为 migrations 下的版本化 SQL。修改已有云端结构时新增迁移，不改已执行文件；校验和按 UTF-8 与 LF 规范化，避免 Windows 换行造成差异。查询和 API 启动均不自动建表。第二份迁移创建每用户一行的 `public.user_settings`，第三份迁移补充 `created_at`；旧记录以 `updated_at` 近似回填，新记录使用数据库当前时间。不需要注册初始化或定时器。
 
 Windows 从仓库根执行只读预览：
 
