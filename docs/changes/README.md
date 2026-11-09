@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [建立 Cursor 串行委派 Skill](./issues/2026-11-09-repo-workflow-cursor-issue.md) · [Commit 记录](./commits/2026-11-09-repo-workflow-cursor-commit.md)；2026-11-09 用户明确批准代码、文档两笔本地提交完结。根规范与三个 workflow Skill 已同步试用分工，Cursor Composer 2.5 新增官网 Skills 条目，Codex 核对 diff 与官网类型检查通过；提示传递、Shell 和 PyYAML 限制保留，未推送或发布。
+
 - [整理 Dock 与账户菜单入口](./issues/2026-11-09-extension-dock-account-entries-issue.md) · [Commit 记录](./commits/2026-11-09-extension-dock-account-entries-commit.md)；2026-11-09 用户验收通过并批准代码、文档两笔本地提交完结。Studio 普通入口与两处 Account Settings 已交付，相关 10 项测试、类型检查及生产构建通过，既有构建警告保留，未推送或发布。
 
 - [修复 DMG 窗口关闭与清理失败](./issues/2026-11-09-repo-dmg-window-cleanup-issue.md) · [Commit 记录](./commits/2026-11-09-repo-dmg-window-cleanup-commit.md)；用户明确要求提交并推送，代码与文档分开完结。发布相关 29 项测试及 JS 语法检查通过；AppleScript 编译受本机 Finder 服务异常阻挡，真实 Release 和安装行为待验证。
