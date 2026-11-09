@@ -35,6 +35,8 @@ export interface DataTableProps<T> {
   error?: string;
   onRetry?: () => void;
   remote?: { query: DataTableQuery; onQueryChange: OnChangeFn<DataTableQuery>; rowCount: number };
+  /** Daily 等页面：在父级 flex 高度链内占满剩余空间，记录区 ScrollArea 纵向滚动，分页保持可见。 */
+  fillRecords?: boolean;
 }
 export type { RowSelectionState };
 
@@ -48,6 +50,7 @@ export interface DataTableQueryRequest {
 }
 export interface DataTableQueryResult<T> { rows: T[]; total: number }
 export type DataTableQueryFn<T> = (request: DataTableQueryRequest, signal: AbortSignal) => Promise<DataTableQueryResult<T>>;
+export type DataTableUpdateFn<T> = (rowId: string, values: Record<string, unknown>, signal: AbortSignal) => Promise<void>;
 
 /** 仅用于资源适配层已确认可展示的安全文案；未知异常使用通用提示。 */
 export class DataTableQueryError extends Error {
@@ -65,10 +68,18 @@ export interface QueryDataTableProps<T> {
   columns: ColumnDef<T, any>[];
   filters?: DataTableFilter[];
   queryFn: DataTableQueryFn<T>;
+  updateFn?: DataTableUpdateFn<T>;
+  /** 显式启用当前响应行预览编辑；默认 false，不与 updateFn 隐式混用。 */
+  previewEdits?: boolean;
   getRowId: (row: T) => string;
   caption: string;
   scopeKey?: string | number;
   enabled?: boolean;
   showCaption?: boolean;
   emptyContent?: ReactNode;
+  editDescription?: string;
+  headerNote?: ReactNode;
+  /** 与 fillRecords 搭配：筛选工具栏单行，窄屏横向滚动。 */
+  fillRecords?: boolean;
+  pageSizes?: number[];
 }

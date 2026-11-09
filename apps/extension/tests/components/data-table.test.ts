@@ -2,6 +2,10 @@ import { expect, it } from 'vitest';
 import { createTable, getCoreRowModel, getFilteredRowModel, getSortedRowModel, getPaginationRowModel } from '@tanstack/react-table';
 import { dateFilter, optionsFilter, initialQuery, updateQuery, formatFilterDate, parseFilterDate, paginationItems } from '../../src/components/custom/data-table/state';
 
+it('initialQuery 默认每页 20 条', () => {
+  expect(initialQuery().pagination).toEqual({ pageIndex: 0, pageSize: 20 });
+});
+
 it('筛选、排序及每页条数变化回到首页，普通翻页保持页码', () => {
   const query = { ...initialQuery(), pagination: { pageIndex: 3, pageSize: 20 } };
   expect(updateQuery(query, 'globalFilter', 'sample').pagination.pageIndex).toBe(0);

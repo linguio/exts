@@ -1,7 +1,9 @@
 import { useState, useSyncExternalStore, type CSSProperties } from 'react';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '../../components/ui/breadcrumb';
+import { ScrollArea } from '../../components/ui/scroll-area';
 import { Separator } from '../../components/ui/separator';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '../../components/ui/sidebar';
+import { cn } from '../../lib/utils';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../components/ui/empty';
 import { UiIcon } from '../../components/custom/ui-icon';
 import { useAccount, readSessionResetVersion, subscribeSessionReset } from '../../features/account/auth-client';
@@ -23,6 +25,12 @@ export function Studio({ onHome }: StudioProps) {
   const group = studioMenu.find(group => group.items.some(page => page.id === activePage));
   const page = group?.items.find(page => page.id === activePage);
   const Page = page?.component;
+  const fillHeightPage = activePage === 'daily';
+  const pageBody = (
+    <StudioContent account={account} resetVersion={resetVersion}>
+      {Page ? <Page /> : <Empty><EmptyHeader><EmptyMedia variant="icon"><UiIcon name="panels-top-left" className="size-6" /></EmptyMedia><EmptyTitle>Select a page</EmptyTitle><EmptyDescription>Choose a page from the sidebar to get started.</EmptyDescription></EmptyHeader></Empty>}
+    </StudioContent>
+  );
   return (
     <SidebarProvider className="h-dvh min-h-0 overflow-hidden" style={{ '--sidebar-width': 'calc(var(--spacing) * 72)', '--header-height': 'calc(var(--spacing) * 12)' } as CSSProperties}>
       <StudioSidebar onHome={onHome} access={access} sessionKey={sessionKey} activePage={activePage}
@@ -38,9 +46,11 @@ export function Studio({ onHome }: StudioProps) {
             </BreadcrumbList></Breadcrumb>
           </div>
         </header>
-        <StudioContent account={account} resetVersion={resetVersion}>
-          {Page ? <Page /> : <Empty><EmptyHeader><EmptyMedia variant="icon"><UiIcon name="panels-top-left" className="size-6" /></EmptyMedia><EmptyTitle>Select a page</EmptyTitle><EmptyDescription>Choose a page from the sidebar to get started.</EmptyDescription></EmptyHeader></Empty>}
-        </StudioContent>
+        <div className={cn('flex min-h-0 flex-1 flex-col', fillHeightPage && 'overflow-hidden')}>
+          {fillHeightPage
+            ? pageBody
+            : <ScrollArea className="min-h-0 flex-1">{pageBody}</ScrollArea>}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

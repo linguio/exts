@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'r
 import type { Updater } from '@tanstack/react-table';
 import { createQueryTableState, defaultFilterValues, queryTableReducer, toQueryTableRequest } from './state';
 import { runTableQuery } from './query-request';
+import { RowPreviewError, applyRowPreviewPatch, canApplyRowPreview } from './row-preview';
 import type { DataTableFilter, DataTableFilterValue, DataTableQuery, DataTableQueryFn, DataTableQueryResult } from './types';
 
 interface QueryResult<T> {
@@ -15,6 +16,8 @@ interface QueryResult<T> {
 export function useDataTableQuery<T>(filters: DataTableFilter[], queryFn: DataTableQueryFn<T>, enabled: boolean) {
   const [state, dispatch] = useReducer(queryTableReducer, filters, createQueryTableState);
   const [result, setResult] = useState<QueryResult<T>>();
+  const resultRef = useRef(result);
+  useEffect(() => { resultRef.current = result; }, [result]);
   const latestQuery = useRef(queryFn);
   useEffect(() => { latestQuery.current = queryFn; }, [queryFn]);
   const request = useMemo(() => toQueryTableRequest(state.query), [state.query]);
@@ -37,9 +40,19 @@ export function useDataTableQuery<T>(filters: DataTableFilter[], queryFn: DataTa
   const onQuery = useCallback(() => dispatch({ type: 'query' }), []);
   const onReset = () => dispatch({ type: 'reset', defaults: defaultFilterValues(filters) });
   const onRetry = useCallback(() => dispatch({ type: 'retry' }), []);
+  const refresh = useCallback(() => dispatch({ type: 'retry' }), []);
+  const loading = enabled && (result?.key !== key || result?.status === 'loading');
+  const applyRowPreview = useCallback((rowId: string, values: Record<string, unknown>, getRowId: (row: T) => string) => {
+    const snapshot = resultRef.current;
+    if (!canApplyRowPreview(snapshot, key, loading)) {
+      throw new RowPreviewError('Cannot apply preview to the current query result.');
+    }
+    const data = applyRowPreviewPatch(snapshot.data, rowId, values, getRowId);
+    setResult({ ...snapshot, data });
+  }, [key, loading]);
   return { query: state.query, draft: state.draft, data: result?.data,
-    loading: enabled && (result?.key !== key || result.status === 'loading'),
+    loading,
     error: enabled && result?.key === key ? result.error : undefined,
     idle: !enabled && result?.data === undefined,
-    onQueryChange, onFilterChange, onQuery, onReset, onRetry };
+    onQueryChange, onFilterChange, onQuery, onReset, onRetry, refresh, applyRowPreview };
 }

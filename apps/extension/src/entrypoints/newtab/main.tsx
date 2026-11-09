@@ -27,14 +27,7 @@ if (!container) {
   throw new Error('exts React 根节点不存在。');
 }
 
-if (import.meta.env.DEV && new URLSearchParams(location.search).has('table-demo')) {
-  // 仅开发模式加载通用组件示例，不进入正式导航和发布包。
-  void import('../../components/custom/data-table/example').then(({ default: Example }) => {
-    createRoot(container).render(<Example />);
-  });
-} else {
-  // 恢复本机位置后再挂载，避免先显示 Home 再跳到 Studio。
-  void readViewPreference().then(initialView => {
-    createRoot(container).render(<App initialView={initialView} />);
-  });
-}
+// 恢复本机位置后再挂载，避免先显示 Home 再跳到 Studio。
+void readViewPreference().then(initialView => {
+  createRoot(container).render(<App initialView={initialView} />);
+});
