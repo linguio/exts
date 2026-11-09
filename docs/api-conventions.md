@@ -9,7 +9,7 @@
 ## 方法与路径
 
 - 所有业务接口统一 POST，包含查询和未来新增、修改、删除操作；参数使用 application/json 请求体。查询使用 POST 不改变其只读语义。
-- 路径按模块及资源组织，使用 /api/<module>/<resource>。当前 Activity 查询为 POST /api/activity/days；当前不增加版本前缀，未来写接口路径随实际 Issue 设计，不提前创建占位接口。
+- 路径按模块及资源组织，使用 /api/<module>/<resource>。Activity 查询为 POST /api/activity/days，按记录 id 局部更新为 POST /api/activity/days/update；不增加版本前缀。
 - Settings 独立于用户资料：POST /api/settings/preferences 读取本人完整设置，POST /api/settings/preferences/update 每次只更新一个字段并返回完整设置。
 - 文档 GET /、/docs、/openapi.json 与内部任务 GET /internal/jobs/activity-days 保留原方法；内部任务使用独立服务端认证。第三方 OAuth/OIDC 等协议按其自身要求调用。
 
@@ -27,7 +27,8 @@
 - Activity 必须传 JSON 对象。pageIndex/pageSize 同传启用分页：页码从 0 开始，每页 1–100 条，仅接受整数；日期可选，支持单边筛选或不限定日期。不分页时省略两项，必须提供 startDate/endDate，匹配最多 500 条，超过返回 422，提示缩小日期范围或分页，不截断。日期含首尾，开始不得晚于结束；原无请求体或 {} 查询全部历史的契约已取消。
 - Activity sort 为有序数组，每项 {field,order}；field 仅接受 date、exerciseMinutes、readingMinutes、learningMinutes、creationMinutes、sleepMinutes，order 为 asc/desc，重复或非法字段/方向返回 422。数组先后代表优先级；省略或空数组默认 date desc，未包含 date 时追加 date desc。时长 NULL 无论升降序始终最后，0 正常参与比较。后端先筛选排序，再分页，计数与记录来自同一 SQL 快照。
 - 图表传完整日期范围及 sort:[{field:"date",order:"asc"}]，不传分页；Daily 传分页和用户排序。排序独立于分页。
-- Settings 读取使用空 JSON 对象；更新仅接受 theme、mediaDownload.enabled 或 historyCleaner.enabled 中的一项，不接收 userId。用户没有设置行时返回 system/false/false 默认值，首次成功更新时才建行；旧本地配置不迁移。
+- Activity 更新请求体为 {"id":"<记录 UUID>","changes":{...}}；changes 至少包含 exerciseMinutes、readingMinutes、learningMinutes、creationMinutes、sleepMinutes 中的一项，每项为 0 至 PostgreSQL INTEGER 上限的严格整数，拒绝 null、小数、布尔、字符串与未知字段；身份仅取自令牌，按 id 与 user_id 更新既有行，不创建、不修改日期。未命中本人记录返回 404 NOT_FOUND。同字段并发以后写为准，依赖数据库 UPDATE 行锁，无 version 或应用锁。
+- Settings 读取使用空 JSON 对象；更新仅接受 theme、mediaDownload.enabled 或 historyCleaner.enabled 中的一项，不接收 userId。用户没有设置行时返回 theme 默认值且 id 为 null，首次成功更新时才建行；已有行返回稳定 id。旧本地配置不迁移。
 
 ```json
 {"startDate":"2026-11-01","endDate":"2026-11-06","pageIndex":0,"pageSize":20,"sort":[{"field":"date","order":"desc"}]}
@@ -35,8 +36,8 @@
 
 ## 响应与异常
 
-- 成功响应统一 {"data": ...}；Activity 为 {"data":{"days":[...],"total":87,"pageIndex":0,"pageSize":20}}；total 为日期筛选后的本人记录总数，空页保留真实 total；不分页的 pageIndex/pageSize 为 null。每条记录包含 userId、date、exerciseMinutes、readingMinutes、learningMinutes、creationMinutes、sleepMinutes、createdAt、updatedAt。
-- Settings 读取与更新均返回 {"data":{"theme":"system","mediaDownload":{"enabled":false},"historyCleaner":{"enabled":false}}}；数据库使用 user_id 与独立列，本地副本另存当前 userId，不在接口返回中暴露。
+- 成功响应统一 {"data": ...}；Activity 查询为 {"data":{"days":[...],"total":87,"pageIndex":0,"pageSize":20}}；total 为日期筛选后的本人记录总数，空页保留真实 total；不分页的 pageIndex/pageSize 为 null。每条记录包含 id、userId、date、五项 camelCase 分钟字段、createdAt、updatedAt。Activity 更新成功返回单条同样结构的 data。
+- Settings 读取与更新均返回 {"data":{"id":null|"uuid","theme":"system","mediaDownload":{"enabled":false},"historyCleaner":{"enabled":false}}}；无持久化行时 id 为 null。数据库另以 user_id 维持每人一行语义，本地副本另存当前 userId。
 - 失败响应统一 {"error":{"code":"...","message":"...","requestId":"..."}}，同时保留真实 HTTP 状态；不使用 200 掩盖失败。X-Request-ID 与响应中的 requestId 对应。
 - 401 表示未登录或凭据失效，403 表示禁止访问，422 表示参数错误，500 表示未预期异常，503 表示依赖暂不可用。空记录返回成功空数组；连接失败不能返回空数据冒充成功。
 - NULL 表示未填写，0 表示明确为零；不把两者混同。服务端只返回已有记录，图表日期补齐和统计由前端执行。

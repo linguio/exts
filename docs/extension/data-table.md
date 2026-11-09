@@ -6,7 +6,7 @@
 
 普通业务表格的目标是仅提供字段、筛选、接口及必要资源元数据，查询与标准 CRUD 的共同流程只维护一份，强制边界见[配置驱动与单一维护原则](../table-conventions.md#配置驱动与单一维护原则)。
 
-扩展已提供 QueryDataTable 作为普通业务查询入口，复用现有 DataTable 渲染。Daily 已迁入该入口，查询走真实接口，编辑仅在当前响应行上临时预览；真实写接口仍待后续接入。以下 DataTable 低层 API 保留兼容，不代表每张业务表格都应重复实现查询流程。
+扩展已提供 QueryDataTable 作为普通业务查询入口，复用现有 DataTable 渲染。Daily 已迁入该入口：查询走真实接口，编辑通过 `updateFn` 调用 `POST /api/activity/days/update`，保存成功后 `refresh` 重新查询；时长输入仅接受 ASCII 数字，局部提交相对打开时发生变化的字段。以下 DataTable 低层 API 保留兼容，不代表每张业务表格都应重复实现查询流程。
 
 ## 位置与职责
 
@@ -36,7 +36,7 @@ const filters: DataTableFilter[] = [
 - queryFn 接收 {pageIndex,pageSize,sort,filters} 和 signal，返回 Promise<{rows,total}>。sort 已转换为有序 {field,order} 数组；filters 的键为 columnId，值为已经生效的筛选值。筛选不要求对应可见数据列。
 - queryFn 放在资源适配侧，只映射业务字段、调用已有接口并验证响应；将 signal 转交既有请求能力，不再创建表格 AbortController。调用方无需传 data/loading/error/rowCount/remote 或 Query/Reset 处理器。
 - queryFn 引用变化只更新下一次使用的函数，不因普通重渲染再次请求；资源含义变化必须使用 scopeKey，或明确点击 Query/Retry，不能仅靠替换函数引用隐式切换数据范围。
-- 资源侧确认可公开的错误使用公开 DataTableQueryError；未知异常统一显示 Failed to load records. Please retry.，不展示原始错误。公共层验证集合、总数及页记录数量的基本契约，记录内部安全分类日志。
+- 资源侧确认可公开的错误使用公开 DataTableQueryError；未知异常映射为共用安全文案，不展示原始连接细节。QueryDataTable 失败时表格 body 显示空数据，共用层通过右下角 Sonner `toast.error` 提示 **查询失败，请重试**，不在表格内嵌 Alert 或 Retry 按钮；用户通过 Query/Reset 或翻页/排序重新查询。公共层验证集合、总数及页记录数量的基本契约，记录内部安全分类日志。
 - 查询、重置、分页、排序、列显隐和 body 加载沿用仓库级规范。Retry 只重试已生效查询，不提交草稿。scopeKey 变化同步重建内容，取消旧请求，首帧不展示旧作用域数据。
 
 ### 内部职责
@@ -91,8 +91,7 @@ const [query, setQuery] = useState(initialQuery);
 <DataTable columns={columns} data={response.rows} getRowId={getRowId}
   caption="记录" filters={filters}
   remote={{ query, onQueryChange: setQuery, rowCount: response.total }}
-  loading={loading} hasPreviousResult={hasPreviousResult}
-  error={errorMessage} onRetry={reload} />
+  loading={loading} hasPreviousResult={hasPreviousResult} />
 ```
 
 - `query` 包含 `pagination: { pageIndex, pageSize }`、`sorting`、`columnFilters` 和 `globalFilter`。`pageIndex` 从 0 开始，`pageSize` 必须是正整数，`rowCount` 为筛选后的非负总条数；暂不支持未知总数的游标分页。
@@ -112,7 +111,7 @@ const [query, setQuery] = useState(initialQuery);
 
 - `selection` 默认关闭；开启后支持单行和当前页全选。前端模式可跨页累积选择，服务端模式只维护当前响应范围内的选择，不表达所有查询结果全选。
 - 数据引用、筛选、搜索、`selectionKey` 或选择开关变化时清空选择；服务端换页也清空。切换账号或其他数据作用域时更新 `selectionKey`。
-- `onSelectionChange(ids)` 返回稳定记录 ID；`bulkActions(ids, clear)` 返回业务操作控件，成功后由业务调用 `clear()`。加载或失败时隐藏批量操作。
+- `onSelectionChange(ids)` 返回稳定记录 ID；`bulkActions(ids, clear)` 返回业务操作控件，成功后由业务调用 `clear()`。加载时隐藏批量操作。
 - 满足编辑条件时 QueryDataTable 增加 Actions 列与 Edit 按钮；列显隐不改变编辑字段集合。`previewEdits` 时行预览只改匹配行、保留 total、不重排当前页，且在途或 key 不一致时拒绝补丁。有损关闭走 AlertDialog。
 
 ## 列 meta 配置
@@ -133,13 +132,13 @@ meta: {
 
 ## Daily 真实查询与行预览编辑
 
-- Daily 使用 QueryDataTable：`queryFn` 为 `queryDailyRecords`，`previewEdits` 显式开启，`fillRecords` 占 Studio 可用高度；`pageSizes` 为 20/50/100；筛选从 columns meta 推导，工具栏单行、窄屏横向滚动。
+- Daily 使用 QueryDataTable：`queryFn` 为 `queryDailyRecords`，`updateFn` 写入服务端，`partialUpdates` 只提交改动字段，`getRowId` 使用记录 `id`，`fillRecords` 占 Studio 可用高度；`pageSizes` 为 20/50/100；筛选从 columns meta 推导，工具栏单行、窄屏横向滚动。
 - 行末 Edit 打开共用 Sheet，日期只读，五项时长回填原始分钟。保存由共用层对当前响应行浅合并，不调用写接口、保存后不立即重新查询；下次 Query、翻页或刷新以接口数据为准。Daily 不传 `editDescription`，页面与 Sheet 内均无该英文说明；其他页面仍可按需传入。
 - `query.ts` 映射 date→startDate/endDate 与 Activity 响应；行预览逻辑在 `row-preview.ts` 与 `use-data-table-query`，不把第二数据源放进资源层。Daily 页 `p-4 md:p-6`；Studio 主内容 `overflow-auto`，非 Daily 页面正常整页滚动。
 - Daily 工具栏左侧日期条件，右侧为 ButtonGroup（Query 文字、Reset 图标）与紧邻独立的 Columns 图标菜单；Reset/Columns 带 Tooltip 与 aria-label。排序使用已有表头：普通点击切换单列，Shift 点击组合多列，沿用 TanStack 优先级与交互，不另设排序配置区。
 - 日期草稿点击 Query 后生效，保留当前排序并回首页；排序立即查询，但只使用已生效日期，保留草稿。翻页/每页条数使用已生效条件。
 - Reset 同时清空草稿与已生效日期、用户排序，回第一页并立即查询一次；保留每页条数和列显隐。初始化、重置和清空排序时，前端 sorting 为空，发送 sort:[]，由后端默认 date desc；默认日期不占用户排序优先级。手动选择时长时按用户顺序排序，由后端追加 date desc 作为末尾稳定条件；主动选择 Date 时按显式优先级参与。
-- 表头与内容默认居中，样式由 DataTable 组合层维护，官方 Table 原语保持不变。首次与刷新统一在整个 tbody 的水平/垂直中心显示官方 Spinner，首次保留表头与空白内容区，刷新保留同账号记录；不新增顶部行，不使用 Skeleton；失败 Alert 支持 Retry，不把失败当空结果；新请求取消旧请求且忽略迟到响应。会话重置由 Studio 内容边界重建 Daily。
+- 表头与内容默认居中，样式由 DataTable 组合层维护，官方 Table 原语保持不变。首次与刷新统一在整个 tbody 的水平/垂直中心显示官方 Spinner，首次保留表头与空白内容区，刷新保留同账号已有记录；不新增顶部行，不使用 Skeleton。查询失败显示空表格与业务 Empty，右下角 Toast 提示，Query/Reset 可重试；内部 `status: 'error'` 不把失败当成功空结果。新请求取消旧请求且忽略迟到响应。会话重置由 Studio 内容边界重建 Daily。
 - Daily 复用 remote 查询契约，由接口返回 rows/total，不对当前页再次排序或筛选。Home 图表仍使用真实接口、明确日期升序的不分页范围，并校验 total 等于记录数，拒绝不完整响应。
 
 ## 本次用户验收
@@ -150,7 +149,7 @@ meta: {
 4. 选择日期但不点 Query，修改排序应立即请求旧日期范围，日期输入保留；点击 Query 后使用新日期范围并回首页。
 5. 普通点击运动表头启用单列排序，再 Shift 点击阅读组合排序；检查顺序符合排序先后优先级，NULL 在最后、0 保持明确值。翻页与修改每页条数使用当前生效条件。分页底栏在常规宽度下为总数、每页条数、页码、跳转同行；窄屏空间不足时仅完整控件组换行，“每页”与选择器、输入框与跳转按钮不会拆开。
 6. 隐藏 Reading、改每页 50 并翻页，修改日期草稿后 Reset：日期清空、日期倒序和第一页恢复，每页 50 与隐藏列保留；Network 中只发生一次重置查询。
-7. 暂停 API 请求后 Query，看到失败和 Retry；恢复服务后重试；快速修改排序只展示最后一次响应。退出、换号及同账号重新登录不显示旧账号记录。
+7. 暂停 API 后 Query：表格为空、无内容区失败 Alert，右下角 Toast 提示；恢复后 Query/Reset 可重试；快速修改排序只展示最后一次响应。退出、换号及同账号重新登录不显示旧账号记录。
 8. 回 Home 查看 Calendar/Chart/Pie，确认日期范围完整、请求不带分页且 sort 为 date asc。使用接口工具验证非法排序/半组分页参数及未分页超过 500 条返回 422；恰好 500 条完整返回。大数据场景需要相应隔离夹具，不修改真实账号记录。
 9. 明暗主题、窄屏、多排序布局、Popover/Select/列显隐与焦点交互由用户实际验收；代理未执行这些检查。
 
@@ -181,7 +180,7 @@ meta: {
 3. 修改日期草稿不请求；普通点击时长表头立即请求旧的已生效日期；草稿保持。Query 后才提交新日期并回第一页。
 4. Shift 点击第二个时长列，按用户选择先后传 sort；翻页保持已生效筛选/排序，修改每页条数回首页；跳转只接受实际存在的页码。
 5. 隐藏一列、每页改为 50、翻页并修改草稿，再 Reset：恢复无日期和空用户排序、第一页，仅请求一次；保留 50 条及隐藏列。
-6. API 暂不可用时 Query，看到错误与 Retry；先编辑草稿再 Retry，仍重试上次生效条件。恢复 API 后再重试，成功显示记录；不会把失败当作成功空结果。
+6. API 暂不可用时 Query：空表格 + 右下角 Toast，工具栏仍可用；点 Query/Reset 重试上次生效条件（草稿不自动提交）。恢复后成功显示记录；失败不会冒充成功空结果。
 7. 快速连续查询/排序，最后一次请求生效；退出、换号或同账号重新登录后旧记录不再显示。真实生命周期与跨账号交互仍由用户在浏览器验收。
 8. 对照 daily/daily-records.tsx：应只剩 QueryDataTable 的配置和资源查询函数，查询 Effect、AbortController、手写工具栏及旧 daily/state.ts 已删除；公共流程位于 custom/data-table。
 9. 本次 Daily 实际使用日期筛选；文本/选项查询模式复用既有控件并有配置/状态检查，未新增第二个真实业务表格或执行浏览器视觉验收。

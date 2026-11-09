@@ -80,7 +80,6 @@ docs/
 
 ## 当前 Issue
 
-无。
 
 ## Issue 队列
 
@@ -91,6 +90,8 @@ docs/
 无。
 
 ## 已完成
+
+- [为业务记录补齐 ID 并接入 Daily 真实更新](./issues/2026-11-09-activity-days-update-issue.md) · [Commit 记录](./commits/2026-11-09-activity-days-update-commit.md)；用户批准代码与文档两笔本地提交完结。目标库两表 UUID ID 主键已迁移，Daily 真保存、数字输入和查询失败空表格与中文 Toast 已实现；相关检查通过。新 API 未部署，隔离库测试与 Chrome/Edge 验收未执行；未推送。
 
 - [通过 Daily 验证配置驱动的表格编辑](./issues/2026-11-09-extension-daily-sheet-edit-issue.md) · [Commit 记录](./commits/2026-11-09-extension-daily-sheet-edit-commit.md)；2026-11-09 用户验收通过并批准代码、文档两笔本地提交完结。真实接口记录临时编辑，默认每页 20 条；Daily 表格滚动分页、Query＋Reset 按钮组、独立 Columns、Edit Sheet 标题与 min 单位已交付，初始焦点落在标题。Cursor composer-2.5 同一会话实施、Codex 审查，相关逻辑测试、类型与构建通过；未推送或发布。
 
