@@ -64,6 +64,11 @@ export const productCategories: readonly ProductCategory[] = [
         description: '按变更影响范围选择必要检查，复用仍有效的验证结果，本地提交不重复运行测试或构建。',
         links: [{ label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/.agents/skills/workflow-tests' }],
       },
+      {
+        name: 'workflow-cursor',
+        description: '将已批准的开发范围交接给 Cursor Agent CLI 串行实施，并由 Codex 审查实际变更与验证结果。',
+        links: [{ label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/.agents/skills/workflow-cursor' }],
+      },
     ],
   },
 ];
