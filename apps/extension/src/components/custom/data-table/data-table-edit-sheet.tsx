@@ -24,6 +24,7 @@ interface DataTableEditSheetProps<T> {
   getRowId: (row: T) => string;
   onSaved: () => void;
   editDescription?: string;
+  partialUpdates?: boolean;
 }
 
 function buildDraft<T>(row: T, fields: DataTableEditFieldDefinition[]): Record<string, string> {
@@ -32,7 +33,8 @@ function buildDraft<T>(row: T, fields: DataTableEditFieldDefinition[]): Record<s
 }
 
 /** 配置驱动的行编辑 Sheet；共用层维护草稿、校验、防重与放弃确认。 */
-export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, updateFn, getRowId, onSaved, editDescription }: DataTableEditSheetProps<T>) {
+export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, updateFn, getRowId, onSaved, editDescription,
+  partialUpdates = false }: DataTableEditSheetProps<T>) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const fieldPrefix = useId();
   const displayFields = useMemo(() => editFieldsFromColumns(columns), [columns]);
@@ -40,6 +42,7 @@ export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, update
   const { beginSubmit, endSubmit, cancelSubmit, isSubmitting } = useDataTableEditLifecycle();
   const [draft, setDraft] = useState<Record<string, string>>({});
   const [baseline, setBaseline] = useState('');
+  const [baselineDraft, setBaselineDraft] = useState<Record<string, string>>({});
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [discardOpen, setDiscardOpen] = useState(false);
@@ -52,6 +55,7 @@ export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, update
     if (!open || !row) return;
     const next = buildDraft(row, displayFields);
     setDraft(next);
+    setBaselineDraft(next);
     setBaseline(JSON.stringify(next));
     setFieldErrors({});
     setSubmitting(false);
@@ -81,9 +85,14 @@ export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, update
   async function handleSave(event: FormEvent) {
     event.preventDefault();
     if (!row || isSubmitting()) return;
-    const { values, errors } = validateEditDraft(writableFields, draft);
+    const { values, errors } = validateEditDraft(writableFields, draft,
+      partialUpdates ? { baseline: baselineDraft, partial: true } : undefined);
     setFieldErrors(errors);
     if (Object.keys(errors).length) return;
+    if (partialUpdates && !Object.keys(values).length) {
+      toast.error('No changes to save.');
+      return;
+    }
     const controller = beginSubmit();
     setSubmitting(true);
     try {
@@ -138,7 +147,11 @@ export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, update
                   'aria-required': required || undefined,
                   'aria-invalid': error ? true as const : undefined,
                   'aria-describedby': error ? errorId : undefined,
-                  onChange: (event: ChangeEvent<HTMLInputElement>) => setDraft(previous => ({ ...previous, [field.id]: event.target.value })),
+                  onChange: (event: ChangeEvent<HTMLInputElement>) => {
+                    let next = event.target.value;
+                    if (field.config.type === 'integer' && field.config.digitsOnly) next = next.replace(/\D/g, '');
+                    setDraft(previous => ({ ...previous, [field.id]: next }));
+                  },
                 };
                 return <Field key={field.id} data-invalid={error ? true : undefined}>
                   <label className="text-sm font-medium" htmlFor={inputId}>

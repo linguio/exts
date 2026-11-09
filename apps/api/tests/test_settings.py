@@ -40,12 +40,12 @@ class SettingsTests(unittest.TestCase):
             result = service.read(USER_ID, None)
         read.assert_called_once_with(None, USER_ID)
         self.assertEqual(result.model_dump(by_alias=True), {
-            'theme': 'system', 'mediaDownload': {'enabled': False},
+            'id': None, 'theme': 'system', 'mediaDownload': {'enabled': False},
             'historyCleaner': {'enabled': False},
         })
 
     def test_one_field_update_keeps_other_settings(self):
-        row = {'theme': 'dark', 'media_download_enabled': True, 'history_cleaner_enabled': False}
+        row = {'id': USER_ID, 'theme': 'dark', 'media_download_enabled': True, 'history_cleaner_enabled': False}
         with patch('modules.settings.repository.save', return_value=row) as save:
             result = service.save(USER_ID, PreferencesPatch.model_validate({'theme': 'dark'}), None)
         save.assert_called_once_with(None, USER_ID, 'theme', 'dark')

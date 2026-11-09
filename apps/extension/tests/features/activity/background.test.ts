@@ -70,6 +70,21 @@ it('拒绝非法日期，取消仅影响同一发送页面的在途请求', asyn
   await vi.waitFor(() => expect(respond).toHaveBeenLastCalledWith(expect.objectContaining({ ok: false, error: expect.objectContaining({ code: 'CANCELLED' }) })));
 });
 
+it('更新请求只转发 id 与 changes，非法参数不请求 HTTP', async () => {
+  const { listener, sender, fetcher } = setup();
+  const respond = vi.fn();
+  listener({ type: 'exts:activity', action: 'update', requestId: 'update-1', userId: 'user-1',
+    id: '00000000-0000-4000-8000-000000000010', changes: { exerciseMinutes: 30 } }, sender, respond);
+  await vi.waitFor(() => expect(fetcher).toHaveBeenCalledTimes(1));
+  expect(fetcher.mock.calls[0]![0]).toMatchObject({ url: 'http://127.0.0.1:8000/api/activity/days/update', method: 'POST' });
+  expect(await (fetcher.mock.calls[0]![0] as Request).clone().json()).toEqual({
+    id: '00000000-0000-4000-8000-000000000010', changes: { exerciseMinutes: 30 },
+  });
+  listener({ type: 'exts:activity', action: 'update', requestId: 'update-2', userId: 'user-1', id: 'bad', changes: {} }, sender, respond);
+  expect(respond).toHaveBeenLastCalledWith(expect.objectContaining({ ok: false }));
+  expect(fetcher).toHaveBeenCalledTimes(1);
+});
+
 it('分页与多字段排序只转发白名单业务参数，非法参数不请求 HTTP', async () => {
   const { listener, sender, fetcher } = setup();
   const respond = vi.fn();

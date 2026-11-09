@@ -5,7 +5,7 @@ from psycopg import Connection, sql
 from core.database import read_rows
 
 
-_FIELDS = ('theme', 'media_download_enabled', 'history_cleaner_enabled')
+_FIELDS = ('id', 'theme', 'media_download_enabled', 'history_cleaner_enabled')
 _SELECT = sql.SQL('SELECT {} FROM public.user_settings WHERE user_id = %s').format(
     sql.SQL(', ').join(sql.Identifier(field) for field in _FIELDS)
 )

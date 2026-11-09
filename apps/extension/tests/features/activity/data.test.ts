@@ -5,7 +5,7 @@ import { localDateKey } from '../../../src/features/activity/data/date';
 import { createActivityTrend } from '../../../src/features/activity/data/summary';
 
 const period = { startDate: '2026-11-01', endDate: '2026-11-06' };
-const day = { userId: 'user-1', date: '2026-11-02', exerciseMinutes: null, readingMinutes: 0,
+const day = { id: '00000000-0000-4000-8000-000000000010', userId: 'user-1', date: '2026-11-02', exerciseMinutes: null, readingMinutes: 0,
   learningMinutes: 60, creationMinutes: null, sleepMinutes: null,
   createdAt: '2026-11-02T00:00:00+08:00', updatedAt: '2026-11-02T09:00:00+08:00' };
 

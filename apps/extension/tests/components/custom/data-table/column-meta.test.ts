@@ -68,6 +68,20 @@ it('edit.unit 仅展示，不参与整数解析与 payload', () => {
   expect(result.values).toEqual({ exerciseMinutes: 12 });
 });
 
+it('partial 与 rejectEmptyIfChanged 只提交改动且禁止清空已改字段', () => {
+  const columns: ColumnDef<Row>[] = [{ accessorKey: 'exerciseMinutes', header: 'Exercise',
+    meta: { dataTable: { edit: { type: 'integer', min: 0, emptyAsNull: true, rejectEmptyIfChanged: true } } } },
+  { accessorKey: 'readingMinutes', header: 'Reading',
+    meta: { dataTable: { edit: { type: 'integer', min: 0, emptyAsNull: true } } } }];
+  const fields = writableEditFieldsFromColumns(columns);
+  const baseline = { exerciseMinutes: '10', readingMinutes: '' };
+  const changed = validateEditDraft(fields, { exerciseMinutes: '12', readingMinutes: '' }, { baseline, partial: true });
+  expect(changed.values).toEqual({ exerciseMinutes: 12 });
+  const cleared = validateEditDraft(fields, { exerciseMinutes: '', readingMinutes: '' }, { baseline, partial: true });
+  expect(cleared.errors.exerciseMinutes).toBeTruthy();
+  expect(cleared.values).toEqual({});
+});
+
 it('只读字段不进入可写 payload', () => {
   const columns: ColumnDef<Row>[] = [
     { accessorKey: 'date', header: 'Date', meta: { dataTable: { edit: { type: 'text', readOnly: true } } } },

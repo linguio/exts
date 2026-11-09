@@ -20,7 +20,7 @@ function resolveFilters<T>(columns: ColumnDef<T, any>[], filterOverride: DataTab
   return filtersFromColumns(columns);
 }
 
-function QueryDataTableContent<T>({ columns, filters: filterOverride, queryFn, updateFn, previewEdits = false, getRowId, caption,
+function QueryDataTableContent<T>({ columns, filters: filterOverride, queryFn, updateFn, partialUpdates = false, previewEdits = false, getRowId, caption,
   enabled = true, showCaption = true, emptyContent, editDescription, headerNote, fillRecords = false, pageSizes }: QueryDataTableProps<T>) {
   const filters = useMemo(() => resolveFilters(columns, filterOverride), [columns, filterOverride]);
   const { applyRowPreview, refresh, ...queryState } = useDataTableQuery(filters, queryFn, enabled);
@@ -39,9 +39,9 @@ function QueryDataTableContent<T>({ columns, filters: filterOverride, queryFn, u
   const tableColumns = useMemo((): ColumnDef<T, any>[] => {
     if (!showEdit) return columns;
     return [...columns, { id: '__actions', header: 'Actions', enableHiding: false, enableSorting: false, enableGlobalFilter: false,
-      cell: ({ row }) => <Button type="button" variant="outline" size="sm" disabled={queryState.loading || !!queryState.error}
+      cell: ({ row }) => <Button type="button" variant="outline" size="sm" disabled={queryState.loading}
         onClick={() => setEditingRow(row.original)}>Edit</Button> }];
-  }, [columns, queryState.error, queryState.loading, showEdit]);
+  }, [columns, queryState.loading, showEdit]);
 
   const content = <>
     {headerNote
@@ -50,12 +50,12 @@ function QueryDataTableContent<T>({ columns, filters: filterOverride, queryFn, u
         : <div className="mb-3">{headerNote}</div>)
       : null}
     {showEdit && <DataTableEditSheet open={!!editingRow} row={editingRow} columns={columns} getRowId={getRowId}
-      updateFn={commitRowUpdate} editDescription={editDescription}
+      updateFn={commitRowUpdate} editDescription={editDescription} partialUpdates={partialUpdates && !!updateFn}
       onOpenChange={open => { if (!open) setEditingRow(null); }}
       onSaved={handleSaved} />}
     <DataTable columns={tableColumns} data={queryState.data?.rows ?? noRows} getRowId={getRowId}
       caption={caption} showCaption={showCaption} search={false} fillRecords={fillRecords} pageSizes={pageSizes}
-      loading={queryState.loading} hasPreviousResult={queryState.data !== undefined} error={queryState.error} onRetry={queryState.onRetry}
+      loading={queryState.loading} hasPreviousResult={queryState.hasPreviousResult}
       emptyContent={queryState.idle ? <span className="sr-only">Query is not enabled</span> : emptyContent}
       remote={{ query: queryState.query, onQueryChange: queryState.onQueryChange, rowCount: queryState.data?.total ?? 0 }}
       toolbar={table => <DataTableToolbar table={table} filters={filters} search={false} visibility disabled={!enabled} singleRow={fillRecords}

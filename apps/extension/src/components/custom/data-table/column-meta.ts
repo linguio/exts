@@ -32,6 +32,11 @@ export interface DataTableIntegerEditRules {
   min?: number;
   max?: number;
   emptyAsNull?: boolean;
+  /** 输入过程只保留 ASCII 数字，用于粘贴过滤。 */
+  digitsOnly?: boolean;
+  /** 与 baseline 比较已改动时，不允许保存为空。 */
+  rejectEmptyIfChanged?: boolean;
+  emptyChangedMessage?: string;
   invalidMessage?: string;
   minMessage?: string;
   maxMessage?: string;
@@ -164,17 +169,36 @@ export function formatEditDraftValue(config: DataTableColumnEditMeta, raw: unkno
   return raw === null || raw === undefined ? '' : String(raw);
 }
 
-export function validateEditDraft(fields: DataTableEditFieldDefinition[], draft: Record<string, string>): {
+export interface ValidateEditDraftOptions {
+  baseline?: Record<string, string>;
+  partial?: boolean;
+}
+
+export function validateEditDraft(fields: DataTableEditFieldDefinition[], draft: Record<string, string>,
+  options?: ValidateEditDraftOptions): {
   values: Record<string, unknown>;
   errors: Record<string, string>;
 } {
   const values: Record<string, unknown> = {};
   const errors: Record<string, string> = {};
+  const baseline = options?.baseline;
+  const partial = options?.partial;
   for (const field of fields) {
     if (!isWritableEditField(field.config)) continue;
-    const result = parseEditFieldValue(field.config, draft[field.id] ?? '');
+    const draftValue = draft[field.id] ?? '';
+    if (partial && baseline && draftValue === (baseline[field.id] ?? '')) continue;
+    if (configIsInteger(field.config) && field.config.rejectEmptyIfChanged && baseline
+      && draftValue !== (baseline[field.id] ?? '') && !draftValue.trim()) {
+      errors[field.id] = field.config.emptyChangedMessage ?? field.config.invalidMessage ?? 'Enter a whole number.';
+      continue;
+    }
+    const result = parseEditFieldValue(field.config, draftValue);
     if (result.error) errors[field.id] = result.error;
     else if ('value' in result) values[field.id] = result.value;
   }
   return { values, errors };
+}
+
+function configIsInteger(config: DataTableColumnEditMeta): config is { type: 'integer' } & DataTableIntegerEditRules {
+  return config.type === 'integer';
 }

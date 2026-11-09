@@ -32,8 +32,6 @@ export interface DataTableProps<T> {
   bulkActions?: (ids: string[], clear: () => void) => ReactNode;
   loading?: boolean;
   hasPreviousResult?: boolean;
-  error?: string;
-  onRetry?: () => void;
   remote?: { query: DataTableQuery; onQueryChange: OnChangeFn<DataTableQuery>; rowCount: number };
   /** Daily 等页面：在父级 flex 高度链内占满剩余空间，记录区 ScrollArea 纵向滚动，分页保持可见。 */
   fillRecords?: boolean;
@@ -69,6 +67,8 @@ export interface QueryDataTableProps<T> {
   filters?: DataTableFilter[];
   queryFn: DataTableQueryFn<T>;
   updateFn?: DataTableUpdateFn<T>;
+  /** 保存时仅提交相对打开时草稿发生变化的字段。 */
+  partialUpdates?: boolean;
   /** 显式启用当前响应行预览编辑；默认 false，不与 updateFn 隐式混用。 */
   previewEdits?: boolean;
   getRowId: (row: T) => string;

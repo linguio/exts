@@ -16,7 +16,7 @@ it('资源适配仅映射业务日期和已标准化排序，不再持有查询�
 });
 
 it('通过已有消息请求转交取消信号，校验后统一返回 rows 和 total', async () => {
-  const day = { userId: 'user-1', date: '2026-11-02', exerciseMinutes: null, readingMinutes: 0,
+  const day = { id: '00000000-0000-4000-8000-000000000010', userId: 'user-1', date: '2026-11-02', exerciseMinutes: null, readingMinutes: 0,
     learningMinutes: 60, creationMinutes: null, sleepMinutes: null,
     createdAt: '2026-11-02T00:00:00+08:00', updatedAt: '2026-11-02T09:00:00+08:00' };
   vi.mocked(requestActivity).mockResolvedValue({ days: [day], total: 1, pageIndex: 0, pageSize: 20 });

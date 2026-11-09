@@ -11,9 +11,14 @@ const durationEdit = {
   type: 'integer' as const,
   unit: 'min',
   min: 0,
+  max: 2147483647,
   emptyAsNull: true,
+  digitsOnly: true,
+  rejectEmptyIfChanged: true,
   invalidMessage: 'Enter a whole number of minutes.',
+  emptyChangedMessage: 'Enter a whole number of minutes.',
   minMessage: 'Minutes cannot be negative.',
+  maxMessage: 'Minutes cannot exceed 2,147,483,647.',
 };
 
 export const dailyColumns: ColumnDef<DailyActivityRow>[] = [

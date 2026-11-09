@@ -2,9 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnDef, type Updater } from '@tanstack/react-table';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, TableCaption } from '../../ui/table';
 import { Checkbox } from '../../ui/checkbox';
-import { Button } from '../../ui/button';
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription } from '../../ui/empty';
-import { Alert, AlertTitle, AlertDescription } from '../../ui/alert';
 import { Spinner } from '../../ui/spinner';
 import { ScrollArea } from '../../ui/scroll-area';
 import { cn } from '../../../lib/utils';
@@ -16,7 +14,7 @@ import type { DataTableProps, DataTableQuery, RowSelectionState } from './types'
 
 export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCaption = true, filters = [], search = true, multiSort = true,
   columnVisibility = true, pageSizes = [20, 50, 100], selection = false, selectionKey, onSelectionChange, bulkActions,
-  loading = false, hasPreviousResult = false, error, onRetry, remote, showPagination = true, emptyContent, fillRecords = false }: DataTableProps<T>) {
+  loading = false, hasPreviousResult = false, remote, showPagination = true, emptyContent, fillRecords = false }: DataTableProps<T>) {
   const [localQuery, setLocalQuery] = useState(initialQuery);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const query = remote?.query ?? localQuery;
@@ -39,11 +37,11 @@ export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCa
     });
     const result = configure(columns);
     if (selection) result.unshift({ id: '__selection', enableHiding: false, enableSorting: false, enableGlobalFilter: false,
-      header: ({ table }) => <Checkbox aria-label="选择当前页全部记录" checked={table.getIsAllPageRowsSelected() ? true : table.getIsSomePageRowsSelected() ? 'indeterminate' : false} disabled={loading || !!error || !table.getRowModel().rows.length} onCheckedChange={value => table.toggleAllPageRowsSelected(value === true)} />,
-      cell: ({ row }) => <Checkbox aria-label={`选择记录 ${row.id}`} checked={row.getIsSelected()} disabled={loading || !!error} onCheckedChange={value => row.toggleSelected(value === true)} />,
+      header: ({ table }) => <Checkbox aria-label="选择当前页全部记录" checked={table.getIsAllPageRowsSelected() ? true : table.getIsSomePageRowsSelected() ? 'indeterminate' : false} disabled={loading || !table.getRowModel().rows.length} onCheckedChange={value => table.toggleAllPageRowsSelected(value === true)} />,
+      cell: ({ row }) => <Checkbox aria-label={`选择记录 ${row.id}`} checked={row.getIsSelected()} disabled={loading} onCheckedChange={value => row.toggleSelected(value === true)} />,
     });
     return result;
-  }, [columns, filters, selection, loading, error]);
+  }, [columns, filters, selection, loading]);
   const table = useReactTable({ data, columns: resolvedColumns, getRowId,
     state: { ...query, rowSelection }, onPaginationChange: update => change('pagination', update),
     onSortingChange: update => change('sorting', update), onColumnFiltersChange: update => change('columnFilters', update),
@@ -56,13 +54,13 @@ export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCa
   });
   const pages = table.getPageCount();
   useEffect(() => {
-    if (!loading && !error && query.pagination.pageIndex > Math.max(0, pages - 1)) {
+    if (!loading && query.pagination.pageIndex > Math.max(0, pages - 1)) {
       queryChange(previous => ({ ...previous, pagination: { ...previous.pagination, pageIndex: Math.max(0, pages - 1) } }));
     }
-  }, [pages, query.pagination.pageIndex, loading, error, queryChange]);
+  }, [pages, query.pagination.pageIndex, loading, queryChange]);
   const selected = Object.keys(rowSelection).filter(id => rowSelection[id]);
   const filtered = !!query.globalFilter || query.columnFilters.length > 0;
-  const busy = loading || !!error;
+  const busy = loading;
   const columnCount = Math.max(1, table.getVisibleLeafColumns().length);
   const headerClassName = fillRecords ? 'sticky top-0 z-10 bg-background [&_th]:bg-background' : undefined;
   const tableBlock = <div className="overflow-hidden rounded-md border"><Table aria-label={caption}>{showCaption && <TableCaption>{caption}</TableCaption>}
@@ -82,11 +80,9 @@ export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCa
   return <section className={cn(fillRecords ? 'flex min-h-0 flex-1 flex-col gap-4' : 'space-y-4')} aria-label={caption} aria-busy={loading}>
     {toolbarBlock}
     {selection && selected.length > 0 && <div className={cn('flex flex-wrap items-center gap-2', fillRecords && 'shrink-0')}><span>已选择 {selected.length} 条</span>{!busy && bulkActions?.(selected, () => setRowSelection({}))}</div>}
-    {error
-      ? <Alert className={fillRecords ? 'shrink-0' : undefined}><AlertTitle>查询失败</AlertTitle><AlertDescription><p>{error}</p>{onRetry && <Button type="button" variant="outline" onClick={onRetry} disabled={loading}>重试</Button>}</AlertDescription></Alert>
-      : fillRecords
-        ? <ScrollArea className="min-h-0 flex-1">{tableBlock}</ScrollArea>
-        : tableBlock}
+    {fillRecords
+      ? <ScrollArea className="min-h-0 flex-1">{tableBlock}</ScrollArea>
+      : tableBlock}
     {showPagination && <div className={cn(fillRecords && 'shrink-0')}><DataTablePagination table={table} pageSizes={pageSizes} disabled={busy} /></div>}
   </section>;
 }

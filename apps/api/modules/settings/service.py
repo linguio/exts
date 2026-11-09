@@ -8,8 +8,9 @@ from modules.settings.schemas import FeatureSetting, Preferences, PreferencesPat
 
 def _preferences(row: dict | None) -> Preferences:
     if row is None:
-        return Preferences()
+        return Preferences(id=None)
     return Preferences(
+        id=row['id'],
         theme=row['theme'],
         media_download=FeatureSetting(enabled=row['media_download_enabled']),
         history_cleaner=FeatureSetting(enabled=row['history_cleaner_enabled']),

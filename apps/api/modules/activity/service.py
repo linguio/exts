@@ -8,7 +8,7 @@ from core.responses import ApiError
 from core.config import BUSINESS_ZONE
 from core.database import connection
 from modules.activity import repository
-from modules.activity.schemas import ActivityDay, ActivityDays, DateRange, UNPAGED_LIMIT
+from modules.activity.schemas import ActivityDay, ActivityDayUpdate, ActivityDays, DateRange, UNPAGED_LIMIT
 
 
 def read_days(user_id: UUID, period: DateRange, database: Connection) -> ActivityDays:
@@ -26,3 +26,22 @@ def ensure_today() -> int:
     today = datetime.now(BUSINESS_ZONE).date()
     with connection(readonly=False) as database:
         return repository.create_daily_rows(database, today)
+
+
+CHANGE_FIELD_COLUMNS = {
+    'exercise_minutes': 'exercise_minutes',
+    'reading_minutes': 'reading_minutes',
+    'learning_minutes': 'learning_minutes',
+    'creation_minutes': 'creation_minutes',
+    'sleep_minutes': 'sleep_minutes',
+}
+
+
+def update_day(user_id: UUID, body: ActivityDayUpdate, database: Connection) -> ActivityDay:
+    columns = {column: getattr(body.changes, field)
+               for field, column in CHANGE_FIELD_COLUMNS.items()
+               if field in body.changes.model_fields_set}
+    row = repository.update_user_day(database, user_id, body.id, columns)
+    if row is None:
+        raise ApiError(404, 'NOT_FOUND', '记录不存在')
+    return ActivityDay.model_validate(row)

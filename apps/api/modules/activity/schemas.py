@@ -50,6 +50,7 @@ class DateRange(BaseModel):
 class ActivityDay(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
+    id: UUID
     user_id: UUID = Field(alias='userId')
     date: date
     exercise_minutes: int | None = Field(alias='exerciseMinutes', ge=0)
@@ -67,3 +68,41 @@ class ActivityDays(BaseModel):
     total: int = Field(ge=0)
     page_index: int | None = Field(default=None, alias='pageIndex')
     page_size: int | None = Field(default=None, alias='pageSize')
+
+
+POSTGRES_INTEGER_MAX = 2147483647
+
+
+class ActivityDayChanges(BaseModel):
+    model_config = ConfigDict(extra='forbid', populate_by_name=True)
+
+    exercise_minutes: int | None = Field(default=None, alias='exerciseMinutes', ge=0, le=POSTGRES_INTEGER_MAX, strict=True)
+    reading_minutes: int | None = Field(default=None, alias='readingMinutes', ge=0, le=POSTGRES_INTEGER_MAX, strict=True)
+    learning_minutes: int | None = Field(default=None, alias='learningMinutes', ge=0, le=POSTGRES_INTEGER_MAX, strict=True)
+    creation_minutes: int | None = Field(default=None, alias='creationMinutes', ge=0, le=POSTGRES_INTEGER_MAX, strict=True)
+    sleep_minutes: int | None = Field(default=None, alias='sleepMinutes', ge=0, le=POSTGRES_INTEGER_MAX, strict=True)
+
+    @field_validator('exercise_minutes', 'reading_minutes', 'learning_minutes', 'creation_minutes', 'sleep_minutes',
+                     mode='before')
+    @classmethod
+    def strict_integers(cls, value):
+        if value is None:
+            return None
+        if isinstance(value, bool) or not isinstance(value, int):
+            raise ValueError('时长必须是整数')
+        return value
+
+    @model_validator(mode='after')
+    def at_least_one_change(self):
+        if not self.model_fields_set:
+            raise ValueError('至少需要一项变更')
+        if any(getattr(self, field) is None for field in self.model_fields_set):
+            raise ValueError('时长不能为 null')
+        return self
+
+
+class ActivityDayUpdate(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+
+    id: UUID
+    changes: ActivityDayChanges

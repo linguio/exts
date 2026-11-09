@@ -18,10 +18,14 @@ export interface ActivityDay {
 
 /** Daily 列使用现有接口的业务字段；未填写与明确为零保持区分。 */
 export interface DailyActivityRow {
+  id: string;
+  userId: string;
   date: string;
   exerciseMinutes: number | null;
   readingMinutes: number | null;
   learningMinutes: number | null;
   creationMinutes: number | null;
   sleepMinutes: number | null;
+  createdAt: string;
+  updatedAt: string;
 }

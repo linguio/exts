@@ -1,4 +1,5 @@
 from typing import Literal
+from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, model_validator
 
@@ -15,6 +16,7 @@ class FeatureSetting(BaseModel):
 class Preferences(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
+    id: UUID | None = None
     theme: Theme = 'system'
     media_download: FeatureSetting = Field(default_factory=lambda: FeatureSetting(enabled=False), alias='mediaDownload')
     history_cleaner: FeatureSetting = Field(default_factory=lambda: FeatureSetting(enabled=False), alias='historyCleaner')

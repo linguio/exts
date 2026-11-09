@@ -36,8 +36,8 @@ class DocumentationTests(unittest.TestCase):
         response = self.client.get("/openapi.json")
         self.assertEqual(response.status_code, 200)
         schema = response.json()
-        self.assertEqual(set(schema['paths']), {'/api/activity/days', '/api/settings/preferences',
-                                               '/api/settings/preferences/update'})
+        self.assertEqual(set(schema['paths']), {'/api/activity/days', '/api/activity/days/update',
+                                               '/api/settings/preferences', '/api/settings/preferences/update'})
         operation = schema['paths']['/api/activity/days']['post']
         self.assertNotIn('parameters', operation)
         self.assertTrue(operation['requestBody'].get('required', False))
@@ -45,9 +45,21 @@ class DocumentationTests(unittest.TestCase):
         period = schema['components']['schemas']['DateRange']
         self.assertEqual(set(period['properties']), {'startDate', 'endDate', 'pageIndex', 'pageSize', 'sort'})
         self.assertFalse(period.get('required'))
+        update = schema['paths']['/api/activity/days/update']['post']
+        self.assertNotIn('parameters', update)
+        self.assertTrue(update['requestBody'].get('required', False))
+        self.assertIn('application/json', update['requestBody']['content'])
+        update_body = schema['components']['schemas']['ActivityDayUpdate']
+        self.assertEqual(set(update_body['properties']), {'id', 'changes'})
+        self.assertEqual(set(update_body['required']), {'id', 'changes'})
+        changes = schema['components']['schemas']['ActivityDayChanges']
+        self.assertEqual(set(changes['properties']),
+                         {'exerciseMinutes', 'readingMinutes', 'learningMinutes', 'creationMinutes', 'sleepMinutes'})
         self.assertEqual(self.client.get('/api/activity/days').status_code, 405)
+        self.assertEqual(self.client.get('/api/activity/days/update').status_code, 405)
         self.assertIn('securitySchemes', schema['components'])
         self.assertEqual(operation['security'], [{'HTTPBearer': []}])
+        self.assertEqual(update['security'], [{'HTTPBearer': []}])
         self.assertNotIn("API_ACCESS_TOKEN", schema["info"]["description"])
 
     def test_documented_example_uses_actual_response_model_and_nullable_values(self):

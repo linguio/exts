@@ -13,7 +13,6 @@ SORT_COLUMNS = {
     'learningMinutes': 'learning_minutes', 'creationMinutes': 'creation_minutes', 'sleepMinutes': 'sleep_minutes',
 }
 
-
 def read_user_days(database: Connection, user_id: UUID, query: DateRange) -> tuple[list[dict], int] | None:
     conditions = [sql.SQL('days.user_id = request_user.id')]
     parameters = [user_id]
@@ -57,3 +56,19 @@ def create_daily_rows(database: Connection, day: date) -> int:
            SELECT id, %s FROM neon_auth."user"
            ON CONFLICT (user_id, date) DO NOTHING''', (day,),
     ).rowcount
+
+
+def update_user_day(database: Connection, user_id: UUID, record_id: UUID, changes: dict[str, int]) -> dict | None:
+    if not changes:
+        return None
+    assignments = sql.SQL(', ').join(
+        sql.SQL('{} = %s').format(sql.Identifier(column))
+        for column in changes
+    )
+    query = sql.SQL('''
+        UPDATE public.activity_daily_records AS days SET {}
+        WHERE days.id = %s AND days.user_id = %s
+        RETURNING days.*
+    ''').format(assignments)
+    row = database.execute(query, [*changes.values(), record_id, user_id]).fetchone()
+    return dict(row) if row else None

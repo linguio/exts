@@ -97,5 +97,5 @@ it('未知异常不泄漏原始文案，明确的业务安全错误才展示', a
   const failure = vi.fn();
   runTableQuery(async () => { throw new Error('private database token'); }, request, vi.fn(), failure);
   await Promise.resolve();
-  expect(failure).toHaveBeenCalledWith(expect.objectContaining({ message: 'Failed to load records. Please retry.' }));
+  expect(failure).toHaveBeenCalledWith(expect.objectContaining({ message: '查询失败，请重试' }));
 });

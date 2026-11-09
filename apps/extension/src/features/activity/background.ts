@@ -1,7 +1,8 @@
 import { ApiRequestError, createApiClient, type ApiSession } from '../../api/client';
 import { resolveApiBaseUrl } from '../../api/config';
-import { getActivityDays } from '../../api/activity';
+import { getActivityDays, updateActivityDay } from '../../api/activity';
 import { validActivityQuery } from './data/query';
+import { validActivityDayUpdate } from './data/update-validation';
 import type { SessionReset } from '../account/session-reset';
 
 export function registerActivity(getSession: () => Promise<ApiSession>, api: typeof chrome = chrome, session?: SessionReset) {
@@ -25,6 +26,33 @@ export function registerActivity(getSession: () => Promise<ApiSession>, api: typ
       pending.get(key)?.abort();
       respond({ ok: true });
       return;
+    }
+    if (message.action === 'update') {
+      if (pending.has(key) || typeof message.userId !== 'string'
+        || !validActivityDayUpdate(message as Record<string, unknown>)) {
+        respond({ ok: false, error: { code: 'INVALID_REQUEST', message: '活动更新参数无效' } });
+        return;
+      }
+      if (session && !session.accepts(message.generation)) {
+        respond({ ok: false, error: { code: 'SESSION_CHANGED', message: '账号已变更' } });
+        return;
+      }
+      const generation = session?.generation;
+      const controller = new AbortController();
+      pending.set(key, controller);
+      void updateActivityDay(client, message.id, message.changes, message.userId, controller.signal).then(
+        () => respond(generation && !session?.isCurrent(generation)
+          ? { ok: false, error: { code: 'SESSION_CHANGED', message: '账号已变更' } } : { ok: true }),
+        error => {
+          if (generation && !session?.isCurrent(generation)) {
+            respond({ ok: false, error: { code: 'SESSION_CHANGED', message: '账号已变更' } });
+            return;
+          }
+          const safe = error instanceof ApiRequestError ? error : new ApiRequestError('REQUEST_FAILED', '活动请求失败');
+          if (safe.code !== 'CANCELLED') console.error('Activity 更新失败', { code: safe.code, status: safe.status, requestId: safe.requestId });
+          respond({ ok: false, error: { code: safe.code, message: safe.message, status: safe.status, requestId: safe.requestId } });
+        }).finally(() => pending.delete(key));
+      return true;
     }
     if (message.action !== 'get' || !validActivityQuery(message) || typeof message.userId !== 'string' || pending.has(key)) {
       respond({ ok: false, error: { code: 'INVALID_REQUEST', message: '活动请求参数无效' } });

@@ -12,7 +12,7 @@ from app import app
 from core.auth import CurrentUser, get_token_user, get_user_database
 from core.responses import ApiError
 from modules.activity import service
-from modules.activity.schemas import ActivityDays, DateRange
+from modules.activity.schemas import ActivityDay, ActivityDays, DateRange
 
 
 class ActivityAccessTests(unittest.TestCase):
@@ -45,7 +45,7 @@ class ActivityQueryTests(unittest.TestCase):
         app.dependency_overrides.clear()
 
     def test_query_passes_current_user_and_returns_daily_data_with_metadata(self):
-        row = dict(user_id=self.user_id, date='2026-11-01', exercise_minutes=0, reading_minutes=None,
+        row = dict(id='00000000-0000-4000-8000-000000000010', user_id=self.user_id, date='2026-11-01', exercise_minutes=0, reading_minutes=None,
                    learning_minutes=60, creation_minutes=None, sleep_minutes=330,
                    created_at='2026-11-06T08:00:00+08:00', updated_at='2026-11-06T09:00:00+08:00')
         with patch.object(
@@ -57,7 +57,7 @@ class ActivityQueryTests(unittest.TestCase):
         self.assertEqual(str(query.call_args.args[2].start_date), '2026-11-01')
         self.assertEqual(str(query.call_args.args[2].end_date), '2026-11-06')
         self.assertEqual(response.json(), {'data': {'total': 1, 'pageIndex': None, 'pageSize': None, 'days': [{
-            'date': '2026-11-01', 'exerciseMinutes': 0, 'readingMinutes': None,
+            'id': '00000000-0000-4000-8000-000000000010', 'date': '2026-11-01', 'exerciseMinutes': 0, 'readingMinutes': None,
             'learningMinutes': 60, 'creationMinutes': None, 'sleepMinutes': 330,
             'userId': str(self.user_id), 'createdAt': '2026-11-06T08:00:00+08:00',
             'updatedAt': '2026-11-06T09:00:00+08:00',
@@ -105,7 +105,64 @@ class ActivityQueryTests(unittest.TestCase):
         self.assertEqual(response.json()['error']['requestId'], response.headers['x-request-id'])
 
 
+class ActivityUpdateTests(unittest.TestCase):
+    def setUp(self):
+        self.user_id = UUID('00000000-0000-4000-8000-000000000001')
+        self.record_id = UUID('00000000-0000-4000-8000-000000000010')
+        app.dependency_overrides[get_token_user] = lambda: CurrentUser(self.user_id)
+        app.dependency_overrides[get_user_database] = lambda: object()
+        self.client = TestClient(app)
+
+    def tearDown(self):
+        app.dependency_overrides.clear()
+
+    def test_update_passes_user_and_returns_record(self):
+        row = dict(id=self.record_id, user_id=self.user_id, date='2026-11-01', exercise_minutes=30, reading_minutes=None,
+                   learning_minutes=60, creation_minutes=None, sleep_minutes=330,
+                   created_at='2026-11-06T08:00:00+08:00', updated_at='2026-11-06T09:30:00+08:00')
+        with patch.object(service, 'update_day', return_value=ActivityDay.model_validate(row)) as update:
+            response = self.client.post('/api/activity/days/update',
+                                        json={'id': str(self.record_id), 'changes': {'exerciseMinutes': 30}})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(update.call_args.args[0], self.user_id)
+        self.assertEqual(response.json()['data']['exerciseMinutes'], 30)
+
+    def test_invalid_payload_never_calls_service(self):
+        with patch.object(service, 'update_day') as update:
+            for payload in ({'changes': {'exerciseMinutes': 1}},
+                            {'id': str(self.record_id), 'changes': {}},
+                            {'id': str(self.record_id), 'changes': {'exerciseMinutes': None}},
+                            {'id': str(self.record_id), 'changes': {'exerciseMinutes': 1.5}},
+                            {'id': str(self.record_id), 'changes': {'exerciseMinutes': -1}},
+                            {'id': str(self.record_id), 'changes': {'date': '2026-11-01'}}):
+                with self.subTest(payload=payload):
+                    response = self.client.post('/api/activity/days/update', json=payload)
+                    self.assertEqual(response.status_code, 422)
+                    self.assertEqual(response.json()['error']['code'], 'INVALID_REQUEST')
+            update.assert_not_called()
+
+    def test_missing_record_returns_not_found(self):
+        with patch.object(service, 'update_day', side_effect=ApiError(404, 'NOT_FOUND', '记录不存在')):
+            response = self.client.post('/api/activity/days/update',
+                                        json={'id': str(self.record_id), 'changes': {'exerciseMinutes': 0}})
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()['error']['code'], 'NOT_FOUND')
+
+
 class ActivityRepositoryTests(unittest.TestCase):
+    def test_update_applies_partial_columns_and_requires_owner(self):
+        user_id = UUID('00000000-0000-4000-8000-000000000001')
+        record_id = UUID('00000000-0000-4000-8000-000000000010')
+        database = MagicMock()
+        database.execute.return_value.fetchone.return_value = {
+            'id': record_id, 'user_id': user_id, 'date': '2026-11-01', 'exercise_minutes': 30,
+        }
+        row = service.repository.update_user_day(database, user_id, record_id, {'exercise_minutes': 30})
+        self.assertEqual(row['exercise_minutes'], 30)
+        database.execute.assert_called_once()
+        database.execute.return_value.fetchone.return_value = None
+        self.assertIsNone(service.repository.update_user_day(database, user_id, record_id, {'exercise_minutes': 1}))
+
     def test_missing_user_empty_dates_and_real_rows_remain_distinct(self):
         user_id = UUID('00000000-0000-4000-8000-000000000001')
         record = {'total': 1, 'date': '2026-11-01', 'exercise_minutes': 0, 'reading_minutes': None}
