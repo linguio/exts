@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [更新官网 Activity 编辑日志与产品版本](./issues/2026-11-10-website-activity-editing-changelog-issue.md) · [Commit 记录](./commits/2026-11-10-website-activity-editing-changelog-commit.md)；2026-11-10 用户验收通过并批准代码、文档两笔本地提交完结。官网 Changelog 新增 Extension、API、Skills 三标签 Activity 编辑记录，产品版本更新为 2.2.0；官网类型检查受本机依赖 DNS 失败阻断，未推送或部署。
+
 - [统一提示反馈并修复 Daily 保存校验](./issues/2026-11-09-extension-toast-daily-validation-issue.md) · [Commit 记录](./commits/2026-11-09-extension-toast-daily-validation-commit.md)；2026-11-10 用户验收通过并批准代码、文档两笔本地提交完结。右下角 Toast 统一英文、复制及点击隔离；Daily 以 0.5 小时步进保存，API、图表及数据库 `*_hours` 列已对齐，修复读取响应校验 500；未推送或部署。
 
 - [为业务记录补齐 ID 并接入 Daily 真实更新](./issues/2026-11-09-activity-days-update-issue.md) · [Commit 记录](./commits/2026-11-09-activity-days-update-commit.md)；用户批准代码与文档两笔本地提交完结。目标库两表 UUID ID 主键已迁移，Daily 真保存、数字输入和查询失败空表格与中文 Toast 已实现；相关检查通过。新 API 未部署，隔离库测试与 Chrome/Edge 验收未执行；未推送。
