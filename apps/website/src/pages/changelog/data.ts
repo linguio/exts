@@ -13,6 +13,21 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'activity-editing-workflow-v220',
+    date: '2026-11-10',
+    title: '完善 Activity 编辑与开发工作流',
+    groups: [{
+      platform: 'Extension',
+      changes: ['优化表格编辑组件与右侧 Sheet 表单。'],
+    }, {
+      platform: 'API',
+      changes: ['新增 Activity 日记录更新接口。'],
+    }, {
+      platform: 'Skills',
+      changes: ['新增 Cursor 串行开发工作流，由 Codex 负责规划与验证，Cursor 执行实现。'],
+    }],
+  },
+  {
     id: 'daily-activity-query-v210',
     date: '2026-11-09',
     title: '新增 Daily 活动记录查询',
