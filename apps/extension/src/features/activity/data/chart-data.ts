@@ -1,7 +1,7 @@
 import { parseActivityDays } from './response';
 import type { ActivityPeriod } from '../../../api/activity';
 import { localDateKey, activityToday } from './date';
-import type { ActivityRecords, GrowthMinutes } from './types';
+import type { ActivityRecords, GrowthHours } from './types';
 
 export type ActivityView = 'calendar' | 'chart' | 'pie';
 
@@ -12,17 +12,17 @@ export function activityPeriod(view: ActivityView, today = activityToday()): Act
 }
 
 const growthFields = [
-  ['exerciseMinutes', 'exercise'], ['readingMinutes', 'reading'],
-  ['learningMinutes', 'learning'], ['creationMinutes', 'creation'],
+  ['exerciseHours', 'exercise'], ['readingHours', 'reading'],
+  ['learningHours', 'learning'], ['creationHours', 'creation'],
 ] as const;
 
 export function activityRecords(data: unknown, userId: string, period: ActivityPeriod): ActivityRecords {
   const response = parseActivityDays(data, userId, period);
-  const records: Record<string, { growth: GrowthMinutes; sleepMinutes?: number }> = {};
+  const records: Record<string, { growth: GrowthHours; sleepHours?: number }> = {};
   for (const day of response.days) {
-    const growth: GrowthMinutes = {};
+    const growth: GrowthHours = {};
     for (const [field, key] of growthFields) if (day[field] !== null) growth[key] = day[field];
-    records[day.date] = { growth, ...(day.sleepMinutes !== null ? { sleepMinutes: day.sleepMinutes } : {}) };
+    records[day.date] = { growth, ...(day.sleepHours !== null ? { sleepHours: day.sleepHours } : {}) };
   }
   return records;
 }

@@ -1,8 +1,8 @@
 export type GrowthKey = 'exercise' | 'reading' | 'learning' | 'creation';
-export type GrowthMinutes = Partial<Record<GrowthKey, number>>;
+export type GrowthHours = Partial<Record<GrowthKey, number>>;
 export interface ActivityRecord {
-  growth?: GrowthMinutes;
-  sleepMinutes?: number;
+  growth?: GrowthHours;
+  sleepHours?: number;
 }
 export type ActivityRecords = Readonly<Record<string, ActivityRecord>>;
 
@@ -10,8 +10,8 @@ export interface ActivityDay {
   date: string;
   label: string;
   weekday: number;
-  minutes: number;
-  growth: GrowthMinutes;
+  hours: number;
+  growth: GrowthHours;
   level: 0 | 1 | 2 | 3 | 4;
   isFuture: boolean;
 }
@@ -21,11 +21,11 @@ export interface DailyActivityRow {
   id: string;
   userId: string;
   date: string;
-  exerciseMinutes: number | null;
-  readingMinutes: number | null;
-  learningMinutes: number | null;
-  creationMinutes: number | null;
-  sleepMinutes: number | null;
+  exerciseHours: number | null;
+  readingHours: number | null;
+  learningHours: number | null;
+  creationHours: number | null;
+  sleepHours: number | null;
   createdAt: string;
   updatedAt: string;
 }

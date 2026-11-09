@@ -23,13 +23,13 @@ export function ActivityCalendar({ days }: { days: ActivityDay[] }) {
             key={day.date}
             role="img"
             aria-label={description}
-            tabIndex={day.minutes > 0 ? 0 : undefined}
+            tabIndex={day.hours > 0 ? 0 : undefined}
             className="block size-3 rounded-[2px] outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
             style={{ backgroundColor: `var(--activity-level-${day.level})` }}
           />
         );
 
-        if (day.minutes === 0) return cell;
+        if (day.hours === 0) return cell;
 
         return (
           <Tooltip key={day.date} disableHoverableContent>
@@ -40,7 +40,7 @@ export function ActivityCalendar({ days }: { days: ActivityDay[] }) {
                 active
                 label={day.date.slice(5)}
                 payload={growthCategories.map(item => ({ graphicalItemId: item.key, name: item.key, dataKey: item.key, value: day.growth[item.key] ?? 0, color: item.color }))}
-                formatter={(value, name) => <ActivityTooltipValue name={String(name)} minutes={Number(value)} />}
+                formatter={(value, name) => <ActivityTooltipValue name={String(name)} hours={Number(value)} />}
               />
             </TooltipContent>
           </Tooltip>

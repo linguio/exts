@@ -50,11 +50,10 @@ class DocumentationTests(unittest.TestCase):
         self.assertTrue(update['requestBody'].get('required', False))
         self.assertIn('application/json', update['requestBody']['content'])
         update_body = schema['components']['schemas']['ActivityDayUpdate']
-        self.assertEqual(set(update_body['properties']), {'id', 'changes'})
-        self.assertEqual(set(update_body['required']), {'id', 'changes'})
-        changes = schema['components']['schemas']['ActivityDayChanges']
-        self.assertEqual(set(changes['properties']),
-                         {'exerciseMinutes', 'readingMinutes', 'learningMinutes', 'creationMinutes', 'sleepMinutes'})
+        self.assertEqual(set(update_body['properties']),
+                         {'id', 'exerciseHours', 'readingHours', 'learningHours', 'creationHours', 'sleepHours'})
+        self.assertEqual(set(update_body['required']), {'id'})
+        self.assertNotIn('ActivityDayDurations', schema['components']['schemas'])
         self.assertEqual(self.client.get('/api/activity/days').status_code, 405)
         self.assertEqual(self.client.get('/api/activity/days/update').status_code, 405)
         self.assertIn('securitySchemes', schema['components'])
@@ -73,5 +72,5 @@ class DocumentationTests(unittest.TestCase):
         self.assertEqual(parsed.model_dump(mode='json', by_alias=True), example)
         self.assertEqual(set(example['data']['days'][0]),
                          {field.alias or name for name, field in ActivityDay.model_fields.items()})
-        empty_day = {**example['data']['days'][0], 'exerciseMinutes': None, 'creationMinutes': None}
-        self.assertIsNone(ActivityDay.model_validate(empty_day).exercise_minutes)
+        empty_day = {**example['data']['days'][0], 'exerciseHours': None, 'creationHours': None}
+        self.assertIsNone(ActivityDay.model_validate(empty_day).exercise_hours)

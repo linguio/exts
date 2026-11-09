@@ -58,7 +58,7 @@ export function ActivityDataProvider({ children }: { children: ReactNode }) {
         status: error instanceof ApiRequestError ? error.status : undefined,
         requestId: error instanceof ApiRequestError ? error.requestId : undefined,
       });
-      toast.error('加载失败');
+      toast.error('Unable to load activity data.');
     });
     return () => controller.abort();
   }, [userId, view, resetVersion]);

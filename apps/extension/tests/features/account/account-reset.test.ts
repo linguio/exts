@@ -63,13 +63,13 @@ it('主动登录先清理旧本地状态，再建立新会话；恢复状态不�
   const nextSender = { ...sender, documentId: 'new-document' };
   const failed = await new Promise<any>(resolve => listener({ type: 'exts:account', action: 'login',
     generation: session.generation }, nextSender, resolve));
-  expect(failed).toEqual({ ok: false, error: '本地状态清理失败，请重试' });
+  expect(failed).toEqual({ ok: false, error: 'Local state cleanup failed. Please try again.' });
   expect(fixture.manager.signinPopup).toHaveBeenCalledTimes(attempts);
 
   fixture.authStorage.clear.mockClear();
   fixture.manager.signinPopup.mockRejectedValueOnce(new Error('cancelled'));
   const cancelled = await new Promise<any>(resolve => listener({ type: 'exts:account', action: 'login', generation: session.generation },
     { ...sender, documentId: 'third-document' }, resolve));
-  expect(cancelled).toEqual({ ok: false, error: '已取消登录' });
+  expect(cancelled).toEqual({ ok: false, error: 'Sign-in cancelled.' });
   expect(fixture.authStorage.clear).toHaveBeenCalledTimes(2);
 });

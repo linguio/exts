@@ -58,7 +58,7 @@ export function MediaDownloadSettings() {
         <Switch checked={enabled} disabled={busy} aria-labelledby={`${id}-label`} aria-describedby={`${id}-description`} onCheckedChange={next => {
           setBusy(true);
           setUnavailable(false);
-          void mediaDownloadSetting().set(next).then(() => { setEnabled(next); toast.success('已保存'); })
+          void mediaDownloadSetting().set(next).then(() => { setEnabled(next); toast.success(settingsMessages.saved); })
             .catch(() => {
               setUnavailable(true);
               toast.error(settingsMessages.saveFailed);

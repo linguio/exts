@@ -14,18 +14,17 @@ export function createActivityCalendar(records: ActivityRecords, today: Date): A
     const isFuture = key > todayKey;
     const growth = isFuture ? {} : (records[key]?.growth ?? {});
     const values = Object.values(growth);
-    const minutes = values.reduce((sum, value) => sum + value, 0);
-    const level = values.filter(value => value >= 30).length as ActivityDay['level'];
+    const hours = values.reduce((sum, value) => sum + value, 0);
+    const level = values.filter(value => value >= 0.5).length as ActivityDay['level'];
 
     return {
       date: key,
       label: `${key.slice(5)} · ${weekdays[date.getDay()]}`,
       weekday: date.getDay(),
-      minutes,
+      hours,
       growth,
       level,
       isFuture,
     };
   });
 }
-

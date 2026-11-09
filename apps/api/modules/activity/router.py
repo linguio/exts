@@ -13,8 +13,8 @@ router = APIRouter(prefix='/api/activity', tags=['Activity'])
 example_response = Success[ActivityDays](data=ActivityDays(total=1, page_index=0, page_size=20, days=[ActivityDay(
     id='00000000-0000-4000-8000-000000000010',
     user_id='00000000-0000-4000-8000-000000000001', date='2026-11-06',
-    exercise_minutes=30, reading_minutes=0, learning_minutes=60,
-    creation_minutes=0, sleep_minutes=330,
+    exercise_hours=0.5, reading_hours=0, learning_hours=1,
+    creation_hours=0, sleep_hours=5.5,
     created_at='2026-11-06T00:00:00+08:00', updated_at='2026-11-06T09:00:00+08:00',
 )])).model_dump(mode='json', by_alias=True)
 
@@ -35,8 +35,8 @@ def activity_days(user: Annotated[CurrentUser, Depends(get_token_user)],
 update_example = Success[ActivityDay](data=ActivityDay(
     id='00000000-0000-4000-8000-000000000010',
     user_id='00000000-0000-4000-8000-000000000001', date='2026-11-06',
-    exercise_minutes=30, reading_minutes=0, learning_minutes=60,
-    creation_minutes=0, sleep_minutes=330,
+    exercise_hours=0.5, reading_hours=0, learning_hours=1,
+    creation_hours=0, sleep_hours=5.5,
     created_at='2026-11-06T00:00:00+08:00', updated_at='2026-11-06T09:30:00+08:00',
 )).model_dump(mode='json', by_alias=True)
 
@@ -47,7 +47,7 @@ update_example = Success[ActivityDay](data=ActivityDay(
                       'content': {'application/json': {'example': update_example}}},
             },
             summary='更新当前用户的每日活动记录',
-            description='仅允许按记录 id 局部更新五项时长；身份取自令牌，不接受 userId。至少一项变更，每项为 0 至 INTEGER 上限的非负整数，拒绝 null、小数与其它字段。')
+            description='仅允许按记录 id 局部更新五项时长；身份取自令牌，不接受 userId。至少一项变更，每项为非负且 0.5 倍数的小时数，拒绝 null、非半小时小数与其它字段。')
 def activity_days_update(payload: ActivityDayUpdate,
                          user: Annotated[CurrentUser, Depends(get_token_user)],
                          database: Annotated[Connection, Depends(get_user_database, scope='function')]):

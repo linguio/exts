@@ -28,8 +28,8 @@ class ActivityPaginationTests(unittest.TestCase):
     def test_range_and_unbounded_paged_query_are_supported(self):
         self.assertIsNone(DateRange.model_validate({'startDate': '2026-01-01', 'endDate': '2026-11-08'}).page_index)
         query = DateRange.model_validate({'pageIndex': 0, 'pageSize': 20, 'sort': [
-            {'field': 'readingMinutes', 'order': 'desc'}, {'field': 'date', 'order': 'asc'}]})
-        self.assertEqual([item.field for item in query.sort], ['readingMinutes', 'date'])
+            {'field': 'readingHours', 'order': 'desc'}, {'field': 'date', 'order': 'asc'}]})
+        self.assertEqual([item.field for item in query.sort], ['readingHours', 'date'])
 
     def test_empty_out_of_range_page_retains_total(self):
         query = DateRange.model_validate({'pageIndex': 9, 'pageSize': 20})

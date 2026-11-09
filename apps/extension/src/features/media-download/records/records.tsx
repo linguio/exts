@@ -61,7 +61,7 @@ export function DownloadsPanel() {
     try {
       await clearDownloads(filter);
       setConfirmOpen(false);
-    } catch (error) { toast.error(error instanceof Error ? error.message : '下载记录清空失败'); }
+    } catch (error) { toast.error(error instanceof Error ? error.message : 'Unable to clear download history.'); }
     finally { setClearing(false); }
   };
 
@@ -81,7 +81,7 @@ export function DownloadsPanel() {
         </ToggleGroup>
         <div className="flex items-center gap-1">
           <NamedTooltip label={`打开 ${folders[filter]} 文件夹`} suppressed={confirmOpen}>
-            <Button type="button" variant="ghost" size="icon-sm" aria-label={`打开 ${folders[filter]} 文件夹`} onClick={() => toast.info('暂无法打开文件夹，尚未接入 Exts Desktop')}>
+            <Button type="button" variant="ghost" size="icon-sm" aria-label={`Open ${folders[filter]} folder`} onClick={() => toast.info('Folders are not available yet. Exts Desktop is not connected.')}>
               <UiIcon name="folder-open" className="size-4" />
             </Button>
           </NamedTooltip>

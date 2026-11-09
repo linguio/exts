@@ -97,16 +97,16 @@ export function registerAccount(api: typeof chrome = chrome, session?: SessionRe
   }) : null;
   api.runtime.onMessage.addListener((message, sender, respond) => {
     if (message?.type !== 'exts:account' && message?.type !== 'exts:session:generation') return;
-    if (sender.id !== api.runtime.id || sender.url?.split('?')[0] !== api.runtime.getURL('newtab.html')) { respond({ ok: false, error: '账户请求来源无效' }); return; }
+    if (sender.id !== api.runtime.id || sender.url?.split('?')[0] !== api.runtime.getURL('newtab.html')) { respond({ ok: false, error: 'Account requests must come from the extension new tab.' }); return; }
     if (message.type === 'exts:session:generation') { respond({ ok: true, generation: session?.generation }); return; }
     const action = message.action;
-    if (!['get', 'login', 'logout'].includes(action)) { respond({ ok: false, error: '未知账户操作' }); return; }
+    if (!['get', 'login', 'logout'].includes(action)) { respond({ ok: false, error: 'Unknown account action.' }); return; }
     if (session && action !== 'get' && !session.accepts(message.generation)) {
-      respond({ ok: false, error: '会话已变更，请重试' }); return;
+      respond({ ok: false, error: 'Session changed. Please try again.' }); return;
     }
     const provider = message.provider ?? 'github';
-    if (action === 'login' && provider !== 'github' && provider !== 'google') { respond({ ok: false, error: '未知登录提供方' }); return; }
-    if (!controller) { respond(action === 'get' ? { ok: true, user: null, generation: session?.generation } : { ok: false, error: '尚未配置 OIDC Client ID，请先完成 Neon 配置并重新构建' }); return; }
+    if (action === 'login' && provider !== 'github' && provider !== 'google') { respond({ ok: false, error: 'Unknown sign-in provider.' }); return; }
+    if (!controller) { respond(action === 'get' ? { ok: true, user: null, generation: session?.generation } : { ok: false, error: 'OIDC is not configured. Set up Neon and rebuild the extension.' }); return; }
     if (action === 'get' && session?.resetting) { respond({ ok: true, user: null, generation: session.generation }); return; }
     let resetStarted = false;
     let resetStage: 'cleanup' | 'auth' = 'cleanup';
@@ -143,7 +143,7 @@ export function registerAccount(api: typeof chrome = chrome, session?: SessionRe
       if (action === 'get') {
         const expired = error instanceof AccountSessionExpiredError;
         console.error('Studio 账户状态读取失败', { category: expired ? 'session-expired' : 'request-failed' });
-        respond({ ok: false, code: expired ? 'session-expired' : 'state-unavailable', error: expired ? '登录已失效，请重新登录' : '暂时无法确认账户状态，请重试' });
+        respond({ ok: false, code: expired ? 'session-expired' : 'state-unavailable', error: expired ? 'Session expired. Please sign in again.' : 'Unable to verify account status. Please try again.' });
         return;
       }
       if (resetStarted) void api.runtime.sendMessage({ type: 'exts:account:changed', reset: true, resetDelayMs: 1500,
@@ -151,8 +151,8 @@ export function registerAccount(api: typeof chrome = chrome, session?: SessionRe
       const cancelled = error instanceof Error && /cancel|closed|did not approve/i.test(error.message);
       console.error('Studio OIDC 操作失败', { action, category: cancelled ? 'cancelled' : 'request-failed' });
       respond({ ok: false, error: action === 'logout'
-        ? '退出未完成，请重试'
-        : (resetStage === 'cleanup' ? '本地状态清理失败，请重试' : cancelled ? '已取消登录' : '认证请求失败，请重试并检查 OAuth Provider 配置') });
+        ? 'Sign-out did not complete. Please try again.'
+        : (resetStage === 'cleanup' ? 'Local state cleanup failed. Please try again.' : cancelled ? 'Sign-in cancelled.' : 'Authentication failed. Check your OAuth provider configuration and try again.') });
     });
     return true;
   });

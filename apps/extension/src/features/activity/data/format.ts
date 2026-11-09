@@ -1,11 +1,11 @@
-function activityHours(minutes: number) {
-  return String(Number((minutes / 60).toFixed(1)));
+function formatHourAmount(hours: number) {
+  return String(Number(hours.toFixed(1)));
 }
 
-export function formatActivityDuration(minutes: number) {
-  return `${activityHours(minutes)}h`;
+export function formatActivityDuration(hours: number) {
+  return `${formatHourAmount(hours)}h`;
 }
 
-export function formatActivityProgress(minutes: number, percent: number, goal?: number) {
-  return `${Math.round(percent)}% / ${formatActivityDuration(goal ?? minutes)}`;
+export function formatActivityProgress(hours: number, percent: number, goal?: number) {
+  return `${Math.round(percent)}% / ${formatActivityDuration(goal ?? hours)}`;
 }

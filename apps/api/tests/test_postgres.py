@@ -20,6 +20,20 @@ TEST_URL = os.environ.get('API_TEST_DATABASE_URL')
 USER_A = UUID('00000000-0000-4000-8000-000000000001')
 USER_B = UUID('00000000-0000-4000-8000-000000000002')
 
+HOUR_COLUMNS = ('exercise', 'reading', 'learning', 'creation', 'sleep')
+
+
+def align_activity_hour_columns(database):
+    """测试库将迁移创建的 INTEGER *_minutes 转为浮点并重命名为 *_hours，模拟生产列名，事务回滚。"""
+    for name in HOUR_COLUMNS:
+        column = f'{name}_minutes'
+        database.execute(f'''
+            ALTER TABLE public.activity_daily_records
+            ALTER COLUMN {column} TYPE DOUBLE PRECISION
+            USING CASE WHEN {column} IS NULL THEN NULL ELSE {column}::double precision END
+        ''')
+        database.execute(f'ALTER TABLE public.activity_daily_records RENAME COLUMN {column} TO {name}_hours')
+
 
 @unittest.skipUnless(TEST_URL, '未配置显式隔离 PostgreSQL 测试库，不写入现有 Neon 数据库')
 class PostgresTests(unittest.TestCase):
@@ -39,16 +53,17 @@ class PostgresTests(unittest.TestCase):
         self.database.execute('INSERT INTO neon_auth."user" VALUES (%s), (%s)', (USER_A, USER_B))
         for migration in load_migrations():
             self.database.execute(migration.sql)
+        align_activity_hour_columns(self.database)
 
     def test_daily_job_is_idempotent_and_queries_are_isolated(self):
         day = date(2026, 11, 6)
         self.assertEqual(create_daily_rows(self.database, day), 2)
         self.database.execute(
-            'UPDATE public.activity_daily_records SET exercise_minutes=30 WHERE user_id=%s', (USER_A,),
+            'UPDATE public.activity_daily_records SET exercise_hours=0.5 WHERE user_id=%s', (USER_A,),
         )
         self.assertEqual(create_daily_rows(self.database, day), 0)
-        self.assertEqual(read_user_days(self.database, USER_A, DateRange.model_validate({'startDate': str(day), 'endDate': str(day)}))[0][0]['exercise_minutes'], 30)
-        self.assertIsNone(read_user_days(self.database, USER_B, DateRange.model_validate({'startDate': str(day), 'endDate': str(day)}))[0][0]['exercise_minutes'])
+        self.assertEqual(read_user_days(self.database, USER_A, DateRange.model_validate({'startDate': str(day), 'endDate': str(day)}))[0][0]['exercise_hours'], 0.5)
+        self.assertIsNone(read_user_days(self.database, USER_B, DateRange.model_validate({'startDate': str(day), 'endDate': str(day)}))[0][0]['exercise_hours'])
         self.assertEqual(read_user_days(self.database, USER_A, DateRange.model_validate({'startDate': '2026-11-07', 'endDate': '2026-11-07'})), ([], 0))
         create_daily_rows(self.database, date(2026, 11, 7))
         self.assertEqual(len(read_user_days(self.database, USER_A, DateRange.model_validate({'pageIndex': 0, 'pageSize': 20}))[0]), 2)
@@ -57,13 +72,13 @@ class PostgresTests(unittest.TestCase):
         self.assertIsNone(read_user_days(self.database, UUID('00000000-0000-4000-8000-000000000003'), DateRange.model_validate({'pageIndex': 0, 'pageSize': 20})))
 
     def test_sort_priority_nulls_totals_and_empty_pages(self):
-        for day, exercise, reading in [('2026-11-01', 30, 20), ('2026-11-02', 30, 50),
-                                       ('2026-11-03', 60, 0), ('2026-11-04', None, None)]:
+        for day, exercise, reading in [('2026-11-01', 0.5, 0.5), ('2026-11-02', 0.5, 1),
+                                       ('2026-11-03', 1, 0), ('2026-11-04', None, None)]:
             self.database.execute(
-                'INSERT INTO public.activity_daily_records (user_id,date,exercise_minutes,reading_minutes) VALUES (%s,%s,%s,%s)',
+                'INSERT INTO public.activity_daily_records (user_id,date,exercise_hours,reading_hours) VALUES (%s,%s,%s,%s)',
                 (USER_A, day, exercise, reading))
         payload = {'pageIndex': 0, 'pageSize': 2, 'sort': [
-            {'field': 'exerciseMinutes', 'order': 'desc'}, {'field': 'readingMinutes', 'order': 'desc'}]}
+            {'field': 'exerciseHours', 'order': 'desc'}, {'field': 'readingHours', 'order': 'desc'}]}
         rows, total = read_user_days(self.database, USER_A, DateRange.model_validate(payload))
         self.assertEqual(total, 4)
         self.assertEqual([str(row['date']) for row in rows], ['2026-11-03', '2026-11-02'])
@@ -71,7 +86,7 @@ class PostgresTests(unittest.TestCase):
         self.assertEqual([str(row['date']) for row in rows], ['2026-11-01', '2026-11-04'])
         self.assertEqual(read_user_days(self.database, USER_A, DateRange.model_validate({**payload, 'pageIndex': 2})), ([], 4))
         rows, _ = read_user_days(self.database, USER_A, DateRange.model_validate({**payload, 'pageSize': 20,
-            'sort': [{'field': 'exerciseMinutes', 'order': 'asc'}]}))
+            'sort': [{'field': 'exerciseHours', 'order': 'asc'}]}))
         self.assertEqual([str(row['date']) for row in rows], ['2026-11-02', '2026-11-01', '2026-11-03', '2026-11-04'])
 
     def test_unpaged_500_records_succeed_and_501_are_rejected(self):
@@ -90,7 +105,7 @@ class PostgresTests(unittest.TestCase):
         day = date(2026, 11, 6)
         create_daily_rows(self.database, day)
         with self.assertRaises(psycopg.errors.CheckViolation), self.database.transaction():
-            self.database.execute('UPDATE public.activity_daily_records SET sleep_minutes=-1')
+            self.database.execute('UPDATE public.activity_daily_records SET sleep_hours=-1')
         with self.assertRaises(psycopg.errors.ForeignKeyViolation), self.database.transaction():
             self.database.execute('INSERT INTO public.activity_daily_records(user_id,date) VALUES (%s,%s)',
                                   (UUID('00000000-0000-4000-8000-000000000003'), day))
@@ -101,24 +116,24 @@ class PostgresTests(unittest.TestCase):
             'SELECT created_at,updated_at FROM public.activity_daily_records WHERE user_id=%s', (USER_A,),
         ).fetchone()
         self.assertEqual(row['updated_at'], row['created_at'])
-        self.assertIsNone(before['sleep_minutes'])
+        self.assertIsNone(before['sleep_hours'])
 
     def test_partial_update_only_touches_requested_columns(self):
         day = date(2026, 11, 10)
         create_daily_rows(self.database, day)
         row = read_user_days(self.database, USER_A, DateRange.model_validate({'startDate': str(day), 'endDate': str(day)}))[0][0]
         record_id = row['id']
-        self.assertIsNone(row['reading_minutes'])
-        updated = update_user_day(self.database, USER_A, record_id, {'exercise_minutes': 12})
-        self.assertEqual(updated['exercise_minutes'], 12)
-        self.assertIsNone(updated['reading_minutes'])
-        self.assertIsNone(update_user_day(self.database, USER_B, record_id, {'exercise_minutes': 99}))
+        self.assertIsNone(row['reading_hours'])
+        updated = update_user_day(self.database, USER_A, record_id, {'exercise_hours': 1})
+        self.assertEqual(updated['exercise_hours'], 1)
+        self.assertIsNone(updated['reading_hours'])
+        self.assertIsNone(update_user_day(self.database, USER_B, record_id, {'exercise_hours': 0.5}))
         self.assertIsNone(update_user_day(self.database, USER_A, UUID('00000000-0000-4000-8000-000000000099'),
-                                          {'exercise_minutes': 1}))
-        body = ActivityDayUpdate.model_validate({'id': str(record_id), 'changes': {'exerciseMinutes': 20, 'sleepMinutes': 0}})
+                                          {'exercise_hours': 0.5}))
+        body = ActivityDayUpdate.model_validate({'id': str(record_id), 'exerciseHours': 1, 'sleepHours': 0})
         saved = service.update_day(USER_A, body, self.database)
-        self.assertEqual(saved.exercise_minutes, 20)
-        self.assertEqual(saved.sleep_minutes, 0)
+        self.assertEqual(saved.exercise_hours, 1)
+        self.assertEqual(saved.sleep_hours, 0)
 
     def test_settings_upsert_keeps_single_row_and_stable_id(self):
         first = settings_repository.save(self.database, USER_A, 'theme', 'dark')
@@ -160,9 +175,10 @@ class PostgresMigrationFourTests(unittest.TestCase):
                 self.migration_four = migration
                 break
             self.database.execute(migration.sql)
+        align_activity_hour_columns(self.database)
         self.database.execute(
-            'INSERT INTO public.activity_daily_records (user_id, date, exercise_minutes) VALUES (%s, %s, %s)',
-            (USER_A, date(2026, 11, 5), 5),
+            'INSERT INTO public.activity_daily_records (user_id, date, exercise_hours) VALUES (%s, %s, %s)',
+            (USER_A, date(2026, 11, 5), 0.5),
         )
         self.database.execute(
             '''INSERT INTO public.user_settings (user_id, theme, media_download_enabled, history_cleaner_enabled)
@@ -172,18 +188,18 @@ class PostgresMigrationFourTests(unittest.TestCase):
 
     def test_backfill_ids_primary_key_and_unique_constraints(self):
         before = self.database.execute(
-            'SELECT user_id, date, exercise_minutes FROM public.activity_daily_records WHERE user_id = %s', (USER_A,),
+            'SELECT user_id, date, exercise_hours FROM public.activity_daily_records WHERE user_id = %s', (USER_A,),
         ).fetchone()
-        self.assertEqual(before['exercise_minutes'], 5)
+        self.assertEqual(before['exercise_hours'], 0.5)
         self.assertEqual(self.database.execute(
             'SELECT count(*) AS count FROM public.user_settings WHERE user_id = %s', (USER_A,),
         ).fetchone()['count'], 1)
         self.database.execute(self.migration_four.sql)
         day = self.database.execute(
-            'SELECT id, user_id, date, exercise_minutes FROM public.activity_daily_records WHERE user_id = %s', (USER_A,),
+            'SELECT id, user_id, date, exercise_hours FROM public.activity_daily_records WHERE user_id = %s', (USER_A,),
         ).fetchone()
         self.assertIsNotNone(day['id'])
-        self.assertEqual(day['exercise_minutes'], 5)
+        self.assertEqual(day['exercise_hours'], 0.5)
         settings = settings_repository.read(self.database, USER_A)
         self.assertIsNotNone(settings['id'])
         with self.assertRaises(psycopg.errors.UniqueViolation), self.database.transaction():
@@ -192,8 +208,8 @@ class PostgresMigrationFourTests(unittest.TestCase):
                 (USER_A, day['date']),
             )
         create_daily_rows(self.database, day['date'])
-        updated = update_user_day(self.database, USER_A, day['id'], {'reading_minutes': 10})
-        self.assertEqual(updated['reading_minutes'], 10)
-        self.assertEqual(updated['exercise_minutes'], 5)
+        updated = update_user_day(self.database, USER_A, day['id'], {'reading_hours': 0.5})
+        self.assertEqual(updated['reading_hours'], 0.5)
+        self.assertEqual(updated['exercise_hours'], 0.5)
         upsert = settings_repository.save(self.database, USER_A, 'theme', 'system')
         self.assertEqual(upsert['id'], settings['id'])

@@ -28,19 +28,19 @@ def ensure_today() -> int:
         return repository.create_daily_rows(database, today)
 
 
-CHANGE_FIELD_COLUMNS = {
-    'exercise_minutes': 'exercise_minutes',
-    'reading_minutes': 'reading_minutes',
-    'learning_minutes': 'learning_minutes',
-    'creation_minutes': 'creation_minutes',
-    'sleep_minutes': 'sleep_minutes',
+DURATION_FIELD_COLUMNS = {
+    'exercise_hours': 'exercise_hours',
+    'reading_hours': 'reading_hours',
+    'learning_hours': 'learning_hours',
+    'creation_hours': 'creation_hours',
+    'sleep_hours': 'sleep_hours',
 }
 
 
 def update_day(user_id: UUID, body: ActivityDayUpdate, database: Connection) -> ActivityDay:
-    columns = {column: getattr(body.changes, field)
-               for field, column in CHANGE_FIELD_COLUMNS.items()
-               if field in body.changes.model_fields_set}
+    columns = {column: getattr(body, field)
+               for field, column in DURATION_FIELD_COLUMNS.items()
+               if field in body.model_fields_set}
     row = repository.update_user_day(database, user_id, body.id, columns)
     if row is None:
         raise ApiError(404, 'NOT_FOUND', '记录不存在')

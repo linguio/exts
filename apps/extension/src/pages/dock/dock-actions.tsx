@@ -40,7 +40,7 @@ export function DockActions() {
           onCloseAutoFocus={overlay.onCloseAutoFocus}
         >
           {placeholders.map((item) => (
-            <DropdownMenuItem key={item.name} onSelect={() => { toast.info('暂未接入'); }}>
+            <DropdownMenuItem key={item.name} onSelect={() => { toast.info('Not connected yet.'); }}>
               <UiIcon name={item.icon} className="size-4" />
               <span>{item.name}</span>
             </DropdownMenuItem>

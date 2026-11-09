@@ -2,9 +2,9 @@ import { ApiRequestError } from '../../../api/client';
 import type { ActivityQuery } from '../../../api/activity';
 import type { DailyActivityRow } from './types';
 import { validActivityDate } from './date';
+import { isActivityHourValue } from './hours';
 
 const recordIdPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const POSTGRES_INTEGER_MAX = 2147483647;
 
 function validRecordId(value: unknown): value is string {
   return typeof value === 'string' && recordIdPattern.test(value);
@@ -35,10 +35,9 @@ export function parseActivityDays(data: unknown, userId: string, query: Activity
       || (query.startDate && (day.date as string) < query.startDate) || (query.endDate && (day.date as string) > query.endDate)
       || dates.has(day.date as string)) throw invalid();
     dates.add(day.date as string);
-    for (const field of ['exerciseMinutes', 'readingMinutes', 'learningMinutes', 'creationMinutes', 'sleepMinutes']) {
-      const minutes = day[field];
-      if (minutes !== null && (typeof minutes !== 'number' || !Number.isSafeInteger(minutes) || minutes < 0
-        || minutes > POSTGRES_INTEGER_MAX)) throw invalid();
+    for (const field of ['exerciseHours', 'readingHours', 'learningHours', 'creationHours', 'sleepHours']) {
+      const hours = day[field];
+      if (hours !== null && (typeof hours !== 'number' || !isActivityHourValue(hours))) throw invalid();
     }
     if (typeof day.createdAt !== 'string' || !Number.isFinite(Date.parse(day.createdAt))
       || typeof day.updatedAt !== 'string' || !Number.isFinite(Date.parse(day.updatedAt))) throw invalid();
@@ -46,11 +45,11 @@ export function parseActivityDays(data: unknown, userId: string, query: Activity
       id: day.id as string,
       userId: day.userId as string,
       date: day.date as string,
-      exerciseMinutes: day.exerciseMinutes as number | null,
-      readingMinutes: day.readingMinutes as number | null,
-      learningMinutes: day.learningMinutes as number | null,
-      creationMinutes: day.creationMinutes as number | null,
-      sleepMinutes: day.sleepMinutes as number | null,
+      exerciseHours: day.exerciseHours as number | null,
+      readingHours: day.readingHours as number | null,
+      learningHours: day.learningHours as number | null,
+      creationHours: day.creationHours as number | null,
+      sleepHours: day.sleepHours as number | null,
       createdAt: day.createdAt as string,
       updatedAt: day.updatedAt as string,
     });

@@ -9,7 +9,8 @@ export type DataTableColumnFilterMeta =
 
 export type DataTableColumnEditMeta =
   | ({ type: 'text' } & DataTableTextEditRules)
-  | ({ type: 'integer' } & DataTableIntegerEditRules);
+  | ({ type: 'integer' } & DataTableIntegerEditRules)
+  | ({ type: 'number' } & DataTableNumberEditRules);
 
 export interface DataTableTextEditRules {
   /** 输入框内展示的固定单位文案，不参与草稿与 payload。 */
@@ -40,6 +41,23 @@ export interface DataTableIntegerEditRules {
   invalidMessage?: string;
   minMessage?: string;
   maxMessage?: string;
+}
+
+export interface DataTableNumberEditRules {
+  unit?: string;
+  readOnly?: boolean;
+  disabled?: boolean;
+  required?: boolean;
+  requiredMessage?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  rejectEmptyIfChanged?: boolean;
+  emptyChangedMessage?: string;
+  invalidMessage?: string;
+  minMessage?: string;
+  maxMessage?: string;
+  stepMessage?: string;
 }
 
 export interface DataTableColumnMetaConfig {
@@ -137,6 +155,11 @@ function patternMatches(pattern: RegExp, value: string): boolean {
   return new RegExp(pattern.source, flags).test(value);
 }
 
+function matchesStep(value: number, step: number): boolean {
+  const units = value / step;
+  return Math.abs(units - Math.round(units)) < 1e-9;
+}
+
 export function parseEditFieldValue(config: DataTableColumnEditMeta, input: string): { value?: unknown; error?: string } {
   if (config.disabled) return {};
   if (config.type === 'text') {
@@ -150,19 +173,31 @@ export function parseEditFieldValue(config: DataTableColumnEditMeta, input: stri
   if (config.readOnly) return {};
   if (!trimmed) {
     if (config.required) return { error: config.requiredMessage ?? defaultRequiredMessage };
-    return { value: config.emptyAsNull === false ? 0 : null };
+    if (config.type === 'integer') return { value: config.emptyAsNull === false ? 0 : null };
+    return { error: config.requiredMessage ?? defaultRequiredMessage };
   }
-  if (!/^-?\d+$/.test(trimmed)) return { error: config.invalidMessage ?? 'Enter a whole number.' };
+  if (config.type === 'integer') {
+    if (!/^-?\d+$/.test(trimmed)) return { error: config.invalidMessage ?? 'Enter a whole number.' };
+    const value = Number(trimmed);
+    if (!Number.isSafeInteger(value)) return { error: config.invalidMessage ?? 'Enter a whole number.' };
+    if (config.min !== undefined && value < config.min) return { error: config.minMessage ?? `Minimum is ${config.min}.` };
+    if (config.max !== undefined && value > config.max) return { error: config.maxMessage ?? `Maximum is ${config.max}.` };
+    return { value };
+  }
+  if (!/^-?\d+(\.\d+)?$/.test(trimmed)) return { error: config.invalidMessage ?? 'Enter a valid number.' };
   const value = Number(trimmed);
-  if (!Number.isSafeInteger(value)) return { error: config.invalidMessage ?? 'Enter a whole number.' };
+  if (!Number.isFinite(value)) return { error: config.invalidMessage ?? 'Enter a valid number.' };
   if (config.min !== undefined && value < config.min) return { error: config.minMessage ?? `Minimum is ${config.min}.` };
   if (config.max !== undefined && value > config.max) return { error: config.maxMessage ?? `Maximum is ${config.max}.` };
+  if (config.step !== undefined && !matchesStep(value, config.step)) {
+    return { error: config.stepMessage ?? `Enter a multiple of ${config.step}.` };
+  }
   return { value };
 }
 
 /** 将行原始值格式化为表单草稿字符串。 */
 export function formatEditDraftValue(config: DataTableColumnEditMeta, raw: unknown): string {
-  if (config.type === 'integer') {
+  if (config.type === 'integer' || config.type === 'number') {
     if (raw === null || raw === undefined) return '';
     return String(raw);
   }
@@ -187,9 +222,9 @@ export function validateEditDraft(fields: DataTableEditFieldDefinition[], draft:
     if (!isWritableEditField(field.config)) continue;
     const draftValue = draft[field.id] ?? '';
     if (partial && baseline && draftValue === (baseline[field.id] ?? '')) continue;
-    if (configIsInteger(field.config) && field.config.rejectEmptyIfChanged && baseline
+    if (configHasEmptyReject(field.config) && field.config.rejectEmptyIfChanged && baseline
       && draftValue !== (baseline[field.id] ?? '') && !draftValue.trim()) {
-      errors[field.id] = field.config.emptyChangedMessage ?? field.config.invalidMessage ?? 'Enter a whole number.';
+      errors[field.id] = field.config.emptyChangedMessage ?? field.config.invalidMessage ?? 'This field is required.';
       continue;
     }
     const result = parseEditFieldValue(field.config, draftValue);
@@ -199,6 +234,7 @@ export function validateEditDraft(fields: DataTableEditFieldDefinition[], draft:
   return { values, errors };
 }
 
-function configIsInteger(config: DataTableColumnEditMeta): config is { type: 'integer' } & DataTableIntegerEditRules {
-  return config.type === 'integer';
+function configHasEmptyReject(config: DataTableColumnEditMeta): config is ({ type: 'integer' } & DataTableIntegerEditRules)
+  | ({ type: 'number' } & DataTableNumberEditRules) {
+  return config.type === 'integer' || config.type === 'number';
 }

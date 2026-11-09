@@ -9,8 +9,8 @@ from modules.activity.schemas import DateRange, UNPAGED_LIMIT
 
 
 SORT_COLUMNS = {
-    'date': 'date', 'exerciseMinutes': 'exercise_minutes', 'readingMinutes': 'reading_minutes',
-    'learningMinutes': 'learning_minutes', 'creationMinutes': 'creation_minutes', 'sleepMinutes': 'sleep_minutes',
+    'date': 'date', 'exerciseHours': 'exercise_hours', 'readingHours': 'reading_hours',
+    'learningHours': 'learning_hours', 'creationHours': 'creation_hours', 'sleepHours': 'sleep_hours',
 }
 
 def read_user_days(database: Connection, user_id: UUID, query: DateRange) -> tuple[list[dict], int] | None:
@@ -58,17 +58,17 @@ def create_daily_rows(database: Connection, day: date) -> int:
     ).rowcount
 
 
-def update_user_day(database: Connection, user_id: UUID, record_id: UUID, changes: dict[str, int]) -> dict | None:
-    if not changes:
+def update_user_day(database: Connection, user_id: UUID, record_id: UUID, durations: dict[str, float]) -> dict | None:
+    if not durations:
         return None
     assignments = sql.SQL(', ').join(
         sql.SQL('{} = %s').format(sql.Identifier(column))
-        for column in changes
+        for column in durations
     )
     query = sql.SQL('''
         UPDATE public.activity_daily_records AS days SET {}
         WHERE days.id = %s AND days.user_id = %s
         RETURNING days.*
     ''').format(assignments)
-    row = database.execute(query, [*changes.values(), record_id, user_id]).fetchone()
+    row = database.execute(query, [*durations.values(), record_id, user_id]).fetchone()
     return dict(row) if row else None

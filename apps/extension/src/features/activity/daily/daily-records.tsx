@@ -6,7 +6,7 @@ import type { DailyActivityRow } from '../data/types';
 import { dailyColumns } from './columns';
 import { DailyEmpty } from './daily-empty';
 import { queryDailyRecords } from './query';
-import { requestDailyUpdate, toActivityDayChanges } from './update';
+import { requestDailyUpdate, toActivityDayUpdate } from './update';
 
 const getRowId = (row: DailyActivityRow) => row.id;
 
@@ -15,7 +15,7 @@ export function DailyRecords() {
   const resetVersion = useSyncExternalStore(subscribeSessionReset, readSessionResetVersion);
   const sessionKey = user ? studioSessionKey(user.id, resetVersion) : undefined;
   const updateDaily = async (rowId: string, values: Record<string, unknown>, signal: AbortSignal) => {
-    await requestDailyUpdate(rowId, toActivityDayChanges(values), user!.id, signal);
+    await requestDailyUpdate(toActivityDayUpdate(rowId, values), user!.id, signal);
   };
   return <QueryDataTable columns={dailyColumns} getRowId={getRowId}
     queryFn={(request, signal) => queryDailyRecords(request, user!.id, signal)}

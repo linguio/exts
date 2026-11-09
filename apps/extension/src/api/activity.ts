@@ -1,7 +1,7 @@
 import type { ApiClient } from './client';
 
 export interface ActivityPeriod { startDate: string; endDate: string }
-export const activitySortFields = ['date', 'exerciseMinutes', 'readingMinutes', 'learningMinutes', 'creationMinutes', 'sleepMinutes'] as const;
+export const activitySortFields = ['date', 'exerciseHours', 'readingHours', 'learningHours', 'creationHours', 'sleepHours'] as const;
 export type ActivitySortField = typeof activitySortFields[number];
 export interface ActivitySort { field: ActivitySortField; order: 'asc' | 'desc' }
 export interface ActivityQuery {
@@ -12,9 +12,10 @@ export interface ActivityQuery {
   sort?: ActivitySort[];
 }
 
-export const activityDurationFields = ['exerciseMinutes', 'readingMinutes', 'learningMinutes', 'creationMinutes', 'sleepMinutes'] as const;
+export const activityDurationFields = ['exerciseHours', 'readingHours', 'learningHours', 'creationHours', 'sleepHours'] as const;
 export type ActivityDurationField = typeof activityDurationFields[number];
-export type ActivityDayChanges = Partial<Record<ActivityDurationField, number>>;
+export type ActivityDayDurationValues = Partial<Record<ActivityDurationField, number>>;
+export type ActivityDayUpdate = { id: string } & ActivityDayDurationValues;
 
 export function getActivityDays(client: ApiClient, query: ActivityQuery, userId: string, signal: AbortSignal) {
   return client.request<unknown>('/api/activity/days', {
@@ -24,8 +25,8 @@ export function getActivityDays(client: ApiClient, query: ActivityQuery, userId:
   });
 }
 
-export function updateActivityDay(client: ApiClient, id: string, changes: ActivityDayChanges, userId: string, signal: AbortSignal) {
+export function updateActivityDay(client: ApiClient, update: ActivityDayUpdate, userId: string, signal: AbortSignal) {
   return client.request<unknown>('/api/activity/days/update', {
-    method: 'POST', json: { id, changes }, expectedUserId: userId, signal,
+    method: 'POST', json: update, expectedUserId: userId, signal,
   });
 }

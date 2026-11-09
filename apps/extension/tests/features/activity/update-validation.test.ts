@@ -1,15 +1,32 @@
-import { expect, it } from 'vitest';
-import { validActivityDayUpdate } from '../../../src/features/activity/data/update-validation';
+import { expect, test } from 'vitest';
+import { parseActivityDayUpdate } from '../../../src/features/activity/data/update-validation';
 
-const id = '00000000-0000-4000-8000-000000000010';
+const recordId = '00000000-0000-4000-8000-000000000010';
 
-it('接受合法局部更新', () => {
-  expect(validActivityDayUpdate({ id, changes: { exerciseMinutes: 0, sleepMinutes: 30 } })).toBe(true);
+test('accepts valid hour fields and all-zero updates', () => {
+  expect(parseActivityDayUpdate({ id: recordId, exerciseHours: 0.5 })).toEqual({
+    ok: true, update: { id: recordId, exerciseHours: 0.5 },
+  });
+  expect(parseActivityDayUpdate({
+    id: recordId,
+    exerciseHours: 0, readingHours: 0, learningHours: 0, creationHours: 0, sleepHours: 0,
+  })).toEqual({
+    ok: true,
+    update: { id: recordId, exerciseHours: 0, readingHours: 0, learningHours: 0, creationHours: 0, sleepHours: 0 },
+  });
 });
 
-it('拒绝未知字段、空变更与非整数', () => {
-  expect(validActivityDayUpdate({ id, changes: {} })).toBe(false);
-  expect(validActivityDayUpdate({ id, changes: { exerciseMinutes: 1.2 } })).toBe(false);
-  expect(validActivityDayUpdate({ id, changes: { date: '2026-11-01' } as Record<string, unknown> })).toBe(false);
-  expect(validActivityDayUpdate({ id: 'not-a-uuid', changes: { exerciseMinutes: 1 } })).toBe(false);
+test('rejects bad id, non-half-hour values and unknown fields', () => {
+  expect(parseActivityDayUpdate({ id: 'bad', exerciseHours: 1 })).toMatchObject({
+    ok: false, message: 'Activity record id is missing or invalid.',
+  });
+  expect(parseActivityDayUpdate({ id: recordId })).toMatchObject({
+    ok: false, message: 'Activity update must include at least one hour field.',
+  });
+  expect(parseActivityDayUpdate({ id: recordId, exerciseHours: 0.25 })).toMatchObject({
+    ok: false, message: 'exerciseHours must be a non-negative number in 0.5-hour steps.',
+  });
+  expect(parseActivityDayUpdate({ id: recordId, typo: 1 })).toMatchObject({
+    ok: false, message: 'Unknown activity field: typo.',
+  });
 });

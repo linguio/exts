@@ -19,15 +19,15 @@ export function AccountDialog({ children, isPending, refetch, onOpenChange, onCl
     setPending(provider);
     try {
       await loginAccount(provider);
-      toast.success('登录成功');
+      toast.success('Signed in successfully.');
       await refetch();
       setOpen(false);
       onOpenChange?.(false);
     } catch (error) {
-      if (error instanceof Error && error.message === '已取消登录') toast.info(error.message);
+      if (error instanceof Error && error.message === 'Sign-in cancelled.') toast.info(error.message);
       else {
         console.error('Studio OIDC 登录失败');
-        toast.error(error instanceof Error ? error.message : '登录失败，请重试');
+        toast.error(error instanceof Error ? error.message : 'Sign-in failed. Please try again.');
       }
     } finally {
       setPending(null);

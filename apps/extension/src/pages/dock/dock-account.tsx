@@ -27,11 +27,11 @@ export function DockAccount() {
     setLoggingOut(true);
     try {
       await logoutAccount();
-      toast.success('退出成功');
+      toast.success('Signed out successfully.');
       await refetch();
       overlay.overlayProps.onOpenChange(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : '退出失败，请重试');
+      toast.error(error instanceof Error ? error.message : 'Unable to sign out. Please try again.');
     } finally {
       setLoggingOut(false);
     }

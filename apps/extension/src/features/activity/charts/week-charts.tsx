@@ -11,7 +11,7 @@ export function ActivityWeek({ records, today, loading, hasPreviousResult }: {
 }) {
   const week = createActivityWeek(records, today);
   const fullPayload = week.items.map(item => ({
-    graphicalItemId: item.key, name: item.key, dataKey: item.key, value: item.minutes, payload: item,
+    graphicalItemId: item.key, name: item.key, dataKey: item.key, value: item.hours, payload: item,
   }));
   return (
     <div className="grid h-24 min-h-0 grid-cols-2 gap-4">
@@ -23,14 +23,14 @@ export function ActivityWeek({ records, today, loading, hasPreviousResult }: {
               label={`W${week.weekNumber} Spent`}
               payload={fullPayload}
               formatter={(value, name) => <ActivityTooltipValue
-                name={String(name)} minutes={Number(value)} percent={week.total ? Number(value) / week.total * 100 : 0}
+                name={String(name)} hours={Number(value)} percent={week.total ? Number(value) / week.total * 100 : 0}
                 highlighted={name === payload?.[0]?.payload?.key}
               />}
             />} /> : null}
             {/* 无投入时仅用图形权重绘制灰色空圆，不写入记录或参与统计。 */}
-            <Pie data={week.total > 0 ? week.items.filter(item => item.minutes > 0)
-              : [{ key: 'empty', minutes: 1, fill: 'var(--muted)' }]}
-              dataKey="minutes" nameKey="key" outerRadius={44} startAngle={90} endAngle={-270} />
+            <Pie data={week.total > 0 ? week.items.filter(item => item.hours > 0)
+              : [{ key: 'empty', hours: 1, fill: 'var(--muted)' }]}
+              dataKey="hours" nameKey="key" outerRadius={44} startAngle={90} endAngle={-270} />
           </PieChart>
         </ChartContainer>
       </LoadingRegion>
@@ -43,7 +43,7 @@ export function ActivityWeek({ records, today, loading, hasPreviousResult }: {
               label={`W${week.weekNumber} Plan`}
               payload={fullPayload}
               formatter={(_value, name, item) => <ActivityTooltipValue
-                name={String(name)} minutes={item.payload.minutes} goal={item.payload.goal} percent={item.payload.percent}
+                name={String(name)} hours={item.payload.hours} goal={item.payload.goal} percent={item.payload.percent}
                 highlighted={name === payload?.[0]?.payload?.key}
               />}
             />} />

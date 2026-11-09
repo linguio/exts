@@ -90,7 +90,7 @@ export function createDownloadMenu(document: Document, actions: {
     theme(value) { preference = value; applyTheme(); render(); },
     ready(warning = '') { directoryReady = true; message = warning; render(); },
     problem(value) { message = value; busy = false; open = true; render(); },
-    completed() { toast.success('下载完成', { toasterId: 'tg-download' }); },
+    completed() { toast.success('Download complete.', { toasterId: 'tg-download' }); },
   };
   return controller;
 }

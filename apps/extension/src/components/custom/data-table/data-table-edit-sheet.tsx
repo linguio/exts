@@ -138,9 +138,14 @@ export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, update
                 const error = fieldErrors[field.id];
                 const unit = field.config.unit;
                 const controlDisabled = disabled || submitting;
+                const numberConfig = field.config.type === 'number' ? field.config : undefined;
                 const controlProps = {
                   id: inputId,
-                  inputMode: field.config.type === 'integer' ? 'numeric' as const : undefined,
+                  type: numberConfig ? 'number' as const : undefined,
+                  inputMode: field.config.type === 'integer' || field.config.type === 'number' ? 'decimal' as const : undefined,
+                  min: numberConfig?.min,
+                  max: numberConfig?.max,
+                  step: numberConfig?.step,
                   value: draft[field.id] ?? '',
                   readOnly,
                   disabled: controlDisabled,

@@ -1,7 +1,7 @@
 import { DataTableQueryError, type DataTableQueryFn, type DataTableQueryRequest, type DataTableQueryResult } from './types';
 
 /** 查询失败 Toast 固定文案，不暴露连接细节或环境提示。 */
-export const QUERY_FAILED_TOAST = '查询失败，请重试';
+export const QUERY_FAILED_TOAST = 'Query failed. Please try again.';
 
 export function preserveQueryTotal<T>(previous: DataTableQueryResult<T> | undefined): number {
   return previous?.total ?? 0;

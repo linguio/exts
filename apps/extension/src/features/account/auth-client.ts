@@ -45,7 +45,7 @@ async function request(action: 'get' | 'login' | 'logout', provider?: AccountPro
   const generation = action === 'get' ? undefined : await captureSessionGeneration();
   const response = await chrome.runtime.sendMessage({ type: 'exts:account', action, provider, generation });
   if (!response?.ok) {
-    const error = new Error(response?.error || '账户请求失败') as Error & { code?: string };
+    const error = new Error(response?.error || 'Account request failed.') as Error & { code?: string };
     error.code = response?.code;
     throw error;
   }
@@ -73,7 +73,7 @@ export function useAccount() {
     }
     catch (error) {
       if (before !== resetVersion) return;
-      const next = error instanceof Error ? error : new Error('暂时无法确认账户状态，请重试');
+      const next = error instanceof Error ? error : new Error('Unable to verify account status. Please try again.');
       if ('code' in next && next.code === 'session-expired') setUser(null);
       setError(previous => previous?.message === next.message ? previous : next);
     }

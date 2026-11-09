@@ -12,9 +12,9 @@ it('草稿不影响当前查询，排序和翻页只使用已生效条件，Quer
   let state = createQueryTableState(filters);
   expect(toQueryTableRequest(state.query)).toEqual({ pageIndex: 0, pageSize: 20, sort: [], filters: { status: ['active'] } });
   state = queryTableReducer(state, { type: 'draft', id: 'date', value: { from: '2026-11-01', to: '2026-11-09' } });
-  state = queryTableReducer(state, { type: 'table', update: previous => updateQuery(previous, 'sorting', [{ id: 'readingMinutes', desc: true }]) });
+  state = queryTableReducer(state, { type: 'table', update: previous => updateQuery(previous, 'sorting', [{ id: 'readingHours', desc: true }]) });
   state = queryTableReducer(state, { type: 'table', update: previous => updateQuery(previous, 'pagination', { pageIndex: 2, pageSize: 20 }) });
-  expect(toQueryTableRequest(state.query)).toEqual({ pageIndex: 2, pageSize: 20, sort: [{ field: 'readingMinutes', order: 'desc' }], filters: { status: ['active'] } });
+  expect(toQueryTableRequest(state.query)).toEqual({ pageIndex: 2, pageSize: 20, sort: [{ field: 'readingHours', order: 'desc' }], filters: { status: ['active'] } });
   state = queryTableReducer(state, { type: 'query' });
   expect(toQueryTableRequest(state.query)).toMatchObject({ pageIndex: 0, filters: { status: ['active'], date: { from: '2026-11-01', to: '2026-11-09' } } });
 });
@@ -97,5 +97,5 @@ it('未知异常不泄漏原始文案，明确的业务安全错误才展示', a
   const failure = vi.fn();
   runTableQuery(async () => { throw new Error('private database token'); }, request, vi.fn(), failure);
   await Promise.resolve();
-  expect(failure).toHaveBeenCalledWith(expect.objectContaining({ message: '查询失败，请重试' }));
+  expect(failure).toHaveBeenCalledWith(expect.objectContaining({ message: 'Query failed. Please try again.' }));
 });

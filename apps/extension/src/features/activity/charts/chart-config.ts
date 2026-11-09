@@ -3,5 +3,5 @@ import { growthCategories } from '../data/summary';
 
 export const activityChartConfig: ChartConfig = {
   ...Object.fromEntries(growthCategories.map(item => [item.key, { label: item.label, color: item.color }])),
-  sleepMinutes: { label: 'Sleep', color: 'var(--chart-3)' },
+  sleepHours: { label: 'Sleep', color: 'var(--chart-3)' },
 } satisfies ChartConfig;

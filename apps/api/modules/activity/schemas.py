@@ -1,5 +1,6 @@
 import re
 from datetime import date
+from decimal import Decimal
 from uuid import UUID
 from typing import Literal
 
@@ -8,7 +9,7 @@ from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, field_validato
 
 UNPAGED_LIMIT = 500
 
-SortField = Literal['date', 'exerciseMinutes', 'readingMinutes', 'learningMinutes', 'creationMinutes', 'sleepMinutes']
+SortField = Literal['date', 'exerciseHours', 'readingHours', 'learningHours', 'creationHours', 'sleepHours']
 
 
 class ActivitySort(BaseModel):
@@ -47,19 +48,46 @@ class DateRange(BaseModel):
         return self
 
 
+def _normalize_hours_value(value, *, require_half_hour: bool) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        raise ValueError('时长格式无效')
+    if isinstance(value, int):
+        number = float(value)
+    elif isinstance(value, float):
+        number = value
+    elif isinstance(value, Decimal):
+        number = float(value)
+    else:
+        raise ValueError('时长格式无效')
+    if number < 0:
+        raise ValueError('时长不能为负数')
+    if require_half_hour:
+        doubled = number * 2
+        if abs(doubled - round(doubled)) > 1e-9:
+            raise ValueError('时长必须是 0.5 的倍数')
+    return number
+
+
 class ActivityDay(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     id: UUID
     user_id: UUID = Field(alias='userId')
     date: date
-    exercise_minutes: int | None = Field(alias='exerciseMinutes', ge=0)
-    reading_minutes: int | None = Field(alias='readingMinutes', ge=0)
-    learning_minutes: int | None = Field(alias='learningMinutes', ge=0)
-    creation_minutes: int | None = Field(alias='creationMinutes', ge=0)
-    sleep_minutes: int | None = Field(alias='sleepMinutes', ge=0)
+    exercise_hours: float | None = Field(alias='exerciseHours', ge=0)
+    reading_hours: float | None = Field(alias='readingHours', ge=0)
+    learning_hours: float | None = Field(alias='learningHours', ge=0)
+    creation_hours: float | None = Field(alias='creationHours', ge=0)
+    sleep_hours: float | None = Field(alias='sleepHours', ge=0)
     created_at: AwareDatetime = Field(alias='createdAt')
     updated_at: AwareDatetime = Field(alias='updatedAt')
+
+    @field_validator('exercise_hours', 'reading_hours', 'learning_hours', 'creation_hours', 'sleep_hours', mode='before')
+    @classmethod
+    def normalize_hours(cls, value):
+        return _normalize_hours_value(value, require_half_hour=False)
 
 
 class ActivityDays(BaseModel):
@@ -70,39 +98,28 @@ class ActivityDays(BaseModel):
     page_size: int | None = Field(default=None, alias='pageSize')
 
 
-POSTGRES_INTEGER_MAX = 2147483647
-
-
-class ActivityDayChanges(BaseModel):
+class ActivityDayUpdate(BaseModel):
     model_config = ConfigDict(extra='forbid', populate_by_name=True)
 
-    exercise_minutes: int | None = Field(default=None, alias='exerciseMinutes', ge=0, le=POSTGRES_INTEGER_MAX, strict=True)
-    reading_minutes: int | None = Field(default=None, alias='readingMinutes', ge=0, le=POSTGRES_INTEGER_MAX, strict=True)
-    learning_minutes: int | None = Field(default=None, alias='learningMinutes', ge=0, le=POSTGRES_INTEGER_MAX, strict=True)
-    creation_minutes: int | None = Field(default=None, alias='creationMinutes', ge=0, le=POSTGRES_INTEGER_MAX, strict=True)
-    sleep_minutes: int | None = Field(default=None, alias='sleepMinutes', ge=0, le=POSTGRES_INTEGER_MAX, strict=True)
+    id: UUID
+    exercise_hours: float | None = Field(default=None, alias='exerciseHours', ge=0)
+    reading_hours: float | None = Field(default=None, alias='readingHours', ge=0)
+    learning_hours: float | None = Field(default=None, alias='learningHours', ge=0)
+    creation_hours: float | None = Field(default=None, alias='creationHours', ge=0)
+    sleep_hours: float | None = Field(default=None, alias='sleepHours', ge=0)
 
-    @field_validator('exercise_minutes', 'reading_minutes', 'learning_minutes', 'creation_minutes', 'sleep_minutes',
-                     mode='before')
+    @field_validator('exercise_hours', 'reading_hours', 'learning_hours', 'creation_hours', 'sleep_hours', mode='before')
     @classmethod
-    def strict_integers(cls, value):
+    def strict_hours(cls, value):
         if value is None:
             return None
-        if isinstance(value, bool) or not isinstance(value, int):
-            raise ValueError('时长必须是整数')
-        return value
+        return _normalize_hours_value(value, require_half_hour=True)
 
     @model_validator(mode='after')
-    def at_least_one_change(self):
-        if not self.model_fields_set:
+    def at_least_one_duration(self):
+        duration_fields = {field for field in self.model_fields_set if field != 'id'}
+        if not duration_fields:
             raise ValueError('至少需要一项变更')
-        if any(getattr(self, field) is None for field in self.model_fields_set):
+        if any(getattr(self, field) is None for field in duration_fields):
             raise ValueError('时长不能为 null')
         return self
-
-
-class ActivityDayUpdate(BaseModel):
-    model_config = ConfigDict(extra='forbid')
-
-    id: UUID
-    changes: ActivityDayChanges

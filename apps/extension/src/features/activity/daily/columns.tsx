@@ -3,22 +3,22 @@ import type { DailyActivityRow } from '../data/types';
 import { formatActivityDuration } from '../data/format';
 
 const durationCell = ({ getValue }: CellContext<DailyActivityRow, unknown>) => {
-  const minutes = getValue<number | null>();
-  return minutes === null ? '—' : formatActivityDuration(minutes);
+  const hours = getValue<number | null>();
+  return hours === null ? '—' : formatActivityDuration(hours);
 };
 
 const durationEdit = {
-  type: 'integer' as const,
-  unit: 'min',
+  type: 'number' as const,
+  unit: 'h',
+  required: true,
+  requiredMessage: 'Enter a number of hours.',
   min: 0,
-  max: 2147483647,
-  emptyAsNull: true,
-  digitsOnly: true,
+  step: 0.5,
   rejectEmptyIfChanged: true,
-  invalidMessage: 'Enter a whole number of minutes.',
-  emptyChangedMessage: 'Enter a whole number of minutes.',
-  minMessage: 'Minutes cannot be negative.',
-  maxMessage: 'Minutes cannot exceed 2,147,483,647.',
+  invalidMessage: 'Enter hours in 0.5 steps.',
+  emptyChangedMessage: 'Enter hours in 0.5 steps.',
+  minMessage: 'Hours cannot be negative.',
+  stepMessage: 'Enter hours in 0.5 steps.',
 };
 
 export const dailyColumns: ColumnDef<DailyActivityRow>[] = [
@@ -27,14 +27,14 @@ export const dailyColumns: ColumnDef<DailyActivityRow>[] = [
       filter: { type: 'date', label: 'Date range' },
       edit: { type: 'text', readOnly: true },
     } } },
-  { accessorKey: 'exerciseMinutes', header: 'Exercise', sortDescFirst: true, cell: durationCell,
+  { accessorKey: 'exerciseHours', header: 'Exercise', sortDescFirst: true, cell: durationCell,
     meta: { dataTable: { edit: durationEdit } } },
-  { accessorKey: 'readingMinutes', header: 'Reading', sortDescFirst: true, cell: durationCell,
+  { accessorKey: 'readingHours', header: 'Reading', sortDescFirst: true, cell: durationCell,
     meta: { dataTable: { edit: durationEdit } } },
-  { accessorKey: 'learningMinutes', header: 'Learning', sortDescFirst: true, cell: durationCell,
+  { accessorKey: 'learningHours', header: 'Learning', sortDescFirst: true, cell: durationCell,
     meta: { dataTable: { edit: durationEdit } } },
-  { accessorKey: 'creationMinutes', header: 'Creation', sortDescFirst: true, cell: durationCell,
+  { accessorKey: 'creationHours', header: 'Creation', sortDescFirst: true, cell: durationCell,
     meta: { dataTable: { edit: durationEdit } } },
-  { accessorKey: 'sleepMinutes', header: 'Sleep', sortDescFirst: true, cell: durationCell,
+  { accessorKey: 'sleepHours', header: 'Sleep', sortDescFirst: true, cell: durationCell,
     meta: { dataTable: { edit: durationEdit } } },
 ];

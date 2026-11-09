@@ -31,11 +31,11 @@ export function AccountLogin() {
     setPending(true);
     try {
       await logoutAccount();
-      toast.success('退出成功');
+      toast.success('Signed out successfully.');
       await refetch();
     } catch (error) {
       console.error('Studio 账户退出失败');
-      toast.error(error instanceof Error ? error.message : '退出失败，请重试');
+      toast.error(error instanceof Error ? error.message : 'Unable to sign out. Please try again.');
     } finally {
       setPending(false);
     }

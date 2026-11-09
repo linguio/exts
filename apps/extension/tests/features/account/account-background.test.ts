@@ -28,14 +28,14 @@ it('真实 OIDC 客户端可在无 DOM 后台初始化，内容脚本无法调�
   const listener = await setup('test-public-client');
   const respond = vi.fn();
   listener({ type: 'exts:account', action: 'get' }, { id: 'exts', url: 'https://example.com' }, respond);
-  expect(respond).toHaveBeenCalledWith({ ok: false, error: '账户请求来源无效' });
+  expect(respond).toHaveBeenCalledWith({ ok: false, error: 'Account requests must come from the extension new tab.' });
 });
 
 it('拒绝未知登录提供方，不把任意页面输入传入授权流程', async () => {
   const listener = await setup('test-public-client');
   const respond = vi.fn();
   listener({ type: 'exts:account', action: 'login', provider: 'unknown' }, { id: 'exts', url: 'chrome-extension://exts/newtab.html' }, respond);
-  expect(respond).toHaveBeenCalledWith({ ok: false, error: '未知登录提供方' });
+  expect(respond).toHaveBeenCalledWith({ ok: false, error: 'Unknown sign-in provider.' });
 });
 
 it('登录引导通过官网片段传递提供方和标准授权地址，不改写授权查询', async () => {
