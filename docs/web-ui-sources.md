@@ -32,11 +32,11 @@
 
 - 后续 Studio Daily 结构补充：复用官方日期筛选和 Table，业务通过可选 emptyContent 提供官方 Empty，通过 showPagination 隐藏未接入数据时的分页/总数；两项默认行为保持既有通用表格行为，不自绘控件或加入业务字段。
 
-- Table、Input、Checkbox、Select、Calendar、Command、Pagination、Alert 使用既有固定源码基线 `c257f688cf4de7ec10cc1be84cad29cd4631182c` 的 [new-york-v4/ui](https://github.com/shadcn-ui/ui/tree/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/registry/new-york-v4/ui)，已读取实际源码，分别迁至扩展 `src/components/ui`；非重新仿写。Command 依赖的 DialogHeader 和列显隐需要的 DropdownMenuCheckboxItem 从同一基线补齐，已有组件其余实现保留。
-- 必要适配：cn 改为本地 lib/utils；Input/Checkbox/Select/Calendar 的 dark 变体改为祖先 data-theme=dark 选择器，符合扩展已有主题机制。其他官方结构、尺寸、状态、默认类名保留，不修改全局 Token。Table 与 Select 内部滚动沿用官方实现。
+- Table、Input、Input Group、Textarea、Checkbox、Select、Calendar、Command、Pagination、Alert 使用既有固定源码基线 `c257f688cf4de7ec10cc1be84cad29cd4631182c` 的 [new-york-v4/ui](https://github.com/shadcn-ui/ui/tree/c257f688cf4de7ec10cc1be84cad29cd4631182c/apps/v4/registry/new-york-v4/ui)，已读取实际源码，分别迁至扩展 `src/components/ui`；非重新仿写。Input Group 依赖同基线 Textarea；DataTable 编辑 Sheet 在列 `edit.unit` 配置时使用 InputGroup + InputGroupAddon（inline-end）+ InputGroupText。Command 依赖的 DialogHeader 和列显隐需要的 DropdownMenuCheckboxItem 从同一基线补齐，已有组件其余实现保留。
+- 必要适配：cn 改为本地 lib/utils；Input/Textarea/Input Group/Checkbox/Select/Calendar 的 dark 变体改为祖先 data-theme=dark 选择器，符合扩展已有主题机制。其他官方结构、尺寸、状态、默认类名保留，不修改全局 Token。Table 与 Select 内部滚动沿用官方实现。
 - 通用 DataTable 参考官方组合思路，采用精确依赖 @tanstack/react-table 8.21.3（table-core 同版），保持与该固定源码时期的 v8 示例 API 对齐；没有升级其他依赖。它是项目组合，不宣称与当前官方示例视觉一致，也不是迁入完整官方 DataTable 示例。
 - `custom/data-table` 提供文本/选项/日期筛选、列标题排序、分页、列显隐、可选行选择与状态展示；复用既有 Button、Popover、Spinner，新增的 Input/Checkbox/Select 均为实际使用控件。日期范围采用官方 Calendar + Popover，选项多选采用 Command + Popover，列显隐采用 DropdownMenuCheckboxItem，分页采用 Pagination 配合 Select/Input，空状态采用现有 Empty，错误采用 Alert；不另维护控件样式或颜色方案。新增精确依赖 react-day-picker 9.11.1、cmdk 1.1.1，锁文件已同步。官方 PaginationLink 没有 disabled 属性，组合层仅补充 aria-disabled、不可用时的 tabIndex 和点击拦截，保留官方样式；这是翻页边界所需的语义接入，并非替代官方控件。
-- 开发示例通过 newtab 的 DEV 条件查询参数 table-demo 按需加载，无正式导航入口，不进入生产构建；服务端模式仅内存模拟。接入边界与用户验收见 [DataTable 说明](extension/data-table.md)。实际视觉和交互尚待用户验收。
+- 2026-11-09 移除 table-demo 开发入口；Daily 在真实查询上显式开启 `previewEdits`（非默认）并 `fillRecords` 弹性占高，记录区官方 ScrollArea 纵向滚动，Table 横向滚动保留官方内层；默认每页 20，Daily 页大小 20/50/100。查询工具栏右侧为官方 ButtonGroup（Query/Reset）与紧邻独立 Columns 图标菜单，图标配 Tooltip。复用共用 Sheet 与 AlertDialog。接入边界见 [DataTable 说明](extension/data-table.md)。视觉与交互由用户在 Chrome/Edge 验收。
 
 ## 图表区域 Loading（2026-11-07）
 
@@ -188,7 +188,7 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 
 - Alert Dialog 源码固定为本文官方基线 c257f688cf4de7ec10cc1be84cad29cd4631182c 的 new-york-v4/ui/alert-dialog.tsx，读取官方原文件后接入；使用现有 radix-ui，无新增依赖。
 - shared/ui/alert-dialog.tsx 保留官方 Root、Trigger、Portal、Overlay、Content、Header/Footer、Title/Description、Action/Cancel 及 Button asChild 组合。去除 use client，适配本地 cn/Button 路径；未引入未使用的 Media。
-- 未安装动画工具类，移除对应进出场类；边框显式引用 border-border，文字引用 text-foreground。确认框位于整个页面中心，保留官方黑色半透明遮罩；为叠在既有 Sheet 上，Overlay/Content 分别使用 z-60/z-70，其余保留官方默认样式及取消优先焦点。
+- 未安装动画工具类，移除对应进出场类；边框显式引用 border-border，文字引用 text-foreground。确认框位于整个页面中心，保留官方黑色半透明遮罩；为叠在既有 Sheet 上，Overlay/Content 分别使用 z-60/z-70，其余保留官方默认样式及取消优先焦点。2026-11-09 起表格行编辑表单复用共用 Sheet，放弃未保存修改使用 AlertDialog；登录等业务 Dialog 未改。
 - Download 自己持有筛选、确认文案和清空逻辑，无全局弹窗管理。记录截断和图标名称复用现有 Tooltip，文件夹不可用和清空失败复用现有 Sonner，沿用当前主题。
 - 工具栏使用官方 ToggleGroup、Button icon-sm 和既有品牌资源；新增通用列表、文件夹、垃圾桶图标通过 UiIcon 静态映射。40px 记录行属于业务布局，不新增通用表格或卡片封装。
 

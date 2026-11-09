@@ -6,7 +6,7 @@
 
 普通业务表格的目标是仅提供字段、筛选、接口及必要资源元数据，查询与标准 CRUD 的共同流程只维护一份，强制边界见[配置驱动与单一维护原则](../table-conventions.md#配置驱动与单一维护原则)。
 
-扩展已提供 QueryDataTable 作为普通业务查询入口，复用现有 DataTable 渲染。Daily 已迁入该入口，查询状态、生命周期和工具栏统一维护；标准 CRUD 尚未实施。以下 DataTable 低层 API 保留兼容，不代表每张业务表格都应重复实现查询流程。
+扩展已提供 QueryDataTable 作为普通业务查询入口，复用现有 DataTable 渲染。Daily 已迁入该入口，查询走真实接口，编辑仅在当前响应行上临时预览；真实写接口仍待后续接入。以下 DataTable 低层 API 保留兼容，不代表每张业务表格都应重复实现查询流程。
 
 ## 位置与职责
 
@@ -29,7 +29,8 @@ const filters: DataTableFilter[] = [
   getRowId={row => row.id} caption="Records" scopeKey={resourceScope} />
 ```
 
-- columns、queryFn、getRowId、caption 必填；filters 可省略。scopeKey 用于账号/资源变化时同步隔离全部查询状态，或由父级已存在的重建边界保证；不读取组件内部账号。
+- columns、queryFn、getRowId、caption 必填；filters 可省略，省略时从 `columns[].meta.dataTable.filter` 推导。scopeKey 用于账号/资源变化时同步隔离全部查询状态，或由父级已存在的重建边界保证；不读取组件内部账号。
+- 行末 Edit 需可写字段且（`updateFn` 或显式 `previewEdits`）；`previewEdits` 默认 false。预览保存只补丁当前成功响应、不重新请求；`updateFn` 保存成功后由组合层 `refresh`。`filters` 省略时从 columns meta 推导，显式 `[]` 表示无筛选。默认每页 20 条；可选 `fillRecords` 在父级 flex 链内占满剩余高度，记录区官方 ScrollArea 纵向滚动、分页紧随表格，横向滚动沿用官方 Table。可选 `headerNote`/`editDescription` 供页面补充说明。
 - enabled 默认 true；false 时不发请求并取消在途请求，首次未启用不显示为查询成功空记录。showCaption/emptyContent 保留既有展示能力。
 - filters.defaultValue 仅在查询入口初始化和 Reset 时应用。文本默认值为字符串，选项为字符串数组，日期范围为 {from,to}；默认值不会被编辑草稿污染，父级重渲染不重新应用默认条件。
 - queryFn 接收 {pageIndex,pageSize,sort,filters} 和 signal，返回 Promise<{rows,total}>。sort 已转换为有序 {field,order} 数组；filters 的键为 columnId，值为已经生效的筛选值。筛选不要求对应可见数据列。
@@ -40,11 +41,13 @@ const filters: DataTableFilter[] = [
 
 ### 内部职责
 
-- query-data-table.tsx：公开 QueryDataTable，按 scopeKey 重建私有内容实例，连接内部 Hook、Toolbar 和原 DataTable。
+- query-data-table.tsx：公开 QueryDataTable，按 scopeKey 重建私有内容实例，连接内部 Hook、Toolbar、可选编辑 Sheet 和原 DataTable。
+- column-meta.ts：从列 meta 推导 filters、编辑字段与草稿校验。
+- data-table-edit-sheet.tsx：共用 Sheet 草稿、字段校验、提交防重、失败 toast 与未保存 AlertDialog。
 - use-data-table-query.ts：唯一草稿/生效查询和结果状态，管理请求 Effect、queryFn 最新引用、启用/停用及重试。
 - state.ts：默认值复制、草稿/Query/Reset 状态转换、分页排序参数标准化。
 - query-request.ts：实例级请求执行/取消，丢弃迟到结果并规范化安全错误；供纯异步测试验证，不是全局请求管理器。
-- toolbar.tsx：同一份文本、选项和日期控件渲染；queryControls 模式绑定草稿并显示 Query/Reset，原 DataTable 即时模式保持兼容。
+- toolbar.tsx：同一份文本、选项和日期控件渲染；queryControls 模式绑定草稿，右侧为官方 ButtonGroup（Query/Reset）与独立 Columns 图标菜单，原 DataTable 即时模式保持兼容。
 - 原表头、日期、列显隐及分页组件继续复用，不新增官方原语或改变主题。
 
 ## DataTable 低层前端模式
@@ -110,31 +113,34 @@ const [query, setQuery] = useState(initialQuery);
 - `selection` 默认关闭；开启后支持单行和当前页全选。前端模式可跨页累积选择，服务端模式只维护当前响应范围内的选择，不表达所有查询结果全选。
 - 数据引用、筛选、搜索、`selectionKey` 或选择开关变化时清空选择；服务端换页也清空。切换账号或其他数据作用域时更新 `selectionKey`。
 - `onSelectionChange(ids)` 返回稳定记录 ID；`bulkActions(ids, clear)` 返回业务操作控件，成功后由业务调用 `clear()`。加载或失败时隐藏批量操作。
-- `ColumnDef.cell` 是现有底层操作列渲染入口。普通资源表格应由统一业务入口按能力配置提供标准操作、确认、提交及刷新流程；资源侧只提供接口与业务权限/校验。当前尚未完成该统一 CRUD 入口，不把底层可渲染能力表述为已完成通用 CRUD。
+- 满足编辑条件时 QueryDataTable 增加 Actions 列与 Edit 按钮；列显隐不改变编辑字段集合。`previewEdits` 时行预览只改匹配行、保留 total、不重排当前页，且在途或 key 不一致时拒绝补丁。有损关闭走 AlertDialog。
 
-## 验收示例
+## 列 meta 配置
 
-示例文件：`components/custom/data-table/example.tsx`。仅开发模式按需加载，不进入正式导航或生产构建。
+```tsx
+meta: {
+  dataTable: {
+    filter: { type: 'date', label: 'Date range' },
+    edit: { type: 'integer', unit: 'min', min: 0, emptyAsNull: true },
+  },
+}
+```
 
-1. 在仓库根运行 `pnpm ext:dev`，等待稳定目录发布成功。
-2. Chrome/Edge 的扩展管理页加载根 `dist/dev/chrome-mv3-dev-stable`，或重新加载已指向该目录的扩展。
-3. 打开 `chrome-extension://<扩展 ID>/newtab.html?table-demo`，看到 87 条通用示例记录。
-4. 前端模式输入名称、选择状态及日期范围，确认条件交集、重置、排序、Shift 多列排序及每页条数；在后续页改变条件后回到首页，首页/末页翻页链接不可操作，Pagination 页码与省略号对应当前范围。
-5. 日期面板应为 shadcn Calendar，不再是浏览器原生日历；在 Command 面板搜索并切换选项。在 DropdownMenu 中隐藏可隐藏列，保留名称列；勾选单行、当前页全选并翻页，执行示例批量操作后选择清空。
-6. 切换服务端模式，观察页面底部 query；确认页码、排序、筛选变化传给模拟服务端，列表与总数对应筛选结果，换页不误选其他记录。这里仅用内存模拟响应，不是实际 HTTP 验证。
-7. 切换 loading、refresh、empty、error：分别看到 body 居中的首次 Spinner、保留内容且 body 居中的刷新 Spinner、官方 Empty 空记录及 Alert 错误重试；error 点击重试回到正常数据。无匹配筛选显示“没有符合条件的记录”。
-8. 明暗主题、窄屏横向滚动、菜单/选择控件和键盘操作由用户自行在真实浏览器验收。Table 与 Select 内部滚动沿用官方实现，不额外嵌套 ScrollArea。
+- `filter` 类型支持 text、options、date，语义与独立 `DataTableFilter` 一致。
+- `edit.type` 支持 text 与 integer（`readOnly`、`disabled`、`unit`、`emptyAsNull`、min/max、校验文案等）。`unit` 仅在编辑 Sheet 内以官方 InputGroup 后缀展示，不改变草稿值、校验或 payload。`readOnly` 可聚焦复制且不进 payload；`disabled` 显示但控件禁用，不参与校验与 payload，也不能单独使行末 Edit 出现。日期等业务主键应 `readOnly`，不从单元格展示文本反解析。
+- 共用 `DataTableEditSheet` 标题固定为 **Edit**，共用 `SquarePen` 图标；标题栏 `min-h-14`、`text-lg font-semibold`、`px-6 pr-16` 与 Settings Sheet 一致；打开时 `onOpenAutoFocus` 阻止默认聚焦首字段，程序聚焦标题，避免只读 Date 被自动选中。组合层写死标题与图标，`QueryDataTable` 不提供 `editTitle` 覆盖。
+- Daily 在 columns.tsx 单一维护展示、筛选与编辑；`query.ts` 继续提供实际使用的真实查询适配，临时编辑只更新当前返回记录。
 
-代理不执行浏览器视觉或交互验收。实际生产组件接入另一个工作项，不以此示例代替真实业务联调。
+## Daily 真实查询与行预览编辑
 
-## Daily 真实查询组合
-
-- Daily 已改用 QueryDataTable，页面只保留 columns、日期 filters、queryFn、行标识、名称和账号作用域配置；不再自行实现 toolbar、Effect、loading/error、草稿或分页状态。资源侧 query.ts 映射 date→startDate/endDate、校验排序字段与 Activity 响应，返回 rows/total；保留原 requestActivity 的后台消息及会话保护。
-- Daily 工具栏左侧日期条件，右侧 Query、Reset、Columns。排序使用已有表头：普通点击切换单列，Shift 点击组合多列，沿用 TanStack 优先级与交互，不另设排序配置区。
+- Daily 使用 QueryDataTable：`queryFn` 为 `queryDailyRecords`，`previewEdits` 显式开启，`fillRecords` 占 Studio 可用高度；`pageSizes` 为 20/50/100；筛选从 columns meta 推导，工具栏单行、窄屏横向滚动。
+- 行末 Edit 打开共用 Sheet，日期只读，五项时长回填原始分钟。保存由共用层对当前响应行浅合并，不调用写接口、保存后不立即重新查询；下次 Query、翻页或刷新以接口数据为准。Daily 不传 `editDescription`，页面与 Sheet 内均无该英文说明；其他页面仍可按需传入。
+- `query.ts` 映射 date→startDate/endDate 与 Activity 响应；行预览逻辑在 `row-preview.ts` 与 `use-data-table-query`，不把第二数据源放进资源层。Daily 页 `p-4 md:p-6`；Studio 主内容 `overflow-auto`，非 Daily 页面正常整页滚动。
+- Daily 工具栏左侧日期条件，右侧为 ButtonGroup（Query 文字、Reset 图标）与紧邻独立的 Columns 图标菜单；Reset/Columns 带 Tooltip 与 aria-label。排序使用已有表头：普通点击切换单列，Shift 点击组合多列，沿用 TanStack 优先级与交互，不另设排序配置区。
 - 日期草稿点击 Query 后生效，保留当前排序并回首页；排序立即查询，但只使用已生效日期，保留草稿。翻页/每页条数使用已生效条件。
 - Reset 同时清空草稿与已生效日期、用户排序，回第一页并立即查询一次；保留每页条数和列显隐。初始化、重置和清空排序时，前端 sorting 为空，发送 sort:[]，由后端默认 date desc；默认日期不占用户排序优先级。手动选择时长时按用户顺序排序，由后端追加 date desc 作为末尾稳定条件；主动选择 Date 时按显式优先级参与。
 - 表头与内容默认居中，样式由 DataTable 组合层维护，官方 Table 原语保持不变。首次与刷新统一在整个 tbody 的水平/垂直中心显示官方 Spinner，首次保留表头与空白内容区，刷新保留同账号记录；不新增顶部行，不使用 Skeleton；失败 Alert 支持 Retry，不把失败当空结果；新请求取消旧请求且忽略迟到响应。会话重置由 Studio 内容边界重建 Daily。
-- Daily 采用 remote，由接口返回的 days/total 驱动记录和总数，不在前端重新排序。图表采用明确日期升序的不分页范围查询，并校验 total 等于记录数，拒绝不完整响应。
+- Daily 复用 remote 查询契约，由接口返回 rows/total，不对当前页再次排序或筛选。Home 图表仍使用真实接口、明确日期升序的不分页范围，并校验 total 等于记录数，拒绝不完整响应。
 
 ## 本次用户验收
 

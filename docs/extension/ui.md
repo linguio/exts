@@ -36,7 +36,7 @@
 ## 通用数据表格
 
 - [仓库级表格规范](../table-conventions.md) 与本 UI 规范并列，是表格加载、默认布局、筛选查询、排序、分页与列表接口约定的统一事实来源；新建或调整表格必须查阅。本文件不另维护同类默认规则。
-- 扩展普通业务查询使用 components/custom/data-table 的 QueryDataTable，统一草稿/生效查询、请求生命周期和工具栏；低层 DataTable 保留直接使用兼容。复用既有官方组件/主题；业务列、字段格式、请求、权限和操作留在 feature，不进入通用组件。
+- 扩展普通业务查询使用 components/custom/data-table 的 QueryDataTable，统一草稿/生效查询、请求生命周期和工具栏；低层 DataTable 默认不设固定像素高度，Daily 通过 `fillRecords` 在 flex 布局内分配剩余空间并由官方 ScrollArea 纵向滚动记录区。复用既有官方组件/主题；业务列、字段格式、请求、权限和操作留在 feature，不进入通用组件。表格行编辑共用 Sheet（默认 420px 与主题遮罩）标题栏与 Settings 同为 56px 行高与 Lucide 图标 + 标题组合，打开时同样阻止默认自动聚焦并聚焦标题；编辑 Sheet 固定 **Edit** 与 `SquarePen`，Settings 仍为 `settings` 图标。简短提示与简单操作用 Dialog；删除或放弃未保存修改用 AlertDialog（叠在 Sheet 上时沿用既有 z-60/z-70 层级）。
 - 首次/刷新统一 body 中央无可见文字 Spinner，表格不使用骨架屏；本页上方模块级 LoadingRegion 的首次 Skeleton 规则不适用于表格。其余行为及例外流程以仓库级规范为准。
 - 组件参数与扩展业务接入见 [DataTable 说明](./data-table.md)，官方固定版本及必要适配见 [Web UI 来源](../web-ui-sources.md)。表格规范建立不等于所有现有调用方已按规范改造或通过用户验收。
 
@@ -50,7 +50,7 @@
 - 菜单由 pages/studio/menu.ts 的静态分组和页面配置维护，当前为 Activity → Daily，分别使用 ChartColumn 与 NotebookText。菜单仅在确认登录后可见，登录后不自动选择/打开页面，右侧使用官方 Empty 显示 Select a page；Activity 为 SidebarGroupLabel 文字标题，Daily 为带图标的 SidebarMenuButton 平铺项，按用户截图采用 dashboard-01 Documents 结构，不包含折叠箭头或子菜单缩进。
 - Studio 统一处理账号状态：首次读取显示 Spinner；普通读取失败显示 Alert 和 Retry；未登录或会话过期显示 Empty、Sign in to Studio、Sign in to access your personal workspace. 和 Sign in 按钮，复用现有 AccountDialog。登录后才挂载当前业务页面，不按表格、图表或表单分别实现登录提示。
 - 受保护内容以账号 ID 和既有会话重置版本作为 React key，退出、换号及同账号重新登录均使旧页面局部状态失效；Home/Studio 的 React Activity 保留不跨越账号内容边界。异步取消与迟到结果防护、边界外 Provider/后台/持久化状态仍由既有模块负责，不另建重置总线或按菜单增加清理分支。
-- Daily 接入 days 的真实服务端分页与多字段排序，日期条件点击 Query 生效，表头排序即时生效且仅使用已生效日期，普通点击单列、Shift 点击多列；左侧日期条件，右侧 Query / Reset / Columns。Reset 清空日期草稿、已生效条件及用户排序，回第一页，后端默认日期倒序，保留每页条数和列显隐；前端不预置默认 date，以免唯一日期占用户多字段排序第一位，日期稳定条件由后端追加在末尾；空状态展示真实无记录。具体行为与验收见 [DataTable](./data-table.md)。
+- Daily 使用真实查询接口与 QueryDataTable；行末 Edit/Sheet 仅临时更新当前已加载记录，未写入账号。字段、筛选与编辑集中于 columns.meta；Daily 内容区弹性占满可用高度，筛选单行可横向滚动，表格与分页在视口内分层。Studio 非 Daily 内容区使用官方 ScrollArea 整页滚动。Home 图表仍走原有 API。具体行为见 [DataTable](./data-table.md)。
 
 ## 主题与 Token
 
@@ -132,6 +132,7 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 
 ## 组件边界与约定
 
+- 扩展内的编辑类 Sheet 采用一致的标题栏：56px 高、两侧按现有 Settings 标题栏间距、Lucide 编辑图标与 **Edit** 标题；该视觉与文案规则维护在本应用 UI 规范。具体字段、校验和保存流程归所属业务组合层，表格行编辑仍由 `custom/data-table` 管理，不另抽全局编辑表单组件。
 - 通用 `Button` 保留官方 variant 与常见状态；普通 ghost 反馈不变。Dock 工具按钮复用 `variant="entry" size="entry"` 透明外壳，实际反馈由内部 `entry-surface` 承担，不在调用方复制同套参数。
 - EDU 保留默认模糊和点击解除逻辑，Hover 背景不变、指针为手形；其 hover 背景引用同一个 `overlay` Token，覆盖 ghost 默认背景变化。
 - Settings 与 Download 使用右侧 Sheet：共用组件统一维护默认宽 420px、最大不超过屏幕，调用方不重复写宽度。Header 高 56px，均显示对应 Lucide 图标与标题，关闭按钮提示为 `Close`。Download 正文展示下载记录；Settings 正文包含 General 和 Features 两区，分区标题为 14px／font-medium，设置项标题沿用官方 ItemTitle 的 14px／font-medium。Settings 正文父容器统一设置 24px 内边距及 24px 分区间距，子分区不叠加外侧内边距；两区之间不用 Separator，不叠加 Browsing history 标题；两个 Header 下方均保留分割线。 用户最终选择恢复此原样式，仅在共用右侧 Sheet 增加左上／左下 rounded-l-[var(--radius)]，当前为 16px；右侧直角贴边。
