@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { DropdownMenu, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
@@ -13,6 +13,7 @@ import { AccountMenuContent } from '../account/account-menu-content';
 /** 保留官方登录组合，GitHub 与 Google 共用 Neon 身份和会话。 */
 export function AccountLogin() {
   const [pending, setPending] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const { isMobile } = useSidebar();
   const { user, isPending, error, refetch } = useAccount();
   const avatar = user?.image?.startsWith('https://') ? user.image : undefined;
@@ -46,7 +47,7 @@ export function AccountLogin() {
         <SidebarMenuItem>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" aria-label={`Account: ${name}`}>
+              <SidebarMenuButton ref={triggerRef} size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" aria-label={`Account: ${name}`}>
                 <Avatar className="h-8 w-8 rounded-lg grayscale">
                   {avatar ? <AvatarImage src={avatar} alt={name} referrerPolicy="no-referrer" /> : null}
                   <AvatarFallback className="rounded-lg"><UiIcon name="user-round" className="size-4" /></AvatarFallback>
@@ -58,7 +59,7 @@ export function AccountLogin() {
                 <UiIcon name="ellipsis-vertical" className="ml-auto size-4" />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
-            <AccountMenuContent user={user} loggingOut={pending} onLogout={() => { void logout(); }} side={isMobile ? 'bottom' : 'right'} sideOffset={4} matchTriggerWidth />
+            <AccountMenuContent triggerRef={triggerRef} user={user} loggingOut={pending} onLogout={() => { void logout(); }} side={isMobile ? 'bottom' : 'right'} sideOffset={4} matchTriggerWidth />
           </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>

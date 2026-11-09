@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '../../components/ui/button';
 import { DropdownMenu, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
@@ -15,6 +15,7 @@ import { useDockOverlay } from './use-dock-overlay';
 export function DockAccount() {
   const { user, isPending, error, refetch } = useAccount();
   const overlay = useDockOverlay();
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
@@ -38,6 +39,7 @@ export function DockAccount() {
 
   const button = (
     <Button
+      ref={triggerRef}
       type="button"
       variant="entry"
       size="entry"
@@ -56,7 +58,7 @@ export function DockAccount() {
       {user && !error ? (
         <DropdownMenu {...overlay.overlayProps}>
           <TooltipTrigger asChild><DropdownMenuTrigger asChild>{button}</DropdownMenuTrigger></TooltipTrigger>
-          <AccountMenuContent user={user} loggingOut={loggingOut} onLogout={() => { void logout(); }} side="top" sideOffset={12} onCloseAutoFocus={overlay.onCloseAutoFocus} />
+          <AccountMenuContent triggerRef={triggerRef} user={user} loggingOut={loggingOut} onLogout={() => { void logout(); }} side="top" sideOffset={12} onCloseAutoFocus={overlay.onCloseAutoFocus} />
         </DropdownMenu>
       ) : (
         <AccountDialog isPending={isPending} refetch={refetch} onOpenChange={overlay.overlayProps.onOpenChange} onCloseAutoFocus={overlay.onCloseAutoFocus}>

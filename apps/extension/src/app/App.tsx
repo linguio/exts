@@ -39,8 +39,7 @@ export function App({ initialView }: { initialView: AppView }) {
             <div className="flex min-w-0 justify-center" data-bookmark-dock>
               <Dock
                 favorites={DOCK_FAVORITES}
-                studioActive={studioActive}
-                onStudioChange={changeStudio}
+                onOpenStudio={() => changeStudio(true)}
               />
             </div>
           </main>

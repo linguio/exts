@@ -1,29 +1,29 @@
-import { Toggle } from '../../components/ui/toggle';
+import { Button } from '../../components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
 
 interface StudioDockEntryProps {
-  active: boolean;
-  onActiveChange: (active: boolean) => void;
+  onOpen: () => void;
 }
 
-/** 固定图标表达工作台入口，提示表达下一次切换的目标。 */
-export function StudioDockEntry({ active, onActiveChange }: StudioDockEntryProps) {
-  const label = active ? 'Back to Home' : 'Switch to Studio';
+/** 首页 Dock 仅提供进入工作台的入口。 */
+export function StudioDockEntry({ onOpen }: StudioDockEntryProps) {
+  const label = 'Open Studio';
 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Toggle
-          pressed={active}
-          onPressedChange={onActiveChange}
+        <Button
+          type="button"
+          variant="entry"
+          size="entry"
+          onClick={onOpen}
           aria-label={label}
-          className="entry-trigger size-16 min-w-0 flex-none rounded-[var(--radius)] p-0"
         >
           <span className="entry-surface">
             <UiIcon name="panels-top-left" className="entry-glyph" />
           </span>
-        </Toggle>
+        </Button>
       </TooltipTrigger>
       <TooltipContent side="top" align="center" sideOffset={12}>{label}</TooltipContent>
     </Tooltip>

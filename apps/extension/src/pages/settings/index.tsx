@@ -15,7 +15,7 @@ export function SettingsSheet({ children, open, onOpenChange, onCloseAutoFocus }
   children: ReactNode;
   open: boolean;
   onOpenChange(open: boolean): void;
-  onCloseAutoFocus(): void;
+  onCloseAutoFocus(event: Event): void;
 }) {
   const titleRef = useRef<HTMLHeadingElement>(null);
 

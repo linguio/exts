@@ -11,12 +11,11 @@ import { DockSettings } from './dock-settings';
 
 interface DockProps {
   favorites: Bookmark[];
-  studioActive: boolean;
-  onStudioChange: (active: boolean) => void;
+  onOpenStudio: () => void;
 }
 
 /** 常驻 Dock 组合收藏、模块入口与工具菜单，具体业务由所属模块持有。 */
-export function Dock({ favorites, studioActive, onStudioChange }: DockProps) {
+export function Dock({ favorites, onOpenStudio }: DockProps) {
   return (
     <nav className="bookmark-dock box-border min-w-0 w-max max-w-full rounded-[var(--radius)] border border-border bg-surface-raised shadow-[var(--shadow-hover)]" aria-label="Dock">
       <ScrollArea className="min-w-0 max-w-full" viewportClassName="overscroll-x-contain">
@@ -37,7 +36,7 @@ export function Dock({ favorites, studioActive, onStudioChange }: DockProps) {
           <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-12" aria-hidden="true" />
           <div className="bookmark-dock__tools flex shrink-0 flex-nowrap gap-2">
             <div className="bookmark-dock__group relative flex">
-              <StudioDockEntry active={studioActive} onActiveChange={onStudioChange} />
+              <StudioDockEntry onOpen={onOpenStudio} />
             </div>
             <DockActions />
             <DockDownload />
