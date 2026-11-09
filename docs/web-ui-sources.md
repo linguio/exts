@@ -174,6 +174,7 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 - 共用组件只负责展示；实际完成判断、文案、文件名和调用时机仍在 TG 模块中。
 - 2026-10-24 按用户反馈在共用 Toaster 显式设置默认 bottom-right，TG 去除 top-right 覆盖，与 Newtab 提示共用位置规则；不同页面分别挂载，不增加跨页提示中心或业务管理层。
 - 2026-10-24 统一通过 shared/ui/sonner.tsx 导出既有 toast API，TG 与 Download 均从该入口导入；沿用官方 success/info/warning/error 和现有 Lucide 映射，不添加消息管理封装或彩色状态覆盖。业务仅选择等级与提示语；当前文件夹提示改用 info，以展示既有信息图标。后续 X 遵守同一规则，不在本期接入。
+- 2026-11-09 共用 `src/components/ui/sonner.tsx` 在保留官方 Toaster 与 Lucide 图标映射的前提下，用薄包装为全部 `toast.*` 调用附加右侧仅图标的复制动作（`toast-copy-action.tsx`，官方 `Button` `variant="outline" size="icon"`，与 DataTable Columns 触发器相同交互语义，不使用 Sonner `[data-button]` 高反差样式）；Lucide `Copy`/`Check` 经 Sonner `action` 自定义节点挂载；复制当前可见英文字符串，成功后短暂显示 Check 再恢复 Copy；悬停/键盘提示用官方 `Tooltip`/`TooltipContent`，固定文案 `Copy`（与 DataTable Columns 相同），`aria-label` 可随成功切换为 `Copied`；`toast-message.ts` 将非英文或不可复制为纯文本的入参替换为按等级的通用英文。Toaster 使用 `pointer-events-none` 与每条 Toast 的 `pointer-events-auto` 降低点击穿透；不新增通知管理层，业务仍直接调用既有 API。
 
 ## Settings 分组列表与折叠（2026-10-28）
 

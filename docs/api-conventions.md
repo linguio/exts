@@ -25,18 +25,22 @@
 - 认证业务请求发送 Authorization: Bearer <accessToken>、Accept: application/json；存在 JSON 请求体时发送 Content-Type: application/json。服务端通过已验证身份限定数据归属，不接受请求中的 userId 作为授权依据。
 - 扩展在后台读取访问令牌、发出业务 HTTP 请求；页面消息不能指定任意 URL、方法或请求头，令牌不传给页面、不输出日志。
 - Activity 必须传 JSON 对象。pageIndex/pageSize 同传启用分页：页码从 0 开始，每页 1–100 条，仅接受整数；日期可选，支持单边筛选或不限定日期。不分页时省略两项，必须提供 startDate/endDate，匹配最多 500 条，超过返回 422，提示缩小日期范围或分页，不截断。日期含首尾，开始不得晚于结束；原无请求体或 {} 查询全部历史的契约已取消。
-- Activity sort 为有序数组，每项 {field,order}；field 仅接受 date、exerciseMinutes、readingMinutes、learningMinutes、creationMinutes、sleepMinutes，order 为 asc/desc，重复或非法字段/方向返回 422。数组先后代表优先级；省略或空数组默认 date desc，未包含 date 时追加 date desc。时长 NULL 无论升降序始终最后，0 正常参与比较。后端先筛选排序，再分页，计数与记录来自同一 SQL 快照。
+- Activity sort 为有序数组，每项 {field,order}；field 仅接受 date、exerciseHours、readingHours、learningHours、creationHours、sleepHours，order 为 asc/desc，重复或非法字段/方向返回 422。数组先后代表优先级；省略或空数组默认 date desc，未包含 date 时追加 date desc。时长 NULL 无论升降序始终最后，0 正常参与比较。后端先筛选排序，再分页，计数与记录来自同一 SQL 快照。
 - 图表传完整日期范围及 sort:[{field:"date",order:"asc"}]，不传分页；Daily 传分页和用户排序。排序独立于分页。
-- Activity 更新请求体为 {"id":"<记录 UUID>","changes":{...}}；changes 至少包含 exerciseMinutes、readingMinutes、learningMinutes、creationMinutes、sleepMinutes 中的一项，每项为 0 至 PostgreSQL INTEGER 上限的严格整数，拒绝 null、小数、布尔、字符串与未知字段；身份仅取自令牌，按 id 与 user_id 更新既有行，不创建、不修改日期。未命中本人记录返回 404 NOT_FOUND。同字段并发以后写为准，依赖数据库 UPDATE 行锁，无 version 或应用锁。
+- Activity 更新（`POST /api/activity/days/update`）请求体为单层 JSON，字段为 `id` 与可选五项小时字段：`{ id, exerciseHours?, readingHours?, learningHours?, creationHours?, sleepHours? }`。必须包含 `id`，且至少发送一项小时字段（可只更新部分列）；每项为非负数值且必须为 `0.5` 的倍数，`0` 合法，拒绝 null、负数、非半小时小数、布尔、字符串与未知字段。服务端将 `*Hours` 写入物理列 `exercise_hours` 等（NUMERIC，非负）。身份仅取自令牌，按 id 与 user_id 更新既有行，不创建、不修改日期。未命中本人记录返回 404 NOT_FOUND。同字段并发以后写为准，依赖数据库 UPDATE 行锁，无 version 或应用锁。
 - Settings 读取使用空 JSON 对象；更新仅接受 theme、mediaDownload.enabled 或 historyCleaner.enabled 中的一项，不接收 userId。用户没有设置行时返回 theme 默认值且 id 为 null，首次成功更新时才建行；已有行返回稳定 id。旧本地配置不迁移。
 
 ```json
 {"startDate":"2026-11-01","endDate":"2026-11-06","pageIndex":0,"pageSize":20,"sort":[{"field":"date","order":"desc"}]}
 ```
 
+```json
+{"id":"550e8400-e29b-41d4-a716-446655440000","exerciseHours":0,"readingHours":0,"learningHours":0,"creationHours":0,"sleepHours":0}
+```
+
 ## 响应与异常
 
-- 成功响应统一 {"data": ...}；Activity 查询为 {"data":{"days":[...],"total":87,"pageIndex":0,"pageSize":20}}；total 为日期筛选后的本人记录总数，空页保留真实 total；不分页的 pageIndex/pageSize 为 null。每条记录包含 id、userId、date、五项 camelCase 分钟字段、createdAt、updatedAt。Activity 更新成功返回单条同样结构的 data。
+- 成功响应统一 {"data": ...}；Activity 查询为 {"data":{"days":[...],"total":87,"pageIndex":0,"pageSize":20}}；total 为日期筛选后的本人记录总数，空页保留真实 total；不分页的 pageIndex/pageSize 为 null。每条记录包含 id、userId、date、五项 camelCase 小时字段（`exerciseHours` 等）、createdAt、updatedAt。Activity 更新成功返回单条同样结构的 data。
 - Settings 读取与更新均返回 {"data":{"id":null|"uuid","theme":"system","mediaDownload":{"enabled":false},"historyCleaner":{"enabled":false}}}；无持久化行时 id 为 null。数据库另以 user_id 维持每人一行语义，本地副本另存当前 userId。
 - 失败响应统一 {"error":{"code":"...","message":"...","requestId":"..."}}，同时保留真实 HTTP 状态；不使用 200 掩盖失败。X-Request-ID 与响应中的 requestId 对应。
 - 401 表示未登录或凭据失效，403 表示禁止访问，422 表示参数错误，500 表示未预期异常，503 表示依赖暂不可用。空记录返回成功空数组；连接失败不能返回空数据冒充成功。

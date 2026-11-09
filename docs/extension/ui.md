@@ -226,8 +226,8 @@ Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Do
 | 警告 | toast.warning | TriangleAlert | 需要用户留意或处理的状态；不因此新增当前模块的触发条件 |
 | 错误 | toast.error | OctagonX | 已触发操作失败，例如下载记录清空失败 |
 
-业务模块持有文案、等级、完成条件等状态；不在共用 UI 中加入 Chrome API、下载记录、跨页面通知管理或重复消息包装器。不同页面/Shadow DOM 各自挂载 Toaster，多条提示沿用 Sonner 默认折叠堆叠与关闭行为，互不转发。
+业务模块持有文案、等级、完成条件等状态；不在共用 UI 中加入 Chrome API、下载记录、跨页面通知管理或重复消息包装器。不同页面/Shadow DOM 各自挂载 Toaster，多条提示沿用 Sonner 默认折叠堆叠与关闭行为，互不转发。用户可见提示语统一使用英文；共用 `sonner.tsx` 为每条 Toast 提供右侧官方 outline 图标按钮（与 DataTable Columns 触发器同款 `Button`，Lucide Copy，成功后短暂 Check），复制当前可见英文文案；悬停/键盘提示与 Columns 相同采用官方 Tooltip，固定显示 `Copy`，`aria-label` 为完整英文说明（成功后可显示 `Copied`），并通过 Toaster/`pointer-events` 规则避免点击穿透到页面控件。
 
 Settings 的加载、保存与权限操作失败统一使用根部现有 Toaster 的 toast.error，不在设置行追加错误段落；共用英文文案集中在 src/features/settings/messages.ts，调用方直接使用官方 API，不包装新的通知服务。Toast 不复制内部异常细节；保留必要的正式异常日志，临时排错日志结束后清理。此规则不改变已有 TG 下载仅成功提示的专属约定。
 
-TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标和“下载完成”，不再描述文件名；文件名保留在 Download 记录。开始、进行中、取消和失败不显示 Toast。后续 X 必须复用同一组件和位置，实际触发条件由其独立 Issue 决定，不代表本次已接入。
+TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标和 “Download complete.”，不再描述文件名；文件名保留在 Download 记录。开始、进行中、取消和失败不显示 Toast。后续 X 必须复用同一组件和位置，实际触发条件由其独立 Issue 决定，不代表本次已接入。

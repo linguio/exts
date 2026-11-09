@@ -168,7 +168,7 @@ meta: {
 
 ## 默认日期排序验收补充
 
-- 重新加载/Reset 后先 Shift 点击 Exercise，再 Shift 点击 Reading：请求 sort 应为 exerciseMinutes、readingMinutes，不含默认 date；日期由后端追加在最后。
+- 重新加载/Reset 后先 Shift 点击 Exercise，再 Shift 点击 Reading：请求 sort 应为 exerciseHours、readingHours，不含默认 date；日期由后端追加在最后。
 - 检查运动时长优先、相同运动时长再比较阅读时长；时长都相同时按日期倒序。
 - 移除全部用户排序或 Reset 后，sort 为 []，后端返回日期倒序；普通点击仍按 TanStack 默认交互切换单列，不改为点击自动累加。
 - 本轮针对默认优先级的 9 项相关逻辑检查、扩展类型检查、本地 API 构建通过；API 未修改，浏览器实际交互仍待用户验收。
