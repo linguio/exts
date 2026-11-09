@@ -92,7 +92,7 @@
 ## 官方基线
 
 - Studio GitHub 登录（2026-11-04）：从同一固定版本 c257f688cf4de7ec10cc1be84cad29cd4631182c 的 ui/avatar.tsx 补齐实际需要的 AvatarImage，沿用官方 aspect-square/size-full；未登录 Fallback、Account 行及登录块样式保持原有规则。真实账户、登录进行中及退出属于获批登录行为，不改主题 Token。插件认证采用 oidc-client-ts 3.5.0；官网认证承接页使用现有官方 Button 和主题，不引入额外 UI 模板或图表框架，@neon/auth 0.8.2 仅在官网读取网页会话。
-- 已登录账户（2026-11-04）：用户指定 [Blocks](https://ui.shadcn.com/blocks) 的 dashboard-01 `nav-user.tsx`。只替换 Studio 右下角已登录入口，不执行 CLI，不迁入图表、表格或 Tabler 图标。菜单结构、向右展开、`sideOffset=4`、`min-w-56` 与竖向省略号沿用该块；图标改用既有 Lucide 静态映射。DropdownMenu 仅补同一固定版本的 Group、Label、Separator，不加入动画类，共用菜单默认间距仍为 12px。无头像时继续用 UserRound，不显示示例缩写。Log out 调用现有退出；Account、Billing、Notifications 无新功能。未登录仍打开原登录框。
+- 已登录账户（2026-11-04）：用户指定 [Blocks](https://ui.shadcn.com/blocks) 的 dashboard-01 `nav-user.tsx`。只替换 Studio 右下角已登录入口，不执行 CLI，不迁入图表、表格或 Tabler 图标。菜单结构、向右展开、`sideOffset=4`、`min-w-56` 与竖向省略号沿用该块；图标改用既有 Lucide 静态映射。DropdownMenu 仅补同一固定版本的 Group、Label、Separator，不加入动画类，共用菜单默认间距仍为 12px。无头像时继续用 UserRound，不显示示例缩写。Log out 调用现有退出；Account、Notifications 无新功能。2026-11-09 按用户批准从共享账户菜单移除 Billing，在 Notifications 下新增 Settings，沿用既有 Settings 图标与官方 DropdownMenuItem，关闭菜单后打开既有 SettingsSheet，并在关闭后恢复到账户入口；Newtab 与 Studio 共用，菜单方向、尺寸及未登录流程保留。
 
 - 核对日期：2026-10-16。
 - 仓库：[shadcn-ui/ui](https://github.com/shadcn-ui/ui)，MIT 许可。
@@ -119,7 +119,7 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 
 扩展实际深色通过根 `data-theme` 覆盖原有 Token，System 模式才跟随系统媒体查询，不依赖 `.dark`。接入源码时移除依赖 `.dark` 的配色分支，以主题 Token 表达对应状态；减少动态效果继续由现有全局规则处理。仓库未安装动画工具类插件，因此不引入无法生效的动画类或新依赖。Sheet 当前仅使用右侧入口，其余方向保留官方定位接口，不增加未批准的新交互。
 
-2026-10-26 Studio 直接组合现有官方 Toggle 与 Tooltip，调用方指定现有 Dock 的 64px 外框；因 Tooltip 共享 data-state 且 entry-surface 会遮住按钮底色，选中外观通过根 aria-pressed 将官方 accent/accent-foreground 应用到共用入口图块。Radix 继续管理 pressed，不改 Toggle 源码，不添加图标填充或自定义状态。Actions 复用现有 DropdownMenu 默认 Hover、焦点、键盘与选中关闭行为，保留菜单打开时抑制 Tooltip 及原有关闭焦点行为；两个占位项通过 onSelect 调用 toast.info 显示「暂未接入」。现有 Toaster 从下载面板移到 Newtab 根部，仍复用同一共用 Sonner 源码、主题与右下角默认位置，不重复挂载或新增管理层。
+2026-11-09 Studio 入口按用户批准改用已有官方 Button 的项目 entry/entry 组合与 Tooltip，保留 64px 外框和 PanelsTopLeft；移除原 Toggle pressed 与专属选中样式，使用共用入口悬停反馈，不修改全局 Token 或 Toggle 源码。Actions 复用现有 DropdownMenu 默认 Hover、焦点、键盘与选中关闭行为，保留菜单打开时抑制 Tooltip 及原有关闭焦点行为；两个占位项通过 onSelect 调用 toast.info 显示「暂未接入」。现有 Toaster 从下载面板移到 Newtab 根部，仍复用同一共用 Sonner 源码、主题与右下角默认位置，不重复挂载或新增管理层。
 
 ## 业务组合与扫描边界
 
