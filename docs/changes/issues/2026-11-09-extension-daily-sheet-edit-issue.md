@@ -83,7 +83,6 @@ Daily 已通过 QueryDataTable 接入真实查询，但字段展示与筛选配�
 - [扩展 UI 规范](../../extension/ui.md)
 - [Web UI 来源](../../web-ui-sources.md)
 - [分级验证规范](../../verification.md)
-- [Cursor 委派 Skill](../../../.agents/skills/workflow-cursor/SKILL.md)
 
 ## 唯一下一步
 

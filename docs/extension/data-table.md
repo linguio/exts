@@ -30,7 +30,7 @@ const filters: DataTableFilter[] = [
 ```
 
 - columns、queryFn、getRowId、caption 必填；filters 可省略，省略时从 `columns[].meta.dataTable.filter` 推导。scopeKey 用于账号/资源变化时同步隔离全部查询状态，或由父级已存在的重建边界保证；不读取组件内部账号。
-- 行末 Edit 需可写字段且（`updateFn` 或显式 `previewEdits`）；`previewEdits` 默认 false。预览保存只补丁当前成功响应、不重新请求；`updateFn` 保存成功后由组合层 `refresh`。`filters` 省略时从 columns meta 推导，显式 `[]` 表示无筛选。默认每页 20 条；可选 `fillRecords` 在父级 flex 链内占满剩余高度，记录区官方 ScrollArea 纵向滚动、分页紧随表格，横向滚动沿用官方 Table。可选 `headerNote`/`editDescription` 供页面补充说明。
+- 行末 Edit 需可写字段且（`updateFn` 或显式 `previewEdits`）；`previewEdits` 默认 false。预览保存只补丁当前成功响应、不重新请求；`updateFn` 保存成功后由组合层 `refresh`。`filters` 省略时从 columns meta 推导，显式 `[]` 表示无筛选。默认每页 20 条；可选 `fillRecords` 需要父级提供 `min-h-0` 的 flex 高度链，在工具栏和分页间占满剩余高度。有记录时只使用一个内部 ScrollArea 承担横向与纵向滚动，表头 `sticky top-0`、默认 Actions 列 `sticky right-0`；没有记录或首次加载时，表头下方改为不带 ScrollArea 的 `flex-1` 数据区，空态或 Spinner 必须在该区域正中，不能用空表格行撑高。Table 外壳不得另建 overflow，不能拆成两张表。可选 `headerNote`/`editDescription` 供页面补充说明。
 - enabled 默认 true；false 时不发请求并取消在途请求，首次未启用不显示为查询成功空记录。showCaption/emptyContent 保留既有展示能力。
 - filters.defaultValue 仅在查询入口初始化和 Reset 时应用。文本默认值为字符串，选项为字符串数组，日期范围为 {from,to}；默认值不会被编辑草稿污染，父级重渲染不重新应用默认条件。
 - queryFn 接收 {pageIndex,pageSize,sort,filters} 和 signal，返回 Promise<{rows,total}>。sort 已转换为有序 {field,order} 数组；filters 的键为 columnId，值为已经生效的筛选值。筛选不要求对应可见数据列。

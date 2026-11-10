@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [修复 Daily 表格滚动并补齐接口说明](./issues/2026-11-10-extension-daily-table-body-scroll-issue.md) · [Commit 记录](./commits/2026-11-10-extension-daily-table-body-scroll-commit.md)；2026-11-10 用户验收通过并批准本地提交。Daily 固定表头与 Actions、空态/加载居中、Studio 登录页/Overview/session 路由恢复、原生右键菜单拦截及 Settings OpenAPI 说明已交付；Extension 类型检查通过，浏览器交互由用户验收，未推送或发布。
+
 - [更新官网 Activity 编辑日志与产品版本](./issues/2026-11-10-website-activity-editing-changelog-issue.md) · [Commit 记录](./commits/2026-11-10-website-activity-editing-changelog-commit.md)；2026-11-10 用户验收通过并批准代码、文档两笔本地提交完结。官网 Changelog 新增 Extension、API、Skills 三标签 Activity 编辑记录，产品版本更新为 2.2.0；官网类型检查受本机依赖 DNS 失败阻断，未推送或部署。
 
 - [统一提示反馈并修复 Daily 保存校验](./issues/2026-11-09-extension-toast-daily-validation-issue.md) · [Commit 记录](./commits/2026-11-09-extension-toast-daily-validation-commit.md)；2026-11-10 用户验收通过并批准代码、文档两笔本地提交完结。右下角 Toast 统一英文、复制及点击隔离；Daily 以 0.5 小时步进保存，API、图表及数据库 `*_hours` 列已对齐，修复读取响应校验 500；未推送或部署。
@@ -100,7 +102,6 @@ docs/
 
 - [通过 Daily 验证配置驱动的表格编辑](./issues/2026-11-09-extension-daily-sheet-edit-issue.md) · [Commit 记录](./commits/2026-11-09-extension-daily-sheet-edit-commit.md)；2026-11-09 用户验收通过并批准代码、文档两笔本地提交完结。真实接口记录临时编辑，默认每页 20 条；Daily 表格滚动分页、Query＋Reset 按钮组、独立 Columns、Edit Sheet 标题与 min 单位已交付，初始焦点落在标题。Cursor composer-2.5 同一会话实施、Codex 审查，相关逻辑测试、类型与构建通过；未推送或发布。
 
-- [建立 Cursor 串行委派 Skill](./issues/2026-11-09-repo-workflow-cursor-issue.md) · [Commit 记录](./commits/2026-11-09-repo-workflow-cursor-commit.md)；2026-11-09 用户明确批准代码、文档两笔本地提交完结。根规范与三个 workflow Skill 已同步试用分工，Cursor Composer 2.5 新增官网 Skills 条目，Codex 核对 diff 与官网类型检查通过；提示传递、Shell 和 PyYAML 限制保留，未推送或发布。
 
 - [整理 Dock 与账户菜单入口](./issues/2026-11-09-extension-dock-account-entries-issue.md) · [Commit 记录](./commits/2026-11-09-extension-dock-account-entries-commit.md)；2026-11-09 用户验收通过并批准代码、文档两笔本地提交完结。Studio 普通入口与两处 Account Settings 已交付，相关 10 项测试、类型检查及生产构建通过，既有构建警告保留，未推送或发布。
 
