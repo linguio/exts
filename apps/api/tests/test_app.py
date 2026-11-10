@@ -59,6 +59,12 @@ class DocumentationTests(unittest.TestCase):
         self.assertIn('securitySchemes', schema['components'])
         self.assertEqual(operation['security'], [{'HTTPBearer': []}])
         self.assertEqual(update['security'], [{'HTTPBearer': []}])
+        settings_read = schema['paths']['/api/settings/preferences']['post']
+        settings_update = schema['paths']['/api/settings/preferences/update']['post']
+        self.assertIn('description', settings_read)
+        self.assertIn('description', settings_update)
+        self.assertIn('userId', settings_read['description'])
+        self.assertIn('theme', settings_update['description'])
         self.assertNotIn("API_ACCESS_TOKEN", schema["info"]["description"])
 
     def test_documented_example_uses_actual_response_model_and_nullable_values(self):
