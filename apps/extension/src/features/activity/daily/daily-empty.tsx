@@ -5,7 +5,7 @@ import { UiIcon } from '../../../components/custom/ui-icon';
 export function DailyEmpty() {
   return <Empty>
     <EmptyHeader>
-      <EmptyMedia variant="icon"><UiIcon name="notebook-text" className="size-6" /></EmptyMedia>
+      <EmptyMedia variant="icon"><UiIcon name="circle-dashed" className="size-6" /></EmptyMedia>
       <EmptyTitle>No activity records</EmptyTitle>
       <EmptyDescription>There are no records for the selected date range.</EmptyDescription>
     </EmptyHeader>

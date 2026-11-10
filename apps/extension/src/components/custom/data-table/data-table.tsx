@@ -62,16 +62,37 @@ export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCa
   const filtered = !!query.globalFilter || query.columnFilters.length > 0;
   const busy = loading;
   const columnCount = Math.max(1, table.getVisibleLeafColumns().length);
+  const stickyEndClass = 'sticky right-0 z-10 bg-background';
+  function headClass(columnId: string) {
+    return cn('text-center', columnId === '__actions' && stickyEndClass);
+  }
+  function cellClass(columnId: string) {
+    return cn('text-center', columnId === '__actions' && stickyEndClass);
+  }
   const headerClassName = fillRecords ? 'sticky top-0 z-10 bg-background [&_th]:bg-background' : undefined;
-  const tableBlock = <div className="overflow-hidden rounded-md border"><Table aria-label={caption}>{showCaption && <TableCaption>{caption}</TableCaption>}
-    <TableHeader className={headerClassName}>{table.getHeaderGroups().map(group => <TableRow key={group.id}>{group.headers.map(header => <TableHead className="text-center" key={header.id} colSpan={header.colSpan} aria-sort={header.column.getIsSorted() === 'asc' ? 'ascending' : header.column.getIsSorted() === 'desc' ? 'descending' : undefined}>{header.isPlaceholder ? null : typeof header.column.columnDef.header === 'string' ? <DataTableColumnHeader column={header.column} title={header.column.columnDef.header} disabled={busy} /> : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>)}</TableRow>)}</TableHeader>
+  const rows = table.getRowModel().rows;
+  const initialLoading = loading && (!hasPreviousResult || !rows.length);
+  const fillPlaceholder = fillRecords && (initialLoading || !rows.length);
+  const tableHeader = <TableHeader className={headerClassName}>{table.getHeaderGroups().map(group => <TableRow key={group.id}>{group.headers.map(header => <TableHead className={headClass(header.column.id)} key={header.id} colSpan={header.colSpan} aria-sort={header.column.getIsSorted() === 'asc' ? 'ascending' : header.column.getIsSorted() === 'desc' ? 'descending' : undefined}>{header.isPlaceholder ? null : typeof header.column.columnDef.header === 'string' ? <DataTableColumnHeader column={header.column} title={header.column.columnDef.header} disabled={busy} /> : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>)}</TableRow>)}</TableHeader>;
+  const emptyState = emptyContent ?? <Empty className="flex-none border-0 p-0"><EmptyHeader><EmptyTitle>{filtered ? '没有符合条件的记录' : '暂无记录'}</EmptyTitle><EmptyDescription>{filtered ? '请调整筛选条件后重试。' : '数据记录将在此显示。'}</EmptyDescription></EmptyHeader></Empty>;
+  const tableContent = fillPlaceholder
+    ? <div className="flex h-full min-h-0 flex-1 flex-col"><Table aria-label={caption} containerClassName="shrink-0 overflow-visible">{showCaption && <TableCaption>{caption}</TableCaption>}{tableHeader}</Table><div className="flex flex-1 items-center justify-center p-6" aria-busy={loading}>{initialLoading ? <Spinner aria-label="Loading records" /> : emptyState}</div></div>
+    : <Table aria-label={caption} containerClassName={fillRecords ? 'overflow-visible' : undefined}>{showCaption && <TableCaption>{caption}</TableCaption>}
+    {tableHeader}
     <TableBody className="relative" aria-busy={loading}>
-      {loading && (!hasPreviousResult || !table.getRowModel().rows.length)
+      {initialLoading
         ? <TableRow aria-hidden="true"><TableCell colSpan={columnCount} className="h-48" /></TableRow>
-        : table.getRowModel().rows.length ? table.getRowModel().rows.map(row => <TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>{row.getVisibleCells().map(cell => <TableCell className="text-center" key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>)}</TableRow>) : <TableRow><TableCell colSpan={columnCount} className="h-24 text-center">{emptyContent ?? <Empty><EmptyHeader><EmptyTitle>{filtered ? '没有符合条件的记录' : '暂无记录'}</EmptyTitle><EmptyDescription>{filtered ? '请调整筛选条件后重试。' : '数据记录将在此显示。'}</EmptyDescription></EmptyHeader></Empty>}</TableCell></TableRow>}
+        : rows.length ? rows.map(row => <TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>{row.getVisibleCells().map(cell => <TableCell className={cellClass(cell.column.id)} key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>)}</TableRow>) : <TableRow><TableCell colSpan={columnCount} className="h-24 text-center">{emptyState}</TableCell></TableRow>}
       {loading && <TableRow className="pointer-events-none absolute inset-0 z-10 border-0 hover:bg-transparent"><TableCell colSpan={columnCount} className="flex h-full items-center justify-center p-0"><Spinner aria-label="Loading records" /></TableCell></TableRow>}
     </TableBody>
-  </Table></div>;
+  </Table>;
+  const tableBlock = fillRecords
+    ? <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border">
+      {fillPlaceholder
+        ? tableContent
+        : <ScrollArea className="min-h-0 flex-1" horizontal viewportClassName="[&>div]:flex [&>div]:h-full [&>div]:min-h-0 [&>div]:flex-col">{tableContent}</ScrollArea>}
+    </div>
+    : <div className="overflow-hidden rounded-md border">{tableContent}</div>;
   const defaultToolbar = <DataTableToolbar table={table} filters={filters} search={search} visibility={columnVisibility} disabled={busy} />;
   const toolbarNode = toolbar ? toolbar(table, busy) : defaultToolbar;
   const toolbarBlock = fillRecords
@@ -80,9 +101,7 @@ export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCa
   return <section className={cn(fillRecords ? 'flex min-h-0 flex-1 flex-col gap-4' : 'space-y-4')} aria-label={caption} aria-busy={loading}>
     {toolbarBlock}
     {selection && selected.length > 0 && <div className={cn('flex flex-wrap items-center gap-2', fillRecords && 'shrink-0')}><span>已选择 {selected.length} 条</span>{!busy && bulkActions?.(selected, () => setRowSelection({}))}</div>}
-    {fillRecords
-      ? <ScrollArea className="min-h-0 flex-1">{tableBlock}</ScrollArea>
-      : tableBlock}
+    {tableBlock}
     {showPagination && <div className={cn(fillRecords && 'shrink-0')}><DataTablePagination table={table} pageSizes={pageSizes} disabled={busy} /></div>}
   </section>;
 }

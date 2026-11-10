@@ -1,16 +1,17 @@
-import { useState, useSyncExternalStore, type CSSProperties } from 'react';
+import { useEffect, useState, useSyncExternalStore, type CSSProperties } from 'react';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '../../components/ui/breadcrumb';
 import { ScrollArea } from '../../components/ui/scroll-area';
 import { Separator } from '../../components/ui/separator';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '../../components/ui/sidebar';
 import { cn } from '../../lib/utils';
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../components/ui/empty';
-import { UiIcon } from '../../components/custom/ui-icon';
 import { useAccount, readSessionResetVersion, subscribeSessionReset } from '../../features/account/auth-client';
-import { studioMenu, type StudioPageId } from './menu';
-import { selectedStudioPage, studioAccess, studioSessionKey } from './studio-access';
+import { resolveStudioRoute } from './menu';
+import { studioAccess, studioSessionKey } from './studio-access';
 import { StudioContent } from './studio-content';
 import { StudioSidebar } from './studio-sidebar';
+import { LoginPage } from '../login';
+import { saveStudioRoute, readStudioRoute } from '../../app/view-preference';
+import { toast } from '../../components/ui/sonner';
 
 interface StudioProps { onHome: () => void }
 
@@ -20,21 +21,39 @@ export function Studio({ onHome }: StudioProps) {
   const resetVersion = useSyncExternalStore(subscribeSessionReset, readSessionResetVersion);
   const access = studioAccess(account);
   const sessionKey = access === 'ready' ? studioSessionKey(account.user!.id, resetVersion) : null;
-  const [selection, setSelection] = useState<{ sessionKey: string; page: StudioPageId } | null>(null);
-  const activePage = selectedStudioPage(selection, sessionKey);
-  const group = studioMenu.find(group => group.items.some(page => page.id === activePage));
-  const page = group?.items.find(page => page.id === activePage);
+  const [selection, setSelection] = useState<{ sessionKey: string; route: string } | null>(null);
+  useEffect(() => {
+    if (!sessionKey || !account.user) return;
+    let active = true;
+    void readStudioRoute(account.user.id).then(route => {
+      if (active) setSelection({ sessionKey, route: resolveStudioRoute(route).page.route });
+    }).catch(() => {
+      if (active) setSelection({ sessionKey, route: resolveStudioRoute(null).page.route });
+    });
+    return () => { active = false; };
+  }, [sessionKey, account.user]);
+  const activeRoute = sessionKey && selection?.sessionKey === sessionKey ? selection.route : null;
+  const resolved = access === 'ready' ? resolveStudioRoute(activeRoute) : null;
+  const page = resolved?.page;
+  const group = resolved?.group;
   const Page = page?.component;
-  const fillHeightPage = activePage === 'daily';
-  const pageBody = (
+  const fillHeightPage = page?.fillHeight === true;
+  const pageBody = access === 'signed-out'
+    ? <LoginPage isPending={account.isPending} onRefetch={account.refetch} />
+    : (
     <StudioContent account={account} resetVersion={resetVersion}>
-      {Page ? <Page /> : <Empty><EmptyHeader><EmptyMedia variant="icon"><UiIcon name="panels-top-left" className="size-6" /></EmptyMedia><EmptyTitle>Select a page</EmptyTitle><EmptyDescription>Choose a page from the sidebar to get started.</EmptyDescription></EmptyHeader></Empty>}
+      {Page ? <Page /> : null}
     </StudioContent>
   );
   return (
-    <SidebarProvider className="h-dvh min-h-0 overflow-hidden" style={{ '--sidebar-width': 'calc(var(--spacing) * 72)', '--header-height': 'calc(var(--spacing) * 12)' } as CSSProperties}>
-      <StudioSidebar onHome={onHome} access={access} sessionKey={sessionKey} activePage={activePage}
-        onPageChange={page => { if (sessionKey) setSelection({ sessionKey, page }); }} />
+    <SidebarProvider className="h-dvh min-h-0 overflow-hidden" style={{ '--sidebar-width': 'calc(var(--spacing) * 72)', '--header-height': 'calc(var(--spacing) * 12)' } as CSSProperties} onContextMenuCapture={event => event.preventDefault()}>
+      <StudioSidebar onHome={onHome} access={access} sessionKey={sessionKey} activeRoute={activeRoute}
+        onRouteChange={route => {
+          if (!sessionKey || !account.user) return;
+          const nextRoute = resolveStudioRoute(route).page.route;
+          setSelection({ sessionKey, route: nextRoute });
+          void saveStudioRoute(account.user.id, nextRoute).catch(() => toast.error('Unable to save page preference.'));
+        }} />
       <SidebarInset className="min-h-0 min-w-0" aria-label="Studio">
         <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear">
           <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
@@ -42,14 +61,15 @@ export function Studio({ onHome }: StudioProps) {
             <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-4" />
             <Breadcrumb><BreadcrumbList>
               <BreadcrumbItem>{page ? 'Studio' : <BreadcrumbPage>Studio</BreadcrumbPage>}</BreadcrumbItem>
-              {group && page && <><BreadcrumbSeparator /><BreadcrumbItem>{group.title}</BreadcrumbItem><BreadcrumbSeparator /><BreadcrumbItem><BreadcrumbPage>{page.title}</BreadcrumbPage></BreadcrumbItem></>}
+              {group && page && <><BreadcrumbSeparator /><BreadcrumbItem>{group.title}</BreadcrumbItem></>}
+              {page && <><BreadcrumbSeparator /><BreadcrumbItem><BreadcrumbPage>{page.title}</BreadcrumbPage></BreadcrumbItem></>}
             </BreadcrumbList></Breadcrumb>
           </div>
         </header>
         <div className={cn('flex min-h-0 flex-1 flex-col', fillHeightPage && 'overflow-hidden')}>
-          {fillHeightPage
+          {fillHeightPage || access === 'signed-out'
             ? pageBody
-            : <ScrollArea className="min-h-0 flex-1">{pageBody}</ScrollArea>}
+            : <ScrollArea className="min-h-0 flex-1" viewportClassName="[&>div]:flex [&>div]:min-h-full [&>div]:flex-col">{pageBody}</ScrollArea>}
         </div>
       </SidebarInset>
     </SidebarProvider>

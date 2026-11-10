@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, useId, type ChangeEvent, type For
 import type { ColumnDef } from '@tanstack/react-table';
 import { SquarePen } from 'lucide-react';
 import { Button } from '../../ui/button';
+import { toast } from '../../ui/sonner';
 import { Input } from '../../ui/input';
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../../ui/input-group';
 import { Spinner } from '../../ui/spinner';
@@ -10,7 +11,6 @@ import { ScrollArea } from '../../ui/scroll-area';
 import { Separator } from '../../ui/separator';
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetTitle } from '../../ui/sheet';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../ui/alert-dialog';
-import { toast } from '../../ui/sonner';
 import { editFieldsFromColumns, formatEditDraftValue, validateEditDraft, writableEditFieldsFromColumns, type DataTableEditFieldDefinition } from './column-meta';
 import { useDataTableEditLifecycle } from './use-data-table-edit-lifecycle';
 import type { DataTableUpdateFn } from './types';
@@ -99,6 +99,7 @@ export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, update
       await updateFn(getRowId(row), values, controller.signal);
       if (controller.signal.aborted) return;
       closeClean();
+      toast.success('Activity updated.');
       onSaved();
     } catch (error) {
       if (controller.signal.aborted) return;

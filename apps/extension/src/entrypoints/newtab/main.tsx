@@ -27,7 +27,7 @@ if (!container) {
   throw new Error('exts React 根节点不存在。');
 }
 
-// 恢复本机位置后再挂载，避免先显示 Home 再跳到 Studio。
+// 恢复当前会话位置后再挂载，避免先显示 Home 再跳到 Studio。
 void readViewPreference().then(initialView => {
   createRoot(container).render(<App initialView={initialView} />);
 });
