@@ -24,7 +24,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       changes: ['新增 Activity 日记录更新接口。'],
     }, {
       platform: 'Skills',
-      changes: ['新增 Cursor 串行开发工作流，由 Codex 负责规划与验证，Cursor 执行实现。'],
+      changes: [],
     }],
   },
   {
