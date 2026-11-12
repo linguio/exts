@@ -5,14 +5,14 @@ import { DropdownMenu, DropdownMenuTrigger } from '../../components/ui/dropdown-
 import { toast } from '../../components/ui/sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
-import { AccountDialog } from '@/pages/account/account-dialog';
-import { AccountMenuContent } from '@/pages/account/account-menu-content';
+import { AccountDialog } from '@/pages/studio/login/account-dialog';
+import { AccountMenu } from '@/pages/studio/login/account-menu';
 import { logoutAccount } from '@/features/account/auth-client';
 import { useAccount } from '@/features/account/auth-client';
 import { useDockOverlay } from './use-dock-overlay';
 
 /** 首页账户入口复用共享 Account 登录框，已登录菜单直接在 Dock 展开。 */
-export function DockAccount() {
+export function AccountEntry() {
   const { user, isPending, error, refetch } = useAccount();
   const overlay = useDockOverlay();
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -58,7 +58,7 @@ export function DockAccount() {
       {user && !error ? (
         <DropdownMenu {...overlay.overlayProps}>
           <TooltipTrigger asChild><DropdownMenuTrigger asChild>{button}</DropdownMenuTrigger></TooltipTrigger>
-          <AccountMenuContent triggerRef={triggerRef} user={user} loggingOut={loggingOut} onLogout={() => { void logout(); }} side="top" sideOffset={12} onCloseAutoFocus={overlay.onCloseAutoFocus} />
+          <AccountMenu triggerRef={triggerRef} user={user} loggingOut={loggingOut} onLogout={() => { void logout(); }} side="top" sideOffset={12} onCloseAutoFocus={overlay.onCloseAutoFocus} />
         </DropdownMenu>
       ) : (
         <AccountDialog isPending={isPending} refetch={refetch} onOpenChange={overlay.overlayProps.onOpenChange} onCloseAutoFocus={overlay.onCloseAutoFocus}>

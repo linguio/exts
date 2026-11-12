@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { studioAccess, studioSessionKey, selectedStudioPage } from '../../../src/pages/studio/studio-access';
+import { studioAccess, studioSessionKey, selectedStudioPage } from '../../../../src/pages/studio/login/account-state';
 
 it('身份未确认时等待，不提前显示登录或业务内容', () => {
   expect(studioAccess({ user: null, isPending: true, error: null })).toBe('loading');

@@ -1,7 +1,7 @@
-import { Button } from '../../components/ui/button';
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../components/ui/empty';
-import { UiIcon } from '../../components/custom/ui-icon';
-import { AccountDialog } from '../account/account-dialog';
+import { Button } from '../../../components/ui/button';
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../components/ui/empty';
+import { UiIcon } from '../../../components/custom/ui-icon';
+import { AccountDialog } from './account-dialog';
 
 interface LoginPageProps {
   isPending: boolean;

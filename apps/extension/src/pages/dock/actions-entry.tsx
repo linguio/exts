@@ -11,7 +11,7 @@ const placeholders = [
 ] as const;
 
 /** 操作菜单沿用官方交互，本期选择占位项只显示未接入提示。 */
-export function DockActions() {
+export function ActionsEntry() {
   const overlay = useDockOverlay();
 
   return (

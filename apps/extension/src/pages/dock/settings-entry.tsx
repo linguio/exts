@@ -2,15 +2,15 @@ import { Button } from '../../components/ui/button';
 import { SheetTrigger } from '../../components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
+import { SettingsSheet } from '../settings';
 import { useDockOverlay } from './use-dock-overlay';
-import { MediaDownloadSheet } from '../download';
 
-/** Dock 只提供一级入口，记录抽屉由媒体下载模块持有。 */
-export function DockDownload() {
+/** Dock 只提供设置入口，设置抽屉及分区由设置模块持有。 */
+export function SettingsEntry() {
   const overlay = useDockOverlay();
 
   return (
-    <MediaDownloadSheet {...overlay.overlayProps} onCloseAutoFocus={overlay.onCloseAutoFocus}>
+    <SettingsSheet {...overlay.overlayProps} onCloseAutoFocus={overlay.onCloseAutoFocus}>
       <Tooltip {...overlay.tooltipProps}>
         <TooltipTrigger asChild>
           <SheetTrigger asChild>
@@ -19,17 +19,17 @@ export function DockDownload() {
               variant="entry"
               size="entry"
               className="bookmark-card bookmark-card--dock bookmark-dock__tool"
-              aria-label="Open Media Download"
+              aria-label="Open settings"
               {...overlay.triggerProps}
             >
               <span className="bookmark-card__icon entry-surface">
-                <UiIcon name="download" className="entry-glyph" />
+                <UiIcon name="settings" className="entry-glyph" />
               </span>
             </Button>
           </SheetTrigger>
         </TooltipTrigger>
-        <TooltipContent side="top" align="center" sideOffset={12}>Media Download</TooltipContent>
+        <TooltipContent side="top" align="center" sideOffset={12}>Settings</TooltipContent>
       </Tooltip>
-    </MediaDownloadSheet>
+    </SettingsSheet>
   );
 }

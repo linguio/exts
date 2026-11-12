@@ -1,12 +1,12 @@
 import { BrandIcon } from '../../../components/custom/brand-icon';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../components/ui/empty';
-import type { studioAccess } from '../studio-access';
+import type { studioAccess } from '../login/account-state';
 import { Button } from '../../../components/ui/button';
 import { studioMenu, studioOverview } from '../routes';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, useSidebar } from '../../../components/ui/sidebar';
 import { UiIcon } from '../../../components/custom/ui-icon';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
-import { AccountLogin } from '../account-login';
+import { AccountSidebar } from '../login/account-sidebar';
 
 interface StudioSidebarProps {
   onHome: () => void;
@@ -53,7 +53,7 @@ export function StudioSidebar({ onHome, access, sessionKey, activeRoute, onRoute
           </SidebarMenuItem>)}</SidebarMenu>
         </SidebarGroup>)}
       </SidebarContent>
-      <SidebarFooter><AccountLogin /></SidebarFooter>
+      <SidebarFooter><AccountSidebar /></SidebarFooter>
     </Sidebar>
   );
 }

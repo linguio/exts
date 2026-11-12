@@ -1,13 +1,13 @@
 import { useState, type ReactNode } from 'react';
 
-import { BrandIcon } from '../../components/custom/brand-icon';
-import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '../../components/ui/dialog';
-import { Field, FieldGroup } from '../../components/ui/field';
-import { toast } from '../../components/ui/sonner';
-import { loginAccount } from '../../features/account/auth-client';
-import type { AccountProvider } from '../../features/account/account-controller';
+import { BrandIcon } from '../../../components/custom/brand-icon';
+import { Button } from '../../../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
+import { Field, FieldGroup } from '../../../components/ui/field';
+import { toast } from '../../../components/ui/sonner';
+import { loginAccount } from '../../../features/account/auth-client';
+import type { AccountProvider } from '../../../features/account/account-controller';
 
 /** Studio 与 Newtab 共用同一登录表单和认证操作。 */
 export function AccountDialog({ children, isPending, refetch, onOpenChange, onCloseAutoFocus }: { children: ReactNode | ((open: boolean) => ReactNode); isPending: boolean; refetch: () => Promise<void>; onOpenChange?: (open: boolean) => void; onCloseAutoFocus?: (event: Event) => void }) {

@@ -4,10 +4,10 @@ import { Separator } from '../../components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import type { Bookmark } from '../../features/bookmarks/bookmark';
 import { StudioDockEntry } from './studio-entry';
-import { DockActions } from './dock-actions';
-import { DockAccount } from './dock-account';
-import { DockDownload } from './dock-download';
-import { DockSettings } from './dock-settings';
+import { ActionsEntry } from './actions-entry';
+import { AccountEntry } from './account-entry';
+import { DownloadEntry } from './download-entry';
+import { SettingsEntry } from './settings-entry';
 
 interface DockProps {
   favorites: Bookmark[];
@@ -38,10 +38,10 @@ export function Dock({ favorites, onOpenStudio }: DockProps) {
             <div className="bookmark-dock__group relative flex">
               <StudioDockEntry onOpen={onOpenStudio} />
             </div>
-            <DockActions />
-            <DockDownload />
-            <DockAccount />
-            <DockSettings />
+            <ActionsEntry />
+            <DownloadEntry />
+            <AccountEntry />
+            <SettingsEntry />
           </div>
         </div>
         <ScrollBar orientation="horizontal" />

@@ -1,12 +1,12 @@
 import { useRef, useState, type RefObject } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
-import { DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '../../components/ui/dropdown-menu';
-import { UiIcon } from '../../components/custom/ui-icon';
-import type { AccountUser } from '../../features/account/account-controller';
-import { SettingsSheet } from '../settings';
+import { Avatar, AvatarFallback, AvatarImage } from '../../../components/ui/avatar';
+import { DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '../../../components/ui/dropdown-menu';
+import { UiIcon } from '../../../components/custom/ui-icon';
+import type { AccountUser } from '../../../features/account/account-controller';
+import { SettingsSheet } from '../../settings';
 
 /** Studio 与 Newtab 使用相同的账户菜单内容。 */
-export function AccountMenuContent({ user, loggingOut, onLogout, side, sideOffset, matchTriggerWidth = false, onCloseAutoFocus, triggerRef }: {
+export function AccountMenu({ user, loggingOut, onLogout, side, sideOffset, matchTriggerWidth = false, onCloseAutoFocus, triggerRef }: {
   user: AccountUser;
   loggingOut: boolean;
   onLogout: () => void;

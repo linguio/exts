@@ -1,11 +1,11 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { useAccount, readSessionResetVersion, subscribeSessionReset } from '../../features/account/auth-client';
 import { resolveStudioRoute } from './routes';
-import { studioAccess, studioSessionKey } from './studio-access';
+import { studioAccess, studioSessionKey } from './login/account-state';
 import { StudioContent } from './layout/content';
 import { StudioSidebar } from './layout/sidebar';
 import { StudioLayout } from './layout';
-import { LoginPage } from '../login';
+import { LoginPage } from './login/login-page';
 import { saveStudioRoute, readStudioRoute } from '../../app/view-preference';
 import { toast } from '../../components/ui/sonner';
 
