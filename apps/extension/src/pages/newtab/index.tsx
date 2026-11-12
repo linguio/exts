@@ -58,7 +58,9 @@ export function NewtabHome() {
   };
 
   return (
-    <div className="newtab-content-viewport" ref={viewportRef} onContextMenuCapture={event => event.preventDefault()}>
+    <div className="newtab-content-viewport" ref={viewportRef} onContextMenuCapture={event => {
+      if (!(event.target instanceof Element && event.target.closest('[data-timer-context-menu]'))) event.preventDefault();
+    }}>
       <div className="newtab-content" ref={contentRef} style={{ width: contentWidth }}>
         <section className="newtab-scroll-area" aria-label="常用书签">
           <ScrollArea className="size-full" viewportClassName="overscroll-contain">

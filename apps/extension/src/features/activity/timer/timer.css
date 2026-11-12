@@ -1,0 +1,19 @@
+/* 外框与间距由既有 Card 决定；内部按可用内容宽度等比排列。 */
+.activity-timer { container-type: inline-size; }
+.timer-face { display: flex; width: 100%; align-items: center; justify-content: center; gap: 6px; font-size: 32cqw; }
+.timer-digit { position: relative; display: block; width: calc((100% - 18px) / 2); aspect-ratio: .85; perspective: 600px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; color: var(--foreground); }
+.timer-half { position: absolute; left: 0; width: 100%; height: 50%; overflow: hidden; background: var(--muted); backface-visibility: hidden; }
+.timer-half > span { position: absolute; left: 0; width: 100%; height: 200%; display: flex; justify-content: center; align-items: center; }
+.timer-half-top { top: 0; border-radius: calc(var(--radius) / 2) calc(var(--radius) / 2) 0 0; transform-origin: bottom; }
+.timer-half-bottom { bottom: 0; border-radius: 0 0 calc(var(--radius) / 2) calc(var(--radius) / 2); transform-origin: top; }
+.timer-half-top > span { top: 0; }
+.timer-half-bottom > span { bottom: 0; }
+.timer-digit::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--border); z-index: 5; pointer-events: none; }
+.timer-fold { z-index: 4; animation: timer-fold 200ms ease-in forwards; }
+.timer-unfold { z-index: 3; transform: rotateX(90deg); animation: timer-unfold 250ms 200ms ease-out forwards; }
+@keyframes timer-fold { to { transform: rotateX(-90deg); } }
+@keyframes timer-unfold { to { transform: rotateX(0); } }
+@media (prefers-reduced-motion: reduce) { .timer-fold, .timer-unfold { display: none; } }
+
+/* 时钟与倒计时共用两张等大双位卡，切换只改变显示内容。 */
+.timer-colon { width: 6px; flex: none; font-size: 20px; color: var(--muted-foreground); }
