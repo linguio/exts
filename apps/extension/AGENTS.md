@@ -35,6 +35,8 @@
 - Studio 参考 Newtab 按 views、components、stores、types、utils 等职责组织，目录内部按功能分组，只创建实际需要的目录；不预建全局 Store、空功能目录或通用事件总线。
 - ActivityCard 归 `features/activity/charts`，由 Home 页面直接引入展示；纯类型、日期/时长转换与统计计算归 `features/activity/data`，Daily 查询与记录归 `features/activity/daily`；日期 Hook 为 charts/use-activity-today.ts，Dock 入口组件归 `pages/dock/studio-entry.tsx`。默认 Calendar，保留三项视图切换；Calendar 为 24 周完成项数日历，Chart 展示最近 14 天成长/睡眠，Pie 展示周投入及周计划。记录由扩展后台认证请求 API 获取，不再使用模拟 JSON，不提供页面录入、持久化或查询缓存；Provider 在 Home/Studio 隐藏边界外保留当前展示数据，登录初始化和三项视图切换才请求，Growth/Sleep 只切换字段，日期统一 Asia/Shanghai。睡眠仅每日总时长。运动、阅读、学习、创作固定对应全局 --chart-1 至 4，日历 activity-level 仅为其别名，全图表复用同一中性灰主题；实心饼图按分类着色，计划环按每25%完成度分档且不显示左右标题；周计划统一周日至周六。具体组合见扩展 UI 文档；退出与主动重新登录按当前会话重置工作项使旧 Activity 请求和展示数据失效，后续数据操作仍按获批范围推进。
 
+- 首页倒计时归 `features/activity/timer`，由 NewtabCards 在日历上方左对齐组合；外框采用文件夹尺寸及日历同类主题与间距。TimerCard 通过 use-countdown 持有当前标签页内存状态，不写 session/local，不同步多标签，不记录活动时长；切 Studio 保留，刷新/关闭清空。Slider 使用指定官方 Base UI 组件，手动0–60分、步进5、提交即开始，运行按截止时间回缩；音频本地合成，归零仅复用 Sonner 与结束音，不请求或发送系统通知。Slider右侧为Clock/Timer模式按钮；时钟显示本地HH:mm、无秒数和滴答，切换清空倒计时，拖动自动回到倒计时。声音右键菜单采用指定官方Base Context Menu默认分组和勾选；英文计时四项、完成三项、按名称从短到长排列，默认Quartz Clock/Glass Chime，本机local保存；切换立即试听且不叠加、不重置计时。来源与布局见 docs/web-ui-sources.md 和 docs/extension/ui.md。
+
 ## 图标职责
 
 - `UiIcon` 只适配 Lucide 通用 UI 图标，统一使用 `currentColor`、已批准的尺寸和线宽；只能显式静态导入实际使用的图标。

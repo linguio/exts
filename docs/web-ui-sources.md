@@ -217,3 +217,23 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 - 纵向区域使用官方自带 ScrollBar；书签区与卡片区保留双向溢出能力，Dock 与官网命令区按官方 Horizontal 示例组合水平 ScrollBar。调用方只维护原有尺寸、间距与内容。
 - 已删除被替代的 Newtab 隐藏原生滚动条规则。DropdownMenu 自带滚动、官网文档主体、Telegram 原网页及 macOS 原生界面保持原有机制。
 - 2026-10-26 UI 文件夹按用户明确批准在调用方隐藏直接子级的官方 ScrollBar，保留 Root、Viewport、内部滚动与 overscroll-y-contain；不改共用源码，不新增原生滚动条 CSS 或手写滚动事件。其余区域继续使用官方默认滚动条。
+
+## Activity 倒计时 Slider（2026-11-13）
+
+- 用户指定 [shadcn Base UI Slider](https://ui.shadcn.com/docs/components/base/slider)，采用官方 [base-nova 注册表](https://ui.shadcn.com/r/styles/base-nova/slider.json) 的完整组件源码与自带类名，不用 Radix 替代。
+- 本次固定注册表源码快照日期 2026-11-13，原始 TSX 的 SHA-256 为 `1fd32ee03ddaa382aabccce0bd88669aa8f91e4fe487622a68745d2ed1d5f5b9`；源码已随 `apps/extension/src/components/ui/slider.tsx` 固定入库，更新前须核对本地差异，不跟随在线注册表自动变化。
+- 精确依赖 `@base-ui/react` 为 `1.9.0`，由 package.json 与 pnpm-lock.yaml 固定；官方组件依赖的 cn 改为现有 lib/utils，不新增重复 cn 工具。
+- 完整保留官方 Root/Control/Track/Indicator/Thumb、thumbAlignment=edge、默认主题类名及焦点反馈；官方 data-horizontal/data-vertical/data-disabled 变体已由现有 shadcn.css 提供，没有改全局 Token。
+- 必要无障碍适配：将调用方 aria-label 同时传给官方 Thumb，供无可见文字标签的单滑块使用；只改导入路径、中文来源注释与此标签传递。
+- 业务组合：单滑块、0–60 分、5 分钟步进、largeStep=5；受控 value 可为剩余分钟小数，倒计时按截止时间连续回缩，不增加业务配色或自建轨道/拖动处理。
+- 官方不存在翻页数字组件，故 timer/flip-digit.tsx 与 timer.css 保留用户确认 Demo 的两阶段翻页，沿用现有主题 Token、1px 分缝与减少动态效果偏好；不仿写 Slider。
+- 未进行视觉或真实 Slider 交互验收，不宣称已与官方呈现效果一致；由用户在 Chrome/Edge 验收。
+
+## Activity 声音右键菜单（2026-11-13）
+
+- 用户指定[官方Base Context Menu](https://ui.shadcn.com/docs/components/base/context-menu)，源码取自[base-nova注册表](https://ui.shadcn.com/r/styles/base-nova/context-menu.json)，原始TSX快照SHA-256：`5be9c316de7e552c1a80e8d3ac8b1a94f9e6692b884632c47a14e9e8e5db0b22`。沿用已安装的`@base-ui/react`精确版本1.9.0，无新增依赖。
+- 迁入实际使用的Root、Trigger、Content、Group、Label、RadioGroup、RadioItem、Separator；保留官方结构、类名、Portal/Positioner、默认勾选和焦点反馈，不添加选中配色。
+- 必要适配：cn导入指向既有lib/utils；官方模板IconPlaceholder按其lucide=CheckIcon指定替换为静态Lucide CheckIcon；未复制不使用的子菜单/多选项，未引入额外组件库。
+- cn-menu-target/cn-menu-translucent保留官方标记类，菜单沿用现有popover与accent主题；不增加额外材质或更改全局Token。现有data-open/closed/disabled等变体来自shadcn.css。
+- 业务卡片经官方render组合为唯一Trigger，不嵌套额外交互控件。Newtab的原生右键拦截仅对标记的计时卡片放行，交由官方组件管理；其他区域维持原行为。菜单打开时隐藏该卡片模式按钮的Tooltip。
+- 两组英文单选，使用官方RadioGroup与默认CheckIndicator；没有自定义圆点或选中背景。实际交互/主题由用户Chrome/Edge验收，未宣称与官网效果已验收一致。
