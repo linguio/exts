@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [整理 Studio 页面目录](./issues/2026-11-12-extension-studio-page-directories-issue.md) · [Commit 记录](./commits/2026-11-12-extension-studio-page-directories-commit.md)；用户验收通过并批准代码、文档两笔本地提交完结。Overview/Daily 归入 Studio，布局归入 layout，menu 改名 routes；类型检查、构建与 4 项访问逻辑测试通过，构建警告保留；未推送或发布。
+
 - [修复 Daily 表格滚动并补齐接口说明](./issues/2026-11-10-extension-daily-table-body-scroll-issue.md) · [Commit 记录](./commits/2026-11-10-extension-daily-table-body-scroll-commit.md)；2026-11-10 用户验收通过并批准本地提交。Daily 固定表头与 Actions、空态/加载居中、Studio 登录页/Overview/session 路由恢复、原生右键菜单拦截及 Settings OpenAPI 说明已交付；Extension 类型检查通过，浏览器交互由用户验收，未推送或发布。
 
 - [更新官网 Activity 编辑日志与产品版本](./issues/2026-11-10-website-activity-editing-changelog-issue.md) · [Commit 记录](./commits/2026-11-10-website-activity-editing-changelog-commit.md)；2026-11-10 用户验收通过并批准代码、文档两笔本地提交完结。官网 Changelog 新增 Extension、API、Skills 三标签 Activity 编辑记录，产品版本更新为 2.2.0；官网类型检查受本机依赖 DNS 失败阻断，未推送或部署。
