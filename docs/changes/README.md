@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [统一 Studio 账号目录与 Dock 入口命名](./issues/2026-11-13-extension-studio-login-directory-issue.md) · [Commit 记录](./commits/2026-11-13-extension-studio-login-directory-commit.md)；用户验收通过并批准代码、文档两笔本地提交完结。账号 UI 与状态统一归入 studio/login，Dock 四个入口统一命名并复用账号组件；4 项状态测试、类型检查及构建通过，原构建警告保留；未推送或发布。
+
 - [整理 Studio 页面目录](./issues/2026-11-12-extension-studio-page-directories-issue.md) · [Commit 记录](./commits/2026-11-12-extension-studio-page-directories-commit.md)；用户验收通过并批准代码、文档两笔本地提交完结。Overview/Daily 归入 Studio，布局归入 layout，menu 改名 routes；类型检查、构建与 4 项访问逻辑测试通过，构建警告保留；未推送或发布。
 
 - [修复 Daily 表格滚动并补齐接口说明](./issues/2026-11-10-extension-daily-table-body-scroll-issue.md) · [Commit 记录](./commits/2026-11-10-extension-daily-table-body-scroll-commit.md)；2026-11-10 用户验收通过并批准本地提交。Daily 固定表头与 Actions、空态/加载居中、Studio 登录页/Overview/session 路由恢复、原生右键菜单拦截及 Settings OpenAPI 说明已交付；Extension 类型检查通过，浏览器交互由用户验收，未推送或发布。
