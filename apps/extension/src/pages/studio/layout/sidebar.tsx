@@ -1,12 +1,12 @@
-import { BrandIcon } from '../../components/custom/brand-icon';
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../components/ui/empty';
-import type { studioAccess } from './studio-access';
-import { Button } from '../../components/ui/button';
-import { studioMenu, studioOverview } from './menu';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, useSidebar } from '../../components/ui/sidebar';
-import { UiIcon } from '../../components/custom/ui-icon';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
-import { AccountLogin } from './account-login';
+import { BrandIcon } from '../../../components/custom/brand-icon';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../components/ui/empty';
+import type { studioAccess } from '../studio-access';
+import { Button } from '../../../components/ui/button';
+import { studioMenu, studioOverview } from '../routes';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, useSidebar } from '../../../components/ui/sidebar';
+import { UiIcon } from '../../../components/custom/ui-icon';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
+import { AccountLogin } from '../account-login';
 
 interface StudioSidebarProps {
   onHome: () => void;

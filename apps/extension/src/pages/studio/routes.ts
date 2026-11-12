@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 import type { UiIconName } from '../../components/custom/types';
-import { OverviewPage } from '../overview';
-import { DailyPage } from './daily-page';
+import { OverviewPage } from './overview';
+import { DailyPage } from './activity/daily';
 
 /** 一级入口与业务分组只登记实际实现的页面；菜单不携带账号、查询或业务字段。 */
 export const studioOverview = { route: '/overview', title: 'Overview', icon: 'panels-top-left', component: OverviewPage, fillHeight: false } as const satisfies {

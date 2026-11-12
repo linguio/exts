@@ -1,9 +1,9 @@
 import { Fragment, type ReactNode } from 'react';
-import type { useAccount } from '../../features/account/auth-client';
-import { Button } from '../../components/ui/button';
-import { Spinner } from '../../components/ui/spinner';
-import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert';
-import { studioAccess, studioSessionKey } from './studio-access';
+import type { useAccount } from '../../../features/account/auth-client';
+import { Button } from '../../../components/ui/button';
+import { Spinner } from '../../../components/ui/spinner';
+import { Alert, AlertDescription, AlertTitle } from '../../../components/ui/alert';
+import { studioAccess, studioSessionKey } from '../studio-access';
 
 /** Studio 共用身份边界；受保护子树随账号和会话重置版本重新创建。 */
 export function StudioContent({ children, account, resetVersion }: { children: ReactNode; account: ReturnType<typeof useAccount>; resetVersion: number }) {
