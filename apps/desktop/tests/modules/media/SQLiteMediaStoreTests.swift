@@ -62,6 +62,32 @@ final class SQLiteMediaStoreTests: XCTestCase {
         XCTAssertEqual(page.first?.id, "item-399999")
     }
 
+    func testPaginationContinuesThroughUnknownDatesAndStopsAtEnd() throws {
+        let store = try SQLiteMediaStore(url: temporaryStoreURL())
+        let dated = [makeItem(id: "dated-b"), makeItem(id: "dated-a")]
+        let undated = ["undated-b", "undated-a"].map { id in
+            MediaItem(
+                id: id,
+                name: id,
+                uti: nil,
+                fileSize: 0,
+                duration: 0,
+                creationDate: nil,
+                modificationDate: nil,
+                fingerprint: nil
+            )
+        }
+        try store.upsert(dated + undated, generation: 1)
+
+        XCTAssertEqual(try store.page(after: nil, limit: 1).map(\.id), ["dated-a"])
+        XCTAssertEqual(try store.page(after: "dated-a", limit: 1).map(\.id), ["dated-b"])
+        XCTAssertEqual(try store.page(after: "dated-b", limit: 1).map(\.id), ["undated-a"])
+        XCTAssertEqual(try store.page(after: "undated-a", limit: 1).map(\.id), ["undated-b"])
+        XCTAssertTrue(try store.page(after: "undated-b", limit: 1).isEmpty)
+        XCTAssertTrue(try store.page(after: "missing", limit: 1).isEmpty)
+        XCTAssertTrue(try store.page(after: nil, limit: 0).isEmpty)
+    }
+
     private func makeItem(id: String) -> MediaItem {
         MediaItem(
             id: id,

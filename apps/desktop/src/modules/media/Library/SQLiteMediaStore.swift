@@ -88,7 +88,7 @@ final class SQLiteMediaStore {
         let base = """
         SELECT id, name, uti, file_size, duration, creation_date, modification_date, fingerprint
         FROM media
-        """
+        """ + "\n"
 
         let sql: String
         let cursorDate: TimeInterval?
@@ -103,13 +103,13 @@ final class SQLiteMediaStore {
             guard cursorExists else { return [] }
             if cursorDate != nil {
                 sql = base + "WHERE sort_date IS NULL OR sort_date < ? OR (sort_date = ? AND id > ?) "
-                    + "ORDER BY CASE WHEN sort_date IS NULL THEN 1 ELSE 0 END, sort_date DESC, id ASC LIMIT ?"
+                    + "ORDER BY sort_date DESC, id ASC LIMIT ?"
             } else {
                 sql = base + "WHERE sort_date IS NULL AND id > ? ORDER BY id ASC LIMIT ?"
             }
         } else {
             cursorDate = nil
-            sql = base + "ORDER BY CASE WHEN sort_date IS NULL THEN 1 ELSE 0 END, sort_date DESC, id ASC LIMIT ?"
+            sql = base + "ORDER BY sort_date DESC, id ASC LIMIT ?"
         }
 
         return try withStatement(sql) { statement in
