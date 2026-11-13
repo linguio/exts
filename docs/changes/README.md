@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [排查发布风险并修复媒体分页](./issues/2026-11-13-repo-release-preflight-issue.md) · 已完成；用户验收通过并批准两笔本地提交 · [Commit记录](./commits/2026-11-13-repo-release-preflight-commit.md)
+
 - [完善版本整理与全量验证流程](./issues/2026-11-13-repo-release-workflow-issue.md) · 已完成；用户验收通过并批准两笔本地提交 · [Commit记录](./commits/2026-11-13-repo-release-workflow-commit.md)
 
 - [更新翻页时钟日志与产品版本](./issues/2026-11-13-website-timer-changelog-issue.md) · 已完成；用户验收通过并批准两笔本地提交 · [Commit记录](./commits/2026-11-13-website-timer-changelog-commit.md)
