@@ -1,8 +1,8 @@
 import type { ReactElement } from 'react';
-import { ContextMenu, ContextMenuContent, ContextMenuGroup, ContextMenuLabel, ContextMenuRadioGroup, ContextMenuRadioItem, ContextMenuSeparator, ContextMenuTrigger } from '../../../components/ui/context-menu';
+import { ContextMenu, ContextMenuContent, ContextMenuGroup, ContextMenuLabel, ContextMenuCheckboxItem, ContextMenuSeparator, ContextMenuTrigger } from '../../../components/ui/context-menu';
 import { endSounds, tickSounds, type TimerSounds } from './sound-preference';
 
-/** 复用官方分组与默认勾选，不增加自定义选中背景或右键管理。 */
+/** 官方勾选项支持同组单选或全不选，音频模块负责试听生命周期。 */
 export function TimerSoundMenu({ children, sounds, onSelect, onOpenChange }: {
   children: ReactElement;
   sounds: TimerSounds;
@@ -14,22 +14,18 @@ export function TimerSoundMenu({ children, sounds, onSelect, onOpenChange }: {
     <ContextMenuContent>
       <ContextMenuGroup>
         <ContextMenuLabel>Timer Sound</ContextMenuLabel>
-        <ContextMenuRadioGroup value={sounds.tick} onValueChange={value => {
-          const sound = tickSounds.find(item => item.value === value);
-          if (sound) onSelect('tick', sound.value);
-        }}>
-          {tickSounds.map(sound => <ContextMenuRadioItem key={sound.value} value={sound.value}>{sound.label}</ContextMenuRadioItem>)}
-        </ContextMenuRadioGroup>
+        {tickSounds.map(sound => <ContextMenuCheckboxItem key={sound.value} checked={sounds.tick === sound.value}
+          closeOnClick={false} onCheckedChange={checked => onSelect('tick', checked ? sound.value : null)}>
+          {sound.label}
+        </ContextMenuCheckboxItem>)}
       </ContextMenuGroup>
       <ContextMenuSeparator />
       <ContextMenuGroup>
         <ContextMenuLabel>Completion Sound</ContextMenuLabel>
-        <ContextMenuRadioGroup value={sounds.end} onValueChange={value => {
-          const sound = endSounds.find(item => item.value === value);
-          if (sound) onSelect('end', sound.value);
-        }}>
-          {endSounds.map(sound => <ContextMenuRadioItem key={sound.value} value={sound.value}>{sound.label}</ContextMenuRadioItem>)}
-        </ContextMenuRadioGroup>
+        {endSounds.map(sound => <ContextMenuCheckboxItem key={sound.value} checked={sounds.end === sound.value}
+          closeOnClick={false} onCheckedChange={checked => onSelect('end', checked ? sound.value : null)}>
+          {sound.label}
+        </ContextMenuCheckboxItem>)}
       </ContextMenuGroup>
     </ContextMenuContent>
   </ContextMenu>;

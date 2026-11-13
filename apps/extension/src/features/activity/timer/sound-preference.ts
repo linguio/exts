@@ -11,7 +11,7 @@ export const endSounds = [
 ] as const;
 export type TickSound = typeof tickSounds[number]['value'];
 export type EndSound = typeof endSounds[number]['value'];
-export type TimerSounds = { tick: TickSound; end: EndSound };
+export type TimerSounds = { tick: TickSound | null; end: EndSound | null };
 export const defaultSounds: TimerSounds = { tick: 'quartz', end: 'glass' };
 export const soundKeys = { tick: 'timer.tickSound', end: 'timer.completionSound' } as const;
 let writeTail: Promise<void> = Promise.resolve();
@@ -20,8 +20,8 @@ let writeTail: Promise<void> = Promise.resolve();
 export async function readSounds(storage: Pick<chrome.storage.StorageArea, 'get'> = chrome.storage.local): Promise<TimerSounds> {
   const values = await storage.get(Object.values(soundKeys));
   return {
-    tick: tickSounds.find(item => item.value === values[soundKeys.tick])?.value ?? defaultSounds.tick,
-    end: endSounds.find(item => item.value === values[soundKeys.end])?.value ?? defaultSounds.end,
+    tick: values[soundKeys.tick] === null ? null : tickSounds.find(item => item.value === values[soundKeys.tick])?.value ?? defaultSounds.tick,
+    end: values[soundKeys.end] === null ? null : endSounds.find(item => item.value === values[soundKeys.end])?.value ?? defaultSounds.end,
   };
 }
 

@@ -1,4 +1,4 @@
-import { useId, useSyncExternalStore } from 'react';
+import { useId, useRef, useState, useSyncExternalStore } from 'react';
 
 import { readTheme, setTheme, subscribeTheme } from './theme';
 import { settingsMessages } from './messages';
@@ -8,6 +8,7 @@ import { Item, ItemActions, ItemContent, ItemGroup, ItemTitle } from '../../comp
 import { ToggleGroup, ToggleGroupItem } from '../../components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
+import { StatusIcon } from '../../components/custom/status-icon';
 
 const choices = [
   { value: 'light', label: 'Light', icon: 'sun' },
@@ -18,6 +19,8 @@ const choices = [
 export function GeneralSettings() {
   const id = useId();
   const theme = useSyncExternalStore(subscribeTheme, readTheme);
+  const [savingTheme, setSavingTheme] = useState<string | null>(null);
+  const saving = useRef(false);
 
   return (
     <section aria-labelledby={`${id}-heading`} className="space-y-3">
@@ -29,18 +32,24 @@ export function GeneralSettings() {
               <ItemTitle id={`${id}-label`}>Theme</ItemTitle>
             </ItemContent>
             <ItemActions>
-              <ToggleGroup type="single" variant="outline" size="sm" spacing={0} value={theme} aria-labelledby={`${id}-label`} onValueChange={(value) => {
+              <ToggleGroup type="single" variant="outline" size="sm" spacing={0} value={theme} disabled={savingTheme !== null} aria-busy={savingTheme !== null} aria-labelledby={`${id}-label`} onValueChange={(value) => {
                 // 单选主题不能取消成空值，保持最后一个有效选择。
                 if (value !== 'light' && value !== 'dark' && value !== 'system') return;
+                if (saving.current || value === theme) return;
+                saving.current = true;
+                setSavingTheme(value);
                 void setTheme(value).then(() => toast.success(settingsMessages.saved)).catch(() => {
                   toast.error(settingsMessages.saveFailed);
+                }).finally(() => {
+                  saving.current = false;
+                  setSavingTheme(null);
                 });
               }}>
                 {choices.map((choice) => (
                   <Tooltip key={choice.value}>
                     <TooltipTrigger asChild>
                       <ToggleGroupItem value={choice.value} aria-label={choice.label} className="w-9 px-0">
-                        <UiIcon name={choice.icon} className="size-4" />
+                        {savingTheme === choice.value ? <StatusIcon level="loading" /> : <UiIcon name={choice.icon} className="size-4" />}
                       </ToggleGroupItem>
                     </TooltipTrigger>
                     <TooltipContent side="top">{choice.label}</TooltipContent>

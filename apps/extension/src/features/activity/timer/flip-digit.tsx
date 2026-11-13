@@ -10,11 +10,11 @@ export function FlipDigit({ value }: { value: string }) {
     return () => clearTimeout(timeout);
   }, [value]);
   return <span className="timer-digit" aria-hidden="true">
-    <span className="timer-half timer-half-top"><span>{frame.current}</span></span>
-    <span className="timer-half timer-half-bottom"><span>{frame.previous ?? frame.current}</span></span>
+    <span className="timer-half timer-half-top"><span><span className="timer-number">{frame.current}</span></span></span>
+    <span className="timer-half timer-half-bottom"><span><span className="timer-number">{frame.previous ?? frame.current}</span></span></span>
     {frame.previous !== null && <span key={frame.current}>
-      <span className="timer-half timer-half-top timer-fold"><span>{frame.previous}</span></span>
-      <span className="timer-half timer-half-bottom timer-unfold"><span>{frame.current}</span></span>
+      <span className="timer-half timer-half-top timer-fold"><span><span className="timer-number">{frame.previous}</span></span></span>
+      <span className="timer-half timer-half-bottom timer-unfold"><span><span className="timer-number">{frame.current}</span></span></span>
     </span>}
   </span>;
 }

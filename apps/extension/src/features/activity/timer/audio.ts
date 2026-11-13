@@ -16,7 +16,7 @@ export class TimerAudio {
   private sounds: TimerSounds = { ...defaultSounds };
 
   setSounds(sounds: TimerSounds) {
-    const changed = this.sounds.tick !== sounds.tick;
+    const changed = this.sounds.tick !== sounds.tick || this.sounds.end !== sounds.end;
     this.sounds = sounds;
     if (changed) this.stopSounds();
   }
@@ -132,6 +132,7 @@ export class TimerAudio {
   }
 
   private ending(time: number) {
+    if (this.sounds.end === null) return 0;
     if (this.sounds.end === 'glass') {
       [[1568, 0], [2093, 0.18], [2637, 0.36]].forEach(([frequency, delay]) => {
         this.tone(time + delay!, frequency!, 1.2, 0.14);
@@ -157,7 +158,7 @@ export class TimerAudio {
 
   schedule() {
     const context = this.context;
-    if (!this.running || this.previewing || !context || context.state !== 'running') return;
+    if (!this.running || this.previewing || this.sounds.tick === null || !context || context.state !== 'running') return;
     if (this.isAmbient()) { this.playBackground(); return; }
     if (this.nextTick < context.currentTime - 0.15) this.nextTick = context.currentTime + 0.02;
     if (this.nextTick > context.currentTime + 0.15) return;
@@ -168,6 +169,7 @@ export class TimerAudio {
 
   preview(group: keyof TimerSounds) {
     this.stopSounds();
+    if (this.sounds[group] === null) return;
     this.prepare();
     const context = this.context;
     if (!context) return;
