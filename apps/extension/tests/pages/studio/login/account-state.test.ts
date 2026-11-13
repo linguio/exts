@@ -1,5 +1,6 @@
 import { expect, it } from 'vitest';
-import { studioAccess, studioSessionKey, selectedStudioPage } from '../../../../src/pages/studio/login/account-state';
+import { studioAccess, studioSessionKey } from '../../../../src/pages/studio/login/account-state';
+import { resolveStudioRoute } from '../../../../src/pages/studio/routes';
 
 it('身份未确认时等待，不提前显示登录或业务内容', () => {
   expect(studioAccess({ user: null, isPending: true, error: null })).toBe('loading');
@@ -17,11 +18,9 @@ it('换账号和同一账号重置都更换内容生命周期，普通重渲染�
   expect(studioSessionKey('account-a', 1)).not.toBe(studioSessionKey('account-a', 2));
 });
 
-it('登录不自动选择页面，退出和换会话均不沿用旧选择', () => {
-  expect(selectedStudioPage(null, 'account-a:1')).toBeNull();
-  const selected = { sessionKey: 'account-a:1', page: 'daily' };
-  expect(selectedStudioPage(selected, 'account-a:1')).toBe('daily');
-  expect(selectedStudioPage(selected, null)).toBeNull();
-  expect(selectedStudioPage(selected, 'account-b:1')).toBeNull();
-  expect(selectedStudioPage(selected, 'account-a:2')).toBeNull();
+it('恢复已注册路由，缺失或未知路由回到 Overview', () => {
+  expect(resolveStudioRoute('/activity/daily').page.route).toBe('/activity/daily');
+  for (const route of [null, '/unknown', '/overview']) {
+    expect(resolveStudioRoute(route).page.route).toBe('/overview');
+  }
 });

@@ -29,7 +29,8 @@ it('主动登录先清理旧本地状态，再建立新会话；恢复状态不�
   vi.stubEnv('VITE_OIDC_CLIENT_ID', 'test-public-client');
   const { registerAccount } = await import('../../../src/features/account/background');
   const listeners: ((message: any, sender: any, respond: (value: any) => void) => void)[] = [];
-  const localValues: Record<string, unknown> = { ui: { view: 'studio' }, settings: {}, downloads: {} };
+  const localValues: Record<string, unknown> = { ui: { view: 'studio' }, settings: {}, downloads: {}, futureAccountData: {} };
+  const sessionValues = { 'ui-session': { view: 'studio', studio: { userId: 'same-user', route: '/activity/daily' } } };
   const api = {
     runtime: { id: 'exts', getURL: (path: string) => `chrome-extension://exts/${path}`,
       onMessage: { addListener: (listener: typeof listeners[number]) => listeners.push(listener) },
@@ -38,7 +39,7 @@ it('主动登录先清理旧本地状态，再建立新会话；恢复状态不�
         return { ok: true };
       }) },
     identity: { getRedirectURL: () => 'https://exts.chromiumapp.org/auth' },
-    storage: { local: {
+    storage: { session: { get: vi.fn(async () => sessionValues), remove: vi.fn(), clear: vi.fn() }, local: {
       get: vi.fn(async () => ({ ...localValues })),
       remove: vi.fn(async (keys: string[]) => { fixture.order.push('clear-local'); for (const key of keys) delete localValues[key]; }),
     } },
@@ -56,7 +57,9 @@ it('主动登录先清理旧本地状态，再建立新会话；恢复状态不�
   expect(fixture.order).toEqual(['clear-local', 'clear-telegram', 'clear-theme', 'clear-auth', 'authenticate']);
   expect(session.accepts(oldGeneration)).toBe(false);
 
-  expect(localValues).toEqual({ ui: { view: 'studio' } });
+  expect(localValues).toEqual({});
+  expect(api.storage.session.remove).not.toHaveBeenCalled();
+  expect(api.storage.session.clear).not.toHaveBeenCalled();
   localValues.settings = {};
   const attempts = fixture.manager.signinPopup.mock.calls.length;
   api.storage.local.remove.mockRejectedValueOnce(new Error('storage unavailable'));

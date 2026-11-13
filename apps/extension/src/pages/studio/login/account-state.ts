@@ -11,8 +11,3 @@ export function studioAccess({ user, isPending, error }: {
 }
 
 export const studioSessionKey = (userId: string, resetVersion: number) => `${userId}:${resetVersion}`;
-
-/** 页面选择只属于产生它的已确认会话，不回退到第一个菜单。 */
-export function selectedStudioPage<T>(selection: { sessionKey: string; page: T } | null, sessionKey: string | null): T | null {
-  return sessionKey && selection?.sessionKey === sessionKey ? selection.page : null;
-}

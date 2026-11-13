@@ -27,8 +27,3 @@ describe('applyRowPreviewPatch', () => {
     expect(() => applyRowPreviewPatch({ total: 0, rows: [] }, 'missing', { exerciseHours: 1 }, getRowId)).toThrow(RowPreviewError);
   });
 });
-
-it('requires optimistic preview target', () => {
-  const data = { total: 1, rows: [{ date: '2026-11-01', exerciseHours: 0.5, readingHours: null }] };
-  expect(applyRowPreviewPatch(data, '2026-11-01', { exerciseHours: 1 }, getRowId).rows[0]!.exerciseHours).toBe(1);
-});

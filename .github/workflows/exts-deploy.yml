@@ -90,6 +90,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Typecheck website
         run: pnpm --filter @exts/website typecheck
+      - name: Test website logic
+        run: node --test --test-concurrency=1 apps/website/tests/auth-requests.test.mjs apps/website/tests/shared/products/categories.test.ts apps/website/tests/pages/home/showcase/card-pool.test.ts
       - name: Build website
         run: pnpm web:build
       - name: Upload website artifact
@@ -191,12 +193,31 @@ jobs:
           echo "$tool_bin" >> "$GITHUB_PATH"
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
+      - name: Setup API test Python
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: '0.11.19'
+          enable-cache: false
+      - name: Install locked API test dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv venv --python "$(cat apps/api/.python-version)" dist/.cache/api/venv
+          uv pip install --python dist/.cache/api/venv/bin/python -r apps/api/requirements-dev.txt
+      - name: Test API
+        env:
+          API_TEST_DATABASE_URL: ''
+        run: dist/.cache/api/venv/bin/python -B -m unittest discover -s apps/api/tests -v
       - name: Test release behavior
-        run: node --test tests/build-release.test.mjs tests/extension-release.test.mjs tests/release-notes.test.mjs apps/desktop/tests/scripts/desk.test.mjs
+        run: node --test --test-concurrency=1 tests/build-release.test.mjs tests/extension-release.test.mjs tests/release-notes.test.mjs apps/desktop/tests/scripts/desk.test.mjs apps/api/tests/dev.test.mjs apps/website/tests/auth-requests.test.mjs apps/website/tests/shared/products/categories.test.ts apps/website/tests/pages/home/showcase/card-pool.test.ts packages/npm-release-tools/tests/publish.test.mjs
       - name: Test stable extension publication
         run: pnpm --filter @linguio/wxt-stable-output test
+      - name: Typecheck stable extension publication
+        run: pnpm --filter @linguio/wxt-stable-output typecheck
+      - name: Verify stable extension package integration
+        run: pnpm --filter @linguio/wxt-stable-output verify:integration
       - name: Test extension
-        run: pnpm --filter @exts/extension test
+        run: pnpm --filter @exts/extension test --maxWorkers 1
       - name: Typecheck extension
         run: pnpm --filter @exts/extension typecheck
       - name: Typecheck website
@@ -209,11 +230,8 @@ jobs:
           xcodegen generate
           xcodebuild test -project exts.xcodeproj -scheme exts \
             -destination 'platform=macOS' \
+            -parallel-testing-enabled NO \
             -derivedDataPath "$GITHUB_WORKSPACE/dist/.cache/desktop/DerivedData" \
-            -only-testing:extsTests/MediaGroupingTests \
-            -only-testing:extsTests/ThumbnailSchedulerTests \
-            -only-testing:extsTests/AppStoragePathsTests \
-            -only-testing:extsTests/DownloadCoordinatorTests \
             "EXTS_BUILD_VERSION=$EXTS_BUILD_VERSION" CODE_SIGNING_ALLOWED=NO
       - name: Build and package ZIP and DMG
         run: pnpm release
