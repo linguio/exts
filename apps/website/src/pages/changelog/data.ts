@@ -13,6 +13,20 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'flip-clock-studio-v230',
+    date: '2026-11-13',
+    title: '新增翻页时钟与倒计时，优化 Studio 使用体验',
+    groups: [{
+      platform: 'Extension',
+      changes: [
+        '新增翻页时钟与倒计时，支持拖动设置时长、切换计时音与完成音，以及分别关闭声音。',
+        '优化 Daily 表格滚动、固定表头与操作列，统一加载和空状态展示。',
+        '完善 Studio 登录页面与导航，支持恢复当前账号上次访问的页面。',
+        '主题保存时显示加载状态，防止重复操作。',
+      ],
+    }],
+  },
+  {
     id: 'activity-editing-workflow-v220',
     date: '2026-11-10',
     title: '完善 Activity 编辑与开发工作流',
