@@ -1,4 +1,4 @@
 interface:
   display_name: "按影响范围测试"
-  short_description: "选择必要检查、复用结果，避免本地提交重复验证"
-  default_prompt: "使用 $workflow-tests 根据当前改动和仓库规范选择最少但充分的检查，复用仍有效的结果，并说明未验证事项。"
+  short_description: "日常按影响验证，发版本全量检查，普通提交复用结果"
+  default_prompt: "使用 $workflow-tests 区分日常开发、产品版本发布准备和仅本地提交；日常按影响最小充分验证，发版本先展示版本与 Changelog 草稿供用户审定、确认后写入，并全量验证和审查测试适用性、执行入口，列明需要更新优化的用例及证据；普通提交复用结果，真实说明失败与未验证事项，未经批准不清理测试。"

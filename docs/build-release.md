@@ -10,6 +10,8 @@
 
 从产品 1.2.0 起，extension 和 desktop 统一构建与发布。每次新产品发布前提升根 version；即使某端没有代码改动，两端仍一起重新构建、使用同一新版本并上传到同一份 Release。历史版本不补包、不覆盖；Website 部署和 NPM 发布保持独立。
 
+用户要求更新产品版本或准备发版本时，先整理上一正式版本以来的提交与交付，展示拟用版本号及官网 Changelog 的标题、分类和逐条正文草稿，由用户审定；确认后才写入版本和日志，不直接修改后再请用户返审。已有明确审定内容不重复确认，并在交付验收前完成[全量发布验证](verification.md#产品版本与全量发布验证)。不能只改版本号、只验证官网，或等普通 commit 时才补测；日常开发与普通本地提交仍分别遵循按影响验证和结果复用规则。版本更新不自动授权推送、Tag 或 Release，CI 的实际覆盖与未执行检查须如实记录。
+
 ```sh
 node scripts/version.mjs
 ```
@@ -101,7 +103,13 @@ Release 草稿正文由 `node scripts/release-notes.mjs` 读取当前提交中�
 
 pnpm ext:release 独立构建扩展，检查 Manifest 版本、新标签页入口及图标资源，生成 ZIP 并校验后发布到根 dist/release。本地允许再次打包，完成暂存生成与校验后替换固定文件，失败保留旧包。Windows 使用系统 PowerShell/.NET ZIP，Linux/macOS 使用 zip/unzip；此命令不构建网站或桌面，不创建 Tag 或上传。
 
-流程 .github/workflows/exts-deploy.yml 展示为 Exts Publish，仅允许 main。推送 main 自动部署官网，并比较推送前后根 package.json 的 version；只有版本值变化时，才自动运行现有 Release。手动运行时仍可通过下拉选择 Website 或 Release，修改 package.json 的其他字段不会触发自动 Release。Release 使用 xcode-27 arm64 runner，显式选择 Xcode 27.0.0 路径，下载并校验固定 XcodeGen 2.46.0，使用 Node.js 24.16.0、pnpm 12.4.2 冻结安装。执行发布与桌面入口逻辑测试、稳定工具和扩展测试、官网及扩展类型检查，以及 Photos 的 MediaGroupingTests、ThumbnailSchedulerTests、AppStoragePathsTests、DownloadCoordinatorTests 四组原生纯逻辑测试；调用现有 pnpm release 完整构建并校验两包，再检查扩展体积。全部通过后创建指向本次构建提交的 v<版本> Tag 与一个草稿 Release，同时附带固定名 ZIP、DMG。已有 Release 拒绝覆盖，已有 Tag 指向不同提交时失败；失败草稿需人工检查，不自动删除或覆盖。
+流程 .github/workflows/exts-deploy.yml 展示为 Exts Publish，仅允许 main。推送 main 自动部署官网，并将根产品版本与最新远端版本 Tag 比较；没有版本 Tag 或根版本高于最新 Tag 时运行 Release，同版本失败且尚未生成 Tag 时后续推送仍可重试。手动运行时可选择 Website 或 Release，不改变现有冲突保护。
+
+Release 使用 xcode-27 arm64 runner，显式选择 Xcode 27.0.0 路径，下载并校验固定 XcodeGen 2.46.0，使用 Node.js 24.16.0、pnpm 12.4.2 冻结安装。串行执行根发布/构建脚本、Desktop/API启动脚本、官网逻辑、npm发布工具、稳定产物工具与扩展测试，完成稳定工具类型/真实WXT包集成检查及官网/扩展类型检查；Photos改为执行完整extsTests目标（包括既有压力用例），禁用原生并行测试，不再仅选四个类。
+
+API测试环境使用固定astral-sh/setup-uv v10.3.3与uv 0.11.19，Python读取apps/api/.python-version的精确版本，依赖安装使用现有requirements-dev.txt。API_TEST_DATABASE_URL显式置空，运行完整unittest入口，隔离实库测试按现有规则跳过；这部分仍为待验证，不将跳过算作全量通过，不连接生产数据库。普通Website构建部署也执行现有三份官网逻辑测试。上述CI变更须待实际GitHub运行验收，不能因本地测试通过就称远端已验证。
+
+检查完成后调用现有 pnpm release 完整构建并校验两包，再检查扩展体积，创建指向本次构建提交的 v<版本> Tag 与一个草稿 Release，同时附带固定名 ZIP、DMG。已有 Release 拒绝覆盖，已有 Tag 指向不同提交时失败；失败草稿需人工检查，不自动删除或覆盖。由于隔离实库检查仍缺环境，流水线成功不代表数据库全量已验收。
 
 推送 main 或手动选择 Website 时构建、校验官网并部署 dist/build/exts-web 到 GitHub Pages，保留 github-pages 环境。版本变化时同一次推送还会运行 Release；Release 虽随完整构建生成官网产物，但不部署官网。自动推送与手动官网部署共用 Website 并发组，手动 Release 使用独立并发组；只有官网部署 job 获得 Pages/OIDC 权限，只有 Release job 获得 Release 写权限；已移除 Chrome 单包入口及 Desktop 提示占位。
 

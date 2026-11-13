@@ -1,6 +1,6 @@
 ---
 name: workflow-change
-description: Use when starting or resuming an approved development change in a repository that manages work through local Issue and delivery records, or when preparing its acceptance, local commits, and completion.
+description: Use when starting or resuming an approved repository-local change, preparing a product version and Changelog, or handling acceptance, local commits, and completion.
 ---
 
 # 本地变更工作流
@@ -23,6 +23,15 @@ description: Use when starting or resuming an approved development change in a r
 - 建档完成后、修改代码或配置前，先展示 Issue 链接、已批准范围和唯一下一步。仅建档不等于已展示；已有实施批准时展示后继续，不重复请求确认。
 - 收到状态问题时先简短回答，再继续已批准工作；收到明确暂停、取消或替换目标时遵循用户最新指令。
 - Issue 只维护当前有效范围、未完成事项及下一步；交付记录收尾时整理成最终结果、有效验证和限制，替换过时结论，保留真正影响判断的失败证据。
+
+## 产品版本与发布准备
+
+- 用户要求“更新产品版本”“升版本”“准备发版本”时，按一次发布准备处理：整理上一正式版本以来的变化，先展示拟用版本号、Changelog 标题、分类和逐条正文草稿，等待用户审定；该指令不等于批准代理自行决定并直接写入版本或日志。用户确认后才按审定内容写入，并完成全量发布验证；已有明确审定的版本与原文不重复请求确认。仅询问版本建议、要求总结或审核文案时保持只读。
+- 先核对上一正式版本的 Tag、现有 Changelog 和交付记录，读取该版本至当前交付的全部提交与必要 diff；合并同一用户结果，按当前日志规范整理，不把每笔内部重构、文档提交或已取消内容逐条当成发布功能。找不到明确版本基线时先说明，不凭最近几笔提交猜测。
+- 版本与日志属于同一发布准备目标，使用同一 Issue 和 Commit 记录。按 [workflow-tests](../workflow-tests/SKILL.md) 的发布分支及仓库验证规范执行全量检查；不能因最终 diff 只有 package.json 和 Changelog 就降为局部检查，也不能用开发阶段的几项测试代替本次全量验证。
+- 核对已知失败、过期测试与实现/现行规范冲突，未解决时发布验证不通过；修复超出授权范围则说明具体问题并等待批准，不静默扩大修改、不把失败只记成限制后继续声称发布就绪。平台或环境不支持的检查明确记录待验证和执行位置，核对 CI 是否实际覆盖。
+- 全量验证还须按 workflow-tests 审查用例适用性和入口覆盖，列明需要保留、更新、合并、删除或补充的范围与证据，不只报告通过数量。扫描与执行不等于批准清理测试；先展示具体建议，再按用户批准范围修改。
+- 完成版本、日志和验证后停在用户验收；准备发布不自动授权 Git 提交、推送、打 Tag、部署或创建 Release。后续仅要求本地 commit 时复用已有结果，不在提交阶段重新启动全量验证。
 
 ## 验收与提交
 

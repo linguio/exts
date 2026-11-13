@@ -42,12 +42,12 @@
 
 ## Studio 内容与会话边界
 
-- chrome.storage.local.ui.view 只保存 home/studio 本机位置，刷新、重开浏览器和新标签页恢复最后选择；启动读取后再挂载，避免闪现 Home。已打开的其他标签页不因偏好更新自动跳转。账号重置保留 ui，业务内容、Daily 选择及表格条件仍重置；不把位置同步云端。
+- chrome.storage.session 的 ui-session 保存 home/studio 位置及当前账号ID与Studio字符串路由；同一扩展会话内刷新和新标签页可恢复，重启浏览器后不保证保留。启动读取后再挂载，已打开标签页不因保存而自动导航。视图与路由串行合并写入，恢复路由按账号隔离，未知路由回退Overview；账号重置清理全部local（含旧ui），不清理session导航，业务页面局部状态仍按账号/重置版本失效，不保存令牌或业务数据，不同步云端。
 
 - Studio 未登录时左侧菜单区复用官方 Empty，显示 Not signed in / Sign in to see your pages.，登录后替换为业务菜单；身份确认或读取失败不显示这个访客提示。
 
 
-- 菜单由 pages/studio/menu.ts 的静态分组和页面配置维护，当前为 Activity → Daily，分别使用 ChartColumn 与 NotebookText。菜单仅在确认登录后可见，登录后不自动选择/打开页面，右侧使用官方 Empty 显示 Select a page；Activity 为 SidebarGroupLabel 文字标题，Daily 为带图标的 SidebarMenuButton 平铺项，按用户截图采用 dashboard-01 Documents 结构，不包含折叠箭头或子菜单缩进。
+- 菜单由 pages/studio/routes.ts 的静态页面注册表维护，包含一级 Overview 与 Activity → Daily；菜单仅在确认登录后可见，登录后恢复当前账号的会话路由，缺失或未知路由回到 Overview；Activity 为 SidebarGroupLabel 文字标题，Daily 为带图标的 SidebarMenuButton 平铺项，按用户截图采用 dashboard-01 Documents 结构，不包含折叠箭头或子菜单缩进。
 - Studio 统一处理账号状态：首次读取显示 Spinner；普通读取失败显示 Alert 和 Retry；未登录或会话过期显示 Empty、Sign in to Studio、Sign in to access your personal workspace. 和 Sign in 按钮，复用现有 AccountDialog。登录后才挂载当前业务页面，不按表格、图表或表单分别实现登录提示。
 - 受保护内容以账号 ID 和既有会话重置版本作为 React key，退出、换号及同账号重新登录均使旧页面局部状态失效；Home/Studio 的 React Activity 保留不跨越账号内容边界。异步取消与迟到结果防护、边界外 Provider/后台/持久化状态仍由既有模块负责，不另建重置总线或按菜单增加清理分支。
 - Daily 使用真实查询接口与 QueryDataTable；行末 Edit/Sheet 仅临时更新当前已加载记录，未写入账号。字段、筛选与编辑集中于 columns.meta；Daily 内容区弹性占满可用高度，筛选单行可横向滚动，表格与分页在视口内分层。Studio 非 Daily 内容区使用官方 ScrollArea 整页滚动。Home 图表仍走原有 API。具体行为见 [DataTable](./data-table.md)。
@@ -151,7 +151,7 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - Grok 书签移除固定底板、保留主体路径。Exts 按用户最新确认保留正式完整外形及底板，浅色黑底白图、深色白底黑图；沿用现有内嵌正式 PNG 的 SVG，不重绘外形、不替换为仅含内部主体的源稿，也不对其应用压平对比的 brightness 滤镜。此主题反转仅用于书签，品牌唯一源稿及三端应用图标保持原样。此次交付见[书签单色 Issue](../changes/issues/2026-10-26-extension-bookmark-monochrome-issue.md)。
 - Dock 左侧保持 favorites，右侧 tools 顺序为 Studio、Actions、Download、Account、Settings。Studio 使用现有 Button entry/entry 与 Tooltip，固定 PanelsTopLeft，提示 Open Studio，点击只进入 Studio；不维护 pressed 或选中背景，悬停反馈复用共用入口样式。Dock 仅在首页显示，Studio 通过独立 Home 按钮返回，页面位置记忆保持不变。
 - Newtab 与 Studio 的已登录 Account 共用菜单内容，条目为 Account、Notifications、Settings、Log out；Account 与 Notifications 保持占位，移除 Billing。Settings 关闭菜单并打开现有 SettingsSheet，复用设置内容与读写逻辑，关闭后恢复到各自账户入口；保留菜单原有弹出方向及 Dock 独立 Settings 入口，未登录流程不变。
-- Studio 采用官方 dashboard-01 的 inset/offcanvas 侧栏、SidebarInset 与顶部导航；Home／Studio 继续由 React Activity 保留状态和 DOM。Dock 只随 Home 显示，Studio 独占视口，没有有效本机偏好时默认 Home，新标签页可恢复 ui.view 保存的 Home/Studio 位置。左侧仅登录后展示 Activity → Daily；右侧按上述共用账号边界显示登录提示或 Daily 记录页。Home 原 ActivityCard 的数据、外观和行为保留。
+- Studio 采用官方 dashboard-01 的 inset/offcanvas 侧栏、SidebarInset 与顶部导航；Home／Studio 继续由 React Activity 保留状态和 DOM。Dock 只随 Home 显示，Studio 独占视口，没有有效本机偏好时默认 Home，同一扩展会话内新标签页恢复 ui-session.view 保存的 Home/Studio 位置。登录后左侧展示 Overview 和 Activity → Daily，按账号恢复会话路由，缺失或未知路由回到 Overview；未登录显示独立 LoginPage，受保护内容仍沿用上述共用账号边界。Home 原 ActivityCard 的数据、外观和行为保留。
 - 品牌头部保留官方示例 32px 标识与两行文字比例，Exts SVG 与 Exts/Studio 使用普通非交互排版，不重绘或叠加底板，不带链接、点击事件或按钮角色。右侧独立使用官方 Button ghost/icon-sm、House 与 Tooltip 作为唯一返回入口，Logo 不可点击；收起时沿用官方 offcanvas，品牌和 Home 随侧栏一起隐藏，窄屏先打开侧栏后访问同一按钮。正文顶部只保留官方 SidebarTrigger、Separator 和 Studio / Activity / Daily 面包屑，不保留 Home 文字按钮、Overview 层级或额外边框。
 - Account 未登录时显示 UserRound / Account / Not signed in；点击打开官方 Dialog，登录内容来自简化 login-03，首行不显示 Logo/Exts 品牌，采用官方 Welcome back 标题与 CardHeader text-center，说明为用户指定的 Login with your Github or Google account。仅保留 Login with GitHub / Login with Google，不包含邮箱、密码、注册、其他方式或无效条款链接，不自行改写官方标题或增加品牌行。GitHub 通过 Neon 官方 SDK 与 identity 窗口授权，期间按钮显示 Signing in… 并阻止重复操作；Google 仍可点击并 toast.info 提示暂未接入。会话初次读取显示 Checking account…；成功后侧栏显示真实头像和昵称/邮箱，账户 Dialog 沿用 Card/Title/Description 组合显示账户与 Sign out，退出期间显示 Signing out…。加载、登录与退出失败直接使用共用 Sonner，取消为信息提示，不插入内联错误或另建通知层。未登录进入 Studio 不受阻，关闭框继续使用原 Studio；账户 Tooltip 在框打开时隐藏，弹框焦点与关闭由官方 Radix Dialog 管理。真实登录与会话行为由用户在 Chrome/Edge 验收，不将自动化结果视为实际授权通过。
 - Sidebar 主题语义映射现有 surface-raised、foreground、accent、border、ring 和 primary，不另设深浅主题；官方内部滚动、图标折叠及 768px 移动端断点沿用。SidebarProvider 不重复挂载 TooltipProvider，不写入示例 cookie，折叠状态仅在当前页面内保留；当前正文为官方 Empty。Account 使用官方 32px Avatar/Fallback、双行文字及尾部 ChevronsUpDown，副标题和间距沿用官方；Fallback 内为静态 UserRound，无假用户头像。登录表单恢复官方 FieldGroup/Field、CardTitle/Description，Card 保留默认边框、背景与 shadow-sm；Dialog 定位外壳透明无阴影，保留可访问语义、关闭按钮和全局 blur-overlay，避免重复卡片材质。Button outline 在共用组件显式使用既有 border-border，不在登录处重复覆盖颜色，不改变主题变量值。
