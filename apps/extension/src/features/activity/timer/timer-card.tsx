@@ -40,7 +40,7 @@ export function TimerCard() {
   const toggleLabel = mode === 'timer' ? 'Time' : 'Countdown';
 
   return <TimerSoundMenu sounds={timer.sounds} onSelect={timer.chooseSound} onOpenChange={setMenuOpen}>
-  <Card data-timer-context-menu ref={timer.hostRef} aria-label={mode === 'timer' ? 'Countdown' : 'Current time'} className="activity-timer box-border h-[var(--size-bookmark-folder)] w-[var(--size-bookmark-folder)] shrink-0 gap-4 rounded-[var(--radius)] p-4 shadow-none">
+  <Card data-timer-context-menu ref={timer.hostRef} aria-label={mode === 'timer' ? 'Countdown' : 'Current time'} className="activity-timer box-border h-[var(--size-bookmark-folder)] w-[var(--size-bookmark-folder)] shrink-0 gap-2 rounded-[var(--radius)] p-4 pt-2 shadow-none">
     <div className="flex h-8 shrink-0 items-center gap-3">
       <Slider aria-label="Countdown minutes" className="min-w-0 flex-1" value={[timer.remainingMs / 60_000]} min={0} max={60} step={5} largeStep={5}
         onPointerDownCapture={timer.prepare} onKeyDownCapture={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown'].includes(event.key)) timer.prepare(); }}
@@ -61,7 +61,7 @@ export function TimerCard() {
         <TooltipContent hidden={menuOpen}>{toggleLabel}</TooltipContent>
       </Tooltip>
     </div>
-    <div className="flex min-h-0 flex-1 items-center">
+    <div className="flex min-h-0 flex-1">
       <div className="timer-face" role="timer" aria-label={mode === 'clock' ? `${clock.hours}:${clock.minutes}` : `${minutesText} minutes ${secondsText} seconds`} aria-live="off">
         <FlipDigit value={mode === 'clock' ? clock.hours : minutesText} />
         <span className="timer-colon" aria-hidden="true">:</span>
