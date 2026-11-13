@@ -236,4 +236,4 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 - 必要适配：cn导入指向既有lib/utils；官方模板IconPlaceholder按其lucide=CheckIcon指定替换为静态Lucide CheckIcon；未复制不使用的子菜单/多选项，未引入额外组件库。
 - cn-menu-target/cn-menu-translucent保留官方标记类，菜单沿用现有popover与accent主题；不增加额外材质或更改全局Token。现有data-open/closed/disabled等变体来自shadcn.css。
 - 业务卡片经官方render组合为唯一Trigger，不嵌套额外交互控件。Newtab的原生右键拦截仅对标记的计时卡片放行，交由官方组件管理；其他区域维持原行为。菜单打开时隐藏该卡片模式按钮的Tooltip。
-- 两组英文单选，使用官方RadioGroup与默认CheckIndicator；没有自定义圆点或选中背景。实际交互/主题由用户Chrome/Edge验收，未宣称与官网效果已验收一致。
+- 两组英文选择原使用RadioGroup；2026-11-13按用户批准改为单选或全不选，补入同一base-nova注册表的官方CheckboxItem与CheckboxItemIndicator。保留官方默认类名与结构，IconPlaceholder同样静态替换为CheckIcon，现有Radio导出保留。业务传入checked/onCheckedChange和closeOnClick=false，选择后保持打开以便切换或取消；按用户最新要求不显示播放图标与试听动画，不修改官方勾选配色或管理焦点。实际交互/主题由用户Chrome/Edge验收，未宣称与官网效果已验收一致。

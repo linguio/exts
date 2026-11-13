@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [优化时间卡片、声音选择与主题保存反馈](./issues/2026-11-13-extension-timer-settings-polish-issue.md) · 已完成；用户验收通过并批准两笔本地提交 · [Commit记录](./commits/2026-11-13-extension-timer-settings-polish-commit.md)
+
 - [在活动日历上方增加翻页倒计时](./issues/2026-11-13-extension-activity-timer-issue.md) · [Commit 记录](./commits/2026-11-13-extension-activity-timer-commit.md)；用户验收通过并批准代码、文档两笔本地提交完结。默认本地时钟、自动倒计时、英文右键音色与本地偏好已交付；14项相关测试、类型检查和构建通过，4项旧导航断言失败、构建警告及白噪声试听衔接短暂断音保留记录；Toast提示音仅排队，未推送或发布。
 
 - [统一 Studio 账号目录与 Dock 入口命名](./issues/2026-11-13-extension-studio-login-directory-issue.md) · [Commit 记录](./commits/2026-11-13-extension-studio-login-directory-commit.md)；用户验收通过并批准代码、文档两笔本地提交完结。账号 UI 与状态统一归入 studio/login，Dock 四个入口统一命名并复用账号组件；4 项状态测试、类型检查及构建通过，原构建警告保留；未推送或发布。

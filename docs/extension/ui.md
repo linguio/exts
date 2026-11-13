@@ -65,6 +65,8 @@
 
 正式偏好保存在 `chrome.storage.local` 的 `settings.theme`，不同步设备；扩展页面同源 localStorage 的 `exts.theme` 只作同步首屏缓存。页面 head 通过 WXT 独立外部脚本 `theme-init.js` 在解析时读取缓存，使用与运行时相同的解析逻辑应用主题；不内联可执行脚本或放宽 CSP。主页面读取正式配置并订阅变化，继续监听系统主题，面板关闭后仍生效。
 
+- Theme保存期间禁用整组主题按钮，仅将点击按钮的图标替换为既有StatusIcon loading；标记aria-busy并遵循减少动画偏好。不遮罩Settings，不禁用无关设置；保留请求成功后应用主题的行为，失败沿用错误Toast，finally解除禁用。重复点击当前主题不请求，pending期间同步拦截重复提交。
+
 上述规范属于整个 extension，并非 Newtab 专属。无法访问扩展同源 localStorage 的网页内容脚本直接读取并订阅 `settings` 对象，取得主题与功能开关；旧 `exts.theme` 存储键迁入正式配置后移除。网页菜单在 Shadow DOM 中通过 `:host` 和 `:host(...)` 引用同一 Token。官方 Sonner 样式同时导入该 Shadow DOM，以支持提示的默认交互。
 
 | 用途 | Token | 现行规则 |
@@ -237,7 +239,7 @@ TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标
 - 首页卡片区左上方组合 TimerCard，下方保留现有 ActivityCard；不新增 Studio 页面。TimerCard 宽高为 --size-bookmark-folder，左边缘与下方日历对齐，日历仍保留原有整块宽度。
 - 外层直接复用日历 Card 的 p-4、gap-4、border、主题背景、rounded-[var(--radius)] 与 shadow-none；卡片之间复用 NewtabCards 的 gap-6。
 - 默认根字号 16px 时，--size-bookmark-folder = 2×64 + 48 + 2 = 178px。去除两侧 16px 内边距及 1px 边框，内容宽 144px。顶部行32px；右侧为官方Button ghost/icon-sm（32px），间隔12px，Slider余宽约100px。
-- 时钟HH:mm与倒计时MM:ss共用两张等大双位卡和中间冒号，统一字号32cqw。内容宽144px，两个6px间隔加6px冒号，余126px均分，单卡63px宽、宽高比0.85（约74px高）；切换只变内容，位置和尺寸不变。
+- 时钟HH:mm与倒计时MM:ss共用两张等大双位卡和中间冒号，统一字号32cqw。内容宽144px，两个6px间隔加6px冒号，余126px均分，单卡63px宽、宽高比0.72（约87.5px高）；Geist Sans 600数字保持横向宽度，文字层纵向缩放2.1，布局和翻页层不缩放；切换只变内容，位置和尺寸不变。
 - Slider 手动5分钟步进；松开自动开始，再拖动替换；右侧不显示时间，改为Clock/Timer模式图标；倒计时卡片按秒显示分秒；运行受控值按50ms采样截止时间缩回，不按分钟跳变。无开始、暂停、重置、额外0/60标签。
 - 字体、颜色和圆角复用现有主题。数字翻页为200ms旧上页折下+250ms新下页展开，结束后更新静态下页；分缝1px，无额外阴影。
 - 状态只在当前 Newtab 的 TimerCard/use-countdown 中，Home/Studio切换不重置；刷新、关闭清空，多标签各自独立，不写session/local，不累计Activity记录。
@@ -247,8 +249,8 @@ TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标
 - 模式补充：Slider右侧使用既有官方Button ghost/icon-sm与Tooltip，显示当前模式Timer/Clock图标。点击切换时清空倒计时并停止声音，Clock模式显示系统本地24小时制HH:mm，不显示秒数，不播放滴答；再次点击自动从25:00开始倒计时，不恢复旧值。拖动Slider自动切入倒计时。
 - 时钟每分钟边界重读系统时间，数字变化才翻页；恢复页面可见性或Home后立即校准。时、分各一张双位翻页卡，中间冒号，字体按内容容器32cqw；倒计时改为同样的两张等大双位卡，分秒变化节奏与翻页时序不变。默认展示系统本地HH:mm，无新增时钟权限或存储。
 
-- 计时卡片右键使用官方Base Context Menu默认分组/勾选；计时音优先将Pink Noise、Brown Noise置顶，其余与完成音按名称从短到长排列。Timer Sound：Pink Noise、Brown Noise、Metronome、Quartz Clock；Completion Sound：Harp、Glass Chime、Soft Three-Tone。计时四项、完成三项，各选一项，默认Quartz Clock＋Glass Chime。
-- 本机偏好分别保存在chrome.storage.local的timer.tickSound与timer.completionSound，不写云端；多个Newtab通过storage.onChanged读取一致偏好，Home隐藏后重新显示会重读。缺失或非法值回到默认。仍遵循现有账号重置清理local规则，不扩大修改认证逻辑。
+- 计时卡片右键使用官方Base Context Menu默认分组/勾选；计时音优先将Pink Noise、Brown Noise置顶，其余与完成音按名称从短到长排列。Timer Sound：Pink Noise、Brown Noise、Metronome、Quartz Clock；Completion Sound：Harp、Glass Chime、Soft Three-Tone。计时四项、完成三项，各组单选或全不选，默认Quartz Clock＋Glass Chime。官方CheckboxItem受控勾选，再选同项取消并停止声音；选择后菜单保持打开。按用户最新要求不显示声音播放图标或试听动画，保留官方默认勾选。
+- 本机偏好分别保存在chrome.storage.local的timer.tickSound与timer.completionSound，不写云端；null表示该组静音，刷新后保留，完成音关闭仍显示归零Toast。多个Newtab通过storage.onChanged读取一致偏好，Home隐藏后重新显示会重读。缺失或非法值回到默认。仍遵循现有账号重置清理local规则，不扩大修改认证逻辑。
 - 选择后立即试听：滴答3次、连续噪声3秒、完成音1遍。试听取消旧音源与旧试听，暂停原滴答；结束恢复当前计时滴答，真正归零时优先结束当前试听并播放完成音；全程不修改截止时间。无计时时试听后释放音频上下文，切模式或关闭页面也释放。
 - 偏好读取/保存失败使用英文toast.error并保留正式错误日志；声音试听不另发Toast。真正到时仍仅有共用完成Toast和所选完成音。
 
