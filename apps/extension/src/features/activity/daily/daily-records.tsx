@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react';
 import { QueryDataTable } from '../../../components/custom/data-table';
 import { useAccount, readSessionResetVersion, subscribeSessionReset } from '../../account/auth-client';
-import { studioSessionKey } from '../../../pages/studio/login/account-state';
+import { studioSessionKey } from '../../../pages/studio/account/state';
 import type { DailyActivityRow } from '../data/types';
 import { dailyColumns } from './columns';
 import { DailyEmpty } from './daily-empty';

@@ -5,8 +5,8 @@ import { DropdownMenu, DropdownMenuTrigger } from '../../components/ui/dropdown-
 import { toast } from '../../components/ui/sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
-import { AccountDialog } from '@/pages/studio/login/account-dialog';
-import { AccountMenu } from '@/pages/studio/login/account-menu';
+import { LoginDialog } from '@/pages/studio/account/login-dialog';
+import { AccountMenu } from '@/pages/studio/account/menu';
 import { logoutAccount } from '@/features/account/auth-client';
 import { useAccount } from '@/features/account/auth-client';
 import { useDockOverlay } from './use-dock-overlay';
@@ -61,9 +61,9 @@ export function AccountEntry() {
           <AccountMenu triggerRef={triggerRef} user={user} loggingOut={loggingOut} onLogout={() => { void logout(); }} side="top" sideOffset={12} onCloseAutoFocus={overlay.onCloseAutoFocus} />
         </DropdownMenu>
       ) : (
-        <AccountDialog isPending={isPending} refetch={refetch} onOpenChange={overlay.overlayProps.onOpenChange} onCloseAutoFocus={overlay.onCloseAutoFocus}>
+        <LoginDialog isPending={isPending} refetch={refetch} onOpenChange={overlay.overlayProps.onOpenChange} onCloseAutoFocus={overlay.onCloseAutoFocus}>
           <TooltipTrigger asChild>{button}</TooltipTrigger>
-        </AccountDialog>
+        </LoginDialog>
       )}
       <TooltipContent side="top" align="center" sideOffset={12}>Account</TooltipContent>
     </Tooltip>

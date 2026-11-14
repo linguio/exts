@@ -6,8 +6,8 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '../
 import { toast } from '../../../components/ui/sonner';
 import { UiIcon } from '../../../components/custom/ui-icon';
 import { useAccount, logoutAccount } from '../../../features/account/auth-client';
-import { AccountDialog } from './account-dialog';
-import { AccountMenu } from './account-menu';
+import { LoginDialog } from './login-dialog';
+import { AccountMenu } from './menu';
 
 
 /** 保留官方登录组合，GitHub 与 Google 共用 Neon 身份和会话。 */
@@ -59,7 +59,7 @@ export function AccountSidebar() {
                 <UiIcon name="ellipsis-vertical" className="ml-auto size-4" />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
-            <AccountMenu triggerRef={triggerRef} user={user} loggingOut={pending} onLogout={() => { void logout(); }} side={isMobile ? 'bottom' : 'right'} sideOffset={4} matchTriggerWidth />
+            <AccountMenu triggerRef={triggerRef} user={user} loggingOut={pending} onLogout={() => { void logout(); }} side={isMobile ? 'bottom' : 'right'} sideOffset={4} />
           </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -69,7 +69,7 @@ export function AccountSidebar() {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <AccountDialog isPending={isPending} refetch={refetch}>
+        <LoginDialog isPending={isPending} refetch={refetch}>
           {open => <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" tooltip={{ children: 'Account', ...(open ? { hidden: true } : {}) }} aria-label="Account: not signed in">
             <Avatar className="h-8 w-8 rounded-lg">
               <AvatarFallback className="rounded-lg"><UiIcon name="user-round" className="size-4" /></AvatarFallback>
@@ -79,7 +79,7 @@ export function AccountSidebar() {
               <span className="truncate text-xs">{isPending ? 'Checking account…' : error ? ('code' in error && error.code === 'session-expired' ? 'Sign in again' : 'Account unavailable') : 'Not signed in'}</span>
             </div>
           </SidebarMenuButton>}
-        </AccountDialog>
+        </LoginDialog>
       </SidebarMenuItem>
     </SidebarMenu>
   );

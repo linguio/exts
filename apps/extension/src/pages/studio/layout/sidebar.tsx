@@ -1,12 +1,12 @@
 import { BrandIcon } from '../../../components/custom/brand-icon';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../components/ui/empty';
-import type { studioAccess } from '../login/account-state';
+import type { studioAccess } from '../account/state';
 import { Button } from '../../../components/ui/button';
 import { studioMenu, studioOverview } from '../routes';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, useSidebar } from '../../../components/ui/sidebar';
 import { UiIcon } from '../../../components/custom/ui-icon';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
-import { AccountSidebar } from '../login/account-sidebar';
+import { AccountSidebar } from '../account';
 
 interface StudioSidebarProps {
   onHome: () => void;
@@ -27,8 +27,14 @@ export function StudioSidebar({ onHome, access, sessionKey, activeRoute, onRoute
     <Sidebar collapsible="offcanvas" variant="inset">
       <SidebarHeader>
         <div className="flex items-center gap-2">
-          <SidebarMenu><SidebarMenuItem><SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
-            <div><BrandIcon icon="brand/exts.svg" size="sm" /><span className="text-base font-semibold">Exts</span></div>
+          <SidebarMenu><SidebarMenuItem><SidebarMenuButton asChild size="lg">
+            <div>
+              <BrandIcon icon="brand/exts.svg" size="md" />
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">Exts</span>
+                <span className="truncate text-xs">Ideas into action</span>
+              </div>
+            </div>
           </SidebarMenuButton></SidebarMenuItem></SidebarMenu>
           <Tooltip><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon-sm" onClick={onHome} aria-label="Back to Home"><UiIcon name="house" className="size-4" /></Button></TooltipTrigger><TooltipContent side="right">Back to Home</TooltipContent></Tooltip>
         </div>

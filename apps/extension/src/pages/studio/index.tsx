@@ -1,11 +1,11 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { useAccount, readSessionResetVersion, subscribeSessionReset } from '../../features/account/auth-client';
 import { resolveStudioRoute } from './routes';
-import { studioAccess, studioSessionKey } from './login/account-state';
+import { studioAccess, studioSessionKey } from './account/state';
 import { StudioContent } from './layout/content';
 import { StudioSidebar } from './layout/sidebar';
 import { StudioLayout } from './layout';
-import { LoginPage } from './login/login-page';
+import { LoginRequired } from './account/login-required';
 import { saveStudioRoute, readStudioRoute } from '../../app/view-preference';
 import { toast } from '../../components/ui/sonner';
 
@@ -35,7 +35,7 @@ export function Studio({ onHome }: StudioProps) {
   const Page = page?.component;
   const fillHeightPage = page?.fillHeight === true;
   const pageBody = access === 'signed-out'
-    ? <LoginPage isPending={account.isPending} onRefetch={account.refetch} />
+    ? <LoginRequired isPending={account.isPending} onRefetch={account.refetch} />
     : (
     <StudioContent account={account} resetVersion={resetVersion}>
       {Page ? <Page /> : null}

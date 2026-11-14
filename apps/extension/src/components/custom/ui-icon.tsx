@@ -1,4 +1,4 @@
-import { Clock, Timer, Bell, CalendarDays, ChartColumn, ChartPie, ChevronDown, ChevronsUpDown, ChevronUp, CircleCheck, CircleDashed, CircleMinus, CircleQuestionMark, CircleUser, CircleX, Download, Ellipsis, EllipsisVertical, Eye, EyeOff, FolderOpen, House, LaptopMinimal, List, LoaderCircle, Lock, LockOpen, LogOut, Moon, NotebookText, PanelLeft, PanelsTopLeft, Settings, SquarePen, Sun, Trash2, TriangleAlert, UserRound, X, Zap, type LucideIcon } from 'lucide-react';
+import { Clock, Timer, Bell, CalendarDays, ChartColumn, ChartPie, Info, ChevronDown, ChevronsUpDown, ChevronUp, CircleCheck, CircleDashed, CircleMinus, CircleQuestionMark, CircleUser, CircleX, Download, Ellipsis, EllipsisVertical, Eye, EyeOff, FolderOpen, House, LaptopMinimal, List, LoaderCircle, Lock, LockOpen, LogOut, Moon, NotebookText, PanelLeft, PanelsTopLeft, Settings, SquarePen, Sun, Trash2, TriangleAlert, UserRound, X, Zap, type LucideIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
 
 import type { UiIconName } from './types';
@@ -7,6 +7,7 @@ import { cn } from '../../lib/utils';
 const uiIconMap: Record<UiIconName, LucideIcon> = {
   'notebook-text': NotebookText,
   house: House,
+  info: Info,
   'panel-left': PanelLeft,
   'user-round': UserRound,
   'ellipsis-vertical': EllipsisVertical,

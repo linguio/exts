@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { studioAccess, studioSessionKey } from '../../../../src/pages/studio/login/account-state';
+import { studioAccess, studioSessionKey } from '../../../../src/pages/studio/account/state';
 import { resolveStudioRoute } from '../../../../src/pages/studio/routes';
 
 it('身份未确认时等待，不提前显示登录或业务内容', () => {
