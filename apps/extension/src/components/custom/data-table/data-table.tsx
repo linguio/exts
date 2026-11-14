@@ -13,7 +13,7 @@ import { dateFilter, initialQuery, optionsFilter, resolveUpdate, updateQuery } f
 import type { DataTableProps, DataTableQuery, RowSelectionState } from './types';
 
 export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCaption = true, filters = [], search = true, multiSort = true,
-  columnVisibility = true, pageSizes = [20, 50, 100], selection = false, selectionKey, onSelectionChange, bulkActions,
+  columnVisibility = true, pageSizes = [10, 20, 50, 100], selection = false, selectionKey, onSelectionChange, bulkActions,
   loading = false, hasPreviousResult = false, remote, showPagination = true, emptyContent, fillRecords = false }: DataTableProps<T>) {
   const [localQuery, setLocalQuery] = useState(initialQuery);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -64,12 +64,12 @@ export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCa
   const columnCount = Math.max(1, table.getVisibleLeafColumns().length);
   const stickyEndClass = 'sticky right-0 z-10 bg-background';
   function headClass(columnId: string) {
-    return cn('text-center', columnId === '__actions' && stickyEndClass);
+    return cn('text-center', fillRecords && 'sticky top-0 z-20 bg-background', columnId === '__actions' && 'sticky right-0 z-30 bg-background');
   }
   function cellClass(columnId: string) {
     return cn('text-center', columnId === '__actions' && stickyEndClass);
   }
-  const headerClassName = fillRecords ? 'sticky top-0 z-10 bg-background [&_th]:bg-background' : undefined;
+  const headerClassName = fillRecords ? 'bg-background [&_th]:bg-background' : undefined;
   const rows = table.getRowModel().rows;
   const initialLoading = loading && (!hasPreviousResult || !rows.length);
   const fillPlaceholder = fillRecords && (initialLoading || !rows.length);

@@ -12,6 +12,7 @@ it('筛选、排序及每页条数变化回到首页，普通翻页保持页码'
   expect(updateQuery(query, 'columnFilters', [{ id: 'status', value: ['done'] }]).pagination.pageIndex).toBe(0);
   expect(updateQuery(query, 'sorting', previous => [...previous, { id: 'date', desc: true }]).pagination.pageIndex).toBe(0);
   expect(updateQuery(query, 'pagination', { pageIndex: 3, pageSize: 50 }).pagination).toEqual({ pageIndex: 0, pageSize: 50 });
+  expect(updateQuery(query, 'pagination', { pageIndex: 3, pageSize: 10 }).pagination).toEqual({ pageIndex: 0, pageSize: 10 });
   expect(updateQuery(query, 'pagination', previous => ({ ...previous, pageIndex: 4 })).pagination.pageIndex).toBe(4);
 });
 

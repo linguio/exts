@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Button } from '../../ui/button';
+import { DataTableRowActions } from './row-actions';
 import { DataTable } from './data-table';
 import { DataTableToolbar } from './toolbar';
 import { useDataTableQuery } from './use-data-table-query';
@@ -39,8 +39,7 @@ function QueryDataTableContent<T>({ columns, filters: filterOverride, queryFn, u
   const tableColumns = useMemo((): ColumnDef<T, any>[] => {
     if (!showEdit) return columns;
     return [...columns, { id: '__actions', header: 'Actions', enableHiding: false, enableSorting: false, enableGlobalFilter: false,
-      cell: ({ row }) => <Button type="button" variant="outline" size="sm" disabled={queryState.loading}
-        onClick={() => setEditingRow(row.original)}>Edit</Button> }];
+      cell: ({ row }) => <DataTableRowActions disabled={queryState.loading} onEdit={() => setEditingRow(row.original)} /> }];
   }, [columns, queryState.loading, showEdit]);
 
   const content = <>

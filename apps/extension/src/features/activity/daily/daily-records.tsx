@@ -20,6 +20,6 @@ export function DailyRecords() {
   return <QueryDataTable columns={dailyColumns} getRowId={getRowId}
     queryFn={(request, signal) => queryDailyRecords(request, user!.id, signal)}
     updateFn={updateDaily} partialUpdates scopeKey={sessionKey} enabled={!!user} caption="Daily activity records" showCaption={false}
-    fillRecords pageSizes={[20, 50, 100]}
+    fillRecords pageSizes={[10, 20, 50, 100]}
     emptyContent={<DailyEmpty />} />;
 }
