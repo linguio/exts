@@ -30,7 +30,7 @@ const filters: DataTableFilter[] = [
 ```
 
 - columns、queryFn、getRowId、caption 必填；filters 可省略，省略时从 `columns[].meta.dataTable.filter` 推导。scopeKey 用于账号/资源变化时同步隔离全部查询状态，或由父级已存在的重建边界保证；不读取组件内部账号。
-- 行末 Edit 需可写字段且（`updateFn` 或显式 `previewEdits`）；`previewEdits` 默认 false。预览保存只补丁当前成功响应、不重新请求；`updateFn` 保存成功后由组合层 `refresh`。`filters` 省略时从 columns meta 推导，显式 `[]` 表示无筛选。默认每页 20 条；可选 `fillRecords` 需要父级提供 `min-h-0` 的 flex 高度链，在工具栏和分页间占满剩余高度。有记录时只使用一个内部 ScrollArea 承担横向与纵向滚动，表头 `sticky top-0`、默认 Actions 列 `sticky right-0`；没有记录或首次加载时，表头下方改为不带 ScrollArea 的 `flex-1` 数据区，空态或 Spinner 必须在该区域正中，不能用空表格行撑高。Table 外壳不得另建 overflow，不能拆成两张表。可选 `headerNote`/`editDescription` 供页面补充说明。
+- 行末更多菜单中的 Edit 需可写字段且（`updateFn` 或显式 `previewEdits`）；`previewEdits` 默认 false。预览保存只补丁当前成功响应、不重新请求；`updateFn` 保存成功后由组合层 `refresh`。`filters` 省略时从 columns meta 推导，显式 `[]` 表示无筛选。默认每页 20 条；可选 `fillRecords` 需要父级提供 `min-h-0` 的 flex 高度链，在工具栏和分页间占满剩余高度。有记录时只使用一个内部 ScrollArea 承担横向与纵向滚动，各表头单元格 `sticky top-0`、默认 Actions 列 `sticky right-0`；没有记录或首次加载时，表头下方改为不带 ScrollArea 的 `flex-1` 数据区，空态或 Spinner 必须在该区域正中，不能用空表格行撑高。Table 外壳不得另建 overflow，不能拆成两张表。可选 `headerNote`/`editDescription` 供页面补充说明。
 - enabled 默认 true；false 时不发请求并取消在途请求，首次未启用不显示为查询成功空记录。showCaption/emptyContent 保留既有展示能力。
 - filters.defaultValue 仅在查询入口初始化和 Reset 时应用。文本默认值为字符串，选项为字符串数组，日期范围为 {from,to}；默认值不会被编辑草稿污染，父级重渲染不重新应用默认条件。
 - queryFn 接收 {pageIndex,pageSize,sort,filters} 和 signal，返回 Promise<{rows,total}>。sort 已转换为有序 {field,order} 数组；filters 的键为 columnId，值为已经生效的筛选值。筛选不要求对应可见数据列。
@@ -132,8 +132,8 @@ meta: {
 
 ## Daily 真实查询与行预览编辑
 
-- Daily 使用 QueryDataTable：`queryFn` 为 `queryDailyRecords`，`updateFn` 写入服务端，`partialUpdates` 只提交改动字段，`getRowId` 使用记录 `id`，`fillRecords` 占 Studio 可用高度；`pageSizes` 为 20/50/100；筛选从 columns meta 推导，工具栏单行、窄屏横向滚动。
-- 行末 Edit 打开共用 Sheet，日期只读，五项时长回填原始分钟。保存由共用层对当前响应行浅合并，不调用写接口、保存后不立即重新查询；下次 Query、翻页或刷新以接口数据为准。Daily 不传 `editDescription`，页面与 Sheet 内均无该英文说明；其他页面仍可按需传入。
+- Daily 使用 QueryDataTable：`queryFn` 为 `queryDailyRecords`，`updateFn` 写入服务端，`partialUpdates` 只提交改动字段，`getRowId` 使用记录 `id`，`fillRecords` 占 Studio 可用高度；`pageSizes` 为 10/20/50/100；筛选从 columns meta 推导，工具栏单行、窄屏横向滚动。
+- 行末更多菜单中的 Edit 打开共用 Sheet，日期只读，五项时长回填原始分钟。保存由共用层对当前响应行浅合并，不调用写接口、保存后不立即重新查询；下次 Query、翻页或刷新以接口数据为准。Daily 不传 `editDescription`，页面与 Sheet 内均无该英文说明；其他页面仍可按需传入。
 - `query.ts` 映射 date→startDate/endDate 与 Activity 响应；行预览逻辑在 `row-preview.ts` 与 `use-data-table-query`，不把第二数据源放进资源层。Daily 页 `p-4 md:p-6`；Studio 主内容 `overflow-auto`，非 Daily 页面正常整页滚动。
 - Daily 工具栏左侧日期条件，右侧为 ButtonGroup（Query 文字、Reset 图标）与紧邻独立的 Columns 图标菜单；Reset/Columns 带 Tooltip 与 aria-label。排序使用已有表头：普通点击切换单列，Shift 点击组合多列，沿用 TanStack 优先级与交互，不另设排序配置区。
 - 日期草稿点击 Query 后生效，保留当前排序并回首页；排序立即查询，但只使用已生效日期，保留草稿。翻页/每页条数使用已生效条件。
@@ -184,3 +184,10 @@ meta: {
 7. 快速连续查询/排序，最后一次请求生效；退出、换号或同账号重新登录后旧记录不再显示。真实生命周期与跨账号交互仍由用户在浏览器验收。
 8. 对照 daily/daily-records.tsx：应只剩 QueryDataTable 的配置和资源查询函数，查询 Effect、AbortController、手写工具栏及旧 daily/state.ts 已删除；公共流程位于 custom/data-table。
 9. 本次 Daily 实际使用日期筛选；文本/选项查询模式复用既有控件并有配置/状态检查，未新增第二个真实业务表格或执行浏览器视觉验收。
+
+## Actions固定与更多菜单
+
+- DataTable的普通表头采用top-0/z-20，Actions表头同时top-0/right-0/z-30；Actions数据列right-0/z-10。thead不再单独sticky，避免整体水平移动限制右上角Actions。保留完整table与唯一ScrollArea，不拆表。
+- QueryDataTable根据原有列编辑元数据与updateFn/previewEdits生成Actions；DataTableRowActions只组合现有官方Button ghost/icon、水平省略号与DropdownMenu，菜单仅Edit。选择Edit继续打开原Sheet，菜单关闭时避免把焦点抢回更多按钮；加载时入口和操作保持禁用。未实现Delete。
+- 共用默认与Daily显式分页候选均为10/20/50/100；initialQuery仍每页20，选择10沿用原查询流程回第一页。
+- 验收：重新加载dist/build/chrome-mv3，登录Studio→Activity→Daily。窄窗口/多列时横向滚动，确认Actions表头与数据列固定右侧；向下滚动记录，确认整行表头固定且右上角Actions仍可见。点击某行更多→Edit，确认对应记录的原Sheet、保存和关闭正常。分页可选10且初始20，切10回第一页；加载/空态/排序保持原行为。视觉与真实交互由用户Chrome/Edge验收。

@@ -62,7 +62,7 @@
 - 默认顺序为查询工具栏、表格、分页页脚。查询条件位于工具栏左侧；右侧为官方 ButtonGroup（Query 文字、Reset 图标）与紧邻独立的 Columns 图标列显隐菜单，同一行排列，图标按钮提供可读名称与提示。排序入口在表头，不另设独立排序配置区。
 - 常规宽度下相关控件同行排列；窄屏只能以完整控件组换行。例如标签与选择器、页码输入与 Go 不拆开。
 - 普通宽表沿用官方 Table 的横向滚动；`fillRecords` 是例外：父级必须形成 `min-h-0` 的 flex 高度链，表格容器以 `flex-1 min-h-0` 占满工具栏与分页之间的剩余高度。
-- `fillRecords` 只能有一个内部 ScrollArea，统一承载横向与纵向滚动；Table 外壳不得再以 `overflow-x-auto`、`overflow-auto` 或其他 overflow 创建第二个滚动容器。物理 table 保持完整，表头通过 `sticky top-0` 固定，因此用户可见效果是只有数据行区域纵向滚动；工具栏与分页不进入该 ScrollArea。
+- `fillRecords` 只能有一个内部 ScrollArea，统一承载横向与纵向滚动；Table 外壳不得再以 `overflow-x-auto`、`overflow-auto` 或其他 overflow 创建第二个滚动容器。物理 table 保持完整，表头单元格通过 `sticky top-0` 固定，因此用户可见效果是只有数据行区域纵向滚动；工具栏与分页不进入该 ScrollArea。
 - `fillRecords` 的横向滚动也必须在同一个 ScrollArea 内完成，表头与数据列同步移动；不得拆成两张 table、重复渲染表头，或让 header/body 使用不同的滚动容器。
 - 含默认 Actions 操作列的表格必须以 `sticky right-0` 固定在该 ScrollArea 最右侧，并为表头和单元格设置不透明背景及高于普通单元格的层级；横向滚动数据列时操作入口保持可见。业务需要取消固定时，必须明确批准并记录。
 - `fillRecords` 没有记录或首次加载时，不得依靠空 `tbody`、空 `tr` 或单元格 `min-height` 撑高；表头下方必须直接使用 `flex-1` 的数据区承载空态或 Spinner，并在该数据区的水平与垂直中心展示。此状态没有可滚动记录，禁止挂载 ScrollArea；仅在存在记录时启用内部 ScrollArea。
@@ -89,6 +89,9 @@
 - 列显隐立即生效，不请求后端、不改变筛选和排序，不被 Reset 清除；至少保留一个数据列，业务必需列可禁止隐藏。隐藏列不等于取消其已生效排序。
 - 日期筛选必须声明对应业务字段、格式、时区和首尾边界，不能把业务 date 自动解释成 createdAt；不把 Daily 的日期字段强加给其他业务。
 
+- 固定表头与右侧Actions交叉时，顶部固定施加于各表头单元格，不在整个thead再建立sticky层；Actions表头同时top-0/right-0，层级高于普通表头和Actions数据单元格，保留不透明背景。
+- 标准编辑行操作使用官方更多图标按钮和DropdownMenu，仅在已有可编辑字段且提供updateFn（或明确previewEdits）时显示Edit；不由业务页重复维护菜单JSX，不预建Delete配置或删除流程。
+
 ## 表头排序
 
 - 沿用 TanStack 默认表头交互：普通点击进行单列排序，Shift 点击组合多列；multiSort=false 时只允许单列。不自行增加普通点击总是累加的行为。
@@ -104,7 +107,7 @@
 | 项目 | 默认规则 |
 | --- | --- |
 | 页码 | 前端/API pageIndex 从 0 开始；界面展示和输入从 1 开始 |
-| 每页条数 | 默认 20；Daily 等业务可选用 20、50、100（无 10）；接口上限 100 |
+| 每页条数 | 默认 20；共用默认及 Daily 可选 10、20、50、100；接口上限 100 |
 | 页脚内容 | 筛选后总记录数、当前页/总页数、Rows per page、页码导航、Go 跳转 |
 | 导航名称 | First、Previous、Next、Last；条数与跳转各自保持完整控件组 |
 | 总页数 | ceil(total / pageSize)，使用筛选后总数，不使用当前页数组长度 |

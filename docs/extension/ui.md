@@ -239,20 +239,20 @@ TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标
 - 首页卡片区上方为ActivityCard，下方左对齐组合TimerCard；不新增 Studio 页面。TimerCard 宽高为 --size-bookmark-folder（默认178px），左边缘与上方日历对齐，日历仍保留原有整块宽度。
 - 外层保留固定文件夹尺寸、border、主题背景、rounded-[var(--radius)]与shadow-none；左右与底部16px、顶部8px，操作行32px、行间8px。官方32px按钮内图标高16px，补偿内部上下各8px后，图标可见边缘至外框顶部/数字牌顶部均为16px，数字牌下方16px。Slider拇指12px、轨道4px沿用官方居中，对应边缘空白比16px分别多2px/6px，不修改官方尺寸。卡片之间使用NewtabCards的gap-8（默认32px），与左侧文件夹两排外框间的8px名称前距＋16px名称＋8px行距一致；水平分区间距保持原值。
 - 默认根字号 16px 时，--size-bookmark-folder = 2×64 + 48 + 2 = 178px。去除两侧 16px 内边距及 1px 边框，内容宽 144px。顶部操作行32px，点击区域保持官方大小；右侧为官方Button ghost/icon-sm（32px），间隔12px，Slider余宽约100px。
-- 时钟HH:mm与倒计时MM:ss共用两张等大双位卡和中间冒号，统一字号32cqw。内容宽144px，两个6px间隔加6px冒号，余126px均分，单卡63px宽，高度填满剩余空间，默认112px（178−2边框−8顶部−32操作行−8行间−16底部），不再使用固定宽高比或额外垂直居中；Geist Sans 600数字保持横向宽度，文字层纵向缩放2.8，布局和翻页层不缩放；切换只变内容，位置和尺寸不变。
+- 时钟HH:mm与倒计时MM:ss共用两张等大双位卡和中间冒号，统一字号32cqw。内容宽144px，两个6px间隔加6px冒号，余126px均分，单卡63px宽，高度填满剩余空间，默认112px（178−2边框−8顶部−32操作行−8行间−16底部），不再使用固定宽高比或额外垂直居中；Geist Sans 600数字保持横向宽度，文字层纵向缩放2.5，布局和翻页层不缩放；切换只变内容，位置和尺寸不变。
 - Slider 手动5分钟步进；松开自动开始，再拖动替换；右侧不显示时间，改为Clock/Timer模式图标；倒计时卡片按秒显示分秒；运行受控值按50ms采样截止时间缩回，不按分钟跳变。无开始、暂停、重置、额外0/60标签。
 - 字体、颜色和圆角复用现有主题。数字翻页为200ms旧上页折下+250ms新下页展开，结束后更新静态下页；分缝1px，无额外阴影。
 - 状态只在当前 Newtab 的 TimerCard/use-countdown 中，Home/Studio切换不重置；刷新、关闭清空，多标签各自独立，不写session/local，不累计Activity记录。
-- 滴答与完成音均由Web Audio本地合成，默认Quartz Clock＋Glass Chime；归零只触发一次英文Toast和结束音，不发送系统通知、不请求通知权限。
+- 滴答与完成音均由Web Audio本地合成，默认Metronome＋Harp；归零只触发一次英文Toast和结束音，不发送系统通知、不请求通知权限。
 - 休眠或冻结可能延后提示音和Toast；这不是后台系统闹钟。声音、布局与实际交互留给用户Chrome/Edge验收。
 
 - 模式补充：Slider右侧使用既有官方Button ghost/icon-sm与Tooltip，显示当前模式Timer/Clock图标。点击切换时清空倒计时并停止声音，Clock模式显示系统本地24小时制HH:mm，不显示秒数，不播放滴答；再次点击自动从25:00开始倒计时，不恢复旧值。拖动Slider自动切入倒计时。
 - 时钟每分钟边界重读系统时间，数字变化才翻页；恢复页面可见性或Home后立即校准。时、分各一张双位翻页卡，中间冒号，字体按内容容器32cqw；倒计时改为同样的两张等大双位卡，分秒变化节奏与翻页时序不变。默认展示系统本地HH:mm，无新增时钟权限或存储。
 
-- 计时卡片右键使用官方Base Context Menu默认分组/勾选；计时音优先将Pink Noise、Brown Noise置顶，其余与完成音按名称从短到长排列。Timer Sound：Pink Noise、Brown Noise、Metronome、Quartz Clock；Completion Sound：Harp、Glass Chime、Soft Three-Tone。计时四项、完成三项，各组单选或全不选，默认Quartz Clock＋Glass Chime。官方CheckboxItem受控勾选，再选同项取消并停止声音；选择后菜单保持打开。按用户最新要求不显示声音播放图标或试听动画，保留官方默认勾选。
+- 计时卡片右键使用官方Base Context Menu默认分组/勾选；计时音Metronome在前、Brown Noise在后，完成音Harp在前、Glass Chime在后。Timer Sound：Metronome、Brown Noise；Completion Sound：Harp、Glass Chime。两组各两项，各组单选或全不选，默认Metronome＋Harp。官方CheckboxItem受控勾选，再选同项取消并停止声音；选择后菜单保持打开。按用户最新要求不显示声音播放图标或试听动画，保留官方默认勾选。
 - 本机偏好分别保存在chrome.storage.local的timer.tickSound与timer.completionSound，不写云端；null表示该组静音，刷新后保留，完成音关闭仍显示归零Toast。多个Newtab通过storage.onChanged读取一致偏好，Home隐藏后重新显示会重读。缺失或非法值回到默认。仍遵循现有账号重置清理local规则，不扩大修改认证逻辑。
 - 选择后立即试听：滴答3次、连续噪声3秒、完成音1遍。试听取消旧音源与旧试听，暂停原滴答；结束恢复当前计时滴答，真正归零时优先结束当前试听并播放完成音；全程不修改截止时间。无计时时试听后释放音频上下文，切模式或关闭页面也释放。
 - 偏好读取/保存失败使用英文toast.error并保留正式错误日志；声音试听不另发Toast。真正到时仍仅有共用完成Toast和所选完成音。
 
-- 计时音新增Pink Noise与Brown Noise，倒计时运行时持续循环，不按秒触发；移除Rain Tap。两种噪声本地合成8秒双声道缓冲区，50ms首尾交叉过渡并从50ms处循环，带淡入；采样RMS目标0.18、峰值上限0.7，再经既有0.35主音量输出。无下载或新增依赖。
-- 连续噪声选择后试听3秒，计时中试听结束恢复连续播放；切回时钟、取消、归零或关闭页面立即停止，归零再播放所选完成音。旧rain偏好按非法值回退Quartz Clock，保留完成音偏好，不重置截止时间。
+- 计时音仅保留Brown Noise与Metronome；Brown Noise在倒计时运行时持续循环，不按秒触发。本地合成8秒双声道缓冲区，50ms首尾交叉过渡并从50ms处循环，带淡入；采样RMS目标0.18、峰值上限0.7，再经既有0.35主音量输出。无下载或新增依赖。
+- 连续噪声选择后试听3秒，计时中试听结束恢复连续播放；切回时钟、取消、归零或关闭页面立即停止，归零再播放所选完成音。旧rain、pink、quartz偏好按非法值回退Metronome，旧warm完成音偏好回退Harp，保留完成音偏好，不重置截止时间。

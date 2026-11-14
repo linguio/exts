@@ -237,3 +237,10 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 - cn-menu-target/cn-menu-translucent保留官方标记类，菜单沿用现有popover与accent主题；不增加额外材质或更改全局Token。现有data-open/closed/disabled等变体来自shadcn.css。
 - 业务卡片经官方render组合为唯一Trigger，不嵌套额外交互控件。Newtab的原生右键拦截仅对标记的计时卡片放行，交由官方组件管理；其他区域维持原行为。菜单打开时隐藏该卡片模式按钮的Tooltip。
 - 两组英文选择原使用RadioGroup；2026-11-13按用户批准改为单选或全不选，补入同一base-nova注册表的官方CheckboxItem与CheckboxItemIndicator。保留官方默认类名与结构，IconPlaceholder同样静态替换为CheckIcon，现有Radio导出保留。业务传入checked/onCheckedChange和closeOnClick=false，选择后保持打开以便切换或取消；按用户最新要求不显示播放图标与试听动画，不修改官方勾选配色或管理焦点。实际交互/主题由用户Chrome/Edge验收，未宣称与官网效果已验收一致。
+
+## DataTable行操作组合（2026-11-14）
+
+- 参考用户指定的[Table Actions示例](https://ui.shadcn.com/docs/components/base/table#actions)，采用更多图标Button＋DropdownMenu组合，菜单仅保留实际存在的Edit，不搬入示例其他业务动作。
+- 复用当前应用已登记来源与固定版本的shadcn官方Button和DropdownMenu（现有Radix版本）；不为单个操作替换全局菜单基础实现。示例Base Trigger的render组合适配为既有官方asChild，沿用已有主题、Portal和菜单默认参数，不宣称与Base示例呈现已一致验收。
+- 水平省略号通过UiIcon静态映射Lucide Ellipsis；行操作封装留在custom/data-table，不包含业务字段、账号或接口。选择Edit时仅抑制菜单恢复入口焦点，交给既有Sheet标题焦点逻辑。无新增依赖，无新增视觉/指针/焦点测试。
+- 固定Actions修正位于表格组合层：顶部sticky移至th，右上角Actions保留top/right与最高层级；官方Table原语未修改。

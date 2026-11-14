@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [调整计时卡片与表格操作](./issues/2026-11-14-extension-timer-digit-scale-issue.md) · [Commit记录](./commits/2026-11-14-extension-timer-digit-scale-commit.md)；用户验收通过并批准计时、表格代码及文档分别本地提交完结。数字比例2.5、精简音色默认Metronome/Harp、Actions固定、带图标Edit更多菜单与10条分页已交付；相关48项测试、类型检查及构建通过，原构建警告与已记录限制保留，未推送或发布。
+
 - [调整时间卡片高度与数字比例](./issues/2026-11-13-extension-timer-height-issue.md) · 已完成；用户验收通过并批准两笔本地提交 · [Commit记录](./commits/2026-11-13-extension-timer-height-commit.md)
 
 - [排查发布风险并修复媒体分页](./issues/2026-11-13-repo-release-preflight-issue.md) · 已完成；用户验收通过并批准两笔本地提交 · [Commit记录](./commits/2026-11-13-repo-release-preflight-commit.md)
