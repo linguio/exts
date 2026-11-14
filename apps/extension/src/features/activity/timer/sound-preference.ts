@@ -1,18 +1,15 @@
 export const tickSounds = [
-  { value: 'pink', label: 'Pink Noise' },
-  { value: 'brown', label: 'Brown Noise' },
   { value: 'metronome', label: 'Metronome' },
-  { value: 'quartz', label: 'Quartz Clock' },
+  { value: 'brown', label: 'Brown Noise' },
 ] as const;
 export const endSounds = [
   { value: 'harp', label: 'Harp' },
   { value: 'glass', label: 'Glass Chime' },
-  { value: 'warm', label: 'Soft Three-Tone' },
 ] as const;
 export type TickSound = typeof tickSounds[number]['value'];
 export type EndSound = typeof endSounds[number]['value'];
 export type TimerSounds = { tick: TickSound | null; end: EndSound | null };
-export const defaultSounds: TimerSounds = { tick: 'quartz', end: 'glass' };
+export const defaultSounds: TimerSounds = { tick: 'metronome', end: 'harp' };
 export const soundKeys = { tick: 'timer.tickSound', end: 'timer.completionSound' } as const;
 let writeTail: Promise<void> = Promise.resolve();
 

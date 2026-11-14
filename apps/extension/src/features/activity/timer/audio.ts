@@ -84,23 +84,20 @@ export class TimerAudio {
 
   private tick(time: number, index: number) {
     const odd = index % 2;
-    if (this.sounds.tick === 'quartz') {
-      this.noise(time, 0.025, 0.38, odd ? 4400 : 5700);
-      this.tone(time, odd ? 2300 : 2900, 0.018, 0.035);
-    } else if (this.sounds.tick === 'metronome') {
+    if (this.sounds.tick === 'metronome') {
       this.tone(time, odd ? 850 : 1150, 0.035, 0.22, 'triangle', 500);
       this.noise(time, 0.018, 0.22, 2600);
     }
   }
 
-  private isAmbient() { return this.sounds.tick === 'pink' || this.sounds.tick === 'brown'; }
+  private isAmbient() { return this.sounds.tick === 'brown'; }
 
   private playBackground(duration?: number) {
     const context = this.context;
     const kind = this.sounds.tick;
-    if (!context || this.background || (kind !== 'pink' && kind !== 'brown')) return;
+    if (!context || this.background || kind !== 'brown') return;
     const buffer = context.createBuffer(2, context.sampleRate * 8, context.sampleRate);
-    for (let channel = 0; channel < 2; channel++) buffer.copyToChannel(createNoiseSamples(kind, context.sampleRate), channel);
+    for (let channel = 0; channel < 2; channel++) buffer.copyToChannel(createNoiseSamples(context.sampleRate), channel);
     const source = context.createBufferSource();
     const filter = context.createBiquadFilter();
     const gain = context.createGain();
@@ -111,7 +108,7 @@ export class TimerAudio {
     source.loopEnd = 8;
     filter.type = 'lowpass';
     filter.Q.value = 0.5;
-    filter.frequency.value = kind === 'brown' ? 1400 : 11000;
+    filter.frequency.value = 1400;
     const start = context.currentTime + 0.02;
     gain.gain.setValueAtTime(0, start);
     gain.gain.linearRampToValueAtTime(1, start + 0.08);
@@ -140,11 +137,10 @@ export class TimerAudio {
       });
       return 1.9;
     }
-    const harp = this.sounds.end === 'harp';
-    (harp ? [523.25, 659.25, 783.99, 1046.5] : [523.25, 659.25, 783.99]).forEach((frequency, index) => {
-      const at = time + index * (harp ? 0.18 : 0.28);
-      this.tone(at, frequency, harp ? 0.8 : 0.65, harp ? 0.16 : 0.18);
-      this.tone(at, frequency * 2, harp ? 0.18 : 0.25, harp ? 0.04 : 0.03);
+    [523.25, 659.25, 783.99, 1046.5].forEach((frequency, index) => {
+      const at = time + index * 0.18;
+      this.tone(at, frequency, 0.8, 0.16);
+      this.tone(at, frequency * 2, 0.18, 0.04);
     });
     return 1.6;
   }

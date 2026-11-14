@@ -1,8 +1,8 @@
 import { expect, it } from 'vitest';
 import { createNoiseSamples } from '../../../../src/features/activity/timer/ambient';
 
-it.each(['pink', 'brown'] as const)('%s噪声可生成持续音频，幅度受限且无非法样本', kind => {
-  const data = createNoiseSamples(kind, 8000);
+it('棕噪声可生成持续音频，幅度受限且无非法样本', () => {
+  const data = createNoiseSamples(8000);
   expect(data.length).toBe(8000 * 8);
   let finite = true;
   let energy = 0;
