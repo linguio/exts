@@ -48,7 +48,7 @@
 
 
 - 菜单由 pages/studio/routes.ts 的静态页面注册表维护，包含一级 Overview 与 Activity → Daily；菜单仅在确认登录后可见，登录后恢复当前账号的会话路由，缺失或未知路由回到 Overview；Activity 为 SidebarGroupLabel 文字标题，Daily 为带图标的 SidebarMenuButton 平铺项，按用户截图采用 dashboard-01 Documents 结构，不包含折叠箭头或子菜单缩进。
-- Studio 统一处理账号状态：首次读取显示 Spinner；普通读取失败显示 Alert 和 Retry；未登录或会话过期显示 Empty、Sign in to Studio、Sign in to access your personal workspace. 和 Sign in 按钮，复用现有 AccountDialog。登录后才挂载当前业务页面，不按表格、图表或表单分别实现登录提示。
+- Studio 统一处理账号状态：首次读取显示 Spinner；普通读取失败显示 Alert 和 Retry；未登录或会话过期显示 Empty、Sign in to Studio、Sign in to access your personal workspace. 和 Sign in 按钮，复用现有 LoginDialog。登录后才挂载当前业务页面，不按表格、图表或表单分别实现登录提示。
 - 受保护内容以账号 ID 和既有会话重置版本作为 React key，退出、换号及同账号重新登录均使旧页面局部状态失效；Home/Studio 的 React Activity 保留不跨越账号内容边界。异步取消与迟到结果防护、边界外 Provider/后台/持久化状态仍由既有模块负责，不另建重置总线或按菜单增加清理分支。
 - Daily 使用真实查询接口与 QueryDataTable；行末 Edit/Sheet 仅临时更新当前已加载记录，未写入账号。字段、筛选与编辑集中于 columns.meta；Daily 内容区弹性占满可用高度，筛选单行可横向滚动，表格与分页在视口内分层。Studio 非 Daily 内容区使用官方 ScrollArea 整页滚动。Home 图表仍走原有 API。具体行为见 [DataTable](./data-table.md)。
 
@@ -137,7 +137,7 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - 扩展内的编辑类 Sheet 采用一致的标题栏：56px 高、两侧按现有 Settings 标题栏间距、Lucide 编辑图标与 **Edit** 标题；该视觉与文案规则维护在本应用 UI 规范。具体字段、校验和保存流程归所属业务组合层，表格行编辑仍由 `custom/data-table` 管理，不另抽全局编辑表单组件。
 - 通用 `Button` 保留官方 variant 与常见状态；普通 ghost 反馈不变。Dock 工具按钮复用 `variant="entry" size="entry"` 透明外壳，实际反馈由内部 `entry-surface` 承担，不在调用方复制同套参数。
 - EDU 保留默认模糊和点击解除逻辑，Hover 背景不变、指针为手形；其 hover 背景引用同一个 `overlay` Token，覆盖 ghost 默认背景变化。
-- Settings 与 Download 使用右侧 Sheet：共用组件统一维护默认宽 420px、最大不超过屏幕，调用方不重复写宽度。Header 高 56px，均显示对应 Lucide 图标与标题，关闭按钮提示为 `Close`。Download 正文展示下载记录；Settings 正文包含 General 和 Features 两区，分区标题为 14px／font-medium，设置项标题沿用官方 ItemTitle 的 14px／font-medium。Settings 正文父容器统一设置 24px 内边距及 24px 分区间距，子分区不叠加外侧内边距；两区之间不用 Separator，不叠加 Browsing history 标题；两个 Header 下方均保留分割线。 用户最终选择恢复此原样式，仅在共用右侧 Sheet 增加左上／左下 rounded-l-[var(--radius)]，当前为 16px；右侧直角贴边。
+- Settings 与 Download 使用右侧 Sheet：共用组件统一维护默认宽 420px、最大不超过屏幕，调用方不重复写宽度。Header 高 56px，均显示对应 Lucide 图标与标题，关闭按钮提示为 `Close`。Download 正文展示下载记录；Settings 正文包含 General 和 Features 两区，分区标题为 14px／font-medium，设置项标题沿用官方 DropdownMenuItemTitle 的 14px／font-medium。Settings 正文父容器统一设置 24px 内边距及 24px 分区间距，子分区不叠加外侧内边距；两区之间不用 Separator，不叠加 Browsing history 标题；两个 Header 下方均保留分割线。 用户最终选择恢复此原样式，仅在共用右侧 Sheet 增加左上／左下 rounded-l-[var(--radius)]，当前为 16px；右侧直角贴边。
 - General 的 Theme 行使用官方 ToggleGroup 单选组合，Light/Dark/System 分别用太阳、月亮、笔记本（LaptopMinimal）图标，默认 System；图标不带可见文字，使用可访问名称与现有 Tooltip 提示名称，始终保留一个选项。控件的主题状态不进入 components/ui。
 - ToggleGroup 单选项以 `aria-checked` 显示激活状态，选中背景使用官方 accent、图标使用 accent-foreground，不增加高反差主色选中块。Tooltip 组合也使用 data-state，因此不得仅凭该属性表达单选反馈；选择判断仍由官方控件负责。
 - 共用 `Switch` 可操作时显示手形指针，禁用时显示禁止指针；在组件内统一维护，不在设置调用方重复指定。
@@ -151,7 +151,7 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - Grok 书签移除固定底板、保留主体路径。Exts 按用户最新确认保留正式完整外形及底板，浅色黑底白图、深色白底黑图；沿用现有内嵌正式 PNG 的 SVG，不重绘外形、不替换为仅含内部主体的源稿，也不对其应用压平对比的 brightness 滤镜。此主题反转仅用于书签，品牌唯一源稿及三端应用图标保持原样。此次交付见[书签单色 Issue](../changes/issues/2026-10-26-extension-bookmark-monochrome-issue.md)。
 - Dock 左侧保持 favorites，右侧 tools 顺序为 Studio、Actions、Download、Account、Settings。Studio 使用现有 Button entry/entry 与 Tooltip，固定 PanelsTopLeft，提示 Open Studio，点击只进入 Studio；不维护 pressed 或选中背景，悬停反馈复用共用入口样式。Dock 仅在首页显示，Studio 通过独立 Home 按钮返回，页面位置记忆保持不变。
 - Newtab 与 Studio 的已登录 Account 共用菜单内容，条目为 Account、Notifications、Settings、Log out；Account 与 Notifications 保持占位，移除 Billing。Settings 关闭菜单并打开现有 SettingsSheet，复用设置内容与读写逻辑，关闭后恢复到各自账户入口；保留菜单原有弹出方向及 Dock 独立 Settings 入口，未登录流程不变。
-- Studio 采用官方 dashboard-01 的 inset/offcanvas 侧栏、SidebarInset 与顶部导航；Home／Studio 继续由 React Activity 保留状态和 DOM。Dock 只随 Home 显示，Studio 独占视口，没有有效本机偏好时默认 Home，同一扩展会话内新标签页恢复 ui-session.view 保存的 Home/Studio 位置。登录后左侧展示 Overview 和 Activity → Daily，按账号恢复会话路由，缺失或未知路由回到 Overview；未登录显示独立 LoginPage，受保护内容仍沿用上述共用账号边界。Home 原 ActivityCard 的数据、外观和行为保留。
+- Studio 采用官方 dashboard-01 的 inset/offcanvas 侧栏、SidebarInset 与顶部导航；Home／Studio 继续由 React Activity 保留状态和 DOM。Dock 只随 Home 显示，Studio 独占视口，没有有效本机偏好时默认 Home，同一扩展会话内新标签页恢复 ui-session.view 保存的 Home/Studio 位置。登录后左侧展示 Overview 和 Activity → Daily，按账号恢复会话路由，缺失或未知路由回到 Overview；未登录显示独立 LoginRequired，受保护内容仍沿用上述共用账号边界。Home 原 ActivityCard 的数据、外观和行为保留。
 - 品牌头部保留官方示例 32px 标识与两行文字比例，Exts SVG 与 Exts/Studio 使用普通非交互排版，不重绘或叠加底板，不带链接、点击事件或按钮角色。右侧独立使用官方 Button ghost/icon-sm、House 与 Tooltip 作为唯一返回入口，Logo 不可点击；收起时沿用官方 offcanvas，品牌和 Home 随侧栏一起隐藏，窄屏先打开侧栏后访问同一按钮。正文顶部只保留官方 SidebarTrigger、Separator 和 Studio / Activity / Daily 面包屑，不保留 Home 文字按钮、Overview 层级或额外边框。
 - Account 未登录时显示 UserRound / Account / Not signed in；点击打开官方 Dialog，登录内容来自简化 login-03，首行不显示 Logo/Exts 品牌，采用官方 Welcome back 标题与 CardHeader text-center，说明为用户指定的 Login with your Github or Google account。仅保留 Login with GitHub / Login with Google，不包含邮箱、密码、注册、其他方式或无效条款链接，不自行改写官方标题或增加品牌行。GitHub 通过 Neon 官方 SDK 与 identity 窗口授权，期间按钮显示 Signing in… 并阻止重复操作；Google 仍可点击并 toast.info 提示暂未接入。会话初次读取显示 Checking account…；成功后侧栏显示真实头像和昵称/邮箱，账户 Dialog 沿用 Card/Title/Description 组合显示账户与 Sign out，退出期间显示 Signing out…。加载、登录与退出失败直接使用共用 Sonner，取消为信息提示，不插入内联错误或另建通知层。未登录进入 Studio 不受阻，关闭框继续使用原 Studio；账户 Tooltip 在框打开时隐藏，弹框焦点与关闭由官方 Radix Dialog 管理。真实登录与会话行为由用户在 Chrome/Edge 验收，不将自动化结果视为实际授权通过。
 - Sidebar 主题语义映射现有 surface-raised、foreground、accent、border、ring 和 primary，不另设深浅主题；官方内部滚动、图标折叠及 768px 移动端断点沿用。SidebarProvider 不重复挂载 TooltipProvider，不写入示例 cookie，折叠状态仅在当前页面内保留；当前正文为官方 Empty。Account 使用官方 32px Avatar/Fallback、双行文字及尾部 ChevronsUpDown，副标题和间距沿用官方；Fallback 内为静态 UserRound，无假用户头像。登录表单恢复官方 FieldGroup/Field、CardTitle/Description，Card 保留默认边框、背景与 shadow-sm；Dialog 定位外壳透明无阴影，保留可访问语义、关闭按钮和全局 blur-overlay，避免重复卡片材质。Button outline 在共用组件显式使用既有 border-border，不在登录处重复覆盖颜色，不改变主题变量值。
@@ -202,7 +202,7 @@ Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Do
 
 ### 共用状态等级
 
-状态图标使用 src/components/custom/status-icon.tsx，基于现有 UiIcon 静态映射。官方 Item 用于行布局、Badge 用于标签、Sonner 用于临时通知，均不提供本需求所需的独立状态 SVG 等级映射，因此按用户批准提供此最小组件，不重写官方 Tooltip 或通知逻辑。
+状态图标使用 src/components/custom/status-icon.tsx，基于现有 UiIcon 静态映射。官方 DropdownMenuItem 用于行布局、Badge 用于标签、Sonner 用于临时通知，均不提供本需求所需的独立状态 SVG 等级映射，因此按用户批准提供此最小组件，不重写官方 Tooltip 或通知逻辑。
 
 | 等级 | 状态图标 | 语义 |
 |---|---|---|
@@ -256,3 +256,18 @@ TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标
 
 - 计时音仅保留Brown Noise与Metronome；Brown Noise在倒计时运行时持续循环，不按秒触发。本地合成8秒双声道缓冲区，50ms首尾交叉过渡并从50ms处循环，带淡入；采样RMS目标0.18、峰值上限0.7，再经既有0.35主音量输出。无下载或新增依赖。
 - 连续噪声选择后试听3秒，计时中试听结束恢复连续播放；切回时钟、取消、归零或关闭页面立即停止，归零再播放所选完成音。旧rain、pink、quartz偏好按非法值回退Metronome，旧warm完成音偏好回退Harp，保留完成音偏好，不重置截止时间。
+
+## Studio 品牌头部
+
+- 顶部采用sidebar-07的SidebarMenuButton lg官方组合，直接复用32px Exts品牌资源，不新增圆角或背景容器，保持SVG自带外形；两行文字为Exts（text-sm/font-medium）和Ideas into action（text-xs），使用官方leading-tight、gap-2与p-2。
+- 品牌区域渲染非交互div，不提供下拉、团队切换或返回行为。右侧独立官方Home按钮保持ghost/icon-sm及原Tooltip；offcanvas、窄屏Sheet、菜单、登录与底部账号入口不变。
+
+- About 位于 Account 账户菜单 Settings 下方，复用官方 DropdownMenuItem 与 Dialog，展示既有 Logo、Exts、Ideas into action 和 Manifest 动态版本（根产品版本经 WXT 构建写入）；内容居中，版本只显示数字；底部 Built by Lin Gui 与 Source on GitHub 分别链接 https://x.com/lingui_dev 和 https://github.com/linguio/exts，不展示 Vercel 或 Website / Changelog 按钮。初始聚焦标题，保留关闭按钮的键盘焦点样式，不另存版本状态。
+
+- Studio 账户界面统一位于 `pages/studio/account`：`index.tsx` 侧栏账户入口、`menu.tsx` 共享账户菜单、`login-dialog.tsx` 登录弹窗、`login-required.tsx` 未登录提示、`state.ts` 展示状态、`about-dialog.tsx` 关于弹窗；Dock 引用同一实现。
+
+- Dock 与 Studio 的 Account 菜单统一固定 200px，不跟随触发按钮宽度；沿用官方内边距，长账户名称和邮箱省略展示。
+
+- About 比例：最大宽 400px、内边距 24px，Logo 48px、名称 20px、描述 14px、纯版本号 12px；分区间距 24px，页脚 12px 单行 `Built by Lin Gui · Source on GitHub`。窄屏保留官方 Dialog 视口留白。
+
+- About 不展示分割线，品牌区与页脚以 24px 留白分隔；Source on GitHub 整段可点击，仅 GitHub 使用下划线。

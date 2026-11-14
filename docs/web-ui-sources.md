@@ -244,3 +244,10 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 - 复用当前应用已登记来源与固定版本的shadcn官方Button和DropdownMenu（现有Radix版本）；不为单个操作替换全局菜单基础实现。示例Base Trigger的render组合适配为既有官方asChild，沿用已有主题、Portal和菜单默认参数，不宣称与Base示例呈现已一致验收。
 - 水平省略号通过UiIcon静态映射Lucide Ellipsis；行操作封装留在custom/data-table，不包含业务字段、账号或接口。选择Edit时仅抑制菜单恢复入口焦点，交给既有Sheet标题焦点逻辑。无新增依赖，无新增视觉/指针/焦点测试。
 - 固定Actions修正位于表格组合层：顶部sticky移至th，右上角Actions保留top/right与最高层级；官方Table原语未修改。
+
+## Studio sidebar-07 品牌头部（2026-11-14）
+
+- 来源：[官方sidebar-07 TeamSwitcher](https://github.com/shadcn-ui/ui/blob/main/apps/v4/registry/new-york-v4/blocks/sidebar-07/components/team-switcher.tsx)，本次取得的源码快照SHA-256为`1c215466753ba65ea2b2944111f9f5c02ac7725d13a05ae33beb46c0e14b1a92`，组合随本地sidebar.tsx固定入库；现有SidebarMenu/MenuButton基础组件继续使用原登记版本，不升级依赖。
+- 保留官方SidebarMenu→SidebarMenuItem→SidebarMenuButton lg组合和grid双行text-sm/leading-tight、名称font-medium与副标题text-xs；删除旧品牌行p-1.5覆盖。
+- 用户批准差异：品牌替换为既有Exts资源，名称Exts、副标题Ideas into action；不要下拉和Teams内容，不迁入团队状态及箭头。用户后续批准移除额外圆角背景容器，直接使用32px Exts Logo；项目rounded-lg映射16px，原32px容器会变圆，因此保留SVG自带外形，不再叠加容器或改全局Token。SidebarMenuButton通过asChild渲染非交互div；右侧独立Home ghost/icon-sm按钮与Tooltip保持原样。未修改品牌源稿或其他侧栏。
+- 保留官方默认主题和交互样式，不额外增加配色、间距或状态覆盖；真实视觉由用户Chrome/Edge验收，不宣称已与官网视觉一致验收。
