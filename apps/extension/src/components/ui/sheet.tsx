@@ -48,6 +48,7 @@ function SheetContent({
   children,
   side = "right",
   showCloseButton = true,
+  onOpenAutoFocus,
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Content> & {
   side?: "top" | "right" | "bottom" | "left"
@@ -71,6 +72,15 @@ function SheetContent({
           className
         )}
         {...props}
+        onOpenAutoFocus={(event) => {
+          onOpenAutoFocus?.(event)
+          if (event.defaultPrevented) return
+          // Radix 在面板容器派发此事件；统一聚焦容器，避免自动选中首个输入框。
+          if (event.currentTarget instanceof HTMLElement) {
+            event.preventDefault()
+            event.currentTarget.focus({ preventScroll: true })
+          }
+        }}
       >
         {children}
         {showCloseButton && (

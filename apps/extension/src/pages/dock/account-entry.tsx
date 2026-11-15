@@ -45,7 +45,6 @@ export function AccountEntry() {
       size="entry"
       className="bookmark-card bookmark-card--dock bookmark-dock__tool"
       aria-label="Account"
-      {...overlay.triggerProps}
     >
       <span className="bookmark-card__icon entry-surface">
         <UiIcon name="user-round" className="entry-glyph" />
@@ -58,10 +57,10 @@ export function AccountEntry() {
       {user && !error ? (
         <DropdownMenu {...overlay.overlayProps}>
           <TooltipTrigger asChild><DropdownMenuTrigger asChild>{button}</DropdownMenuTrigger></TooltipTrigger>
-          <AccountMenu triggerRef={triggerRef} user={user} loggingOut={loggingOut} onLogout={() => { void logout(); }} side="top" sideOffset={12} onCloseAutoFocus={overlay.onCloseAutoFocus} />
+          <AccountMenu triggerRef={triggerRef} user={user} loggingOut={loggingOut} onLogout={() => { void logout(); }} side="top" sideOffset={12} />
         </DropdownMenu>
       ) : (
-        <LoginDialog isPending={isPending} refetch={refetch} onOpenChange={overlay.overlayProps.onOpenChange} onCloseAutoFocus={overlay.onCloseAutoFocus}>
+        <LoginDialog isPending={isPending} refetch={refetch} onOpenChange={overlay.overlayProps.onOpenChange}>
           <TooltipTrigger asChild>{button}</TooltipTrigger>
         </LoginDialog>
       )}

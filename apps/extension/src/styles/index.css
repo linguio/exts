@@ -4,6 +4,7 @@
 @import "./shadcn-theme.css";
 @import "./reset.css";
 @import "./theme.css";
+@import "./focus.css";
 
 /* 官方明暗变体适配扩展已有主题入口，Portal 同样继承根主题。 */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
@@ -86,23 +87,18 @@
     transform var(--duration-fast) var(--ease-standard);
 }
 
-.entry-trigger:focus-visible:not([data-restored-focus]) .entry-surface {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-}
-
 @media (prefers-reduced-motion: no-preference) {
-  .entry-trigger:is(:hover, :focus-visible:not([data-restored-focus])) .entry-surface {
+  .entry-trigger:is(:hover, :focus-visible) .entry-surface {
     translate: 0 var(--entry-hover-lift);
     box-shadow: var(--shadow-hover);
   }
 
-  .entry-trigger:is(:hover, :focus-visible:not([data-restored-focus])) .entry-glyph {
+  .entry-trigger:is(:hover, :focus-visible) .entry-glyph {
     scale: var(--entry-hover-scale);
   }
 
   /* 无图块的遮罩入口只移动图形，透明遮罩本身保持不动。 */
-  .entry-trigger:is(:hover, :focus-visible:not([data-restored-focus])) .entry-glyph--lift {
+  .entry-trigger:is(:hover, :focus-visible) .entry-glyph--lift {
     translate: 0 var(--entry-hover-lift);
   }
 }

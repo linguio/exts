@@ -10,7 +10,7 @@ export function DownloadEntry() {
   const overlay = useDockOverlay();
 
   return (
-    <MediaDownloadSheet {...overlay.overlayProps} onCloseAutoFocus={overlay.onCloseAutoFocus}>
+    <MediaDownloadSheet {...overlay.overlayProps}>
       <Tooltip {...overlay.tooltipProps}>
         <TooltipTrigger asChild>
           <SheetTrigger asChild>
@@ -20,7 +20,6 @@ export function DownloadEntry() {
               size="entry"
               className="bookmark-card bookmark-card--dock bookmark-dock__tool"
               aria-label="Open Media Download"
-              {...overlay.triggerProps}
             >
               <span className="bookmark-card__icon entry-surface">
                 <UiIcon name="download" className="entry-glyph" />

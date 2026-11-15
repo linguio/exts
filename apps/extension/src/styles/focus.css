@@ -1,0 +1,23 @@
+/* 焦点外观只在此维护；保留真实焦点、普通阴影与无效字段反馈。 */
+:focus,
+:focus-visible {
+  outline: none !important;
+}
+
+:focus:not([aria-invalid="true"]),
+:focus-visible:not([aria-invalid="true"]) {
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+}
+
+/* 输入控件的焦点边框不再变色，无效字段继续使用官方错误状态。 */
+[class~="focus-visible:border-ring"]:focus-visible:not([aria-invalid="true"]) {
+  border-color: var(--input);
+}
+
+/* 输入组合由内部控件触发焦点样式，仍在全局统一处理。 */
+[data-slot="input-group"]:has([data-slot="input-group-control"]:focus-visible):not(:has([aria-invalid="true"])) {
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+  border-color: var(--input);
+}

@@ -7,13 +7,12 @@ import { SettingsSheet } from '../../settings';
 import { AboutDialog } from './about-dialog';
 
 /** Studio 与 Newtab 使用相同的账户菜单内容。 */
-export function AccountMenu({ user, loggingOut, onLogout, side, sideOffset, onCloseAutoFocus, triggerRef }: {
+export function AccountMenu({ user, loggingOut, onLogout, side, sideOffset, triggerRef }: {
   user: AccountUser;
   loggingOut: boolean;
   onLogout: () => void;
   side: 'top' | 'bottom' | 'right';
   sideOffset: number;
-  onCloseAutoFocus?: (event: Event) => void;
   triggerRef: RefObject<HTMLButtonElement | null>;
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -26,11 +25,9 @@ export function AccountMenu({ user, loggingOut, onLogout, side, sideOffset, onCl
     <>
       <SettingsSheet open={settingsOpen} onOpenChange={setSettingsOpen} onCloseAutoFocus={(event) => {
         event.preventDefault();
-        onCloseAutoFocus?.(event);
         triggerRef.current?.focus();
       }}>
         <DropdownMenuContent className="w-[200px] rounded-lg" side={side} align="end" sideOffset={sideOffset} onCloseAutoFocus={(event) => {
-          onCloseAutoFocus?.(event);
           if (openingOverlay.current) {
             // 菜单关闭时把焦点交给弹层，不恢复到被遮罩的入口。
             event.preventDefault();
@@ -71,7 +68,6 @@ export function AccountMenu({ user, loggingOut, onLogout, side, sideOffset, onCl
       </SettingsSheet>
       <AboutDialog open={aboutOpen} onOpenChange={setAboutOpen} onCloseAutoFocus={(event) => {
         event.preventDefault();
-        onCloseAutoFocus?.(event);
         triggerRef.current?.focus();
       }} />
     </>

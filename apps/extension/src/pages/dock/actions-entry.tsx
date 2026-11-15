@@ -24,7 +24,6 @@ export function ActionsEntry() {
               variant="entry"
               size="entry"
               aria-label="Actions"
-              {...overlay.triggerProps}
             >
               <span className="entry-surface">
                 <UiIcon name="zap" className="entry-glyph" />
@@ -37,7 +36,6 @@ export function ActionsEntry() {
           side="top"
           align="center"
           sideOffset={12}
-          onCloseAutoFocus={overlay.onCloseAutoFocus}
         >
           {placeholders.map((item) => (
             <DropdownMenuItem key={item.name} onSelect={() => { toast.info('Not connected yet.'); }}>

@@ -10,7 +10,7 @@ export function SettingsEntry() {
   const overlay = useDockOverlay();
 
   return (
-    <SettingsSheet {...overlay.overlayProps} onCloseAutoFocus={overlay.onCloseAutoFocus}>
+    <SettingsSheet {...overlay.overlayProps}>
       <Tooltip {...overlay.tooltipProps}>
         <TooltipTrigger asChild>
           <SheetTrigger asChild>
@@ -20,7 +20,6 @@ export function SettingsEntry() {
               size="entry"
               className="bookmark-card bookmark-card--dock bookmark-dock__tool"
               aria-label="Open settings"
-              {...overlay.triggerProps}
             >
               <span className="bookmark-card__icon entry-surface">
                 <UiIcon name="settings" className="entry-glyph" />

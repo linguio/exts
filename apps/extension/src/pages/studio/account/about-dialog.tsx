@@ -1,5 +1,4 @@
 import { BrandIcon } from '../../../components/custom/brand-icon';
-import { useRef } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../../../components/ui/dialog';
 
 export function AboutDialog({ open, onOpenChange, onCloseAutoFocus }: {
@@ -7,19 +6,14 @@ export function AboutDialog({ open, onOpenChange, onCloseAutoFocus }: {
   onOpenChange(open: boolean): void;
   onCloseAutoFocus(event: Event): void;
 }) {
-  const titleRef = useRef<HTMLHeadingElement>(null);
   const version = chrome.runtime.getManifest().version;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="gap-6 sm:max-w-[400px]" onCloseAutoFocus={onCloseAutoFocus} onOpenAutoFocus={(event) => {
-        // 初始聚焦标题，避免关闭按钮自动显示焦点描边。
-        event.preventDefault();
-        titleRef.current?.focus();
-      }}>
+      <DialogContent className="gap-6 sm:max-w-[400px]" onCloseAutoFocus={onCloseAutoFocus}>
         <DialogHeader className="items-center text-center sm:text-center">
           <BrandIcon icon="brand/exts.svg" size="md" className="size-12!" />
-          <DialogTitle ref={titleRef} tabIndex={-1} className="text-xl outline-none">Exts</DialogTitle>
+          <DialogTitle className="text-xl outline-none">Exts</DialogTitle>
           <DialogDescription>Ideas into action</DialogDescription>
           <p className="text-xs text-muted-foreground">{version}</p>
         </DialogHeader>

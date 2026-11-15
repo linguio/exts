@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, useId, type ChangeEvent, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, useId, type ChangeEvent, type FormEvent } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { SquarePen } from 'lucide-react';
 import { Button } from '../../ui/button';
@@ -35,7 +35,6 @@ function buildDraft<T>(row: T, fields: DataTableEditFieldDefinition[]): Record<s
 /** 配置驱动的行编辑 Sheet；共用层维护草稿、校验、防重与放弃确认。 */
 export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, updateFn, getRowId, onSaved, editDescription,
   partialUpdates = false }: DataTableEditSheetProps<T>) {
-  const titleRef = useRef<HTMLHeadingElement>(null);
   const fieldPrefix = useId();
   const displayFields = useMemo(() => editFieldsFromColumns(columns), [columns]);
   const writableFields = useMemo(() => writableEditFieldsFromColumns(columns), [columns]);
@@ -115,16 +114,12 @@ export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, update
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent side="right" className="flex flex-col gap-0 p-0"
         {...(editDescription ? {} : { 'aria-describedby': undefined })}
-        onOpenAutoFocus={event => {
-          event.preventDefault();
-          titleRef.current?.focus();
-        }}
         onEscapeKeyDown={event => { event.preventDefault(); requestClose(); }}
         onInteractOutside={event => { event.preventDefault(); requestClose(); }}>
         <form className="flex min-h-0 flex-1 flex-col" onSubmit={handleSave}>
           <header className="flex min-h-14 shrink-0 items-center px-6 pr-16">
             <SquarePen className="mr-3 size-5 shrink-0" aria-hidden />
-            <SheetTitle ref={titleRef} tabIndex={-1} className="text-lg font-semibold">Edit</SheetTitle>
+            <SheetTitle className="text-lg font-semibold">Edit</SheetTitle>
           </header>
           {editDescription && <SheetDescription className="px-6 pb-4">{editDescription}</SheetDescription>}
           <Separator />

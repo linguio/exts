@@ -23,9 +23,20 @@ function Tooltip({
 }
 
 function TooltipTrigger({
+  onFocus,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+  return (
+    <TooltipPrimitive.Trigger
+      data-slot="tooltip-trigger"
+      {...props}
+      onFocus={(event) => {
+        onFocus?.(event)
+        // 只阻止 Radix 因聚焦打开提示，保留真实焦点与官方悬停、关闭行为。
+        event.preventDefault()
+      }}
+    />
+  )
 }
 
 function TooltipContent({

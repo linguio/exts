@@ -1,4 +1,4 @@
-import { useRef, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { Card } from '../../components/ui/card';
 import { ItemGroup, ItemSeparator } from '../../components/ui/item';
@@ -15,21 +15,16 @@ export function SettingsSheet({ children, open, onOpenChange, onCloseAutoFocus }
   children: ReactNode;
   open: boolean;
   onOpenChange(open: boolean): void;
-  onCloseAutoFocus(event: Event): void;
+  onCloseAutoFocus?(event: Event): void;
 }) {
-  const titleRef = useRef<HTMLHeadingElement>(null);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       {children}
-      <SheetContent aria-describedby={undefined} onOpenAutoFocus={(event) => {
-        // 打开时先聚焦标题，避免自动聚焦主题按钮触发提示。
-        event.preventDefault();
-        titleRef.current?.focus();
-      }} onCloseAutoFocus={onCloseAutoFocus}>
+      <SheetContent aria-describedby={undefined} onCloseAutoFocus={onCloseAutoFocus}>
         <header className="flex min-h-14 shrink-0 items-center px-6 pr-16">
           <UiIcon name="settings" className="mr-3 size-5 shrink-0" />
-          <SheetTitle ref={titleRef} tabIndex={-1} className="text-lg font-semibold">Settings</SheetTitle>
+          <SheetTitle className="text-lg font-semibold">Settings</SheetTitle>
         </header>
         <Separator />
         <ScrollArea className="min-h-0 flex-1">

@@ -10,7 +10,7 @@ import { loginAccount } from '../../../features/account/auth-client';
 import type { AccountProvider } from '../../../features/account/account-controller';
 
 /** Studio 与 Newtab 共用同一登录表单和认证操作。 */
-export function LoginDialog({ children, isPending, refetch, onOpenChange, onCloseAutoFocus }: { children: ReactNode | ((open: boolean) => ReactNode); isPending: boolean; refetch: () => Promise<void>; onOpenChange?: (open: boolean) => void; onCloseAutoFocus?: (event: Event) => void }) {
+export function LoginDialog({ children, isPending, refetch, onOpenChange }: { children: ReactNode | ((open: boolean) => ReactNode); isPending: boolean; refetch: () => Promise<void>; onOpenChange?: (open: boolean) => void }) {
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState<AccountProvider | null>(null);
 
@@ -41,7 +41,7 @@ export function LoginDialog({ children, isPending, refetch, onOpenChange, onClos
       if (nextOpen) void refetch();
     }}>
       <DialogTrigger asChild>{typeof children === 'function' ? children(open) : children}</DialogTrigger>
-      <DialogContent onCloseAutoFocus={onCloseAutoFocus} className="gap-0 border-0 bg-transparent p-0 shadow-none sm:max-w-sm">
+      <DialogContent className="gap-0 border-0 bg-transparent p-0 shadow-none sm:max-w-sm">
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader className="text-center">
