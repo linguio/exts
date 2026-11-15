@@ -130,7 +130,7 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 
 入口 Hover 与键盘 Focus 共用规则。保持当前即时缩放与上移效果：过渡属性只包含 `filter`、`transform`，图块另外包含边框和阴影；CSS 独立 `scale` / `translate` 不单独补充平滑过渡。若后续调整动效，修改这里的共用规则，不在某个组件单独添加 `transition-transform`。
 
-减少动态效果开启时禁用入口缩放、上移和动态阴影，保留清晰的焦点轮廓。不要在组件中复制缩放比例、上移距离或遮罩模糊值。
+减少动态效果开启时禁用入口缩放、上移和动态阴影，焦点描边遵循全局取消规则。不要在组件中复制缩放比例、上移距离或遮罩模糊值。
 
 ## 组件边界与约定
 
@@ -145,7 +145,7 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - 历史清理区域使用官方基础的 `Switch`，通过 `checked` / `onCheckedChange` 连接状态，保留可访问名称与说明；默认关闭，加载、授权和保存期间禁用重复操作，失败通过共用 toast.error 提示。配置和权限变更同步到已打开页面，不把业务状态放入通用组件或新增全局设置状态。
 - 历史清理开关标题旁的圆圈问号复用 Button/UiIcon/Tooltip，帮助提示完整保留原说明，最大宽度 280px、优先向上显示并支持换行；独立按钮不切换开关，读屏描述通过常驻隐藏文本保留。错误不放进 Tooltip。
 - Sheet 内容、边框与分隔线使用根主题；全屏遮罩使用 blur-overlay，阴影使用项目 Token。打开／关闭动画恢复为 200ms／160ms，减少动态效果遵循全局规则。
-- Tooltip 提供名称或简短帮助说明，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Dock 的 Account（登录框与账户菜单）、Actions、Settings 与 Download 打开弹出层时不显示入口 Tooltip，关闭恢复焦点不自动弹出入口提示，后续正常悬停仍可显示；四个入口通过 Dock 局部 useDockOverlay 共用处理，面板内部提示正常使用。Settings 与 Download 打开时仍由各自面板将焦点放到标题。关闭自动恢复焦点阶段，入口标记 data-restored-focus 并仅抑制该阶段的描边；不取消默认焦点恢复。入口失焦、指针按下或主动键盘操作后清除标记，正常键盘聚焦仍有描边。
+- Tooltip 提供名称或简短帮助说明，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Dock 四个弹层入口打开时隐藏入口 Tooltip，useDockOverlay 仅维护打开状态与提示互斥；关闭后沿用官方焦点恢复及提示行为，不维护 data-restored-focus 或恢复焦点抑制。Settings、Download、About 与表格编辑不再主动聚焦标题。
 - 品牌图标由 `components/custom/brand-icon.tsx` 负责；Newtab 书签、Dock 收藏及其复用入口随主题切换黑白，不再按站点配置 original、adaptive 或 neutral。普通书签透明背景、单色主体，浅色显示黑色、深色显示白色。通用图标由 `UiIcon` 显式静态导入。
 - UI 文件夹图标沿用原始几何、viewBox、线宽与留白，移除灰阶和渐变；白色覆盖形成的必要孔洞通过黑白遮罩转成真正透明区域，再统一主题转换，避免整体滤镜压平镂空。不套用 V3 重绘或统一坐标要求，不维护深浅两套源稿。
 - Grok 书签移除固定底板、保留主体路径。Exts 按用户最新确认保留正式完整外形及底板，浅色黑底白图、深色白底黑图；沿用现有内嵌正式 PNG 的 SVG，不重绘外形、不替换为仅含内部主体的源稿，也不对其应用压平对比的 brightness 滤镜。此主题反转仅用于书签，品牌唯一源稿及三端应用图标保持原样。此次交付见[书签单色 Issue](../changes/issues/2026-10-26-extension-bookmark-monochrome-issue.md)。
@@ -262,7 +262,7 @@ TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标
 - 顶部采用sidebar-07的SidebarMenuButton lg官方组合，直接复用32px Exts品牌资源，不新增圆角或背景容器，保持SVG自带外形；两行文字为Exts（text-sm/font-medium）和Ideas into action（text-xs），使用官方leading-tight、gap-2与p-2。
 - 品牌区域渲染非交互div，不提供下拉、团队切换或返回行为。右侧独立官方Home按钮保持ghost/icon-sm及原Tooltip；offcanvas、窄屏Sheet、菜单、登录与底部账号入口不变。
 
-- About 位于 Account 账户菜单 Settings 下方，复用官方 DropdownMenuItem 与 Dialog，展示既有 Logo、Exts、Ideas into action 和 Manifest 动态版本（根产品版本经 WXT 构建写入）；内容居中，版本只显示数字；底部 Built by Lin Gui 与 Source on GitHub 分别链接 https://x.com/lingui_dev 和 https://github.com/linguio/exts，不展示 Vercel 或 Website / Changelog 按钮。初始聚焦标题，保留关闭按钮的键盘焦点样式，不另存版本状态。
+- About 位于 Account 账户菜单 Settings 下方，复用官方 DropdownMenuItem 与 Dialog，展示既有 Logo、Exts、Ideas into action 和 Manifest 动态版本（根产品版本经 WXT 构建写入）；内容居中，版本只显示数字；底部 Built by Lin Gui 与 Source on GitHub 分别链接 https://x.com/lingui_dev 和 https://github.com/linguio/exts，不展示 Vercel 或 Website / Changelog 按钮。初始聚焦与关闭恢复沿用官方行为，可见焦点描边由全局规则取消，不另存版本状态。
 
 - Studio 账户界面统一位于 `pages/studio/account`：`index.tsx` 侧栏账户入口、`menu.tsx` 共享账户菜单、`login-dialog.tsx` 登录弹窗、`login-required.tsx` 未登录提示、`state.ts` 展示状态、`about-dialog.tsx` 关于弹窗；Dock 引用同一实现。
 
@@ -271,3 +271,15 @@ TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标
 - About 比例：最大宽 400px、内边距 24px，Logo 48px、名称 20px、描述 14px、纯版本号 12px；分区间距 24px，页脚 12px 单行 `Built by Lin Gui · Source on GitHub`。窄屏保留官方 Dialog 视口留白。
 
 - About 不展示分割线，品牌区与页脚以 24px 留白分隔；Source on GitHub 整段可点击，仅 GitHub 使用下划线。
+
+## 全局焦点外观（2026-11-15）
+
+- 扩展可见焦点描边统一在 `src/styles/focus.css` 取消，包括鼠标与键盘产生的 outline、Tailwind ring 及输入焦点边框变色；错误状态保留自身反馈，普通阴影、边框与选中反馈不清空。官方组件已有焦点类可以保留，由全局规则统一覆盖，不逐个组件删除或复制覆盖。
+- 保留真实焦点、官方自动聚焦、焦点恢复与键盘操作，不新增 Hook、全局 focus 拦截或 blur。仅为隐藏描边添加的局部状态与事件应删除；业务需要的焦点交接不以隐藏描边为由删除。
+- 后续新增组件复用全局规则，不在业务调用处添加描边补偿。键盘导航同样无可见焦点描边，是本次确认的产品差异；本文较早记录的局部描边参数不再决定是否显示。
+
+当前启用状态：按用户最新要求，页面与 Telegram 样式均导入唯一的 `src/styles/focus.css`，全局取消描边规则生效；不得删除或停用，也不恢复旧局部补丁。
+
+共用 Tooltip 触发规则（2026-11-15）：用户批准仅在 `src/components/ui/tooltip.tsx` 的 TooltipTrigger 处理焦点事件，阻止 Radix 默认聚焦打开提示；不取消真实焦点，不改悬停延迟、离开/点击/失焦等官方关闭行为。调用方已有 onFocus 仍执行，不在 Sheet 或业务入口增加抑制标记与聚焦补偿；现有弹层打开互斥和业务提示条件保持。focus.css 当前启用。
+
+共用 Sheet 初始聚焦规则（2026-11-15）：用户批准在 `src/components/ui/sheet.tsx` 的 SheetContent 一处聚焦面板容器，替代 Radix 自动聚焦并选中首个输入框。业务页面不复制 onOpenAutoFocus 或标题聚焦补偿；Tab 导航、关闭焦点恢复与未保存确认保持既有职责。Dialog 不随本次调整；此前描述 Sheet 默认初始聚焦的记录以本条为准。

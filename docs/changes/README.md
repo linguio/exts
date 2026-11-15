@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [统一取消扩展焦点描边并清理补偿逻辑](./issues/2026-11-15-extension-focus-feedback-issue.md) · 已完成 · [Commit 记录](./commits/2026-11-15-extension-focus-feedback-commit.md)；用户验收通过并批准代码与文档两笔本地提交，全局描边覆盖、Tooltip 触发及 Sheet 初始聚焦统一维护；类型检查与构建通过，未推送或发布。
+
 - [完善 Studio 品牌头部与 About](./issues/2026-11-14-extension-studio-brand-header-issue.md) · 已完成 · [Commit记录](./commits/2026-11-14-extension-studio-brand-header-commit.md)；用户验证通过并批准代码与文档两笔本地提交，未推送或发布。
 
 - [调整计时卡片与表格操作](./issues/2026-11-14-extension-timer-digit-scale-issue.md) · [Commit记录](./commits/2026-11-14-extension-timer-digit-scale-commit.md)；用户验收通过并批准计时、表格代码及文档分别本地提交完结。数字比例2.5、精简音色默认Metronome/Harp、Actions固定、带图标Edit更多菜单与10条分页已交付；相关48项测试、类型检查及构建通过，原构建警告与已记录限制保留，未推送或发布。

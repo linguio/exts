@@ -251,3 +251,16 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 - 保留官方SidebarMenu→SidebarMenuItem→SidebarMenuButton lg组合和grid双行text-sm/leading-tight、名称font-medium与副标题text-xs；删除旧品牌行p-1.5覆盖。
 - 用户批准差异：品牌替换为既有Exts资源，名称Exts、副标题Ideas into action；不要下拉和Teams内容，不迁入团队状态及箭头。用户后续批准移除额外圆角背景容器，直接使用32px Exts Logo；项目rounded-lg映射16px，原32px容器会变圆，因此保留SVG自带外形，不再叠加容器或改全局Token。SidebarMenuButton通过asChild渲染非交互div；右侧独立Home ghost/icon-sm按钮与Tooltip保持原样。未修改品牌源稿或其他侧栏。
 - 保留官方默认主题和交互样式，不额外增加配色、间距或状态覆盖；真实视觉由用户Chrome/Edge验收，不宣称已与官网视觉一致验收。
+
+## 扩展全局焦点外观（2026-11-15）
+
+- 本节取代前文要求保留 Dock data-restored-focus、关闭后提示抑制及标题初始聚焦的当前约束；历史交付记录不重写。
+- 用户批准在 `apps/extension/src/styles/focus.css` 集中取消焦点 outline、Tailwind ring 和输入焦点边框变色，保留错误状态、普通边框、阴影与选中反馈；页面与 Telegram Shadow DOM 样式均导入唯一 focus.css，不复制规则、不改 Telegram 事件适配。不修改依赖源码。官方焦点类继续保留，以一个全局策略覆盖，不逐组件复制取消规则。
+- Dock useDockOverlay 只保留弹层打开时入口 Tooltip 互斥，删除恢复焦点标记与抑制接线；Settings、Download、About、表格编辑恢复官方初始聚焦。Account/表格的弹层交接、业务交互与 Telegram 环境适配保留。
+- 无新增 Hook 或依赖，不通过 blur 取消焦点；新增页面不得为隐藏描边添加局部补丁。浏览器视觉交互由用户验收，源码变更和构建不代表通过视觉验收。
+
+当前启用状态：按用户最新要求，页面与 Telegram 样式均导入唯一的 `src/styles/focus.css`，全局取消描边规则生效；不得删除或停用，也不恢复旧局部补丁。
+
+共用 Tooltip 触发规则（2026-11-15）：用户批准仅在 `src/components/ui/tooltip.tsx` 的 TooltipTrigger 处理焦点事件，阻止 Radix 默认聚焦打开提示；不取消真实焦点，不改悬停延迟、离开/点击/失焦等官方关闭行为。调用方已有 onFocus 仍执行，不在 Sheet 或业务入口增加抑制标记与聚焦补偿；现有弹层打开互斥和业务提示条件保持。focus.css 当前启用。
+
+共用 Sheet 初始聚焦规则（2026-11-15）：用户批准在 `src/components/ui/sheet.tsx` 的 SheetContent 一处聚焦面板容器，替代 Radix 自动聚焦并选中首个输入框。业务页面不复制 onOpenAutoFocus 或标题聚焦补偿；Tab 导航、关闭焦点恢复与未保存确认保持既有职责。Dialog 不随本次调整；此前描述 Sheet 默认初始聚焦的记录以本条为准。

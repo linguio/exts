@@ -100,6 +100,18 @@
 - 每个阶段按根规范完成必要的逻辑测试、类型检查和生产构建。
 - 功能阶段完成后由用户在 Chrome 或 Edge 实际加载稳定开发目录，验证明暗主题、Tooltip、菜单、键盘、焦点恢复和约定缩放场景；用户未明确验收通过前不得进入最终提交准备。
 
-- About 位于 Account 账户菜单 Settings 下方，复用官方 DropdownMenuItem 与 Dialog，展示既有 Logo、Exts、Ideas into action 和 Manifest 动态版本（根产品版本经 WXT 构建写入）；内容居中，版本只显示数字；底部 Built by Lin Gui 与 Source on GitHub 分别链接 https://x.com/lingui_dev 和 https://github.com/linguio/exts，不展示 Vercel 或 Website / Changelog 按钮。初始聚焦标题，保留关闭按钮的键盘焦点样式，不另存版本状态。
+- About 位于 Account 账户菜单 Settings 下方，复用官方 DropdownMenuItem 与 Dialog，展示既有 Logo、Exts、Ideas into action 和 Manifest 动态版本（根产品版本经 WXT 构建写入）；内容居中，版本只显示数字；底部 Built by Lin Gui 与 Source on GitHub 分别链接 https://x.com/lingui_dev 和 https://github.com/linguio/exts，不展示 Vercel 或 Website / Changelog 按钮。初始聚焦与焦点恢复沿用官方行为；可见焦点描边由全局规则统一取消，不另存版本状态。
 
 - Studio 账户界面统一位于 `pages/studio/account`：`index.tsx` 侧栏账户入口、`menu.tsx` 共享账户菜单、`login-dialog.tsx` 登录弹窗、`login-required.tsx` 未登录提示、`state.ts` 展示状态、`about-dialog.tsx` 关于弹窗；Dock 引用同一实现。
+
+## 焦点反馈
+
+- 焦点、描边与 Tooltip 的通用交互调整遵循根规范的统一维护原则；不在 Settings、Account 或其他业务页为相同问题复制处理。Tooltip 聚焦触发只由共用 TooltipTrigger 控制，页面不得通过标题聚焦、恢复焦点标记或局部拦截规避；业务提示条件与弹层组合按其真实职责维护，不增加第二套通用反馈管理。
+
+- 扩展在 `src/styles/focus.css` 集中取消可见焦点描边，保留普通边框、阴影、错误与选中反馈；官方焦点恢复与键盘操作保持。业务页面不得为隐藏描边增加 Hook、恢复焦点标记、主动失焦或标题聚焦补偿。实际业务需要的焦点交接与弹层打开时的 Tooltip 互斥仍按既有组合维护，不扩大为全局焦点管理器。
+
+当前启用状态：按用户最新要求，页面与 Telegram 样式均导入唯一的 `src/styles/focus.css`，全局取消描边规则生效；不得删除或停用，也不恢复旧局部补丁。
+
+共用 Tooltip 触发规则（2026-11-15）：用户批准仅在 `src/components/ui/tooltip.tsx` 的 TooltipTrigger 处理焦点事件，阻止 Radix 默认聚焦打开提示；不取消真实焦点，不改悬停延迟、离开/点击/失焦等官方关闭行为。调用方已有 onFocus 仍执行，不在 Sheet 或业务入口增加抑制标记与聚焦补偿；现有弹层打开互斥和业务提示条件保持。focus.css 当前启用。
+
+共用 Sheet 初始聚焦规则（2026-11-15）：用户批准在 `src/components/ui/sheet.tsx` 的 SheetContent 一处聚焦面板容器，替代 Radix 自动聚焦并选中首个输入框。业务页面不复制 onOpenAutoFocus 或标题聚焦补偿；Tab 导航、关闭焦点恢复与未保存确认保持既有职责。Dialog 不随本次调整；此前描述 Sheet 默认初始聚焦的记录以本条为准。
