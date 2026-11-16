@@ -28,7 +28,7 @@
 - Activity sort 为有序数组，每项 {field,order}；field 仅接受 date、exerciseHours、readingHours、learningHours、creationHours、sleepHours，order 为 asc/desc，重复或非法字段/方向返回 422。数组先后代表优先级；省略或空数组默认 date desc，未包含 date 时追加 date desc。时长 NULL 无论升降序始终最后，0 正常参与比较。后端先筛选排序，再分页，计数与记录来自同一 SQL 快照。
 - 图表传完整日期范围及 sort:[{field:"date",order:"asc"}]，不传分页；Daily 传分页和用户排序。排序独立于分页。
 - Activity 更新（`POST /api/activity/days/update`）请求体为单层 JSON，字段为 `id` 与可选五项小时字段：`{ id, exerciseHours?, readingHours?, learningHours?, creationHours?, sleepHours? }`。必须包含 `id`，且至少发送一项小时字段（可只更新部分列）；每项为非负数值且必须为 `0.5` 的倍数，`0` 合法，拒绝 null、负数、非半小时小数、布尔、字符串与未知字段。服务端将 `*Hours` 写入物理列 `exercise_hours` 等（NUMERIC，非负）。身份仅取自令牌，按 id 与 user_id 更新既有行，不创建、不修改日期。未命中本人记录返回 404 NOT_FOUND。同字段并发以后写为准，依赖数据库 UPDATE 行锁，无 version 或应用锁。
-- Settings 读取使用空 JSON 对象；更新仅接受 theme、mediaDownload.enabled 或 historyCleaner.enabled 中的一项，不接收 userId。用户没有设置行时返回 theme 默认值且 id 为 null，首次成功更新时才建行；已有行返回稳定 id。旧本地配置不迁移。
+- Settings 读取使用空 JSON 对象；更新仅接受 theme、mediaDownload.enabled、historyCleaner.enabled 或 notifications.soundEnabled 中的一项，不接收 userId。用户没有设置行时返回 theme 默认值且 id 为 null，首次成功更新时才建行；已有行返回稳定 id。通知声音默认关闭；旧本地设置缺 notifications 时补为 soundEnabled:false，不搬迁其他偏好。
 
 ```json
 {"startDate":"2026-11-01","endDate":"2026-11-06","pageIndex":0,"pageSize":20,"sort":[{"field":"date","order":"desc"}]}
@@ -41,7 +41,7 @@
 ## 响应与异常
 
 - 成功响应统一 {"data": ...}；Activity 查询为 {"data":{"days":[...],"total":87,"pageIndex":0,"pageSize":20}}；total 为日期筛选后的本人记录总数，空页保留真实 total；不分页的 pageIndex/pageSize 为 null。每条记录包含 id、userId、date、五项 camelCase 小时字段（`exerciseHours` 等）、createdAt、updatedAt。Activity 更新成功返回单条同样结构的 data。
-- Settings 读取与更新均返回 {"data":{"id":null|"uuid","theme":"system","mediaDownload":{"enabled":false},"historyCleaner":{"enabled":false}}}；无持久化行时 id 为 null。数据库另以 user_id 维持每人一行语义，本地副本另存当前 userId。
+- Settings 读取与更新均返回 {"data":{"id":null|"uuid","theme":"system","mediaDownload":{"enabled":false},"historyCleaner":{"enabled":false},"notifications":{"soundEnabled":false}}}；无持久化行时 id 为 null。数据库另以 user_id 维持每人一行语义，本地副本另存当前 userId。
 - 失败响应统一 {"error":{"code":"...","message":"...","requestId":"..."}}，同时保留真实 HTTP 状态；不使用 200 掩盖失败。X-Request-ID 与响应中的 requestId 对应。
 - 401 表示未登录或凭据失效，403 表示禁止访问，422 表示参数错误，500 表示未预期异常，503 表示依赖暂不可用。空记录返回成功空数组；连接失败不能返回空数据冒充成功。
 - NULL 表示未填写，0 表示明确为零；不把两者混同。服务端只返回已有记录，图表日期补齐和统计由前端执行。

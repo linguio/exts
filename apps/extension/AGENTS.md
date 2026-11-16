@@ -77,7 +77,10 @@
 - Dock 位于视口底部，DropdownMenu 默认从上方弹出并支持碰撞调整；由用户验证菜单在 `1280×720`、缩放后 CSS 视口 `640×360` 以及 100%、125%、150%、200% 缩放下不被裁剪或移出视口。
 - 用户验收 DropdownMenu 应覆盖 Enter、Space 或 ArrowDown 打开、方向键移动、Enter 激活、Esc 关闭并恢复触发器焦点、外部点击关闭等行为；Portal 必须正确继承明暗主题 Token 和层级。
 - 已废弃的自定义 Popover 不得重新引入；DropdownMenu 与 Tooltip 分别承担菜单和提示职责，不维护双轨实现。
-- Settings 包含 General/Features，使用官方 Card、ItemGroup、Item 和 ItemSeparator 组成圆角边框列表。General 组合主题选择，Features 组合历史清理与 Media Download 总开关和帮助。Settings Sheet 由 `pages/settings` 组合，General 设置项归 `features/settings`，媒体下载设置项归 `features/media-download`，Settings 页面只负责抽屉和分区组合，Dock 只组合入口；通过公共 settings 数据源读写／订阅；TG、X、Helper 子项由官方 Collapsible 默认收起，只读展示英文状态，不提供独立开关或子项问号，仅主项保留帮助。折叠触发器与总开关独立，不在 Settings 展示下载记录。
+- Settings 包含 General/Features，使用官方 Card、ItemGroup、Item 和 ItemSeparator 组成圆角边框列表。General 组合主题选择和 Notifications，Features 组合历史清理与 Media Download 总开关和帮助。Settings Sheet 容器归 `pages/settings`；设置界面统一平铺在 `features/settings`，使用 general-*、feature-* 文件名，由 index.tsx 组合分区；store-client.ts 保留请求及订阅，后台和非 UI 消费者直接导入数据入口。媒体下载、历史清理的业务逻辑和数据仍归原模块，Dock 只组合入口；通过公共 settings 数据源读写／订阅；TG、X、Helper 子项由官方 Collapsible 默认收起，只读展示英文状态，不提供独立开关或子项问号，仅主项保留帮助。折叠触发器与总开关独立，不在 Settings 展示下载记录。
+
+- Notifications 默认关闭，仅 Error 自动发声；展开为 Default、Error 两行，Default 问号列出 Default/Success/Warning/Info/Loading，右侧静音图标；Error 右侧声音图标只试听固定音效，总开关关闭仍可试听。折叠、列表、开关和帮助沿用 Media Download 组合。自动通知音首条立即播放、1秒节流、不叠音、不补播；同 Toast 文案更新不重复响。音效与合成播放集中在 lib/audio，倒计时保留专用调度和声音偏好。
+- Notifications 的声音暂停/不可用为用户批准的持续状态反馈，仅开启总开关且已尝试播放后显示在主行下；试听尝试恢复，成功后清除，不判断系统静音，不存入账号。普通设置加载/保存失败继续使用 toast.error，不新增通知包装器。每个页面只挂载一次 notification-audio，使用 Sonner 官方 useSonner 观察状态；扩展页面读取设置，Telegram MAIN 仅接收现有隔离桥传递的布尔声音开关，不跨标签页协调或转发。
 
 ## Media Download 与记录边界
 

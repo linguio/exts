@@ -234,6 +234,16 @@ Settings 的加载、保存与权限操作失败统一使用根部现有 Toaster
 
 TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标和 “Download complete.”，不再描述文件名；文件名保留在 Download 记录。开始、进行中、取消和失败不显示 Toast。后续 X 必须复用同一组件和位置，实际触发条件由其独立 Issue 决定，不代表本次已接入。
 
+## 设置分区与通知声音
+
+- features/settings/index.tsx 组合 General/Features，界面按 general-*、feature-* 平铺；pages/settings 只持有 Sheet，数据入口为 store-client.ts。主题行迁至 general-theme.tsx，历史清理和媒体下载仅迁移设置界面，保留原业务数据入口。
+- General 按 Theme、Notifications 排列。Notifications 沿用 Media Download 的官方 Collapsible、Item、ItemSeparator、独立折叠箭头和 Switch，默认收起；不调整主题 Token。
+- 展开仅 Default、Error 两行。Default 问号提示为 Default, Success, Warning, Info, Loading. No sound.，右侧 VolumeX；Error 右侧 Volume2 按钮提示 Preview sound，直接试听固定错误音，不提供音色选择。
+- notifications.soundEnabled 默认 false，关闭时仍可试听。仅 Error 自动发声；每页面首条立即播放、1秒节流、音效未结束不叠加、不补播。同 Toast 文案更新不重复响；Loading 转 Error 响一次，其余结果无声。业务无需新增声音参数，倒计时结束音保持独立。
+- lib/audio 的 presets、synthesis、player、notification-sounds 集中维护音效和播放；notification-audio 使用 Sonner 官方 useSonner；扩展页面适配现有 settings 数据入口，Telegram MAIN 只接收原有隔离桥传来的 soundEnabled，不在共用 UI 中加入账号、Chrome API 或通知服务。
+- 总开关开启且实际播放受阻时，Notifications 主行下显示当前页面的持续状态；点击试听尝试恢复，恢复后清除。该反馈是用户批准的播放状态提示，不替代 toast.error 设置操作失败提示。不能识别系统静音，也不把暂停直接称为浏览器权限被拒；各页面音频状态独立，不同步账号，关闭/离开页面释放资源，恢复页面重新读取偏好，不补播历史通知。
+- 视觉、交互、音效听感及 Chrome/Edge 自动播放限制由用户实际验收，代理仅完成逻辑、类型及构建检查。
+
 ## Activity 翻页倒计时
 
 - 首页卡片区上方为ActivityCard，下方左对齐组合TimerCard；不新增 Studio 页面。TimerCard 宽高为 --size-bookmark-folder（默认178px），左边缘与上方日历对齐，日历仍保留原有整块宽度。
@@ -283,3 +293,9 @@ TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标
 共用 Tooltip 触发规则（2026-11-15）：用户批准仅在 `src/components/ui/tooltip.tsx` 的 TooltipTrigger 处理焦点事件，阻止 Radix 默认聚焦打开提示；不取消真实焦点，不改悬停延迟、离开/点击/失焦等官方关闭行为。调用方已有 onFocus 仍执行，不在 Sheet 或业务入口增加抑制标记与聚焦补偿；现有弹层打开互斥和业务提示条件保持。focus.css 当前启用。
 
 共用 Sheet 初始聚焦规则（2026-11-15）：用户批准在 `src/components/ui/sheet.tsx` 的 SheetContent 一处聚焦面板容器，替代 Radix 自动聚焦并选中首个输入框。业务页面不复制 onOpenAutoFocus 或标题聚焦补偿；Tab 导航、关闭焦点恢复与未保存确认保持既有职责。Dialog 不随本次调整；此前描述 Sheet 默认初始聚焦的记录以本条为准。
+
+2026-11-16 最新用户验收调整：Settings 模块内部使用官方 ItemSeparator 的 1px 分隔线，覆盖卡片内主项、折叠主项与内容、展开子项之间；保持标签左对齐，替代此前去除内部线的要求。
+
+2026-11-16 用户验收调整：Settings 在唯一组合入口明确使用 text-left，主项及展开子项标签统一左对齐，不修改共用 Item 默认样式。
+
+2026-11-16 分隔线验收修正：用户截图显示同为 h-px 的背景线呈现不同厚度。Settings 唯一组合入口统一将 ItemSeparator 改为零内容高度、1px border-top、透明背景，复用 border Token，不修改官方基础组件；缩放下实际观感仍待用户复验。

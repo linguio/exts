@@ -264,3 +264,15 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 共用 Tooltip 触发规则（2026-11-15）：用户批准仅在 `src/components/ui/tooltip.tsx` 的 TooltipTrigger 处理焦点事件，阻止 Radix 默认聚焦打开提示；不取消真实焦点，不改悬停延迟、离开/点击/失焦等官方关闭行为。调用方已有 onFocus 仍执行，不在 Sheet 或业务入口增加抑制标记与聚焦补偿；现有弹层打开互斥和业务提示条件保持。focus.css 当前启用。
 
 共用 Sheet 初始聚焦规则（2026-11-15）：用户批准在 `src/components/ui/sheet.tsx` 的 SheetContent 一处聚焦面板容器，替代 Radix 自动聚焦并选中首个输入框。业务页面不复制 onOpenAutoFocus 或标题聚焦补偿；Tab 导航、关闭焦点恢复与未保存确认保持既有职责。Dialog 不随本次调整；此前描述 Sheet 默认初始聚焦的记录以本条为准。
+
+## Settings 扁平组合与通知声音（2026-11-16）
+
+复用本文件已固定版本的官方 Collapsible、Item/ItemGroup/ItemSeparator、Card、Switch、Button 和 Tooltip，不修改基础组件、全局 Token 或新增依赖。Settings 界面按 general-*、feature-* 平铺并由 index.tsx 组合；媒体下载及历史清理设置仅移动归属，原主题行外观保持。Notifications 明确参考现有 Media Download 的折叠箭头、独立开关、列表间距及分隔线，已批准差异为 Default 问号说明、静音图标、Error 试听按钮和声音暂停状态提示。采用现有来源不等于已完成视觉验收。
+
+自动声音通过 Sonner 2.0.8 的公开 useSonner 状态接入，仅 Error 响应；原共用 sonner.tsx 展示与业务 toast API 保持。音频不是额外通知层，统一在 lib/audio 合成，倒计时保留原音色参数及专用调度。
+
+Telegram MAIN 仅挂载接收 soundEnabled 的声音展示组件，偏好由既有隔离桥事件传递；扩展页面使用独立设置适配入口。构建产物已核对 MAIN 不包含扩展设置请求，未新增权限或第二条通信机制。
+
+2026-11-16 最新用户验收调整：Settings 模块内部使用官方 ItemSeparator 的 1px 分隔线，覆盖卡片内主项、折叠主项与内容、展开子项之间；保持标签左对齐，替代此前去除内部线的要求。
+
+2026-11-16 分隔线验收修正：用户截图显示同为 h-px 的背景线呈现不同厚度。Settings 唯一组合入口统一将 ItemSeparator 改为零内容高度、1px border-top、透明背景，复用 border Token，不修改官方基础组件；缩放下实际观感仍待用户复验。
