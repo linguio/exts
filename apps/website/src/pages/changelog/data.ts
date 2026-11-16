@@ -13,6 +13,24 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'notification-sound-settings-v240',
+    date: '2026-11-16',
+    title: '新增通知错误音，完善设置与 Studio 体验',
+    groups: [{
+      platform: 'Extension',
+      changes: [
+        '新增通知错误音，默认关闭，支持试听；连续错误提示限制发声频率，减少打扰。',
+        '整理账户菜单与 Settings，将 Notifications 移入 General，统一设置列表布局。',
+        '新增 About 弹窗，可查看当前版本、作者与项目源码。',
+        '优化翻页时钟与倒计时的数字比例和留白，精简音色，默认使用 Metronome 与 Harp。',
+        '修复已知问题，优化使用体验。',
+      ],
+    }, {
+      platform: 'API',
+      changes: [],
+    }],
+  },
+  {
     id: 'flip-clock-studio-v230',
     date: '2026-11-13',
     title: '新增翻页时钟与倒计时，优化 Studio 使用体验',
