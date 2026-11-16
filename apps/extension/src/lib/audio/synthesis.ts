@@ -22,3 +22,16 @@ export function createNoiseSamples(sampleRate: number): Float32Array<ArrayBuffer
   }
   return samples;
 }
+
+/** 创建带包络的音调；由播放器统一连接、启动和回收。 */
+export function createTone(context: AudioContext, time: number, frequency: number, duration: number, level: number, type: OscillatorType = 'sine', end?: number) {
+  const source = context.createOscillator();
+  const gain = context.createGain();
+  source.type = type;
+  source.frequency.setValueAtTime(frequency, time);
+  if (end) source.frequency.exponentialRampToValueAtTime(end, time + duration * 0.8);
+  gain.gain.setValueAtTime(0.0001, time);
+  gain.gain.exponentialRampToValueAtTime(level, time + 0.002);
+  gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+  return { source, gain };
+}

@@ -1,6 +1,8 @@
 import { Activity, useState, useSyncExternalStore } from 'react';
 import 'sonner/dist/styles.css';
 
+import { SettingsNotificationAudio } from '../features/settings/notification-audio';
+
 import { Dock } from '../pages/dock';
 import { NewtabHome } from '../pages/newtab/index';
 import { DOCK_FAVORITES } from '../features/bookmarks/defaults';
@@ -48,6 +50,7 @@ export function App({ initialView }: { initialView: AppView }) {
           <Studio onHome={() => changeStudio(false)} />
         </Activity>
       </div>
+      <SettingsNotificationAudio />
       <Toaster theme={appearance} />
       </ActivityDataProvider>
     </TooltipProvider>

@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { createNoiseSamples } from '../../../../src/features/activity/timer/ambient';
+import { createNoiseSamples } from '../../../src/lib/audio/synthesis';
 
 it('棕噪声可生成持续音频，幅度受限且无非法样本', () => {
   const data = createNoiseSamples(8000);

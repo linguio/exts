@@ -4,6 +4,7 @@ export const SETTINGS_KEY = 'settings';
 
 export interface Settings {
   theme: ThemePreference;
+  notifications: { soundEnabled: boolean };
   mediaDownload: { enabled: boolean };
   historyCleaner: { enabled: boolean };
 }
@@ -12,12 +13,13 @@ export interface AccountSettings extends Settings { userId: string }
 
 export type SettingsPatch = {
   theme?: ThemePreference;
+  notifications?: { soundEnabled: boolean };
   mediaDownload?: { enabled: boolean };
   historyCleaner?: { enabled: boolean };
 };
 
 export const DEFAULT_SETTINGS: Settings = {
-  theme: 'system', mediaDownload: { enabled: false }, historyCleaner: { enabled: false },
+  notifications: { soundEnabled: false }, theme: 'system', mediaDownload: { enabled: false }, historyCleaner: { enabled: false },
 };
 
 function object(value: unknown): Record<string, unknown> | null {
@@ -31,7 +33,9 @@ export function parseSettings(value: unknown): Settings | null {
   if (!current || !mediaDownload || !historyCleaner
     || (current.theme !== 'light' && current.theme !== 'dark' && current.theme !== 'system')
     || typeof mediaDownload.enabled !== 'boolean' || typeof historyCleaner.enabled !== 'boolean') return null;
-  return { theme: current.theme, mediaDownload: { enabled: mediaDownload.enabled },
+  const notifications = object(current.notifications);
+  if (current.notifications !== undefined && (!notifications || typeof notifications.soundEnabled !== 'boolean')) return null;
+  return { notifications: { soundEnabled: notifications?.soundEnabled === true }, theme: current.theme, mediaDownload: { enabled: mediaDownload.enabled },
     historyCleaner: { enabled: historyCleaner.enabled } };
 }
 
@@ -47,6 +51,9 @@ export function validateSettingsPatch(value: unknown): asserts value is Settings
   const [key, entry] = Object.entries(patch)[0]!;
   if (key === 'theme') {
     if (entry !== 'light' && entry !== 'dark' && entry !== 'system') throw new Error('无效主题');
+  } else if (key === 'notifications') {
+    const section = object(entry);
+    if (!section || typeof section.soundEnabled !== 'boolean' || Object.keys(section).length !== 1) throw new Error('无效通知配置');
   } else if (key === 'mediaDownload' || key === 'historyCleaner') {
     const section = object(entry);
     if (!section || typeof section.enabled !== 'boolean' || Object.keys(section).length !== 1) throw new Error('无效功能配置');

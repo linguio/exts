@@ -21,7 +21,7 @@ def read_preferences(user: Annotated[CurrentUser, Depends(get_token_user)],
 
 @router.post('/preferences/update', response_model=Success[Preferences], responses=ERROR_RESPONSES,
              summary='更新当前用户的一项设置',
-             description='仅允许一次更新 theme、mediaDownload 或 historyCleaner 中的一项；身份取自令牌，不接受 userId。theme 仅为 light、dark 或 system，功能项仅接受 enabled 布尔值；更新后返回当前完整设置，其余设置保持不变。')
+             description='仅允许一次更新 theme、mediaDownload、historyCleaner 或 notifications 中的一项；身份取自令牌，不接受 userId。theme 仅为 light、dark 或 system，功能项仅接受 enabled 布尔值，notifications 仅接受 soundEnabled 布尔值且默认关闭；更新后返回当前完整设置，其余设置保持不变。')
 def update_preferences(patch: PreferencesPatch,
                        user: Annotated[CurrentUser, Depends(get_token_user)],
                        database: Annotated[Connection, Depends(get_user_database, scope='function')]):

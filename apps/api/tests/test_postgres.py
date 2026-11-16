@@ -140,6 +140,12 @@ class PostgresTests(unittest.TestCase):
         settings_id = first['id']
         second = settings_repository.save(self.database, USER_A, 'media_download_enabled', True)
         self.assertEqual(second['id'], settings_id)
+        self.assertFalse(second['notification_sound_enabled'])
+        sound = settings_repository.save(self.database, USER_A, 'notification_sound_enabled', True)
+        self.assertEqual(sound['id'], settings_id)
+        self.assertEqual(sound['theme'], 'dark')
+        self.assertTrue(sound['media_download_enabled'])
+        self.assertTrue(sound['notification_sound_enabled'])
         count = self.database.execute('SELECT count(*) AS count FROM public.user_settings WHERE user_id = %s', (USER_A,)).fetchone()['count']
         self.assertEqual(count, 1)
 
@@ -200,7 +206,12 @@ class PostgresMigrationFourTests(unittest.TestCase):
         ).fetchone()
         self.assertIsNotNone(day['id'])
         self.assertEqual(day['exercise_hours'], 0.5)
+        # 当前仓库查询包含后续新增字段，旧行先应用新增列后再验证仓库操作。
+        for migration in load_migrations():
+            if migration.name > self.migration_four.name:
+                self.database.execute(migration.sql)
         settings = settings_repository.read(self.database, USER_A)
+        self.assertFalse(settings['notification_sound_enabled'])
         self.assertIsNotNone(settings['id'])
         with self.assertRaises(psycopg.errors.UniqueViolation), self.database.transaction():
             self.database.execute(

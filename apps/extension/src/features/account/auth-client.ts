@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { AccountProvider, AccountUser } from './account-controller';
 import { resetTheme } from '../settings/theme';
-import { refreshSettings } from '../settings';
+import { refreshSettings } from '../settings/store-client';
 import { captureSessionGeneration, rememberSessionGeneration } from './session-client';
 
 let resetVersion = 0;

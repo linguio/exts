@@ -1,12 +1,10 @@
-import { createNoiseSamples } from './ambient';
+import { AudioPlayer } from '../../../lib/audio/player';
 import { defaultSounds, type TimerSounds } from './sound-preference';
 
 /** 单卡片音频调度：试听优先，不改变倒计时；所有音源在同一上下文管理。 */
 export class TimerAudio {
-  private context: AudioContext | null = null;
-  private output: GainNode | null = null;
-  private sources = new Set<AudioScheduledSourceNode>();
-  private background: AudioBufferSourceNode | null = null;
+  private audio = new AudioPlayer();
+  private get context() { return this.audio.context; }
   private nextTick = 0;
   private alternate = false;
   private running = false;
@@ -21,128 +19,30 @@ export class TimerAudio {
     if (changed) this.stopSounds();
   }
 
-  prepare() {
-    try {
-      if (!this.context) {
-        this.context = new AudioContext();
-        this.output = this.context.createGain();
-        this.output.gain.value = 0.35;
-        this.output.connect(this.context.destination);
-      }
-      void this.context.resume().catch(error => console.error('倒计时声音启动失败', error));
-    } catch (error) { console.error('倒计时声音不可用', error); }
-  }
+  prepare() { this.audio.prepare(); }
 
   private stopSounds() {
     this.sequence++;
     clearTimeout(this.timeout);
     this.previewing = false;
-    for (const source of this.sources) source.stop();
-    this.sources.clear();
-    this.background = null;
-  }
-
-  private connect(source: AudioScheduledSourceNode, gain: GainNode, start: number, duration?: number) {
-    source.connect(gain).connect(this.output!);
-    this.sources.add(source);
-    source.start(start);
-    if (duration !== undefined) source.stop(start + duration);
-    source.onended = () => { this.sources.delete(source); source.disconnect(); gain.disconnect(); };
-  }
-
-  private tone(time: number, frequency: number, duration: number, level: number, type: OscillatorType = 'sine', end?: number) {
-    const context = this.context!;
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    oscillator.type = type;
-    oscillator.frequency.setValueAtTime(frequency, time);
-    if (end) oscillator.frequency.exponentialRampToValueAtTime(end, time + duration * 0.8);
-    gain.gain.setValueAtTime(0.0001, time);
-    gain.gain.exponentialRampToValueAtTime(level, time + 0.002);
-    gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
-    this.connect(oscillator, gain, time, duration + 0.01);
-  }
-
-  private noise(time: number, duration: number, level: number, frequency: number) {
-    const context = this.context!;
-    const buffer = context.createBuffer(1, Math.ceil(context.sampleRate * duration), context.sampleRate);
-    const samples = buffer.getChannelData(0);
-    for (let index = 0; index < samples.length; index++) samples[index] = (Math.random() * 2 - 1) * Math.exp(-index / samples.length * 8);
-    const source = context.createBufferSource();
-    const filter = context.createBiquadFilter();
-    const gain = context.createGain();
-    source.buffer = buffer;
-    filter.type = 'bandpass';
-    filter.frequency.value = frequency;
-    filter.Q.value = 1;
-    gain.gain.value = level;
-    source.connect(filter).connect(gain).connect(this.output!);
-    this.sources.add(source);
-    source.start(time);
-    source.onended = () => { this.sources.delete(source); source.disconnect(); filter.disconnect(); gain.disconnect(); };
+    this.audio.stop();
   }
 
   private tick(time: number, index: number) {
     const odd = index % 2;
     if (this.sounds.tick === 'metronome') {
-      this.tone(time, odd ? 850 : 1150, 0.035, 0.22, 'triangle', 500);
-      this.noise(time, 0.018, 0.22, 2600);
+      this.audio.schedule(odd ? 'metronome-low' : 'metronome-high', time);
     }
   }
 
   private isAmbient() { return this.sounds.tick === 'brown'; }
 
   private playBackground(duration?: number) {
-    const context = this.context;
-    const kind = this.sounds.tick;
-    if (!context || this.background || kind !== 'brown') return;
-    const buffer = context.createBuffer(2, context.sampleRate * 8, context.sampleRate);
-    for (let channel = 0; channel < 2; channel++) buffer.copyToChannel(createNoiseSamples(context.sampleRate), channel);
-    const source = context.createBufferSource();
-    const filter = context.createBiquadFilter();
-    const gain = context.createGain();
-    source.buffer = buffer;
-    source.loop = true;
-    // 末尾已过渡到首段；从50ms处回环以避开拼接跳变。
-    source.loopStart = 0.05;
-    source.loopEnd = 8;
-    filter.type = 'lowpass';
-    filter.Q.value = 0.5;
-    filter.frequency.value = 1400;
-    const start = context.currentTime + 0.02;
-    gain.gain.setValueAtTime(0, start);
-    gain.gain.linearRampToValueAtTime(1, start + 0.08);
-    if (duration !== undefined) {
-      gain.gain.setValueAtTime(1, start + duration - 0.08);
-      gain.gain.linearRampToValueAtTime(0, start + duration);
-    }
-    source.connect(filter).connect(gain).connect(this.output!);
-    this.background = source;
-    this.sources.add(source);
-    source.start(start);
-    if (duration !== undefined) source.stop(start + duration);
-    source.onended = () => {
-      this.sources.delete(source);
-      if (this.background === source) this.background = null;
-      source.disconnect(); filter.disconnect(); gain.disconnect();
-    };
+    if (this.isAmbient() && this.context?.state === 'running') this.audio.playNoiseLoop(duration);
   }
 
   private ending(time: number) {
-    if (this.sounds.end === null) return 0;
-    if (this.sounds.end === 'glass') {
-      [[1568, 0], [2093, 0.18], [2637, 0.36]].forEach(([frequency, delay]) => {
-        this.tone(time + delay!, frequency!, 1.2, 0.14);
-        this.tone(time + delay!, frequency! * 2.76, 0.55, 0.025);
-      });
-      return 1.9;
-    }
-    [523.25, 659.25, 783.99, 1046.5].forEach((frequency, index) => {
-      const at = time + index * 0.18;
-      this.tone(at, frequency, 0.8, 0.16);
-      this.tone(at, frequency * 2, 0.18, 0.04);
-    });
-    return 1.6;
+    return this.sounds.end === null ? 0 : this.audio.schedule(this.sounds.end, time);
   }
 
   start() {
@@ -203,10 +103,7 @@ export class TimerAudio {
   dispose() {
     this.running = false;
     this.stopSounds();
-    const context = this.context;
-    this.context = null;
-    this.output = null;
     this.nextTick = 0;
-    if (context && context.state !== 'closed') void context.close().catch(error => console.error('倒计时音频释放失败', error));
+    this.audio.dispose();
   }
 }

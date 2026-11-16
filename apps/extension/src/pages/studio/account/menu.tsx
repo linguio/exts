@@ -48,8 +48,6 @@ export function AccountMenu({ user, loggingOut, onLogout, side, sideOffset, trig
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem><UiIcon name="circle-user" className="size-4" />Account</DropdownMenuItem>
-            <DropdownMenuItem><UiIcon name="bell" className="size-4" />Notifications</DropdownMenuItem>
             <DropdownMenuItem onSelect={() => {
               openingOverlay.current = true;
               setSettingsOpen(true);

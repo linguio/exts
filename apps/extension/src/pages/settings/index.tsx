@@ -1,14 +1,10 @@
 import { type ReactNode } from 'react';
 
-import { Card } from '../../components/ui/card';
-import { ItemGroup, ItemSeparator } from '../../components/ui/item';
 import { ScrollArea } from '../../components/ui/scroll-area';
 import { Separator } from '../../components/ui/separator';
 import { Sheet, SheetContent, SheetTitle } from '../../components/ui/sheet';
 import { UiIcon } from '../../components/custom/ui-icon';
-import { HistoryCleanerSettings } from '../../features/history-cleaner/settings-section';
-import { MediaDownloadSettings } from '../../features/media-download/settings-section';
-import { GeneralSettings } from '../../features/settings/general-settings';
+import { SettingsContent } from '../../features/settings';
 
 /** 设置模块组合抽屉与各业务设置区域，调用方只提供入口和打开状态。 */
 export function SettingsSheet({ children, open, onOpenChange, onCloseAutoFocus }: {
@@ -28,19 +24,7 @@ export function SettingsSheet({ children, open, onOpenChange, onCloseAutoFocus }
         </header>
         <Separator />
         <ScrollArea className="min-h-0 flex-1">
-          <div className="space-y-6 p-6">
-            <GeneralSettings />
-            <section aria-labelledby="features-heading" className="space-y-3">
-              <h3 id="features-heading" className="text-sm font-medium">Features</h3>
-              <Card className="gap-0 px-4 py-0 shadow-none">
-                <ItemGroup>
-                  <HistoryCleanerSettings />
-                  <ItemSeparator />
-                  <MediaDownloadSettings />
-                </ItemGroup>
-              </Card>
-            </section>
-          </div>
+          <SettingsContent />
         </ScrollArea>
       </SheetContent>
     </Sheet>

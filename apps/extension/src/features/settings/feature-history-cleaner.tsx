@@ -5,9 +5,9 @@ import { Button } from '../../components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
 import { Item, ItemActions, ItemContent, ItemTitle } from '../../components/ui/item';
-import { getHistoryCleanerEnabled, setHistoryCleanerEnabled } from './settings';
-import { subscribeSettings } from '../settings/index';
-import { settingsMessages } from '../settings/messages';
+import { getHistoryCleanerEnabled, setHistoryCleanerEnabled } from '../history-cleaner/settings';
+import { subscribeSettings } from './store-client';
+import { settingsMessages } from './messages';
 import { toast } from '../../components/ui/sonner';
 
 const descriptions = [

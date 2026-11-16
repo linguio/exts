@@ -28,6 +28,7 @@ class SettingsTests(unittest.TestCase):
                 response = client.post('/api/settings/preferences', json={})
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()['data']['theme'], 'system')
+            self.assertEqual(response.json()['data']['notifications'], {'soundEnabled': False})
             read.assert_called_once_with(database, USER_ID)
             invalid = client.post('/api/settings/preferences/update', json={'theme': 'other'})
             self.assertEqual(invalid.status_code, 422)
@@ -41,11 +42,11 @@ class SettingsTests(unittest.TestCase):
         read.assert_called_once_with(None, USER_ID)
         self.assertEqual(result.model_dump(by_alias=True), {
             'id': None, 'theme': 'system', 'mediaDownload': {'enabled': False},
-            'historyCleaner': {'enabled': False},
+            'historyCleaner': {'enabled': False}, 'notifications': {'soundEnabled': False},
         })
 
     def test_one_field_update_keeps_other_settings(self):
-        row = {'id': USER_ID, 'theme': 'dark', 'media_download_enabled': True, 'history_cleaner_enabled': False}
+        row = {'id': USER_ID, 'theme': 'dark', 'media_download_enabled': True, 'history_cleaner_enabled': False, 'notification_sound_enabled': False}
         with patch('modules.settings.repository.save', return_value=row) as save:
             result = service.save(USER_ID, PreferencesPatch.model_validate({'theme': 'dark'}), None)
         save.assert_called_once_with(None, USER_ID, 'theme', 'dark')
@@ -54,5 +55,23 @@ class SettingsTests(unittest.TestCase):
     def test_rejects_empty_multiple_unknown_or_invalid_fields(self):
         for value in ({}, {'theme': 'dark', 'mediaDownload': {'enabled': True}},
                       {'other': True}, {'theme': None}, {'mediaDownload': {'enabled': 'true'}}):
+            with self.subTest(value=value), self.assertRaises(ValidationError):
+                PreferencesPatch.model_validate(value)
+
+    def test_notification_sound_update_preserves_other_settings(self):
+        row = {'id': USER_ID, 'theme': 'dark', 'media_download_enabled': True,
+               'history_cleaner_enabled': False, 'notification_sound_enabled': True}
+        with patch('modules.settings.repository.save', return_value=row) as save:
+            result = service.save(USER_ID, PreferencesPatch.model_validate({'notifications': {'soundEnabled': True}}), None)
+        save.assert_called_once_with(None, USER_ID, 'notification_sound_enabled', True)
+        self.assertEqual(result.model_dump(by_alias=True)['notifications'], {'soundEnabled': True})
+        self.assertEqual(result.theme, 'dark')
+        self.assertTrue(result.media_download.enabled)
+
+    def test_notification_sound_rejects_coercion_and_extra_fields(self):
+        for value in ({'notifications': {'soundEnabled': 'true'}},
+                      {'notifications': {'enabled': True}},
+                      {'notifications': {'soundEnabled': False, 'extra': True}},
+                      {'notifications': {'soundEnabled': True}, 'theme': 'dark'}):
             with self.subTest(value=value), self.assertRaises(ValidationError):
                 PreferencesPatch.model_validate(value)

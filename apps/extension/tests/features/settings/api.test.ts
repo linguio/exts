@@ -1,9 +1,9 @@
 import { expect, it, vi } from 'vitest';
 
-import { getSettings, subscribeSettings, updateSettings } from '../../../src/features/settings/index';
+import { getSettings, subscribeSettings, updateSettings } from '../../../src/features/settings/store-client';
 import { registerSettings } from '../../../src/features/settings/background';
 
-const settings = { theme: 'dark', mediaDownload: { enabled: true }, historyCleaner: { enabled: false } };
+const settings = { notifications: { soundEnabled: false }, theme: 'dark', mediaDownload: { enabled: true }, historyCleaner: { enabled: false } };
 
 it('本地副本变化通知页面，取消订阅后停止', () => {
   const listeners = new Set<(changes: Record<string, { newValue?: unknown }>, area: string) => void>();
@@ -55,5 +55,8 @@ it('未登录时读默认值并在本机保存，不请求云端', async () => {
   expect((await ask('update', { theme: 'dark' })).settings.theme).toBe('dark');
   expect((await ask('get')).settings.theme).toBe('dark');
   expect(values.settings).toMatchObject({ theme: 'dark' });
+  const saved = (await ask('update', { notifications: { soundEnabled: true } })).settings;
+  expect(saved).toMatchObject({ theme: 'dark', notifications: { soundEnabled: true } });
+  expect((await ask('get')).settings.notifications.soundEnabled).toBe(true);
   expect(getSession).not.toHaveBeenCalled();
 });

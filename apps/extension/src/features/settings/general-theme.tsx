@@ -3,8 +3,7 @@ import { useId, useRef, useState, useSyncExternalStore } from 'react';
 import { readTheme, setTheme, subscribeTheme } from './theme';
 import { settingsMessages } from './messages';
 import { toast } from '../../components/ui/sonner';
-import { Card } from '../../components/ui/card';
-import { Item, ItemActions, ItemContent, ItemGroup, ItemTitle } from '../../components/ui/item';
+import { Item, ItemActions, ItemContent, ItemTitle } from '../../components/ui/item';
 import { ToggleGroup, ToggleGroupItem } from '../../components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
@@ -16,18 +15,14 @@ const choices = [
   { value: 'system', label: 'System', icon: 'laptop-minimal' },
 ] as const;
 
-export function GeneralSettings() {
+export function ThemeSettings() {
   const id = useId();
   const theme = useSyncExternalStore(subscribeTheme, readTheme);
   const [savingTheme, setSavingTheme] = useState<string | null>(null);
   const saving = useRef(false);
 
   return (
-    <section aria-labelledby={`${id}-heading`} className="space-y-3">
-      <h3 id={`${id}-heading`} className="text-sm font-medium">General</h3>
-      <Card className="gap-0 px-4 py-0 shadow-none">
-        <ItemGroup>
-          <Item role="listitem" className="px-0">
+    <Item role="listitem" className="px-0">
             <ItemContent>
               <ItemTitle id={`${id}-label`}>Theme</ItemTitle>
             </ItemContent>
@@ -58,8 +53,5 @@ export function GeneralSettings() {
               </ToggleGroup>
             </ItemActions>
           </Item>
-        </ItemGroup>
-      </Card>
-    </section>
   );
 }

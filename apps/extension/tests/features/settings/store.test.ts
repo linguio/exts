@@ -2,7 +2,7 @@ import { expect, it, vi } from 'vitest';
 
 import { createSettingsRepository } from '../../../src/features/settings/store';
 
-const settings = { theme: 'dark', mediaDownload: { enabled: true }, historyCleaner: { enabled: false } };
+const settings = { notifications: { soundEnabled: false }, theme: 'dark', mediaDownload: { enabled: true }, historyCleaner: { enabled: false } };
 
 function setup(initial: Record<string, unknown> = {}) {
   const data = structuredClone(initial);

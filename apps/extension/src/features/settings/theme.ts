@@ -1,4 +1,4 @@
-import { getSettings, subscribeSettings, updateSettings } from './index';
+import { getSettings, subscribeSettings, updateSettings } from './store-client';
 import { readThemePreference, resolveTheme, writeThemePreference, THEME_STORAGE_KEY, type ThemePreference } from '../../lib/theme/preference';
 
 const THEME_CHANGE_EVENT = 'exts:theme-change';

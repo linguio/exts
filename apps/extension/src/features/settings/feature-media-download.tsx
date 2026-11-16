@@ -5,8 +5,8 @@ import { Item, ItemActions, ItemContent, ItemGroup, ItemSeparator, ItemTitle } f
 import { Switch } from '../../components/ui/switch';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
-import { mediaDownloadSetting } from './settings';
-import { settingsMessages } from '../settings/messages';
+import { mediaDownloadSetting } from '../media-download/settings';
+import { settingsMessages } from './messages';
 import { toast } from '../../components/ui/sonner';
 import { StatusIcon, type StatusLevel } from '../../components/custom/status-icon';
 

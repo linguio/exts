@@ -13,10 +13,17 @@ class FeatureSetting(BaseModel):
     enabled: StrictBool
 
 
+class NotificationSetting(BaseModel):
+    model_config = ConfigDict(extra='forbid', populate_by_name=True)
+
+    sound_enabled: StrictBool = Field(alias='soundEnabled')
+
+
 class Preferences(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     id: UUID | None = None
+    notifications: NotificationSetting = Field(default_factory=lambda: NotificationSetting(soundEnabled=False))
     theme: Theme = 'system'
     media_download: FeatureSetting = Field(default_factory=lambda: FeatureSetting(enabled=False), alias='mediaDownload')
     history_cleaner: FeatureSetting = Field(default_factory=lambda: FeatureSetting(enabled=False), alias='historyCleaner')
@@ -25,6 +32,7 @@ class Preferences(BaseModel):
 class PreferencesPatch(BaseModel):
     model_config = ConfigDict(extra='forbid', populate_by_name=True)
 
+    notifications: NotificationSetting | None = None
     theme: Theme | None = None
     media_download: FeatureSetting | None = Field(default=None, alias='mediaDownload')
     history_cleaner: FeatureSetting | None = Field(default=None, alias='historyCleaner')

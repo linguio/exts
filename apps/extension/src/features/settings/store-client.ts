@@ -8,17 +8,23 @@ export const SETTINGS_MESSAGE = 'exts:settings';
 
 async function request(action: 'get' | 'refresh' | 'update', patch?: SettingsPatch,
   api: Pick<typeof chrome, 'runtime'> = chrome, expectedGeneration?: string): Promise<Settings> {
-  const generation = action === 'get' ? undefined : expectedGeneration ?? await captureSessionGeneration(api);
-  const response = await api.runtime.sendMessage({ type: SETTINGS_MESSAGE, action, patch, generation });
-  if (!response?.ok) {
-    const error = new Error(response?.error?.message ?? '配置请求失败') as Error & { code?: string; status?: number };
-    error.code = response?.error?.code;
-    error.status = response?.error?.status;
+  try {
+    const generation = action === 'get' ? undefined : expectedGeneration ?? await captureSessionGeneration(api);
+    const response = await api.runtime.sendMessage({ type: SETTINGS_MESSAGE, action, patch, generation });
+    if (!response?.ok) {
+      const error = new Error(response?.error?.message ?? '配置请求失败') as Error & { code?: string; status?: number };
+      error.code = response?.error?.code;
+      error.status = response?.error?.status;
+      throw error;
+    }
+    const settings = parseSettings(response.settings);
+    if (!settings) throw new Error('配置返回格式无效');
+    return settings;
+  } catch (error) {
+    const failure = error as { code?: string; status?: number };
+    console.error('设置操作失败', { action, fields: patch ? Object.keys(patch) : [], code: failure?.code ?? 'MESSAGE_OR_RESPONSE_FAILED', status: failure?.status });
     throw error;
   }
-  const settings = parseSettings(response.settings);
-  if (!settings) throw new Error('配置返回格式无效');
-  return settings;
 }
 
 export const getSettings = (api?: Pick<typeof chrome, 'runtime'>) => request('get', undefined, api);

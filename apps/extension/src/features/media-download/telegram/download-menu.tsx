@@ -6,6 +6,7 @@ import { Button } from '../../../components/ui/button';
 import { ButtonGroup } from '../../../components/ui/button-group';
 import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/popover';
 import { Toaster, toast } from '../../../components/ui/sonner';
+import { NotificationAudio } from '../../settings/notification-audio';
 import styles from './download-menu.css?inline';
 import type { DownloadMenuController } from './types';
 import { resolveTheme, type ThemePreference } from '../../../lib/theme/preference';
@@ -33,6 +34,7 @@ export function createDownloadMenu(document: Document, actions: {
   let directoryReady = false;
   let message = '';
   let preference: ThemePreference = 'system';
+  let soundEnabled = false;
   const media = window.matchMedia('(prefers-color-scheme: dark)');
   const applyTheme = () => { host.dataset.theme = resolveTheme(preference, media.matches); };
   sheet.textContent = styles.replace(/:root(\[[^\]]+\])?/g, (_selector, attributes: string | undefined) => attributes ? `:host(${attributes})` : ':host');
@@ -69,6 +71,7 @@ export function createDownloadMenu(document: Document, actions: {
         </ButtonGroup>
       </PopoverContent>
     </Popover>
+    <NotificationAudio soundEnabled={soundEnabled} />
     <Toaster id="tg-download" theme={resolveTheme(preference, media.matches)} className="toaster group pointer-events-auto" />
   </>));
   const close = () => { open = false; moreOpen = false; busy = false; render(); };
@@ -80,6 +83,7 @@ export function createDownloadMenu(document: Document, actions: {
     busy(): boolean;
     disable(): void;
     theme(value: ThemePreference): void;
+    sound(value: boolean): void;
     ready(warning?: string): void;
     problem(message: string): void;
   } = {
@@ -88,6 +92,7 @@ export function createDownloadMenu(document: Document, actions: {
     busy: () => busy,
     disable: close,
     theme(value) { preference = value; applyTheme(); render(); },
+    sound(value) { soundEnabled = value; render(); },
     ready(warning = '') { directoryReady = true; message = warning; render(); },
     problem(value) { message = value; busy = false; open = true; render(); },
     completed() { toast.success('Download complete.', { toasterId: 'tg-download' }); },

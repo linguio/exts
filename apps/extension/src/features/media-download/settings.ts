@@ -1,4 +1,4 @@
-import { getSettings, subscribeSettings, updateSettings } from '../settings/index';
+import { getSettings, subscribeSettings, updateSettings } from '../settings/store-client';
 
 export const mediaDownloadSetting = () => ({
   get: async () => (await getSettings()).mediaDownload.enabled,

@@ -1,7 +1,7 @@
 import type { ContentScriptContext } from 'wxt/utils/content-script-context';
 import { mediaDownloadSetting } from '../settings';
 import { type ThemePreference } from '../../../lib/theme/preference';
-import { getSettings, subscribeSettings } from '../../settings/index';
+import { getSettings, subscribeSettings } from '../../settings/store-client';
 import { TELEGRAM_CONFIG_EVENT, TELEGRAM_READY_EVENT, TELEGRAM_SAVED_EVENT, TELEGRAM_RESET_EVENT, TELEGRAM_RESET_DONE_EVENT } from './constants';
 import { addTelegramDownload } from '../records/client';
 import { validateSavedDownload } from '../records/schema';
@@ -12,16 +12,17 @@ export function registerTelegramDownloadBridge(ctx: ContentScriptContext) {
   const setting = mediaDownloadSetting();
   let enabled = false;
   let theme: ThemePreference = 'system';
+  let soundEnabled = false;
   let active = true;
   let resetting = true;
   let pageReady = false;
   let settingVersion = 0;
   let themeVersion = 0;
-  const dispatch = () => window.dispatchEvent(new CustomEvent(TELEGRAM_CONFIG_EVENT, { detail: JSON.stringify({ enabled: enabled && !resetting, theme }) }));
+  const dispatch = () => window.dispatchEvent(new CustomEvent(TELEGRAM_CONFIG_EVENT, { detail: JSON.stringify({ enabled: enabled && !resetting, theme, soundEnabled: active && !resetting && soundEnabled }) }));
   const publish = () => { if (active && ctx.isValid) dispatch(); };
   const stop = setting.subscribe(value => { if (!active) return; settingVersion++; enabled = value; publish(); });
   const stopTheme = subscribeSettings(settings => {
-    if (active) { themeVersion++; theme = settings.theme; publish(); }
+    if (active) { themeVersion++; theme = settings.theme; soundEnabled = settings.notifications.soundEnabled; publish(); }
   });
   ctx.onInvalidated(() => {
     if (!active) return;

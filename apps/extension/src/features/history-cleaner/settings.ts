@@ -1,4 +1,4 @@
-import { getSettings, updateSettings } from '../settings/index';
+import { getSettings, updateSettings } from '../settings/store-client';
 import { currentSessionGeneration } from '../account/session-client';
 
 /** 配置与授权同时有效才启用，避免撤销权限后继续显示开启。 */

@@ -1,7 +1,7 @@
 import { ApiRequestError, createApiClient, type ApiSession } from '../../api/client';
 import { resolveApiBaseUrl } from '../../api/config';
 import { getSettingsPreferences, updateSettingsPreferences } from '../../api/settings';
-import { SETTINGS_MESSAGE } from './index';
+import { SETTINGS_MESSAGE } from './store-client';
 import { DEFAULT_SETTINGS, parseSettings, validateSettingsPatch, type Settings, type SettingsPatch } from './schema';
 import { createSettingsRepository } from './store';
 import type { SessionReset } from '../account/session-reset';

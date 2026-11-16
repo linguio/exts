@@ -94,8 +94,9 @@ export function registerTelegramDownloadPage() {
       const config = JSON.parse((event as CustomEvent<string>).detail);
       enabled = config.enabled === true;
       menu.theme(normalizeTheme(config.theme));
+      menu.sound(config.soundEnabled === true);
       if (!enabled) clearPreview();
-    } catch { enabled = false; clearPreview(); }
+    } catch { enabled = false; menu.sound(false); clearPreview(); }
   });
   window.addEventListener(TELEGRAM_RESET_EVENT, event => {
     const { nonce, clear } = JSON.parse((event as CustomEvent<string>).detail) as { nonce: string; clear: boolean };
