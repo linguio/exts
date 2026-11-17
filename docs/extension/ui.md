@@ -67,7 +67,7 @@
 
 - Theme保存期间禁用整组主题按钮，仅将点击按钮的图标替换为既有StatusIcon loading；标记aria-busy并遵循减少动画偏好。不遮罩Settings，不禁用无关设置；保留请求成功后应用主题的行为，失败沿用错误Toast，finally解除禁用。重复点击当前主题不请求，pending期间同步拦截重复提交。
 
-上述规范属于整个 extension，并非 Newtab 专属。无法访问扩展同源 localStorage 的网页内容脚本直接读取并订阅 `settings` 对象，取得主题与功能开关；旧 `exts.theme` 存储键迁入正式配置后移除。网页菜单在 Shadow DOM 中通过 `:host` 和 `:host(...)` 引用同一 Token。官方 Sonner 样式同时导入该 Shadow DOM，以支持提示的默认交互。
+上述规范属于整个 extension，并非 Newtab 专属。无法访问扩展同源 localStorage 的网页内容脚本直接读取并订阅 `settings` 对象，取得主题与功能开关；旧 `exts.theme` 存储键迁入正式配置后移除。网页菜单在 Shadow DOM 中通过 `:host` 和 `:host(...)` 引用同一 Token。官方 Base UI Toast 的 Tailwind 样式与同一主题一并构建进该 Shadow DOM，Portal 保留在原容器内。
 
 | 用途 | Token | 现行规则 |
 | --- | --- | --- |
@@ -142,7 +142,7 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - ToggleGroup 单选项以 `aria-checked` 显示激活状态，选中背景使用官方 accent、图标使用 accent-foreground，不增加高反差主色选中块。Tooltip 组合也使用 data-state，因此不得仅凭该属性表达单选反馈；选择判断仍由官方控件负责。
 - 共用 `Switch` 可操作时显示手形指针，禁用时显示禁止指针；在组件内统一维护，不在设置调用方重复指定。
 - Media Download 的记录列表由 features/media-download/records 持有，Sheet 由 pages/download 组合，Dock 保留一级入口。Settings 的 General／Features 采用官方 Card、ItemGroup、Item、ItemSeparator 的圆角边框列表，标题置于框外。Media Download 只有一个总开关，独立箭头通过官方 Collapsible 展开默认收起的三个只读子项；仅主项保留问号，子项无问号。界面文案使用英文，TG 状态为 Enabled／Disabled，X／Helper 显示 Not integrated。设置界面与 Sheet 归 `pages/settings` 与对应 feature，`pages/dock` 只组合入口并协调入口提示，设置界面订阅公共 settings 数据，不在其中展示下载记录；保持官方折叠状态与焦点管理，不另写展开状态逻辑。
-- 历史清理区域使用官方基础的 `Switch`，通过 `checked` / `onCheckedChange` 连接状态，保留可访问名称与说明；默认关闭，加载、授权和保存期间禁用重复操作，失败通过共用 toast.error 提示。配置和权限变更同步到已打开页面，不把业务状态放入通用组件或新增全局设置状态。
+- 历史清理区域使用官方基础的 `Switch`，通过 `checked` / `onCheckedChange` 连接状态，保留可访问名称与说明；默认关闭，加载、授权和保存期间禁用重复操作，失败通过共用 toast.add 的 error 类型 提示。配置和权限变更同步到已打开页面，不把业务状态放入通用组件或新增全局设置状态。
 - 历史清理开关标题旁的圆圈问号复用 Button/UiIcon/Tooltip，帮助提示完整保留原说明，最大宽度 280px、优先向上显示并支持换行；独立按钮不切换开关，读屏描述通过常驻隐藏文本保留。错误不放进 Tooltip。
 - Sheet 内容、边框与分隔线使用根主题；全屏遮罩使用 blur-overlay，阴影使用项目 Token。打开／关闭动画恢复为 200ms／160ms，减少动态效果遵循全局规则。
 - Tooltip 提供名称或简短帮助说明，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Dock 四个弹层入口打开时隐藏入口 Tooltip，useDockOverlay 仅维护打开状态与提示互斥；关闭后沿用官方焦点恢复及提示行为，不维护 data-restored-focus 或恢复焦点抑制。Settings、Download、About 与表格编辑不再主动聚焦标题。
@@ -153,9 +153,9 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - Newtab 与 Studio 的已登录 Account 共用菜单内容，条目为 Account、Notifications、Settings、Log out；Account 与 Notifications 保持占位，移除 Billing。Settings 关闭菜单并打开现有 SettingsSheet，复用设置内容与读写逻辑，关闭后恢复到各自账户入口；保留菜单原有弹出方向及 Dock 独立 Settings 入口，未登录流程不变。
 - Studio 采用官方 dashboard-01 的 inset/offcanvas 侧栏、SidebarInset 与顶部导航；Home／Studio 继续由 React Activity 保留状态和 DOM。Dock 只随 Home 显示，Studio 独占视口，没有有效本机偏好时默认 Home，同一扩展会话内新标签页恢复 ui-session.view 保存的 Home/Studio 位置。登录后左侧展示 Overview 和 Activity → Daily，按账号恢复会话路由，缺失或未知路由回到 Overview；未登录显示独立 LoginRequired，受保护内容仍沿用上述共用账号边界。Home 原 ActivityCard 的数据、外观和行为保留。
 - 品牌头部保留官方示例 32px 标识与两行文字比例，Exts SVG 与 Exts/Studio 使用普通非交互排版，不重绘或叠加底板，不带链接、点击事件或按钮角色。右侧独立使用官方 Button ghost/icon-sm、House 与 Tooltip 作为唯一返回入口，Logo 不可点击；收起时沿用官方 offcanvas，品牌和 Home 随侧栏一起隐藏，窄屏先打开侧栏后访问同一按钮。正文顶部只保留官方 SidebarTrigger、Separator 和 Studio / Activity / Daily 面包屑，不保留 Home 文字按钮、Overview 层级或额外边框。
-- Account 未登录时显示 UserRound / Account / Not signed in；点击打开官方 Dialog，登录内容来自简化 login-03，首行不显示 Logo/Exts 品牌，采用官方 Welcome back 标题与 CardHeader text-center，说明为用户指定的 Login with your Github or Google account。仅保留 Login with GitHub / Login with Google，不包含邮箱、密码、注册、其他方式或无效条款链接，不自行改写官方标题或增加品牌行。GitHub 通过 Neon 官方 SDK 与 identity 窗口授权，期间按钮显示 Signing in… 并阻止重复操作；Google 仍可点击并 toast.info 提示暂未接入。会话初次读取显示 Checking account…；成功后侧栏显示真实头像和昵称/邮箱，账户 Dialog 沿用 Card/Title/Description 组合显示账户与 Sign out，退出期间显示 Signing out…。加载、登录与退出失败直接使用共用 Sonner，取消为信息提示，不插入内联错误或另建通知层。未登录进入 Studio 不受阻，关闭框继续使用原 Studio；账户 Tooltip 在框打开时隐藏，弹框焦点与关闭由官方 Radix Dialog 管理。真实登录与会话行为由用户在 Chrome/Edge 验收，不将自动化结果视为实际授权通过。
+- Account 未登录时显示 UserRound / Account / Not signed in；点击打开官方 Dialog，登录内容来自简化 login-03，首行不显示 Logo/Exts 品牌，采用官方 Welcome back 标题与 CardHeader text-center，说明为用户指定的 Login with your Github or Google account。仅保留 Login with GitHub / Login with Google，不包含邮箱、密码、注册、其他方式或无效条款链接，不自行改写官方标题或增加品牌行。GitHub 通过 Neon 官方 SDK 与 identity 窗口授权，期间按钮显示 Signing in… 并阻止重复操作；Google 仍可点击并 toast.add 的 info 类型 提示暂未接入。会话初次读取显示 Checking account…；成功后侧栏显示真实头像和昵称/邮箱，账户 Dialog 沿用 Card/Title/Description 组合显示账户与 Sign out，退出期间显示 Signing out…。加载、登录与退出失败直接使用共用 Base UI Toast，取消为信息提示，不插入内联错误或另建通知层。未登录进入 Studio 不受阻，关闭框继续使用原 Studio；账户 Tooltip 在框打开时隐藏，弹框焦点与关闭由官方 Radix Dialog 管理。真实登录与会话行为由用户在 Chrome/Edge 验收，不将自动化结果视为实际授权通过。
 - Sidebar 主题语义映射现有 surface-raised、foreground、accent、border、ring 和 primary，不另设深浅主题；官方内部滚动、图标折叠及 768px 移动端断点沿用。SidebarProvider 不重复挂载 TooltipProvider，不写入示例 cookie，折叠状态仅在当前页面内保留；当前正文为官方 Empty。Account 使用官方 32px Avatar/Fallback、双行文字及尾部 ChevronsUpDown，副标题和间距沿用官方；Fallback 内为静态 UserRound，无假用户头像。登录表单恢复官方 FieldGroup/Field、CardTitle/Description，Card 保留默认边框、背景与 shadow-sm；Dialog 定位外壳透明无阴影，保留可访问语义、关闭按钮和全局 blur-overlay，避免重复卡片材质。Button outline 在共用组件显式使用既有 border-border，不在登录处重复覆盖颜色，不改变主题变量值。
-- Actions 沿用向上的官方 DropdownMenu，只有带 List / FolderOpen 的 Placeholder A / B；复用官方 Hover、焦点、键盘与选中关闭行为，onSelect 仅调用 toast.info 显示「暂未接入」，不执行业务功能。Media Download、Actions 的入口未迁入 Studio；Settings 通过共享账户菜单打开现有抽屉。Newtab 根部仍只挂一份复用主题的右下角 Toaster，供菜单、静态账户和下载面板共用，业务继续决定提示文案，不新增通知管理层。Components 旧菜单已移除，资源收藏只保留在 UI 文件夹。
+- Actions 沿用向上的官方 DropdownMenu，只有带 List / FolderOpen 的 Placeholder A / B；复用官方 Hover、焦点、键盘与选中关闭行为，onSelect 仅调用 toast.add 的 info 类型 显示「暂未接入」，不执行业务功能。Media Download、Actions 的入口未迁入 Studio；Settings 通过共享账户菜单打开现有抽屉。Newtab 根部仍只挂一份复用主题的右下角 Toaster，供菜单、静态账户和下载面板共用，业务继续决定提示文案，不新增通知管理层。Components 旧菜单已移除，资源收藏只保留在 UI 文件夹。
 - 字号、页面列数、具体宽高、位置与排版仍由现有组件负责；本次不建立全站布局框架或额外组件层。
 
 ## 验证与变更
@@ -177,7 +177,7 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - 默认 Calendar，重复选择不能取消至空值；Tooltip 与组件状态机制保留。Calendar 保留完整 24 周网格、每格 12px、间距 2px、周日开始及未来日期留白；运动、阅读、学习、创作每日各累计满 30 分钟完成一项，0–4 项分别使用 --activity-level-0 至 4，仅映射全局 muted/chart 色源，不维护第二套颜色。参数与核算以本文件“全局图表灰阶”为准。
 - Chart 内容高 96px，固定最近 14 个自然日。右上角复用 ChevronsUpDown 图标 Button ghost/icon-sm 点击直接轮换成长/睡眠。成长每日实际时长堆叠，从上到下为运动/阅读/学习/创作，分别对应 1/2/3/4 档；不足 30 分钟仍显示实际投入，Tooltip显示日期及四项时长，不显示合计或完成数。睡眠只保存每日总分钟，<6h、6–<7h、7–9h、>9h 对应 1–4 档；缺失留空不计 0，虚线固定在7小时且无文字标签，不计算均值。深浅只表达时长范围，不表达健康评分。
 - Pie 内容高96px，左右两列等宽，依次为本周投入实心饼图、四个周计划同心环，各自在列中居中（雷达图已移除）。周日至周六，顶部不显示日期范围标题；四项从12点顺时针、同心环从内到外均为运动/阅读/学习/创作。目标分别180/300/1200/180分钟（运动3h、阅读5h、学习20h、创作3h）；计划环为0–100%域，超额图形封顶、Tooltip保留实际百分比。无投入显示英文空状态 No activity this week，环背景引用0档。两图均无常驻标题，保持原卡片宽高、图形半径和列间距16px。
-- Activity 从后台认证的 /api/activity/days 读取本人数据，移除固定模拟 JSON；不提供页面录入或数据持久化/查询缓存。字段缺失与 null 保留未记录语义，0 为已记录零。请求在登录初始化及三种视图切换时触发；Growth/Sleep 只切换字段，Home/Studio、窗口聚焦、跨天不额外请求。Provider 在隐藏边界外保留当前展示状态；退出或切换身份不显示旧数据，完整本地存储重置在独立后续工作项实施。图表在所有状态始终保留，无数据、未登录、加载或失败使用图表本身的空数据表现；不以 Empty、图标、大标题、登录文案或无周投入文字替换图表。失败只由业务直接调用现有 Sonner toast.error「加载失败」，不增加通知包装器或重试交互。
+- Activity 从后台认证的 /api/activity/days 读取本人数据，移除固定模拟 JSON；不提供页面录入或数据持久化/查询缓存。字段缺失与 null 保留未记录语义，0 为已记录零。请求在登录初始化及三种视图切换时触发；Growth/Sleep 只切换字段，Home/Studio、窗口聚焦、跨天不额外请求。Provider 在隐藏边界外保留当前展示状态；退出或切换身份不显示旧数据，完整本地存储重置在独立后续工作项实施。图表在所有状态始终保留，无数据、未登录、加载或失败使用图表本身的空数据表现；不以 Empty、图标、大标题、登录文案或无周投入文字替换图表。失败只由业务直接调用现有 Sonner toast.add 的 error 类型「加载失败」，不增加通知包装器或重试交互。
 - 柱状图横轴每柱显示日号（1、2、…、31，不显示月份与前导零）。活动卡片内四种数据视图统一复用 ChartTooltipContent 的外观与行布局；日历仅由官方普通 Tooltip 提供触发/定位，局部使用 disableHoverableContent，避免相邻小格触发被鼠标过渡区域阻挡。不改其他模块 Tooltip。
 - 横轴预留 28px 容纳默认 tickSize、6px tickMargin 和日号文字，避免文字在 SVG 底部被截断；保持图表 96px 和原卡片高度不变。
 - 柱状图外轮廓统一4px圆角，数值集中在components/ui/chart.tsx的CHART_BAR_RADIUS，避免SVG数值属性与CSS变量重复维护。睡眠直接用Bar.radius，成长用Recharts官方BarStack.radius，内部各Bar不单独圆角，保留色块直角接缝。缺项、单项和较薄端部沿用官方整体裁切，不自写图形或逐项拼接圆角。
@@ -202,7 +202,7 @@ Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Do
 
 ### 共用状态等级
 
-状态图标使用 src/components/custom/status-icon.tsx，基于现有 UiIcon 静态映射。官方 DropdownMenuItem 用于行布局、Badge 用于标签、Sonner 用于临时通知，均不提供本需求所需的独立状态 SVG 等级映射，因此按用户批准提供此最小组件，不重写官方 Tooltip 或通知逻辑。
+状态图标使用 src/components/custom/status-icon.tsx，基于现有 UiIcon 静态映射。官方 DropdownMenuItem 用于行布局、Badge 用于标签、Toast 用于临时通知，均不提供本需求所需的独立状态 SVG 等级映射，因此按用户批准提供此最小组件，不重写官方 Tooltip 或通知逻辑。
 
 | 等级 | 状态图标 | 语义 |
 |---|---|---|
@@ -217,31 +217,35 @@ Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Do
 
 ### Toast 使用规则
 
-扩展各模块统一从 src/components/ui/sonner.tsx 导入 Toaster 和原生 toast API，复用 shadcn 官方 Sonner 展示组件、Lucide 图标和现有主题。通用组件维护各自页面视口右下角位置、图标映射和外观；业务不覆盖位置、图标或品牌配色，不分别手写提示框、关闭定时器或折叠逻辑。TG、Newtab 和后续 X 使用同一套规则。
+扩展各模块统一从 `src/components/ui/toast.tsx` 导入 Toaster 与官方 toast 管理器，使用 `toast.add({ title, description?, type? })`。复用指定 shadcn Base UI Toast 的结构、排版、图标、间距、圆角、动画、关闭与堆叠规则；适配现有主题，不修改全局 Token。位置沿用官方右下角（窄屏沿用官方两侧留白），业务不覆盖位置、图标或配色，不手写关闭计时或折叠逻辑。
 
-提示采用“等级图标 + 提示语”，不增加第二层 description。内容使用现有主题文字与背景，通过图标区分等级，不启用彩色 richColors。长文案可自然换行，不为单行展示裁掉重要反馈。
+默认使用一句简短英文标题，确需补充原因或处理方式时使用 description；不自动转换或替换提示文案。采用官方状态图标，包含官方错误图标的 destructive Token，不添加其他状态配色。当前业务不接入 Loading、Promise 或 Undo，不把临时提示当作待办或持续任务入口。
 
-| 类型 | 调用方式 | Lucide 图标 | 适用场景 |
+| 类型 | toast.add 的 type | Lucide 图标 | 适用场景 |
 | --- | --- | --- | --- |
-| 成功 | toast.success | CircleCheck | 操作已成功完成，例如下载完成 |
-| 信息 | toast.info | Info | 普通状态说明，例如尚未接入 Desktop |
-| 警告 | toast.warning | TriangleAlert | 需要用户留意或处理的状态；不因此新增当前模块的触发条件 |
-| 错误 | toast.error | OctagonX | 已触发操作失败，例如下载记录清空失败 |
+| 普通 | 省略 | 无 | 无须强调等级的简短操作反馈 |
+| 成功 | success | CircleCheck | 操作成功完成，例如下载完成 |
+| 信息 | info | Info | 普通状态说明，例如尚未接入 Desktop |
+| 警告 | warning | TriangleAlert | 需要留意或处理；不新增业务触发条件 |
+| 错误 | error | OctagonX | 已触发操作失败，例如记录清空失败 |
 
-业务模块持有文案、等级、完成条件等状态；不在共用 UI 中加入 Chrome API、下载记录、跨页面通知管理或重复消息包装器。不同页面/Shadow DOM 各自挂载 Toaster，多条提示沿用 Sonner 默认折叠堆叠与关闭行为，互不转发。用户可见提示语统一使用英文；共用 `sonner.tsx` 为每条 Toast 提供右侧官方 outline 图标按钮（与 DataTable Columns 触发器同款 `Button`，Lucide Copy，成功后短暂 Check），复制当前可见英文文案；悬停/键盘提示与 Columns 相同采用官方 Tooltip，固定显示 `Copy`，`aria-label` 为完整英文说明（成功后可显示 `Copied`），并通过 Toaster/`pointer-events` 规则避免点击穿透到页面控件。
+每条提示保留始终可见的小型官方 Button `variant="ghost" size="icon-sm"` 复制按钮，Lucide Copy 点击成功后短暂显示 Check，Tooltip 为 Copy，读屏文案为 Copy toast message／Copied。复制完整标题与描述，以换行分隔，不截断、不翻译、不替换排错内容。该复制按钮为用户批准的项目差异，独立于官方 Action；当前不接入其他业务操作。复制不额外弹 Toast。
 
-Settings 的加载、保存与权限操作失败统一使用根部现有 Toaster 的 toast.error，不在设置行追加错误段落；共用英文文案集中在 src/features/settings/messages.ts，调用方直接使用官方 API，不包装新的通知服务。Toast 不复制内部异常细节；保留必要的正式异常日志，临时排错日志结束后清理。此规则不改变已有 TG 下载仅成功提示的专属约定。
+业务模块持有文案、等级、触发条件；共用 UI 不加入 Chrome API、业务状态、跨页面通知管理或消息包装器。Newtab 与 Studio 共用根 Toaster；Telegram 在自身 Shadow DOM 挂载 Toaster，Toast 及复制 Tooltip 的 Portal 使用同一容器并继承现有主题。不同页面不转发提示，堆叠、关闭时长与滑动关闭使用官方实现。
 
-TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标和 “Download complete.”，不再描述文件名；文件名保留在 Download 记录。开始、进行中、取消和失败不显示 Toast。后续 X 必须复用同一组件和位置，实际触发条件由其独立 Issue 决定，不代表本次已接入。
+Settings 加载、保存与权限操作失败统一使用根 Toast 的 error 类型，不在设置行追加错误段落。重复英文文案集中在 src/features/settings/messages.ts，调用方直接使用官方 API；不主动展示或复制未显示的内部异常，正式日志不包含令牌等敏感值。
+
+TG 下载仍仅在文件流关闭成功后添加 success Toast，标题为 “Download complete.”，不显示文件名；开始、进行中、取消和失败不弹 Toast。后续 X 遵守共用展示规则，但不代表本次接入。
 
 ## 设置分区与通知声音
 
 - features/settings/index.tsx 组合 General/Features，界面按 general-*、feature-* 平铺；pages/settings 只持有 Sheet，数据入口为 store-client.ts。主题行迁至 general-theme.tsx，历史清理和媒体下载仅迁移设置界面，保留原业务数据入口。
-- General 按 Theme、Notifications 排列。Notifications 沿用 Media Download 的官方 Collapsible、Item、ItemSeparator、独立折叠箭头和 Switch，默认收起；不调整主题 Token。
-- 展开仅 Default、Error 两行。Default 问号提示为 Default, Success, Warning, Info, Loading. No sound.，右侧 VolumeX；Error 右侧 Volume2 按钮提示 Preview sound，直接试听固定错误音，不提供音色选择。
-- notifications.soundEnabled 默认 false，关闭时仍可试听。仅 Error 自动发声；每页面首条立即播放、1秒节流、音效未结束不叠加、不补播。同 Toast 文案更新不重复响；Loading 转 Error 响一次，其余结果无声。业务无需新增声音参数，倒计时结束音保持独立。
-- lib/audio 的 presets、synthesis、player、notification-sounds 集中维护音效和播放；notification-audio 使用 Sonner 官方 useSonner；扩展页面适配现有 settings 数据入口，Telegram MAIN 只接收原有隔离桥传来的 soundEnabled，不在共用 UI 中加入账号、Chrome API 或通知服务。
-- 总开关开启且实际播放受阻时，Notifications 主行下显示当前页面的持续状态；点击试听尝试恢复，恢复后清除。该反馈是用户批准的播放状态提示，不替代 toast.error 设置操作失败提示。不能识别系统静音，也不把暂停直接称为浏览器权限被拒；各页面音频状态独立，不同步账号，关闭/离开页面释放资源，恢复页面重新读取偏好，不补播历史通知。
+- General 按 Theme、Notification sounds 排列。Notification sounds 沿用 Media Download 的官方 Collapsible、Item、ItemSeparator、独立折叠箭头和 Switch，默认收起；不调整主题 Token。
+- 主行帮助说明：Play a sound when an error notification appears. Other notifications stay silent.；无障碍说明同步表达仅错误自动发声、关闭仍可试听。
+- 展开仅 Default、Error 两行。Default 问号提示为 Default, Success, Info, and Warning notifications are silent.，右侧 VolumeX；Error 右侧 Volume2 按钮提示 Preview sound，直接试听固定错误音，不提供音色选择。
+- notifications.soundEnabled 默认 false，关闭时仍可试听。仅 Error 自动发声；每页面首条立即播放、1秒节流、音效未结束不叠加、不补播。同 Toast 文案更新不重复响，其余四类无声；关闭动画中的 Toast 不作为新通知播放。业务无需新增声音参数，倒计时结束音保持独立。
+- lib/audio 的 presets、synthesis、player、notification-sounds 集中维护音效和播放；notification-audio 使用 Base UI 官方 useToastManager；扩展页面适配现有 settings 数据入口，Telegram MAIN 只接收原有隔离桥传来的 soundEnabled，不在共用 UI 中加入账号、Chrome API 或通知服务。
+- 总开关开启且实际播放受阻时，Notification sounds 主行下显示当前页面的持续状态；点击试听尝试恢复，恢复后清除。该反馈是用户批准的播放状态提示，不替代 error Toast 设置操作失败提示。不能识别系统静音，也不把暂停直接称为浏览器权限被拒；各页面音频状态独立，不同步账号，关闭/离开页面释放资源，恢复页面重新读取偏好，不补播历史通知。
 - 视觉、交互、音效听感及 Chrome/Edge 自动播放限制由用户实际验收，代理仅完成逻辑、类型及构建检查。
 
 ## Activity 翻页倒计时
@@ -262,7 +266,7 @@ TG 下载仅在文件流关闭成功后调用 toast.success，显示成功图标
 - 计时卡片右键使用官方Base Context Menu默认分组/勾选；计时音Metronome在前、Brown Noise在后，完成音Harp在前、Glass Chime在后。Timer Sound：Metronome、Brown Noise；Completion Sound：Harp、Glass Chime。两组各两项，各组单选或全不选，默认Metronome＋Harp。官方CheckboxItem受控勾选，再选同项取消并停止声音；选择后菜单保持打开。按用户最新要求不显示声音播放图标或试听动画，保留官方默认勾选。
 - 本机偏好分别保存在chrome.storage.local的timer.tickSound与timer.completionSound，不写云端；null表示该组静音，刷新后保留，完成音关闭仍显示归零Toast。多个Newtab通过storage.onChanged读取一致偏好，Home隐藏后重新显示会重读。缺失或非法值回到默认。仍遵循现有账号重置清理local规则，不扩大修改认证逻辑。
 - 选择后立即试听：滴答3次、连续噪声3秒、完成音1遍。试听取消旧音源与旧试听，暂停原滴答；结束恢复当前计时滴答，真正归零时优先结束当前试听并播放完成音；全程不修改截止时间。无计时时试听后释放音频上下文，切模式或关闭页面也释放。
-- 偏好读取/保存失败使用英文toast.error并保留正式错误日志；声音试听不另发Toast。真正到时仍仅有共用完成Toast和所选完成音。
+- 偏好读取/保存失败使用英文toast.add 的 error 类型并保留正式错误日志；声音试听不另发Toast。真正到时仍仅有共用完成Toast和所选完成音。
 
 - 计时音仅保留Brown Noise与Metronome；Brown Noise在倒计时运行时持续循环，不按秒触发。本地合成8秒双声道缓冲区，50ms首尾交叉过渡并从50ms处循环，带淡入；采样RMS目标0.18、峰值上限0.7，再经既有0.35主音量输出。无下载或新增依赖。
 - 连续噪声选择后试听3秒，计时中试听结束恢复连续播放；切回时钟、取消、归零或关闭页面立即停止，归零再播放所选完成音。旧rain、pink、quartz偏好按非法值回退Metronome，旧warm完成音偏好回退Harp，保留完成音偏好，不重置截止时间。

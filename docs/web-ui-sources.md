@@ -166,15 +166,15 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 
 以上是源码与配置核对结论，不证明最终渲染、焦点、菜单碰撞或真实权限交互已通过。验收发现明显差异时，以原有已确认效果修正，不能要求用户接受官方默认外观。
 
-## 扩展 Sonner（2026-10-21）
+## 扩展 Base UI Toast（2026-11-17）
 
-- 官方源码沿用本文固定 commit 的 new-york-v4/ui/sonner.tsx；运行时依赖精确固定为 sonner 2.0.8，锁文件同步，仅新增该包。
-- 本地 src/shared/ui/sonner.tsx 保留官方图标、主题 Token 与 props 透传；Vite 客户端去除 use client 和 Next.js 专属 next-themes，主题改由调用方使用现有主题解析结果传入，不新增主题系统。
-- TG 在自身 Shadow DOM 中挂载 Toaster，并导入 sonner/dist/styles.css；原页面中的官方默认 CSS 注入行为不修改。堆叠、折叠、关闭时长和交互沿用 Sonner 默认。TG 使用默认 success 类型，不自写关闭计时或通知队列；2026-10-24 按用户确认移除文件名 description，仅保留等级图标及“下载完成”。
-- 共用组件只负责展示；实际完成判断、文案、文件名和调用时机仍在 TG 模块中。
-- 2026-10-24 按用户反馈在共用 Toaster 显式设置默认 bottom-right，TG 去除 top-right 覆盖，与 Newtab 提示共用位置规则；不同页面分别挂载，不增加跨页提示中心或业务管理层。
-- 2026-10-24 统一通过 shared/ui/sonner.tsx 导出既有 toast API，TG 与 Download 均从该入口导入；沿用官方 success/info/warning/error 和现有 Lucide 映射，不添加消息管理封装或彩色状态覆盖。业务仅选择等级与提示语；当前文件夹提示改用 info，以展示既有信息图标。后续 X 遵守同一规则，不在本期接入。
-- 2026-11-09 共用 `src/components/ui/sonner.tsx` 在保留官方 Toaster 与 Lucide 图标映射的前提下，用薄包装为全部 `toast.*` 调用附加右侧仅图标的复制动作（`toast-copy-action.tsx`，官方 `Button` `variant="outline" size="icon"`，与 DataTable Columns 触发器相同交互语义，不使用 Sonner `[data-button]` 高反差样式）；Lucide `Copy`/`Check` 经 Sonner `action` 自定义节点挂载；复制当前可见英文字符串，成功后短暂显示 Check 再恢复 Copy；悬停/键盘提示用官方 `Tooltip`/`TooltipContent`，固定文案 `Copy`（与 DataTable Columns 相同），`aria-label` 可随成功切换为 `Copied`；`toast-message.ts` 将非英文或不可复制为纯文本的入参替换为按等级的通用英文。Toaster 使用 `pointer-events-none` 与每条 Toast 的 `pointer-events-auto` 降低点击穿透；不新增通知管理层，业务仍直接调用既有 API。
+- 取代原 Sonner 展示与包装；使用用户指定的 [Base UI Toast 文档](https://ui.shadcn.com/docs/components/base/toast)及 [Base Nova 官方注册表](https://ui.shadcn.com/r/styles/base-nova/toast.json)。固定采用 2026-11-17 获取的 `registry/base-nova/ui/toast.tsx` 源码快照，原始内容 SHA-256 为 `6d85d6762db4d66461a06db4f531a606357a2d8a554f1f094cda4662db7e85bf`；更新须先核对该快照及以下差异，不直接跟随注册表变化。GitHub 提交查询返回 403，本次以源码内容哈希标识固定版本，不声称取得了官方 Git commit。
+- 运行时沿用精确依赖 `@base-ui/react` 1.9.0、React 19.3.0、lucide-react 1.46.0；移除 sonner 2.0.8 与独立 CSS，锁文件同步，不引入或升级其他依赖。组合 Button 继续复用项目已有官方源码及批准差异，不重复迁入另一套 Button。
+- 必要适配：移除 Next.js 的 use client 指令；cn、Button 改为本地路径；官方生成器 IconPlaceholder 替换为其声明的 Lucide 图标；继续继承现有 popover、popover-foreground、muted-foreground、destructive、border、ring 主题 Token 和已批准 focus.css。保留官方 JSX 结构、尺寸、排版、圆角、阴影、动画、状态样式及响应式视口规则，不新增 CSS 色板或调整全局 Token。
+- Telegram 的 Toaster 增加可选 portalContainer 并传给官方 Portal；复制 Tooltip 的共用 TooltipContent 仅增加可选 Portal 容器透传，默认行为不变。Telegram 传原有 Shadow DOM mount，并在该独立 React 根提供一次 TooltipProvider；Newtab／Studio 沿用根 TooltipProvider。必要的 Portal 适配确保复用同一主题，不把 Tooltip 或 Toast 挂到宿主网站。
+- 用户批准的项目差异：ToastList 在官方 Action 前插入独立的复制按钮，使用现有官方 Button ghost/icon-sm，始终可见，Copy 成功后短暂 Check；复制完整标题和描述，不使用旧 Sonner 消息包装、英文回退替换或 outline 复制按钮。正文默认简短标题，必要时允许描述；TG 下载继续仅 Download complete.，无文件名副标题。
+- 官方 toast 管理器直接导出，业务使用 toast.add 的五类提示；不增加 Loading、Promise、Undo 或其他业务操作。官方源码预留的图标与原语不等于新增业务入口。声音通过官方 useToastManager 读取状态，原音效、默认关闭、Error 唯一自动发声与 1 秒节流规则保持。
+- 实际外观、堆叠、关闭、复制交互及听感待用户 Chrome／Edge 验收；源码迁入、逻辑测试和构建通过不代表与官方效果一致或已完成视觉验收。
 
 ## Settings 分组列表与折叠（2026-10-28）
 
@@ -269,7 +269,7 @@ Telegram 下载菜单的下载资源、选择文件夹项使用现有 DropdownMe
 
 复用本文件已固定版本的官方 Collapsible、Item/ItemGroup/ItemSeparator、Card、Switch、Button 和 Tooltip，不修改基础组件、全局 Token 或新增依赖。Settings 界面按 general-*、feature-* 平铺并由 index.tsx 组合；媒体下载及历史清理设置仅移动归属，原主题行外观保持。Notifications 明确参考现有 Media Download 的折叠箭头、独立开关、列表间距及分隔线，已批准差异为 Default 问号说明、静音图标、Error 试听按钮和声音暂停状态提示。采用现有来源不等于已完成视觉验收。
 
-自动声音通过 Sonner 2.0.8 的公开 useSonner 状态接入，仅 Error 响应；原共用 sonner.tsx 展示与业务 toast API 保持。音频不是额外通知层，统一在 lib/audio 合成，倒计时保留原音色参数及专用调度。
+自动声音现通过 Base UI 1.9.0 的公开 useToastManager 状态接入，仅 Error 响应；当前展示与调用已由上述 Base UI Toast 迁入覆盖。音频不是额外通知层，统一在 lib/audio 合成，倒计时保留原音色参数及专用调度。
 
 Telegram MAIN 仅挂载接收 soundEnabled 的声音展示组件，偏好由既有隔离桥事件传递；扩展页面使用独立设置适配入口。构建产物已核对 MAIN 不包含扩展设置请求，未新增权限或第二条通信机制。
 

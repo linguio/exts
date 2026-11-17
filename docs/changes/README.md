@@ -80,7 +80,7 @@ docs/
 
 ## 当前 Issue
 
-无。
+- [统一 Toast 展示、复制与声音说明](./issues/2026-11-17-extension-toast-standard-issue.md) · 待验收，官方 Toast、完整复制与声音说明已实现，187 项测试、类型检查及构建通过 · [Commit 记录](./commits/2026-11-17-extension-toast-standard-commit.md)
 
 ## Issue 队列
 
