@@ -8,7 +8,7 @@ import { Button } from '../../../components/ui/button';
 import { ScrollArea } from '../../../components/ui/scroll-area';
 import { ToggleGroup, ToggleGroupItem } from '../../../components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
-import { toast } from '../../../components/ui/sonner';
+import { toast } from '../../../components/ui/toast';
 import { UiIcon } from '../../../components/custom/ui-icon';
 import { BrandIcon } from '../../../components/custom/brand-icon';
 import { DownloadRecordRow } from './download-record';
@@ -61,7 +61,7 @@ export function DownloadsPanel() {
     try {
       await clearDownloads(filter);
       setConfirmOpen(false);
-    } catch (error) { toast.error(error instanceof Error ? error.message : 'Unable to clear download history.'); }
+    } catch (error) { toast.add({ type: "error", title: error instanceof Error ? error.message : 'Unable to clear download history.' }); }
     finally { setClearing(false); }
   };
 
@@ -81,7 +81,7 @@ export function DownloadsPanel() {
         </ToggleGroup>
         <div className="flex items-center gap-1">
           <NamedTooltip label={`打开 ${folders[filter]} 文件夹`} suppressed={confirmOpen}>
-            <Button type="button" variant="ghost" size="icon-sm" aria-label={`Open ${folders[filter]} folder`} onClick={() => toast.info('Folders are not available yet. Exts Desktop is not connected.')}>
+            <Button type="button" variant="ghost" size="icon-sm" aria-label={`Open ${folders[filter]} folder`} onClick={() => toast.add({ type: "info", title: 'Folders are not available yet. Exts Desktop is not connected.' })}>
               <UiIcon name="folder-open" className="size-4" />
             </Button>
           </NamedTooltip>

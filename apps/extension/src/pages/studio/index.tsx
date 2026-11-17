@@ -7,7 +7,7 @@ import { StudioSidebar } from './layout/sidebar';
 import { StudioLayout } from './layout';
 import { LoginRequired } from './account/login-required';
 import { saveStudioRoute, readStudioRoute } from '../../app/view-preference';
-import { toast } from '../../components/ui/sonner';
+import { toast } from '../../components/ui/toast';
 
 interface StudioProps { onHome: () => void }
 
@@ -49,7 +49,7 @@ export function Studio({ onHome }: StudioProps) {
           if (!sessionKey || !account.user) return;
           const nextRoute = resolveStudioRoute(route).page.route;
           setSelection({ sessionKey, route: nextRoute });
-          void saveStudioRoute(account.user.id, nextRoute).catch(() => toast.error('Unable to save page preference.'));
+          void saveStudioRoute(account.user.id, nextRoute).catch(() => toast.add({ type: "error", title: 'Unable to save page preference.' }));
         }} />
     }>
       {pageBody}

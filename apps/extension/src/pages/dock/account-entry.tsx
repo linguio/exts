@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '../../components/ui/button';
 import { DropdownMenu, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
-import { toast } from '../../components/ui/sonner';
+import { toast } from '../../components/ui/toast';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
 import { LoginDialog } from '@/pages/studio/account/login-dialog';
@@ -19,7 +19,7 @@ export function AccountEntry() {
   const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
-    if (error) toast.error(error.message);
+    if (error) toast.add({ type: "error", title: error.message });
   }, [error]);
 
   async function logout() {
@@ -27,11 +27,11 @@ export function AccountEntry() {
     setLoggingOut(true);
     try {
       await logoutAccount();
-      toast.success('Signed out successfully.');
+      toast.add({ type: "success", title: 'Signed out successfully.' });
       await refetch();
       overlay.overlayProps.onOpenChange(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Unable to sign out. Please try again.');
+      toast.add({ type: "error", title: error instanceof Error ? error.message : 'Unable to sign out. Please try again.' });
     } finally {
       setLoggingOut(false);
     }

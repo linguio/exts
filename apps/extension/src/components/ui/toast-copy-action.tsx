@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Check, Copy } from 'lucide-react';
 import { Button } from './button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from './tooltip';
 
 /** 复制成功后展示 Check 的时长，便于用户辨认反馈。 */
 export const TOAST_COPY_FEEDBACK_MS = 2_000;
@@ -13,15 +13,16 @@ export function getToastCopyAriaLabel(copied: boolean): string {
   return copied ? 'Copied' : 'Copy toast message';
 }
 
-/** 与 DataTable Columns 触发器一致的仅图标 outline 按钮组合。 */
+/** 用户批准的 ghost 小型图标复制按钮。 */
 export const toastCopyButtonClassName = 'shrink-0';
 
 interface ToastCopyActionProps {
   displayText: string;
+  portalContainer?: HTMLElement | ShadowRoot | null;
 }
 
-/** Sonner 官方 action 插槽：仅图标复制当前 Toast 可见英文文案。 */
-export function ToastCopyAction({ displayText }: ToastCopyActionProps) {
+/** Toast 复制入口：复制完整标题和描述。 */
+export function ToastCopyAction({ displayText, portalContainer }: ToastCopyActionProps) {
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -42,25 +43,23 @@ export function ToastCopyAction({ displayText }: ToastCopyActionProps) {
 
   const ariaLabel = getToastCopyAriaLabel(copied);
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            className={toastCopyButtonClassName}
-            aria-label={ariaLabel}
-            onClick={event => { void handleCopy(event); }}
-            onPointerDown={event => { event.stopPropagation(); }}
-          >
-            {copied
-              ? <Check className="size-4" aria-hidden />
-              : <Copy className="size-4" aria-hidden />}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>{TOAST_COPY_TOOLTIP}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className={toastCopyButtonClassName}
+          aria-label={ariaLabel}
+          onClick={event => { void handleCopy(event); }}
+          onPointerDown={event => { event.stopPropagation(); }}
+        >
+          {copied
+            ? <Check className="size-4" aria-hidden />
+            : <Copy className="size-4" aria-hidden />}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent portalContainer={portalContainer}>{TOAST_COPY_TOOLTIP}</TooltipContent>
+    </Tooltip>
   );
 }

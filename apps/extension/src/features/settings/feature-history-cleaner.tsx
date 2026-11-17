@@ -8,7 +8,7 @@ import { Item, ItemActions, ItemContent, ItemTitle } from '../../components/ui/i
 import { getHistoryCleanerEnabled, setHistoryCleanerEnabled } from '../history-cleaner/settings';
 import { subscribeSettings } from './store-client';
 import { settingsMessages } from './messages';
-import { toast } from '../../components/ui/sonner';
+import { toast } from '../../components/ui/toast';
 
 const descriptions = [
   'Clears all browsing history when the browser starts and when the last window closes.',
@@ -32,7 +32,7 @@ export function HistoryCleanerSettings() {
       if (mounted.current && currentVersion === version.current) setEnabled(current);
     } catch {
       if (mounted.current && currentVersion === version.current) {
-        toast.error(settingsMessages.loadFailed);
+        toast.add({ type: "error", title: settingsMessages.loadFailed });
       }
     } finally {
       if (mounted.current && currentVersion === version.current) setLoading(false);
@@ -43,7 +43,7 @@ export function HistoryCleanerSettings() {
     mounted.current = true;
     const onPermissionRemoved = (permissions: chrome.permissions.Permissions) => {
       if (!permissions.permissions?.includes('browsingData')) return;
-      toast.error(settingsMessages.historyPermissionRemoved);
+      toast.add({ type: "error", title: settingsMessages.historyPermissionRemoved });
       void refresh();
     };
     const onPermissionAdded = (permissions: chrome.permissions.Permissions) => {
@@ -72,12 +72,12 @@ export function HistoryCleanerSettings() {
       const current = await setHistoryCleanerEnabled(next);
       if (mounted.current) {
         setEnabled(current);
-        if (current === next) toast.success(settingsMessages.saved);
-        if (next && !current) toast.error(settingsMessages.historyPermissionDenied);
+        if (current === next) toast.add({ type: "success", title: settingsMessages.saved });
+        if (next && !current) toast.add({ type: "error", title: settingsMessages.historyPermissionDenied });
       }
     } catch {
       if (mounted.current) {
-        toast.error(settingsMessages.saveFailed);
+        toast.add({ type: "error", title: settingsMessages.saveFailed });
       }
     } finally {
       saving.current = false;

@@ -4,7 +4,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../compo
 import { Item, ItemActions, ItemContent, ItemGroup, ItemSeparator, ItemTitle } from '../../components/ui/item';
 import { Switch } from '../../components/ui/switch';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
-import { toast } from '../../components/ui/sonner';
+import { toast } from '../../components/ui/toast';
 import { UiIcon } from '../../components/custom/ui-icon';
 import { notificationSounds, readNotificationAudioStatus, subscribeNotificationAudio } from '../../lib/audio/notification-sounds';
 import { getSettings, subscribeSettings, updateSettings } from './store-client';
@@ -24,7 +24,7 @@ export function NotificationSettings() {
     const stop = subscribeSettings(settings => { changed = true; setEnabled(settings.notifications.soundEnabled); });
     void getSettings().then(settings => {
       if (mounted.current && !changed) setEnabled(settings.notifications.soundEnabled);
-    }).catch(() => { if (mounted.current) toast.error(settingsMessages.loadFailed); })
+    }).catch(() => { if (mounted.current) toast.add({ type: "error", title: settingsMessages.loadFailed }); })
       .finally(() => { if (mounted.current) setLoading(false); });
     return () => { mounted.current = false; stop(); };
   }, []);
@@ -32,10 +32,10 @@ export function NotificationSettings() {
     <Item className="px-0">
       <ItemContent className="min-w-0">
         <ItemTitle>
-          <span id={`${id}-label`}>Notifications</span>
+          <span id={`${id}-label`}>Notification sounds</span>
           <Tooltip>
-            <TooltipTrigger asChild><Button type="button" variant="ghost" size="icon-sm" className="size-6 shrink-0 cursor-pointer text-muted-foreground" aria-label="About Notifications"><UiIcon name="circle-question-mark" className="size-4" /></Button></TooltipTrigger>
-            <TooltipContent side="top" collisionPadding={8} className="max-w-[280px] text-left leading-5">Play a sound for errors. Other notifications stay silent.</TooltipContent>
+            <TooltipTrigger asChild><Button type="button" variant="ghost" size="icon-sm" className="size-6 shrink-0 cursor-pointer text-muted-foreground" aria-label="About notification sounds"><UiIcon name="circle-question-mark" className="size-4" /></Button></TooltipTrigger>
+            <TooltipContent side="top" collisionPadding={8} className="max-w-[280px] text-left leading-5">Play a sound when an error notification appears. Other notifications stay silent.</TooltipContent>
           </Tooltip>
         </ItemTitle>
         {enabled && (status === 'paused' || status === 'unavailable') && <p role="status" className="text-sm text-muted-foreground">
@@ -52,13 +52,13 @@ export function NotificationSettings() {
             if (!mounted.current) return;
             setEnabled(settings.notifications.soundEnabled);
             notificationSounds.setEnabled(settings.notifications.soundEnabled);
-            toast.success(settingsMessages.saved);
-          }).catch(() => { if (mounted.current) toast.error(settingsMessages.saveFailed); })
+            toast.add({ type: "success", title: settingsMessages.saved });
+          }).catch(() => { if (mounted.current) toast.add({ type: "error", title: settingsMessages.saveFailed }); })
             .finally(() => { saving.current = false; if (mounted.current) setPending(false); });
         }} />
       </ItemActions>
     </Item>
-    <span id={`${id}-description`} className="sr-only">Only error notifications play a sound. Preview is available when sounds are off.</span>
+    <span id={`${id}-description`} className="sr-only">Only error notifications play a sound. Default, Success, Info, and Warning notifications are silent. Preview is available when sounds are off.</span>
     <CollapsibleContent>
       <ItemSeparator />
       <ItemGroup>
@@ -67,7 +67,7 @@ export function NotificationSettings() {
             <ItemTitle className="text-sm font-normal">Default
               <Tooltip>
                 <TooltipTrigger asChild><Button type="button" variant="ghost" size="icon-sm" className="size-6 shrink-0 cursor-pointer text-muted-foreground" aria-label="About default notifications"><UiIcon name="circle-question-mark" className="size-4" /></Button></TooltipTrigger>
-                <TooltipContent side="top" collisionPadding={8}>Default, Success, Warning, Info, Loading. No sound.</TooltipContent>
+                <TooltipContent side="top" collisionPadding={8}>Default, Success, Info, and Warning notifications are silent.</TooltipContent>
               </Tooltip>
             </ItemTitle>
           </ItemContent>

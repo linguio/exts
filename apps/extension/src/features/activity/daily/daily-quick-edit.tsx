@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { DataTableEditSheet } from '../../../components/custom/data-table/data-table-edit-sheet';
-import { toast } from '../../../components/ui/sonner';
+import { toast } from '../../../components/ui/toast';
 import { useAccount, readSessionResetVersion, subscribeSessionReset } from '../../account/auth-client';
 import type { DailyActivityRow } from '../data/types';
 import { dailyColumns } from './columns';
@@ -33,7 +33,7 @@ export function DailyQuickEdit({ open, onOpenChange }: { open: boolean; onOpenCh
     if (isPending) return;
     openingScope.current = scope;
     if (accountError || !userId) {
-      toast.error(accountError ? 'Unable to verify account status. Please try again.' : 'Please sign in to edit daily records.');
+      toast.add({ type: "error", title: accountError ? 'Unable to verify account status. Please try again.' : 'Please sign in to edit daily records.' });
       onOpenChange(false);
       return;
     }
@@ -43,13 +43,13 @@ export function DailyQuickEdit({ open, onOpenChange }: { open: boolean; onOpenCh
       if (controller.signal.aborted) return;
       if (row) setRecord({ scope, row });
       else {
-        toast.info('No daily records yet.');
+        toast.add({ type: "info", title: 'No daily records yet.' });
         onOpenChange(false);
       }
     }).catch(() => {
       if (controller.signal.aborted) return;
       console.error('Daily 快捷查询失败', { code: 'QUERY_ERROR' });
-      toast.error('Query failed. Please try again.');
+      toast.add({ type: "error", title: 'Query failed. Please try again.' });
       onOpenChange(false);
     });
     return () => controller.abort();

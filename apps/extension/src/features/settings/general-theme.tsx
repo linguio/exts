@@ -2,7 +2,7 @@ import { useId, useRef, useState, useSyncExternalStore } from 'react';
 
 import { readTheme, setTheme, subscribeTheme } from './theme';
 import { settingsMessages } from './messages';
-import { toast } from '../../components/ui/sonner';
+import { toast } from '../../components/ui/toast';
 import { Item, ItemActions, ItemContent, ItemTitle } from '../../components/ui/item';
 import { ToggleGroup, ToggleGroupItem } from '../../components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
@@ -33,8 +33,8 @@ export function ThemeSettings() {
                 if (saving.current || value === theme) return;
                 saving.current = true;
                 setSavingTheme(value);
-                void setTheme(value).then(() => toast.success(settingsMessages.saved)).catch(() => {
-                  toast.error(settingsMessages.saveFailed);
+                void setTheme(value).then(() => toast.add({ type: "success", title: settingsMessages.saved })).catch(() => {
+                  toast.add({ type: "error", title: settingsMessages.saveFailed });
                 }).finally(() => {
                   saving.current = false;
                   setSavingTheme(null);

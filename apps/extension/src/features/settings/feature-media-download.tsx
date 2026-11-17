@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/too
 import { UiIcon } from '../../components/custom/ui-icon';
 import { mediaDownloadSetting } from '../media-download/settings';
 import { settingsMessages } from './messages';
-import { toast } from '../../components/ui/sonner';
+import { toast } from '../../components/ui/toast';
 import { StatusIcon, type StatusLevel } from '../../components/custom/status-icon';
 
 const descriptions = [
@@ -29,7 +29,7 @@ export function MediaDownloadSettings() {
       .catch(() => {
         if (!active) return;
         setUnavailable(true);
-        toast.error(settingsMessages.loadFailed);
+        toast.add({ type: "error", title: settingsMessages.loadFailed });
       })
       .finally(() => { if (active) setBusy(false); });
     return () => { active = false; stop(); };
@@ -58,10 +58,10 @@ export function MediaDownloadSettings() {
         <Switch checked={enabled} disabled={busy} aria-labelledby={`${id}-label`} aria-describedby={`${id}-description`} onCheckedChange={next => {
           setBusy(true);
           setUnavailable(false);
-          void mediaDownloadSetting().set(next).then(() => { setEnabled(next); toast.success(settingsMessages.saved); })
+          void mediaDownloadSetting().set(next).then(() => { setEnabled(next); toast.add({ type: "success", title: settingsMessages.saved }); })
             .catch(() => {
               setUnavailable(true);
-              toast.error(settingsMessages.saveFailed);
+              toast.add({ type: "error", title: settingsMessages.saveFailed });
             })
             .finally(() => setBusy(false));
         }} />

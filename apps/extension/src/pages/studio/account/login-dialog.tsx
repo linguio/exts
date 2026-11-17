@@ -5,7 +5,7 @@ import { Button } from '../../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
 import { Field, FieldGroup } from '../../../components/ui/field';
-import { toast } from '../../../components/ui/sonner';
+import { toast } from '../../../components/ui/toast';
 import { loginAccount } from '../../../features/account/auth-client';
 import type { AccountProvider } from '../../../features/account/account-controller';
 
@@ -19,15 +19,15 @@ export function LoginDialog({ children, isPending, refetch, onOpenChange }: { ch
     setPending(provider);
     try {
       await loginAccount(provider);
-      toast.success('Signed in successfully.');
+      toast.add({ type: "success", title: 'Signed in successfully.' });
       await refetch();
       setOpen(false);
       onOpenChange?.(false);
     } catch (error) {
-      if (error instanceof Error && error.message === 'Sign-in cancelled.') toast.info(error.message);
+      if (error instanceof Error && error.message === 'Sign-in cancelled.') toast.add({ type: "info", title: error.message });
       else {
         console.error('Studio OIDC 登录失败');
-        toast.error(error instanceof Error ? error.message : 'Sign-in failed. Please try again.');
+        toast.add({ type: "error", title: error instanceof Error ? error.message : 'Sign-in failed. Please try again.' });
       }
     } finally {
       setPending(null);

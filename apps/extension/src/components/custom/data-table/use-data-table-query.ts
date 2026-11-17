@@ -3,7 +3,7 @@ import type { Updater } from '@tanstack/react-table';
 import { createQueryTableState, defaultFilterValues, queryTableReducer, toQueryTableRequest } from './state';
 import { QUERY_FAILED_TOAST, preserveQueryTotal, runTableQuery } from './query-request';
 import { RowPreviewError, applyRowPreviewPatch, canApplyRowPreview } from './row-preview';
-import { toast } from '../../ui/sonner';
+import { toast } from '../../ui/toast';
 import type { DataTableFilter, DataTableFilterValue, DataTableQuery, DataTableQueryFn, DataTableQueryResult } from './types';
 
 interface QueryResult<T> {
@@ -41,7 +41,7 @@ export function useDataTableQuery<T>(filters: DataTableFilter[], queryFn: DataTa
           status: 'error',
           data: { rows: [], total: preserveQueryTotal(previous?.data) },
         }));
-        toast.error(QUERY_FAILED_TOAST);
+        toast.add({ type: "error", title: QUERY_FAILED_TOAST });
       });
   }, [enabled, key, request]);
 

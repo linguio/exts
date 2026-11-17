@@ -1,15 +1,13 @@
 import { expect, it } from 'vitest';
-import { isEnglishDisplayText, resolveToastDisplayText } from '../../../src/components/ui/toast-message';
+import { createElement } from 'react';
+import { getToastCopyText } from '../../../src/components/ui/toast-message';
 
-it('保留英文文案，拒绝中文与不可复制输入', () => {
-  expect(isEnglishDisplayText('Query failed. Please try again.')).toBe(true);
-  expect(isEnglishDisplayText('数据加载失败，请稍后重试')).toBe(false);
-  expect(resolveToastDisplayText('Saved.', 'success')).toBe('Saved.');
-  expect(resolveToastDisplayText('登录已失效，请重新登录', 'error')).toBe('Something went wrong. Please try again.');
-  expect(resolveToastDisplayText('', 'error')).toBe('Something went wrong. Please try again.');
+it('完整复制标题与描述，不替换排错内容', () => {
+  expect(getToastCopyText('Request failed.', 'HTTP 503\nTrace: abc-123')).toBe('Request failed.\nHTTP 503\nTrace: abc-123');
+  expect(getToastCopyText('错误详情', undefined)).toBe('错误详情');
 });
 
-it('按等级返回通用英文回退', () => {
-  expect(resolveToastDisplayText('已保存', 'success')).toBe('Completed successfully.');
-  expect(resolveToastDisplayText('加载中', 'loading')).toBe('Please wait.');
+it('复制可见的嵌套文本，不包含节点结构', () => {
+  expect(getToastCopyText(createElement('strong', null, 'Request ', 'failed'), ['Code: ', 503])).toBe('Request failed\nCode: 503');
+  expect(getToastCopyText('Saved.', null)).toBe('Saved.');
 });

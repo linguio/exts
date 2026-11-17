@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '../../../components/ui/avatar';
 import { DropdownMenu, DropdownMenuTrigger } from '../../../components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '../../../components/ui/sidebar';
-import { toast } from '../../../components/ui/sonner';
+import { toast } from '../../../components/ui/toast';
 import { UiIcon } from '../../../components/custom/ui-icon';
 import { useAccount, logoutAccount } from '../../../features/account/auth-client';
 import { LoginDialog } from './login-dialog';
@@ -22,7 +22,7 @@ export function AccountSidebar() {
   useEffect(() => {
     if (error) {
       console.error('Studio 账户会话读取失败');
-      toast.error(error.message);
+      toast.add({ type: "error", title: error.message });
     }
   }, [error]);
 
@@ -31,11 +31,11 @@ export function AccountSidebar() {
     setPending(true);
     try {
       await logoutAccount();
-      toast.success('Signed out successfully.');
+      toast.add({ type: "success", title: 'Signed out successfully.' });
       await refetch();
     } catch (error) {
       console.error('Studio 账户退出失败');
-      toast.error(error instanceof Error ? error.message : 'Unable to sign out. Please try again.');
+      toast.add({ type: "error", title: error instanceof Error ? error.message : 'Unable to sign out. Please try again.' });
     } finally {
       setPending(false);
     }

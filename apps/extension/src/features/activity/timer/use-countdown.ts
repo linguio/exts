@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { toast } from '../../../components/ui/sonner';
+import { toast } from '../../../components/ui/toast';
 import { defaultSounds, readSounds, saveSound, soundKeys, type TimerSounds } from './sound-preference';
 import { Countdown } from './countdown';
 import { TimerAudio } from './audio';
@@ -30,7 +30,7 @@ export function useCountdown() {
       } catch (error) {
         if (!active) return;
         console.error('倒计时声音偏好读取失败', error);
-        toast.error('Unable to load timer sounds.');
+        toast.add({ type: "error", title: 'Unable to load timer sounds.' });
       }
     }
     void load();
@@ -54,7 +54,7 @@ export function useCountdown() {
     }
     void saveSound(group, value).catch(error => {
       console.error('倒计时声音偏好保存失败', error);
-      toast.error('Unable to save timer sound.');
+      toast.add({ type: "error", title: 'Unable to save timer sound.' });
     });
   }
 

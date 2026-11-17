@@ -1,13 +1,15 @@
-import { createElement, useEffect, useState } from 'react';
-import { toast, useSonner } from 'sonner';
+import { createElement, useEffect, useRef, useState } from 'react';
+import { useToastManager } from '../../components/ui/toast';
 import { notificationSounds } from '../../lib/audio/notification-sounds';
 import { getSettings, subscribeSettings } from './store-client';
 
 /** 展示环境只接收开关，不读取 Chrome API；MAIN 页面通过原有隔离桥取得偏好。 */
 export function NotificationAudio({ soundEnabled }: { soundEnabled: boolean }) {
-  const { toasts } = useSonner();
+  const { toasts } = useToastManager();
+  const currentToasts = useRef(toasts);
+  currentToasts.current = toasts;
   useEffect(() => {
-    notificationSounds.seed(toast.getToasts().filter(item => !('dismiss' in item)));
+    notificationSounds.seed(currentToasts.current);
     const release = () => notificationSounds.dispose();
     window.addEventListener('pagehide', release);
     return () => { window.removeEventListener('pagehide', release); release(); };
@@ -15,13 +17,13 @@ export function NotificationAudio({ soundEnabled }: { soundEnabled: boolean }) {
   useEffect(() => {
     notificationSounds.setEnabled(soundEnabled);
     const restore = () => {
-      notificationSounds.seed(toast.getToasts().filter(item => !('dismiss' in item)));
+      notificationSounds.seed(currentToasts.current);
       notificationSounds.setEnabled(soundEnabled);
     };
     window.addEventListener('pageshow', restore);
     return () => window.removeEventListener('pageshow', restore);
   }, [soundEnabled]);
-  useEffect(() => { notificationSounds.observe(toasts); }, [toasts]);
+  useEffect(() => { notificationSounds.observe(toasts.filter(item => item.transitionStatus !== 'ending')); }, [toasts]);
   return null;
 }
 

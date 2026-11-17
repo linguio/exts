@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "sonner/dist/styles.css";
 @import "../../../styles/theme.css";
 @import "../../../styles/focus.css";
 
@@ -15,6 +14,7 @@
   --color-border: var(--border);
   --color-ring: var(--ring);
   --color-destructive: var(--destructive);
+  --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --font-sans: var(--font-geist-sans);
   --radius-sm: calc(var(--radius) - 8px);

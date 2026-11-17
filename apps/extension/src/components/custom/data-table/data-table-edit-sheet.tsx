@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, useId, type ChangeEvent, type FormEvent }
 import type { ColumnDef } from '@tanstack/react-table';
 import { SquarePen } from 'lucide-react';
 import { Button } from '../../ui/button';
-import { toast } from '../../ui/sonner';
+import { toast } from '../../ui/toast';
 import { Input } from '../../ui/input';
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../../ui/input-group';
 import { Spinner } from '../../ui/spinner';
@@ -89,7 +89,7 @@ export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, update
     setFieldErrors(errors);
     if (Object.keys(errors).length) return;
     if (partialUpdates && !Object.keys(values).length) {
-      toast.error('No changes to save.');
+      toast.add({ type: "error", title: 'No changes to save.' });
       return;
     }
     const controller = beginSubmit();
@@ -98,12 +98,12 @@ export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, update
       await updateFn(getRowId(row), values, controller.signal);
       if (controller.signal.aborted) return;
       closeClean();
-      toast.success('Activity updated.');
+      toast.add({ type: "success", title: 'Activity updated.' });
       onSaved();
     } catch (error) {
       if (controller.signal.aborted) return;
       const message = error instanceof Error ? error.message : 'Save failed. Please try again.';
-      toast.error(message);
+      toast.add({ type: "error", title: message });
     } finally {
       endSubmit(controller);
       setSubmitting(false);
