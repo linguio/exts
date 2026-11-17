@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [在 Home Actions 快捷编辑最新 Daily 记录](./issues/2026-11-17-extension-daily-quick-edit-issue.md) · 已完成 · [Commit 记录](./commits/2026-11-17-extension-daily-quick-edit-commit.md)；快捷编辑及登录前会话核验修复已交付，187 项测试、类型检查和构建通过；用户验收通过并批准代码、文档提交及推送。
+
 - [更新 2.4.0 版本与发布日志](./issues/2026-11-16-repo-release-v240-issue.md) · 已完成 · [Commit 记录](./commits/2026-11-16-repo-release-v240-commit.md)；用户验收通过并批准代码与文档两笔本地提交；已记录 macOS 与隔离数据库验证缺口，未推送或发布。
 
 - [整理账户菜单、设置与通知声音](./issues/2026-11-13-extension-toast-sound-issue.md) · 已完成 · [Commit 记录](./commits/2026-11-13-extension-toast-sound-commit.md)；用户验收通过并批准代码与文档两笔本地提交。默认关闭的错误提示音、设置整理和数据库加列已交付，未推送或发布。
