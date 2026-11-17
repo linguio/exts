@@ -40,9 +40,9 @@ export function subscribeSessionReset(listener: () => void): () => void {
 
 export const readSessionResetVersion = () => resetVersion;
 
-async function request(action: 'get' | 'login' | 'logout', provider?: AccountProvider): Promise<AccountUser | null> {
+async function request(action: 'get' | 'login' | 'logout', provider?: AccountProvider, loginGeneration?: string): Promise<AccountUser | null> {
   const before = resetVersion;
-  const generation = action === 'get' ? undefined : await captureSessionGeneration();
+  const generation = action === 'get' ? undefined : loginGeneration ?? await captureSessionGeneration();
   const response = await chrome.runtime.sendMessage({ type: 'exts:account', action, provider, generation });
   if (!response?.ok) {
     const error = new Error(response?.error || 'Account request failed.') as Error & { code?: string };
@@ -53,7 +53,21 @@ async function request(action: 'get' | 'login' | 'logout', provider?: AccountPro
   return response.user;
 }
 export async function loginAccount(provider: AccountProvider) {
-  const user = await request('login', provider);
+  // 主动登录重新核验后台账号，不把页面缓存代次用于新的授权操作。
+  const before = resetVersion;
+  const account = await chrome.runtime.sendMessage({ type: 'exts:account', action: 'get' });
+  if (!account?.ok && account?.code !== 'session-expired') {
+    throw new Error('Unable to verify account status. Please try again.');
+  }
+  if (account.ok && account.user !== null) throw new Error('Please sign out of the current account first.');
+  const current = await chrome.runtime.sendMessage({ type: 'exts:session:generation' });
+  if (!current?.ok || typeof current.generation !== 'string' || !current.generation) {
+    throw new Error('Unable to verify account status. Please try again.');
+  }
+  if (before !== resetVersion || (account.generation && account.generation !== current.generation)) {
+    throw new Error('Session changed. Please try again.');
+  }
+  const user = await request('login', provider, current.generation);
   if (user) void refreshSettings().catch(() => {});
   return user;
 }
