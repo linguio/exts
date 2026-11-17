@@ -1,12 +1,26 @@
 import { beforeEach, expect, it, vi } from 'vitest';
 import { ApiRequestError } from '../../../src/api/client';
 import { requestActivity } from '../../../src/features/activity/requests';
-import { dailyActivityRequest, queryDailyRecords } from '../../../src/features/activity/daily/query';
+import { dailyActivityRequest, queryDailyRecords, queryLatestDailyRecord } from '../../../src/features/activity/daily/query';
 
 vi.mock('../../../src/features/activity/requests', () => ({ requestActivity: vi.fn() }));
 beforeEach(() => vi.mocked(requestActivity).mockReset());
 const request = { pageIndex: 0, pageSize: 20, sort: [{ field: 'readingHours', order: 'asc' as const }],
   filters: { date: { from: '2026-11-01', to: '2026-11-09' } } };
+
+it('快捷编辑只查询日期最新的一条记录，空结果不创建记录', async () => {
+  const day = { id: '00000000-0000-4000-8000-000000000010', userId: 'user-1', date: '2026-11-02', exerciseHours: null, readingHours: 0,
+    learningHours: 1, creationHours: null, sleepHours: null,
+    createdAt: '2026-11-02T00:00:00+08:00', updatedAt: '2026-11-02T09:00:00+08:00' };
+  const signal = new AbortController().signal;
+  vi.mocked(requestActivity).mockResolvedValueOnce({ days: [day], total: 8, pageIndex: 0, pageSize: 1 });
+  await expect(queryLatestDailyRecord('user-1', signal)).resolves.toEqual(day);
+  expect(requestActivity).toHaveBeenCalledWith({ pageIndex: 0, pageSize: 1, sort: [{ field: 'date', order: 'desc' }] }, 'user-1', signal);
+  vi.mocked(requestActivity).mockResolvedValueOnce({ days: [], total: 0, pageIndex: 0, pageSize: 1 });
+  await expect(queryLatestDailyRecord('user-1', signal)).resolves.toBeNull();
+  vi.mocked(requestActivity).mockRejectedValueOnce(new ApiRequestError('UNAUTHENTICATED', 'Please sign in'));
+  await expect(queryLatestDailyRecord('user-1', signal)).rejects.toThrow('Please sign in');
+});
 
 it('资源适配仅映射业务日期和已标准化排序，不再持有查询状态', () => {
   expect(dailyActivityRequest(request)).toEqual({ pageIndex: 0, pageSize: 20, sort: request.sort,

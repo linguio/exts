@@ -1,21 +1,18 @@
+import { useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
-import { toast } from '../../components/ui/sonner';
+import { DailyQuickEdit } from '../../features/activity/daily/daily-quick-edit';
 import { useDockOverlay } from './use-dock-overlay';
 
-const placeholders = [
-  { name: 'Placeholder A', icon: 'list' },
-  { name: 'Placeholder B', icon: 'folder-open' },
-] as const;
-
-/** 操作菜单沿用官方交互，本期选择占位项只显示未接入提示。 */
+/** 操作菜单只提供入口，查询与编辑由 Daily 业务组件持有。 */
 export function ActionsEntry() {
   const overlay = useDockOverlay();
+  const [dailyOpen, setDailyOpen] = useState(false);
 
   return (
-    <Tooltip {...overlay.tooltipProps}>
+    <><Tooltip {...overlay.tooltipProps}>
       <DropdownMenu {...overlay.overlayProps}>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
@@ -37,14 +34,13 @@ export function ActionsEntry() {
           align="center"
           sideOffset={12}
         >
-          {placeholders.map((item) => (
-            <DropdownMenuItem key={item.name} onSelect={() => { toast.info('Not connected yet.'); }}>
-              <UiIcon name={item.icon} className="size-4" />
-              <span>{item.name}</span>
-            </DropdownMenuItem>
-          ))}
+          <DropdownMenuItem disabled={dailyOpen} onSelect={() => setDailyOpen(true)}>
+            <UiIcon name="notebook-text" className="size-4" />
+            <span>Edit Daily</span>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </Tooltip>
+    <DailyQuickEdit open={dailyOpen} onOpenChange={setDailyOpen} /></>
   );
 }

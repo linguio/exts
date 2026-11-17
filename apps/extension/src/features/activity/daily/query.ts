@@ -5,6 +5,12 @@ import { requestActivity } from '../requests';
 import { parseActivityDays } from '../data/response';
 import type { DailyActivityRow } from '../data/types';
 
+/** 快捷入口固定读取最新已有记录，不继承表格临时查询条件。 */
+export async function queryLatestDailyRecord(userId: string, signal: AbortSignal): Promise<DailyActivityRow | null> {
+  const result = await queryDailyRecords({ pageIndex: 0, pageSize: 1, filters: {}, sort: [{ field: 'date', order: 'desc' }] }, userId, signal);
+  return result.rows[0] ?? null;
+}
+
 /** 资源适配只映射业务参数；分页、排序优先级及请求生命周期由共用查询表格维护。 */
 export function dailyActivityRequest(request: DataTableQueryRequest): ActivityQuery {
   const range = request.filters.date;
