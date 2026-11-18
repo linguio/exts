@@ -1,13 +1,14 @@
+import '@linguio/exts-ui/styles.css';
 import { Activity, useState } from 'react';
 
-import { SettingsNotificationAudio } from '../features/settings/notification-audio';
+import { SettingsToaster } from '../features/settings/notification-toaster';
 
 import { Dock } from '../pages/dock';
 import { NewtabHome } from '../pages/newtab/index';
 import { DOCK_FAVORITES } from '../features/bookmarks/defaults';
 import { Studio } from '@/pages/studio';
 import { TooltipProvider } from '../components/ui/tooltip';
-import { Toaster, toast } from '../components/ui/toast';
+import { toast } from '@linguio/exts-ui/plus/toast';
 import { saveViewPreference, type AppView } from './view-preference';
 import { ActivityDataProvider } from '../features/activity/charts/provider';
 
@@ -26,7 +27,7 @@ export function App({ initialView }: { initialView: AppView }) {
 
   return (
     <TooltipProvider>
-      <Toaster>
+      <SettingsToaster>
         <ActivityDataProvider>
         <div className="bookmarks-page h-dvh overflow-hidden">
           <Activity mode={studioActive ? 'hidden' : 'visible'}>
@@ -46,9 +47,8 @@ export function App({ initialView }: { initialView: AppView }) {
             <Studio onHome={() => changeStudio(false)} />
           </Activity>
         </div>
-        <SettingsNotificationAudio />
         </ActivityDataProvider>
-      </Toaster>
+      </SettingsToaster>
     </TooltipProvider>
   );
 }

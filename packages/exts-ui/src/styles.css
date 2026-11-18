@@ -1,0 +1,40 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tw-animate-css";
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "./ui";
+@source "./plus";
+
+/* 语义变量继承宿主；缺少宿主主题时仍有明确的基础颜色，不注入全局 reset。 */
+@theme inline {
+  --color-background: var(--background, oklch(1 0 0));
+  --color-foreground: var(--foreground, oklch(0.145 0 0));
+  --color-popover: var(--popover, oklch(1 0 0));
+  --color-popover-foreground: var(--popover-foreground, oklch(0.145 0 0));
+  --color-primary: var(--primary, oklch(0.205 0 0));
+  --color-primary-foreground: var(--primary-foreground, oklch(0.985 0 0));
+  --color-secondary: var(--secondary, oklch(0.97 0 0));
+  --color-secondary-foreground: var(--secondary-foreground, oklch(0.205 0 0));
+  --color-muted-foreground: var(--muted-foreground, oklch(0.556 0 0));
+  --color-accent: var(--accent, oklch(0.97 0 0));
+  --color-accent-foreground: var(--accent-foreground, oklch(0.205 0 0));
+  --color-destructive: var(--destructive, oklch(0.577 0.245 27.325));
+  --color-border: var(--border, oklch(0.922 0 0));
+  --color-input: var(--input, oklch(0.922 0 0));
+  --color-ring: var(--ring, oklch(0.708 0 0));
+}
+
+/* 项目增强层高于现有普通模态层；消费者通过同名 Token 调整，不修改基础原语。 */
+.exts-toast-viewport {
+  z-index: var(--exts-z-toast, 80);
+  font-family: inherit;
+}
+.exts-toast-tooltip { z-index: calc(var(--exts-z-toast, 80) + 1); }
+.exts-toast-card, .exts-toast-tooltip { border-style: solid; border-color: var(--border, oklch(0.922 0 0)); }
+@layer base {
+  .exts-toast-card *, .exts-toast-card *::before, .exts-toast-card *::after { box-sizing: border-box; }
+  .exts-toast-card button { font: inherit; border: 0 solid; padding: 0; background-color: transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .exts-toast-card { transition-duration: 0s; }
+}

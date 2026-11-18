@@ -8,7 +8,7 @@ import { Item, ItemActions, ItemContent, ItemTitle } from '../../components/ui/i
 import { getHistoryCleanerEnabled, setHistoryCleanerEnabled } from '../history-cleaner/settings';
 import { subscribeSettings } from './store-client';
 import { settingsMessages } from './messages';
-import { toast } from '../../components/ui/toast';
+import { toast } from '@linguio/exts-ui/plus/toast';
 
 const descriptions = [
   'Clears all browsing history when the browser starts and when the last window closes.',

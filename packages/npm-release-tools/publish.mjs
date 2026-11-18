@@ -98,13 +98,27 @@ async function hashFile(path) {
   return createHash('sha512').update(await readFile(path)).digest('hex');
 }
 
+/** 编译包只允许从本仓库根 dist 发布；未配置的源码包保留原行为。 */
+export async function resolvePackDirectory(root, { directory, metadata }) {
+  const target = metadata.npmRelease?.directory;
+  if (!target) return directory;
+  if (typeof target !== 'string') throw new Error('编译包目录必须位于根 dist');
+  const compiled = await realpath(resolve(directory, target));
+  const dist = await realpath(join(root, 'dist'));
+  if (!isInside(root, dist) || !isInside(dist, compiled)) throw new Error('编译包目录必须位于根 dist');
+  const built = JSON.parse(await readFile(join(compiled, 'package.json'), 'utf8'));
+  if (built.name !== metadata.name || built.version !== metadata.version) throw new Error('编译包身份与源码不一致');
+  return compiled;
+}
+
 async function prepare(name) {
   const { directory, metadata } = await selectPackage(repositoryRoot, name);
   await assertUnpublished(name, metadata.version);
   await runNpm(['run', metadata.npmRelease.verify], { cwd: directory, timeout: 300000 });
+  const packDirectory = await resolvePackDirectory(repositoryRoot, { directory, metadata });
   const artifact = join(repositoryRoot, 'dist/.cache/npm-release', `${name.slice(9)}-${randomUUID()}`);
   await mkdir(artifact, { recursive: true });
-  const [pack] = JSON.parse(await runNpm(['pack', '--json', '--ignore-scripts', '--pack-destination', artifact], { cwd: directory, quiet: true }));
+  const [pack] = JSON.parse(await runNpm(['pack', '--json', '--ignore-scripts', '--pack-destination', artifact], { cwd: packDirectory, quiet: true }));
   validatePack(pack, metadata);
   if (pack.filename !== `${metadata.name.slice(1).replace('/', '-')}-${metadata.version}.tgz`) throw new Error('打包文件名不符合预期');
   const receipt = {

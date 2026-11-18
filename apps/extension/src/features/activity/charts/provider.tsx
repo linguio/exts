@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState, useSyncExternal
 
 import { readSessionResetVersion, subscribeSessionReset, useAccount } from '../../account/auth-client';
 import { ApiRequestError } from '../../../api/client';
-import { toast } from '../../../components/ui/toast';
+import { toast } from '@linguio/exts-ui/plus/toast';
 import { activityPeriod, activityRecords, type ActivityView } from '../data/chart-data';
 import { requestActivity } from '../requests';
 import type { ActivityRecords } from '../data/types';

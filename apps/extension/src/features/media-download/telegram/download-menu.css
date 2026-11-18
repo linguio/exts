@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@linguio/exts-ui/styles.css";
 @import "../../../styles/theme.css";
 @import "../../../styles/focus.css";
 

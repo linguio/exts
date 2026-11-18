@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { DataTableEditSheet } from '../../../components/custom/data-table/data-table-edit-sheet';
-import { toast } from '../../../components/ui/toast';
+import { toast } from '@linguio/exts-ui/plus/toast';
 import { useAccount, readSessionResetVersion, subscribeSessionReset } from '../../account/auth-client';
 import type { DailyActivityRow } from '../data/types';
 import { dailyColumns } from './columns';

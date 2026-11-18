@@ -1,0 +1,2 @@
+/* 本地 Workspace 同样消费已编译样式；正式包直接导出构建后的文件。 */
+@import "../../dist/build/npm/exts-ui/styles.css";

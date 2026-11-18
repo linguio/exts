@@ -1,12 +1,10 @@
-// 基于 shadcn/ui Base Nova 官方 Toast；固定快照及差异见 docs/web-ui-sources.md。
+// 固定 shadcn 来源与必要适配见本包 SOURCES.md。
 import * as React from "react"
 import { Toast as ToastPrimitive } from "@base-ui/react/toast"
-import { cn } from "../../lib/utils"
+import { cn } from "../lib/utils"
 
 import { Button } from "./button"
 import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon, XIcon } from "lucide-react"
-import { ToastCopyAction } from "./toast-copy-action"
-import { getToastCopyText } from "./toast-message"
 
 const toast = ToastPrimitive.createToastManager()
 
@@ -180,7 +178,7 @@ function ToastIcon({ type }: { type: string | undefined }) {
   )
 }
 
-function ToastList({ portalContainer }: { portalContainer?: HTMLElement | ShadowRoot | null }) {
+function ToastList() {
   const { toasts } = ToastPrimitive.useToastManager()
 
   return toasts.map((toastItem) => (
@@ -191,7 +189,6 @@ function ToastList({ portalContainer }: { portalContainer?: HTMLElement | Shadow
           <ToastTitle />
           <ToastDescription />
         </div>
-        <ToastCopyAction displayText={getToastCopyText(toastItem.title, toastItem.description)} portalContainer={portalContainer} />
         <ToastAction />
         <ToastClose />
       </ToastContent>
@@ -202,15 +199,14 @@ function ToastList({ portalContainer }: { portalContainer?: HTMLElement | Shadow
 function Toaster({
   children,
   toastManager = toast,
-  portalContainer,
   ...props
-}: ToastPrimitive.Provider.Props & { portalContainer?: HTMLElement | ShadowRoot | null }) {
+}: ToastPrimitive.Provider.Props) {
   return (
     <ToastProvider toastManager={toastManager} {...props}>
       {children}
-      <ToastPortal container={portalContainer}>
+      <ToastPortal>
         <ToastViewport>
-          <ToastList portalContainer={portalContainer} />
+          <ToastList />
         </ToastViewport>
       </ToastPortal>
     </ToastProvider>

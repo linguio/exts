@@ -7,7 +7,7 @@ import { StudioSidebar } from './layout/sidebar';
 import { StudioLayout } from './layout';
 import { LoginRequired } from './account/login-required';
 import { saveStudioRoute, readStudioRoute } from '../../app/view-preference';
-import { toast } from '../../components/ui/toast';
+import { toast } from '@linguio/exts-ui/plus/toast';
 
 interface StudioProps { onHome: () => void }
 

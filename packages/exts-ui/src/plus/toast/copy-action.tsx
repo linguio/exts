@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Check, Copy } from 'lucide-react';
-import { Button } from './button';
-import { Tooltip, TooltipContent, TooltipTrigger } from './tooltip';
+import { Button } from '../../ui/button';
+import { Tooltip, TooltipTrigger } from '../../ui/tooltip';
+import { Tooltip as TooltipPrimitive } from 'radix-ui';
+import { Branch as DismissableLayerBranch } from '@radix-ui/react-dismissable-layer';
 
 /** 复制成功后展示 Check 的时长，便于用户辨认反馈。 */
 export const TOAST_COPY_FEEDBACK_MS = 2_000;
@@ -30,7 +32,6 @@ export function ToastCopyAction({ displayText, portalContainer }: ToastCopyActio
 
   async function handleCopy(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
-    event.stopPropagation();
     try {
       await navigator.clipboard.writeText(displayText);
       setCopied(true);
@@ -44,7 +45,7 @@ export function ToastCopyAction({ displayText, portalContainer }: ToastCopyActio
   const ariaLabel = getToastCopyAriaLabel(copied);
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
+      <TooltipTrigger asChild onFocus={event => event.preventDefault()}>
         <Button
           type="button"
           variant="ghost"
@@ -52,14 +53,17 @@ export function ToastCopyAction({ displayText, portalContainer }: ToastCopyActio
           className={toastCopyButtonClassName}
           aria-label={ariaLabel}
           onClick={event => { void handleCopy(event); }}
-          onPointerDown={event => { event.stopPropagation(); }}
         >
           {copied
             ? <Check className="size-4" aria-hidden />
             : <Copy className="size-4" aria-hidden />}
         </Button>
       </TooltipTrigger>
-      <TooltipContent portalContainer={portalContainer}>{TOAST_COPY_TOOLTIP}</TooltipContent>
+      <TooltipPrimitive.Portal container={portalContainer}>
+        <DismissableLayerBranch asChild>
+          <TooltipPrimitive.Content sideOffset={4} className="exts-toast-tooltip rounded-md border border-border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-lg">{TOAST_COPY_TOOLTIP}</TooltipPrimitive.Content>
+        </DismissableLayerBranch>
+      </TooltipPrimitive.Portal>
     </Tooltip>
   );
 }

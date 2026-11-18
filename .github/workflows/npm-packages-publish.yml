@@ -11,6 +11,7 @@ on:
         default: '@linguio/wxt-stable-output'
         options:
           - '@linguio/wxt-stable-output'
+          - '@linguio/exts-ui'
 
 permissions:
   contents: read

@@ -5,7 +5,7 @@ import { Button } from '../../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
 import { Field, FieldGroup } from '../../../components/ui/field';
-import { toast } from '../../../components/ui/toast';
+import { toast } from '@linguio/exts-ui/plus/toast';
 import { loginAccount } from '../../../features/account/auth-client';
 import type { AccountProvider } from '../../../features/account/account-controller';
 

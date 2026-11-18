@@ -4,9 +4,9 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../compo
 import { Item, ItemActions, ItemContent, ItemGroup, ItemSeparator, ItemTitle } from '../../components/ui/item';
 import { Switch } from '../../components/ui/switch';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
-import { toast } from '../../components/ui/toast';
+import { toast } from '@linguio/exts-ui/plus/toast';
 import { UiIcon } from '../../components/custom/ui-icon';
-import { notificationSounds, readNotificationAudioStatus, subscribeNotificationAudio } from '../../lib/audio/notification-sounds';
+import { useExtsToastSound } from '@linguio/exts-ui/plus/toast';
 import { getSettings, subscribeSettings, updateSettings } from './store-client';
 import { settingsMessages } from './messages';
 
@@ -17,7 +17,8 @@ export function NotificationSettings() {
   const [pending, setPending] = useState(false);
   const mounted = useRef(false);
   const saving = useRef(false);
-  const status = useSyncExternalStore(subscribeNotificationAudio, readNotificationAudioStatus);
+  const notificationSounds = useExtsToastSound();
+  const status = useSyncExternalStore(notificationSounds.subscribe, notificationSounds.getStatus);
   useEffect(() => {
     mounted.current = true;
     let changed = false;

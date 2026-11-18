@@ -52,6 +52,23 @@ test('仅 registry 404 表示未发布，已有版本和网络错误中止', asy
   await assert.rejects(assertUnpublished('@linguio/one', '1.0.0', async () => { throw new Error('offline'); }), /offline/);
 });
 
+test('编译包只从根dist打包并核对身份，已有源码包仍从原目录打包', async () => {
+  const root = await realpath(await mkdtemp(join(tmpdir(), 'npm-compiled-')));
+  try {
+    const directory = join(root, 'packages', 'one');
+    const compiled = join(root, 'dist', 'build', 'one');
+    await mkdir(directory, { recursive: true });
+    await mkdir(compiled, { recursive: true });
+    const metadata = { name: '@linguio/one', version: '0.1.0', npmRelease: { directory: '../../dist/build/one' } };
+    await writeFile(join(compiled, 'package.json'), JSON.stringify(metadata));
+    assert.equal(await release.resolvePackDirectory(root, { directory, metadata }), compiled);
+    assert.equal(await release.resolvePackDirectory(root, { directory, metadata: { ...metadata, npmRelease: {} } }), directory);
+    await assert.rejects(release.resolvePackDirectory(root, { directory, metadata: { ...metadata, npmRelease: { directory: '../one' } } }), /dist/);
+    await writeFile(join(compiled, 'package.json'), JSON.stringify({ ...metadata, version: '9.0.0' }));
+    await assert.rejects(release.resolvePackDirectory(root, { directory, metadata }), /不一致/);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
 test('拒绝包身份不符或危险的打包清单', () => {
   const metadata = { name: '@linguio/one', version: '1.0.0' };
   const pack = { ...metadata, files: [{ path: 'package.json' }, { path: 'src/index.mjs' }] };

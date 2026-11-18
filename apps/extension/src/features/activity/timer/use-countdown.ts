@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { toast } from '../../../components/ui/toast';
+import { toast } from '@linguio/exts-ui/plus/toast';
 import { defaultSounds, readSounds, saveSound, soundKeys, type TimerSounds } from './sound-preference';
 import { Countdown } from './countdown';
 import { TimerAudio } from './audio';

@@ -1,5 +1,5 @@
 import { expect, it, vi } from 'vitest';
-import { NotificationSounds } from '../../../src/lib/audio/notification-sounds';
+import { NotificationSounds } from '../src/plus/toast/sound';
 
 function setup() {
   let time = 0;
@@ -41,4 +41,18 @@ it('关闭立即停止通知音但仍可试听，播放受阻不补播', () => {
   expect(player.stop).toHaveBeenCalledTimes(1);
   sounds.preview();
   expect(player.preview).toHaveBeenCalledTimes(1);
+});
+
+it('宿主恢复时标记已有错误，释放资源后不会重播恢复前通知', () => {
+  const { sounds, player } = setup();
+  sounds.setEnabled(true);
+  sounds.observe([{ id: 1, type: 'error' }]);
+  sounds.dispose();
+  expect(player.dispose).toHaveBeenCalledTimes(1);
+  sounds.seed([{ id: 1, type: 'error' }]);
+  sounds.setEnabled(true);
+  sounds.observe([{ id: 1, type: 'error' }]);
+  expect(player.play).toHaveBeenCalledTimes(1);
+  sounds.observe([{ id: 2, type: 'error' }]);
+  expect(player.play).toHaveBeenCalledTimes(2);
 });

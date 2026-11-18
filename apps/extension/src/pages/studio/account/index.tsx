@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '../../../components/ui/avatar';
 import { DropdownMenu, DropdownMenuTrigger } from '../../../components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '../../../components/ui/sidebar';
-import { toast } from '../../../components/ui/toast';
+import { toast } from '@linguio/exts-ui/plus/toast';
 import { UiIcon } from '../../../components/custom/ui-icon';
 import { useAccount, logoutAccount } from '../../../features/account/auth-client';
 import { LoginDialog } from './login-dialog';

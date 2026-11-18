@@ -5,9 +5,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from '../../../components/ui/button';
 import { ButtonGroup } from '../../../components/ui/button-group';
 import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/popover';
-import { Toaster, toast } from '../../../components/ui/toast';
+import { ExtsToaster, toast } from '@linguio/exts-ui/plus/toast';
 import { TooltipProvider } from '../../../components/ui/tooltip';
-import { NotificationAudio } from '../../settings/notification-audio';
 import styles from './download-menu.css?inline';
 import type { DownloadMenuController } from './types';
 import { resolveTheme, type ThemePreference } from '../../../lib/theme/preference';
@@ -51,7 +50,7 @@ export function createDownloadMenu(document: Document, actions: {
     finally { render(); }
   };
   const render = () => flushSync(() => root.render(<TooltipProvider>
-    <Toaster portalContainer={mount}>
+    <ExtsToaster portalContainer={mount} soundEnabled={soundEnabled}>
     <Popover open={open} onOpenChange={value => { open = value; if (!value) moreOpen = false; render(); }}>
       <PopoverTrigger asChild><button aria-label="Telegram Download" tabIndex={-1} style={{ position: 'fixed', left: x, top: y, width: 0, height: 0, padding: 0, border: 0, opacity: 0 }} /></PopoverTrigger>
       <PopoverContent portalContainer={mount} sideOffset={0} align="start" collisionPadding={8} className="pointer-events-auto w-max border-0 bg-transparent p-0 shadow-none" aria-label="Telegram 下载操作" onCloseAutoFocus={event => event.preventDefault()}
@@ -73,9 +72,7 @@ export function createDownloadMenu(document: Document, actions: {
         </ButtonGroup>
       </PopoverContent>
     </Popover>
-    <NotificationAudio soundEnabled={soundEnabled} />
-
-    </Toaster>
+    </ExtsToaster>
   </TooltipProvider>));
   const close = () => { open = false; moreOpen = false; busy = false; render(); };
   applyTheme();

@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import { createElement } from 'react';
-import { getToastCopyText } from '../../../src/components/ui/toast-message';
+import { getToastCopyText } from '../src/plus/toast/message';
 
 it('完整复制标题与描述，不替换排错内容', () => {
   expect(getToastCopyText('Request failed.', 'HTTP 503\nTrace: abc-123')).toBe('Request failed.\nHTTP 503\nTrace: abc-123');

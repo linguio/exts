@@ -2,7 +2,7 @@ import { useId, useRef, useState, useSyncExternalStore } from 'react';
 
 import { readTheme, setTheme, subscribeTheme } from './theme';
 import { settingsMessages } from './messages';
-import { toast } from '../../components/ui/toast';
+import { toast } from '@linguio/exts-ui/plus/toast';
 import { Item, ItemActions, ItemContent, ItemTitle } from '../../components/ui/item';
 import { ToggleGroup, ToggleGroupItem } from '../../components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';

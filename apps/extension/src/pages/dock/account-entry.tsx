@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '../../components/ui/button';
 import { DropdownMenu, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
-import { toast } from '../../components/ui/toast';
+import { toast } from '@linguio/exts-ui/plus/toast';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { UiIcon } from '../../components/custom/ui-icon';
 import { LoginDialog } from '@/pages/studio/account/login-dialog';

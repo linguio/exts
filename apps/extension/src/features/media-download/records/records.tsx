@@ -8,7 +8,7 @@ import { Button } from '../../../components/ui/button';
 import { ScrollArea } from '../../../components/ui/scroll-area';
 import { ToggleGroup, ToggleGroupItem } from '../../../components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
-import { toast } from '../../../components/ui/toast';
+import { toast } from '@linguio/exts-ui/plus/toast';
 import { UiIcon } from '../../../components/custom/ui-icon';
 import { BrandIcon } from '../../../components/custom/brand-icon';
 import { DownloadRecordRow } from './download-record';

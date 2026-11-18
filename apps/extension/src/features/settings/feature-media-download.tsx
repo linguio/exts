@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/too
 import { UiIcon } from '../../components/custom/ui-icon';
 import { mediaDownloadSetting } from '../media-download/settings';
 import { settingsMessages } from './messages';
-import { toast } from '../../components/ui/toast';
+import { toast } from '@linguio/exts-ui/plus/toast';
 import { StatusIcon, type StatusLevel } from '../../components/custom/status-icon';
 
 const descriptions = [

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, useId, type ChangeEvent, type FormEvent }
 import type { ColumnDef } from '@tanstack/react-table';
 import { SquarePen } from 'lucide-react';
 import { Button } from '../../ui/button';
-import { toast } from '../../ui/toast';
+import { toast } from '@linguio/exts-ui/plus/toast';
 import { Input } from '../../ui/input';
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../../ui/input-group';
 import { Spinner } from '../../ui/spinner';

@@ -3,13 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "wxt build",
-    "dev": "wxt",
+    "build": "pnpm --filter @linguio/exts-ui build && wxt build",
+    "dev": "pnpm --filter @linguio/exts-ui build && wxt",
     "postinstall": "wxt prepare",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@linguio/exts-ui": "workspace:0.1.0",
     "@base-ui/react": "1.9.0",
     "@tanstack/react-table": "8.21.3",
     "axios": "1.21.0",
