@@ -105,7 +105,7 @@ pnpm ext:release 独立构建扩展，检查 Manifest 版本、新标签页入�
 
 流程 .github/workflows/exts-deploy.yml 展示为 Exts Publish，仅允许 main。推送 main 自动部署官网，并将根产品版本与最新远端版本 Tag 比较；没有版本 Tag 或根版本高于最新 Tag 时运行 Release，同版本失败且尚未生成 Tag 时后续推送仍可重试。手动运行时可选择 Website 或 Release，不改变现有冲突保护。
 
-Release 使用 xcode-27 arm64 runner，显式选择 Xcode 27.0.0 路径，下载并校验固定 XcodeGen 2.46.0，使用 Node.js 24.16.0、pnpm 12.4.2 冻结安装。串行执行根发布/构建脚本、Desktop/API启动脚本、官网逻辑、npm发布工具、稳定产物工具与扩展测试，完成稳定工具类型/真实WXT包集成检查及官网/扩展类型检查；Photos改为执行完整extsTests目标（包括既有压力用例），禁用原生并行测试，不再仅选四个类。
+Release 使用 xcode-27 arm64 runner，显式选择 Xcode 27.0.0 路径，下载并校验固定 XcodeGen 2.46.0，使用 Node.js 24.16.0、pnpm 12.21.0 冻结安装。串行执行根发布/构建脚本、Desktop/API启动脚本、官网逻辑、npm发布工具、稳定产物工具与扩展测试，完成稳定工具类型/真实WXT包集成检查及官网/扩展类型检查；Photos改为执行完整extsTests目标（包括既有压力用例），禁用原生并行测试，不再仅选四个类。
 
 API测试环境使用固定astral-sh/setup-uv v10.3.3与uv 0.11.19，Python读取apps/api/.python-version的精确版本，依赖安装使用现有requirements-dev.txt。API_TEST_DATABASE_URL显式置空，运行完整unittest入口，隔离实库测试按现有规则跳过；这部分仍为待验证，不将跳过算作全量通过，不连接生产数据库。普通Website构建部署也执行现有三份官网逻辑测试。上述CI变更须待实际GitHub运行验收，不能因本地测试通过就称远端已验证。
 

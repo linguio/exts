@@ -4,7 +4,7 @@ React 静态产品官网，使用 Vite、TypeScript、Tailwind CSS 与 shadcn/ui
 
 ## 开发与构建
 
-在仓库根目录执行，使用根配置固定的 Node.js 24.16.0、pnpm 12.4.2：
+在仓库根目录执行，使用根配置固定的 Node.js 24.16.0、pnpm 12.21.0：
 
 ```sh
 pnpm install --frozen-lockfile

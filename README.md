@@ -43,7 +43,7 @@ Skill 的唯一源码和仓库级发现入口统一位于 `.agents/skills/`，�
 
 ## 本地开发
 
-使用 Node.js **24.16.0** 和 pnpm **12.4.2**，在根目录安装依赖：
+使用 Node.js **24.16.0** 和 pnpm **12.21.0**，在根目录安装依赖：
 
 ```sh
 pnpm install --frozen-lockfile

@@ -109,6 +109,9 @@ const [query, setQuery] = useState(initialQuery);
 
 ## 行选择和业务操作
 
+- `DataTableEditSheet` 可独立组合，`loading` 可选且默认 false。需要先读取记录时允许 `open=true`、`row=null`、`loading=true`：保留原有 Header 与 Footer，内容区居中显示官方 Spinner（读屏名称 Loading record 和 aria-busy），Save 禁用且提交处理阻止保存；Cancel 和关闭入口可用。加载或尚未初始化当前记录草稿时不展示字段、不判断脏数据；记录就绪后沿用原表单、校验、局部更新及放弃确认。QueryDataTable 不传 loading，仍直接编辑已有行，不额外查询。
+- Home 的 DailyQuickEdit 在账号已确认或核验中时先打开上述 Sheet，查询成功后填入最新记录；关闭取消查询，迟到响应忽略。未登录、账号核验失败、查询失败或无记录继续由 Daily 以现有官方 Toast 提示并结束打开流程；退出、换号和会话重置沿用账号作用域隔离。
+
 - `selection` 默认关闭；开启后支持单行和当前页全选。前端模式可跨页累积选择，服务端模式只维护当前响应范围内的选择，不表达所有查询结果全选。
 - 数据引用、筛选、搜索、`selectionKey` 或选择开关变化时清空选择；服务端换页也清空。切换账号或其他数据作用域时更新 `selectionKey`。
 - `onSelectionChange(ids)` 返回稳定记录 ID；`bulkActions(ids, clear)` 返回业务操作控件，成功后由业务调用 `clear()`。加载时隐藏批量操作。
