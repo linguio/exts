@@ -2,13 +2,13 @@
   "name": "exts",
   "version": "2.4.0",
   "private": true,
-  "packageManager": "pnpm@12.4.2",
+  "packageManager": "pnpm@12.21.0",
   "engines": {
     "node": "24.16.0"
   },
   "volta": {
     "node": "24.16.0",
-    "pnpm": "12.4.2"
+    "pnpm": "12.21.0"
   },
   "scripts": {
     "dev": "turbo run web:dev ext:dev desk:dev api:dev --continue=always --ui=stream --env-mode=loose",
