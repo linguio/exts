@@ -276,3 +276,13 @@ Telegram MAIN 仅挂载接收 soundEnabled 的声音展示组件，偏好由既�
 2026-11-16 最新用户验收调整：Settings 模块内部使用官方 ItemSeparator 的 1px 分隔线，覆盖卡片内主项、折叠主项与内容、展开子项之间；保持标签左对齐，替代此前去除内部线的要求。
 
 2026-11-16 分隔线验收修正：用户截图显示同为 h-px 的背景线呈现不同厚度。Settings 唯一组合入口统一将 ItemSeparator 改为零内容高度、1px border-top、透明背景，复用 border Token，不修改官方基础组件；缩放下实际观感仍待用户复验。
+
+## exts-ui 首版基础与 plus 分层（2026-11-18）
+
+Toast基础及必要Button/Tooltip迁入packages/exts-ui/src/ui，固定源码、SHA-256及必要导入适配见包内SOURCES.md；Toast重新获取确认与此前记录哈希完全相同。ui不添加复制、项目Portal或声音，不反向引用plus/应用。ExtsToaster在plus组合基础原语，承接原有复制与错误音，公开portalContainer与--exts-z-toast默认80，复制Tooltip81；应用Sheet/AlertDialog不在本轮修改。
+
+应用Toast调用统一改为@linguio/exts-ui/plus/toast，旧ui/toast及复制辅助文件和通知声音实现删除，6项原有纯逻辑测试迁入新包。声音由宿主独立播放器持有，默认关闭、仅error、原频率/包络/音量与1秒节流保留；设置和Telegram只提供偏好，不把Chrome API迁入包。倒计时继续使用应用原播放器，移除其已无调用的error预设，避免重复维护通知音。
+
+包提供预编译CSS，不要求消费应用扫描源码或引入全局reset。Workspace逻辑联调使用源码出口，样式需先build；正式tarball提供ESM、声明、CSS及CSS类型出口。仅处理首版Toast，不据此批量恢复其他应用ui源码。层级、焦点、复制与听感仍由用户Chrome/Edge验收，不能用构建或类型通过代替。
+
+验收补充（2026-11-18）：用户报告关闭Toast连带关闭Sheet，根因是Portal虽提高层级但仍被Radix视为外部交互。用户批准仅在plus接入官方DismissableLayer Branch：直接声明已存在的精确1.1.19依赖，Toast视口与独立Portal的复制Tooltip均用asChild组合，不新增DOM外壳；移除复制按钮旧传播拦截。基础ui及应用Sheet未修改。本地Workspace与真实tgz均检查Dialog/Toast解析到同一模块；这些检查不代替实际焦点和指针验收。

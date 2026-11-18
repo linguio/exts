@@ -16,12 +16,13 @@
 
 ## 通用 UI 与组合
 
+- Toast已迁入 `@linguio/exts-ui/plus/toast`，应用不保留ui/toast、复制及通知播放器的重复实现；业务直接使用包导出的toast.add。设置仅在notification-toaster.tsx读取偏好并传soundEnabled，设置试听通过useExtsToastSound连接当前宿主，Telegram传既有Shadow容器与开关。其他基础/增强组件尚未迁移，不因此扩大范围。
 - 表格及列表查询接口遵循与 UI/API 并列的仓库级[表格规范](../../docs/table-conventions.md)；扩展组件接入说明不能代替该规范，后续共性规则同步维护仓库级文档。
 
 - 官网与扩展全部 Web UI 的选型、来源和风格维护原则遵循根 [AGENTS.md](../../AGENTS.md#web-ui-选型与风格)，不维护组件白名单。
 - `src/components/ui/` 持有通用组件，不包含书签、Dock、Chrome API 或模块状态；各功能在自己的 `src/features/<功能>/` 中组合，Newtab 也遵循此边界。
 - 扩展主题由 `src/lib/theme/preference.ts` 解析偏好、`src/features/settings/theme.ts` 同步运行状态 Light/Dark/System，默认跟随系统；实际明暗通过根 `data-theme` 应用，Portal 继承根 Token，不直接依赖 `.dark` 类。偏好保存、同步与首屏初始化不得放进通用 UI。官方源码接入和必要差异见 [Web UI 来源](../../docs/web-ui-sources.md)。
-- 临时提示统一从 `src/components/ui/toast.tsx` 导入 Toaster 与 toast，复用 shadcn Base UI Toast 和 Lucide 成功/信息/警告/错误图标，使用图标加提示语、各自页面右下角位置和统一主题；默认简短标题，必要时补充描述；TG 下载继续不显示文件名副标题，不增加模块独立配色或位置覆盖。每条提示使用官方 Button ghost/icon-sm 复制完整标题和描述，成功短暂显示勾号；业务使用官方 toast.add，不包装消息或替换可见文案，不新增处理中和 Undo。TG 与后续 X 均遵守，业务只负责等级、文案与触发，不建立跨页面通知管理。等级规则见扩展 UI 规范。
+- 临时提示统一从 `@linguio/exts-ui/plus/toast` 导入 ExtsToaster 与 toast，复用 shadcn Base UI Toast 和 Lucide 成功/信息/警告/错误图标，使用图标加提示语、各自页面右下角位置和统一主题；默认简短标题，必要时补充描述；TG 下载继续不显示文件名副标题，不增加模块独立配色或位置覆盖。每条提示使用官方 Button ghost/icon-sm 复制完整标题和描述，成功短暂显示勾号；业务使用官方 toast.add，不包装消息或替换可见文案，不新增处理中和 Undo。TG 与后续 X 均遵守，业务只负责等级、文案与触发，不建立跨页面通知管理。等级规则见扩展 UI 规范。
 - Download 与 Settings 共用试用前的 Sheet：默认右侧 420px、最大不超过视口，保留主题模糊遮罩、浮层阴影、原 Header／标题图标与分隔线、关闭按钮和 200ms／160ms 动画。仅按用户新增批准在共用组件增加左上／左下 rounded-l-[var(--radius)]，复用全局 1rem，右侧保持直角贴边；不新增边缘留白。
 - 应用根只创建一个 `TooltipProvider`。Tooltip 只提供简短名称或帮助说明，不含可交互内容；菜单或 Sheet 打开时其入口不得残留 Tooltip，Sheet 内的主题名称和帮助提示可正常显示。
 - Tooltip、菜单、Sheet、Button 与链接通过 `asChild` 等方式共享唯一真实交互元素，禁止嵌套交互控件。
@@ -80,7 +81,7 @@
 - Settings 包含 General/Features，使用官方 Card、ItemGroup、Item 和 ItemSeparator 组成圆角边框列表。General 组合主题选择和 Notifications，Features 组合历史清理与 Media Download 总开关和帮助。Settings Sheet 容器归 `pages/settings`；设置界面统一平铺在 `features/settings`，使用 general-*、feature-* 文件名，由 index.tsx 组合分区；store-client.ts 保留请求及订阅，后台和非 UI 消费者直接导入数据入口。媒体下载、历史清理的业务逻辑和数据仍归原模块，Dock 只组合入口；通过公共 settings 数据源读写／订阅；TG、X、Helper 子项由官方 Collapsible 默认收起，只读展示英文状态，不提供独立开关或子项问号，仅主项保留帮助。折叠触发器与总开关独立，不在 Settings 展示下载记录。
 
 - Notifications 默认关闭，仅 Error 自动发声；展开为 Default、Error 两行，Default 问号列出 Default/Success/Warning/Info/Loading，右侧静音图标；Error 右侧声音图标只试听固定音效，总开关关闭仍可试听。折叠、列表、开关和帮助沿用 Media Download 组合。自动通知音首条立即播放、1秒节流、不叠音、不补播；同 Toast 文案更新不重复响。音效与合成播放集中在 lib/audio，倒计时保留专用调度和声音偏好。
-- Notifications 的声音暂停/不可用为用户批准的持续状态反馈，仅开启总开关且已尝试播放后显示在主行下；试听尝试恢复，成功后清除，不判断系统静音，不存入账号。普通设置加载/保存失败继续使用 toast.add 的 error 类型，不新增通知包装器。每个页面只挂载一次 notification-audio，使用 Base UI 官方 useToastManager 观察状态；扩展页面读取设置，Telegram MAIN 仅接收现有隔离桥传递的布尔声音开关，不跨标签页协调或转发。
+- Notifications 的声音暂停/不可用为用户批准的持续状态反馈，仅开启总开关且已尝试播放后显示在主行下；试听尝试恢复，成功后清除，不判断系统静音，不存入账号。普通设置加载/保存失败继续使用 toast.add 的 error 类型，不新增通知包装器。每个展示根仅挂载一次ExtsToaster，包内使用官方useToastManager观察状态；扩展notification-toaster读取设置并传入soundEnabled，Telegram MAIN仅接收现有隔离桥传递的布尔开关，不跨标签页协调或转发。
 
 ## Media Download 与记录边界
 

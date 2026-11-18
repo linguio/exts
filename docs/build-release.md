@@ -2,6 +2,8 @@
 
 三端产品共用根版本，开发命令保持独立；最终产物及可配置的构建缓存统一生成在仓库根 dist。本文是命令、产物路径和版本消费规则的维护入口，本次双包发布接入状态见 [Issue](changes/issues/2026-10-19-repo-desktop-first-release-issue.md)。
 
+`@linguio/exts-ui` 是独立版本的公共UI包，首版0.1.0，不消费根产品版本。包构建位于 `dist/build/npm/exts-ui`，CSS构建缓存位于 `dist/.cache/exts-ui-css`，真实tgz及独立消费者位于 `dist/.cache/exts-ui-verify`；源码包内不生成dist。扩展dev/build命令先构建该包，应用入口用法不变。本地Workspace源码出口与正式包编译出口保持相同公开路径；发布复用[npm流程](npm-release.md)。
+
 ## 唯一产品版本
 
 只手动修改根 package.json 的 version，初始版本为 1.0.0。scripts/version.mjs 是所有需要产品版本的步骤共用的读取与校验入口，不改写文件、不自动升级、不从环境变量、子应用、Git 标签或默认值获取替代版本。

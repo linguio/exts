@@ -1,6 +1,8 @@
-# npm 工具包发布与验收
+# npm 包发布与验收
 
 ## 包与版本
+
+新增组件包 `@linguio/exts-ui`，首版0.1.0、dist-tag为latest，尚未上传或正式发布。本地使用精确Workspace源码引用；编译产物统一在根 `dist/build/npm/exts-ui`，包内CHANGELOG独立维护，不创建额外Git tag/Release。该包与下述WXT工具包保持各自版本及消费方式。
 
 公开包：`@linguio/wxt-stable-output`，首版 `1.0.0`。`linguio` 是用户的 npm 账号，对应个人 scope，公开发布免费，不需要组织或独立仓库。
 
@@ -76,7 +78,7 @@ Token 仅提供给 stage job 的上传步骤。prepare job 不接收 Token；sta
 ### 手动运行
 
 1. GitHub 仓库 → Actions → **NPM Publish** → **Run workflow**。
-2. 分支选 `main`，在包名下拉框选择 `@linguio/wxt-stable-output`；当前只列出这一项公开包，私有发布工具不列入选项。
+2. 分支选 `main`，在包名下拉框选择 `@linguio/wxt-stable-output` 或 `@linguio/exts-ui`；只验证、打包及暂存所选包，私有发布工具不列入选项。本次仅修改本地workflow配置，远端运行须另获批准。
 3. prepare job 检查包和版本，串行验证，打包并上传 tarball/receipt。
 4. stage job 核对同一源码提交、文件清单与 SHA-512，执行 `npm stage publish` 上传同一 tarball。
 5. 摘要显示包名、版本、源码提交和暂存编号，并明确“尚未正式发布”。不自动执行 `npm publish` 或 `npm stage approve`。
@@ -107,6 +109,8 @@ node packages/npm-release-tools/publish.mjs prepare @linguio/wxt-stable-output
 
 ## 未来增加包
 
+需要编译的包可配置 `npmRelease.directory` 为源码包相对路径，指向根dist内的独立发布目录。prepare先运行该包验证脚本，再核对编译目录真实路径、包名及版本，从编译目录打包；未配置时保留源码包原打包行为。发布目录不得越出根dist或通过链接指向仓库外。
+
 公开包放在 `packages`，使用 `@linguio/<包名>`、精确独立版本和 `publishConfig.access: public`，并声明本包串行验证脚本：
 
 ```json
@@ -119,5 +123,15 @@ node packages/npm-release-tools/publish.mjs prepare @linguio/wxt-stable-output
 复用同一 workflow，新增公开包时同步加入 `workflow_dispatch.inputs.package.options`；下拉选择后只暂存所选包。应用和私有工具不列入选项，也不能发布；批量发布、Changesets 与自动版本 PR 不属于本流程。
 
 以后改为 OIDC 暂存上传时需另行配置每个包的 Trusted Publisher，并修改当前 Token 认证配置；正式发布仍由用户在 npm 网页批准。不在本轮自动配置。
+
+## exts-ui 本地准备
+
+```sh
+pnpm --filter @linguio/exts-ui verify:npm
+```
+
+串行执行包类型、迁移的纯逻辑测试、ESM/声明/CSS构建及真实tarball独立消费验证。tarball与fixture在根 `dist/.cache/exts-ui-verify`，独立消费者不链接仓库源码，检查CSS类型入口、实际ESM导入与Vite构建。不会上传npm。应用dev/build会先构建包；包样式或工具类变化后再次build，首版不新增长期watch。
+
+获准正式准备时沿用 `node packages/npm-release-tools/publish.mjs prepare @linguio/exts-ui`；它查询版本占用、重新验证并生成带校验凭据的产物。真实上传仍只允许已批准的Actions stage步骤，latest是npm渠道而不是额外版本号。首版本地prepare已通过并确认产物与独立消费者验证tarball一致；远端Actions、stage及正式发布仍未执行，不把本地准备成功写成远端发布成功。
 
 依据：[npm 暂存发布](https://docs.npmjs.com/staged-publishing/)、[npm stage 命令](https://docs.npmjs.com/cli/v11/commands/npm-stage/)、[Token 配置](https://docs.npmjs.com/creating-and-viewing-access-tokens/)。

@@ -217,7 +217,11 @@ Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Do
 
 ### Toast 使用规则
 
-扩展各模块统一从 `src/components/ui/toast.tsx` 导入 Toaster 与官方 toast 管理器，使用 `toast.add({ title, description?, type? })`。复用指定 shadcn Base UI Toast 的结构、排版、图标、间距、圆角、动画、关闭与堆叠规则；适配现有主题，不修改全局 Token。位置沿用官方右下角（窄屏沿用官方两侧留白），业务不覆盖位置、图标或配色，不手写关闭计时或折叠逻辑。
+ExtsToaster视口和复制Tooltip在plus内组合Radix官方DismissableLayer Branch，复用与项目Dialog相同的1.1.19模块，将Toast操作识别为允许交互区域。关闭/复制不应触发Sheet外部关闭或放弃确认，真正外部点击仍走原流程；不在业务拦截事件，不改基础Toast/Sheet。复制按钮旧stopPropagation已清理。该规则也作用于共享该模块的Radix菜单/弹层；不同Radix版本或其他浮层体系需另行核对，键盘/拖动/模态焦点由用户浏览器复验。
+
+当前普通浮层层级：Sheet遮罩40、内容50，AlertDialog遮罩60、内容70，ExtsToaster视口默认80、复制Tooltip81。Toast层级由包的 `--exts-z-toast` Token统一维护，业务不覆盖单条提示层级；新增普通浮层须核对此顺序，不通过任意提高z-index绕过。包不保证覆盖浏览器原生top layer；当前Modal打开时的复制/关闭和可见性必须一起由用户验收。
+
+扩展各模块统一从 `@linguio/exts-ui/plus/toast` 导入 ExtsToaster 与官方 toast 管理器，使用 `toast.add({ title, description?, type? })`。复用指定 shadcn Base UI Toast 的结构、排版、图标、间距、圆角、动画、关闭与堆叠规则；适配现有主题，不修改全局 Token。位置沿用官方右下角（窄屏沿用官方两侧留白），业务不覆盖位置、图标或配色，不手写关闭计时或折叠逻辑。
 
 默认使用一句简短英文标题，确需补充原因或处理方式时使用 description；不自动转换或替换提示文案。采用官方状态图标，包含官方错误图标的 destructive Token，不添加其他状态配色。当前业务不接入 Loading、Promise 或 Undo，不把临时提示当作待办或持续任务入口。
 
@@ -231,7 +235,7 @@ Tooltip 共用默认 sideOffset 为 4px，用于设置名称与帮助提示；Do
 
 每条提示保留始终可见的小型官方 Button `variant="ghost" size="icon-sm"` 复制按钮，Lucide Copy 点击成功后短暂显示 Check，Tooltip 为 Copy，读屏文案为 Copy toast message／Copied。复制完整标题与描述，以换行分隔，不截断、不翻译、不替换排错内容。该复制按钮为用户批准的项目差异，独立于官方 Action；当前不接入其他业务操作。复制不额外弹 Toast。
 
-业务模块持有文案、等级、触发条件；共用 UI 不加入 Chrome API、业务状态、跨页面通知管理或消息包装器。Newtab 与 Studio 共用根 Toaster；Telegram 在自身 Shadow DOM 挂载 Toaster，Toast 及复制 Tooltip 的 Portal 使用同一容器并继承现有主题。不同页面不转发提示，堆叠、关闭时长与滑动关闭使用官方实现。
+业务模块持有文案、等级、触发条件；共用 UI 不加入 Chrome API、业务状态、跨页面通知管理或消息包装器。Newtab 与 Studio 共用根 ExtsToaster；Telegram 在自身 Shadow DOM 挂载 ExtsToaster，Toast 及复制 Tooltip 的 Portal 使用同一容器并继承现有主题。不同页面不转发提示，堆叠、关闭时长与滑动关闭使用官方实现。
 
 Settings 加载、保存与权限操作失败统一使用根 Toast 的 error 类型，不在设置行追加错误段落。重复英文文案集中在 src/features/settings/messages.ts，调用方直接使用官方 API；不主动展示或复制未显示的内部异常，正式日志不包含令牌等敏感值。
 
@@ -244,7 +248,7 @@ TG 下载仍仅在文件流关闭成功后添加 success Toast，标题为 “Do
 - 主行帮助说明：Play a sound when an error notification appears. Other notifications stay silent.；无障碍说明同步表达仅错误自动发声、关闭仍可试听。
 - 展开仅 Default、Error 两行。Default 问号提示为 Default, Success, Info, and Warning notifications are silent.，右侧 VolumeX；Error 右侧 Volume2 按钮提示 Preview sound，直接试听固定错误音，不提供音色选择。
 - notifications.soundEnabled 默认 false，关闭时仍可试听。仅 Error 自动发声；每页面首条立即播放、1秒节流、音效未结束不叠加、不补播。同 Toast 文案更新不重复响，其余四类无声；关闭动画中的 Toast 不作为新通知播放。业务无需新增声音参数，倒计时结束音保持独立。
-- lib/audio 的 presets、synthesis、player、notification-sounds 集中维护音效和播放；notification-audio 使用 Base UI 官方 useToastManager；扩展页面适配现有 settings 数据入口，Telegram MAIN 只接收原有隔离桥传来的 soundEnabled，不在共用 UI 中加入账号、Chrome API 或通知服务。
+- Toast声音由packages/exts-ui/src/plus/toast维护，ExtsToaster按宿主持有独立播放器并监听官方状态；应用notification-toaster.tsx只读取偏好，Telegram传soundEnabled，Settings通过useExtsToastSound试听和读取状态。应用lib/audio的presets、synthesis、player只服务原有倒计时；关闭、节流、暂停及恢复规则保持。
 - 总开关开启且实际播放受阻时，Notification sounds 主行下显示当前页面的持续状态；点击试听尝试恢复，恢复后清除。该反馈是用户批准的播放状态提示，不替代 error Toast 设置操作失败提示。不能识别系统静音，也不把暂停直接称为浏览器权限被拒；各页面音频状态独立，不同步账号，关闭/离开页面释放资源，恢复页面重新读取偏好，不补播历史通知。
 - 视觉、交互、音效听感及 Chrome/Edge 自动播放限制由用户实际验收，代理仅完成逻辑、类型及构建检查。
 

@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [建立 exts-ui 包并迁入完整 Toast 能力](./issues/2026-11-18-exts-ui-toast-package-issue.md) · 已完成 · [Commit记录](./commits/2026-11-18-exts-ui-toast-package-commit.md)；用户验收通过并批准代码与文档两笔本地提交，首版包、声音及Radix协作、真实tgz与本地prepare已交付；未推送或上传npm，限制据实保留。
+
 - [完善快捷编辑加载态并升级 pnpm](./issues/2026-11-18-extension-edit-sheet-loading-issue.md) · 已完成 · [Commit 记录](./commits/2026-11-18-extension-edit-sheet-loading-commit.md)；用户验收通过并批准加载态代码、pnpm配置和文档三笔本地提交；验证限制据实保留，未推送，Toast层级调整不在本次交付范围。
 
 - [统一 Toast 展示、复制与声音说明](./issues/2026-11-17-extension-toast-standard-issue.md) · 已完成 · [Commit 记录](./commits/2026-11-17-extension-toast-standard-commit.md)；官方 Toast、完整复制与声音说明已交付，187 项测试、类型检查及构建通过；2026-11-18 用户验收通过并批准本地提交及推送。
