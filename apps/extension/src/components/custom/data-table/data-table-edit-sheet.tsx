@@ -25,6 +25,7 @@ interface DataTableEditSheetProps<T> {
   onSaved: () => void;
   editDescription?: string;
   partialUpdates?: boolean;
+  loading?: boolean;
 }
 
 function buildDraft<T>(row: T, fields: DataTableEditFieldDefinition[]): Record<string, string> {
@@ -34,7 +35,7 @@ function buildDraft<T>(row: T, fields: DataTableEditFieldDefinition[]): Record<s
 
 /** 配置驱动的行编辑 Sheet；共用层维护草稿、校验、防重与放弃确认。 */
 export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, updateFn, getRowId, onSaved, editDescription,
-  partialUpdates = false }: DataTableEditSheetProps<T>) {
+  partialUpdates = false, loading = false }: DataTableEditSheetProps<T>) {
   const fieldPrefix = useId();
   const displayFields = useMemo(() => editFieldsFromColumns(columns), [columns]);
   const writableFields = useMemo(() => writableEditFieldsFromColumns(columns), [columns]);
@@ -45,13 +46,18 @@ export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, update
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [discardOpen, setDiscardOpen] = useState(false);
+  const [draftRow, setDraftRow] = useState<T | null>(null);
 
   useEffect(() => {
     if (!open) cancelSubmit();
   }, [open, cancelSubmit]);
 
   useEffect(() => {
-    if (!open || !row) return;
+    if (!open || loading || !row) {
+      setDraftRow(null);
+      setDiscardOpen(false);
+      return;
+    }
     const next = buildDraft(row, displayFields);
     setDraft(next);
     setBaselineDraft(next);
@@ -59,9 +65,12 @@ export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, update
     setFieldErrors({});
     setSubmitting(false);
     setDiscardOpen(false);
-  }, [open, row, displayFields]);
+    setDraftRow(row);
+  }, [open, loading, row, displayFields]);
 
-  const dirty = open && baseline !== JSON.stringify(draft);
+  // 记录与草稿对应后才开放表单，避免加载切换时展示旧草稿或误触发放弃确认。
+  const ready = !loading && !!row && draftRow === row;
+  const dirty = open && ready && baseline !== JSON.stringify(draft);
 
   function closeClean() {
     cancelSubmit();
@@ -83,7 +92,7 @@ export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, update
 
   async function handleSave(event: FormEvent) {
     event.preventDefault();
-    if (!row || isSubmitting()) return;
+    if (!ready || !row || isSubmitting()) return;
     const { values, errors } = validateEditDraft(writableFields, draft,
       partialUpdates ? { baseline: baselineDraft, partial: true } : undefined);
     setFieldErrors(errors);
@@ -123,7 +132,9 @@ export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, update
           </header>
           {editDescription && <SheetDescription className="px-6 pb-4">{editDescription}</SheetDescription>}
           <Separator />
-          <ScrollArea className="min-h-0 flex-1">
+          {!ready ? <div className="flex min-h-0 flex-1 items-center justify-center" aria-busy="true">
+            <Spinner aria-label="Loading record" />
+          </div> : <ScrollArea className="min-h-0 flex-1">
             <FieldGroup className="gap-5 p-4">
               {displayFields.map(field => {
                 const inputId = `${fieldPrefix}-${field.id}`;
@@ -170,10 +181,10 @@ export function DataTableEditSheet<T>({ open, row, columns, onOpenChange, update
                 </Field>;
               })}
             </FieldGroup>
-          </ScrollArea>
+          </ScrollArea>}
           <SheetFooter className="flex-row justify-end border-t border-border sm:justify-end">
             <Button type="button" variant="outline" disabled={submitting} onClick={requestClose}>Cancel</Button>
-            <Button type="submit" disabled={submitting}>{submitting ? <><Spinner className="size-4" aria-hidden /><span className="sr-only">Saving</span><span>Saving…</span></> : 'Save'}</Button>
+            <Button type="submit" disabled={!ready || submitting}>{submitting ? <><Spinner className="size-4" aria-hidden /><span className="sr-only">Saving</span><span>Saving…</span></> : 'Save'}</Button>
           </SheetFooter>
         </form>
       </SheetContent>

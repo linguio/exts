@@ -56,7 +56,9 @@ export function DailyQuickEdit({ open, onOpenChange }: { open: boolean; onOpenCh
   }, [open, scope, userId, isPending, accountError, onOpenChange]);
 
   const row = record?.scope === scope ? record.row : null;
-  return <DataTableEditSheet key={scope} open={open && !!row && !accountError} row={row} columns={dailyColumns}
+  const currentScope = openingScope.current === null || openingScope.current === scope;
+  return <DataTableEditSheet key={scope} open={open && currentScope && !accountError && (isPending || !!userId)}
+    loading={isPending || !row} row={row} columns={dailyColumns}
     getRowId={getRowId} partialUpdates onOpenChange={onOpenChange}
     updateFn={(rowId, values, signal) => requestDailyUpdate(toActivityDayUpdate(rowId, values), userId!, signal)}
     onSaved={() => setRecord(null)} />;
