@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [整理官网更新日志并准备产品版本](./issues/2026-11-19-repo-release-next-issue.md) · 已完成 · 用户验收通过并批准代码与文档两笔本地提交；2.5.0及五条日志已交付，macOS与隔离库验证缺口保留，未推送或发布 · [Commit记录](./commits/2026-11-19-repo-release-next-commit.md)
+
 - [恢复本地 UI 联调并验证双包自动暂存](./issues/2026-11-19-extension-registry-ui-issue.md) · 已完成 · 双包自动暂存已成功；README交付修正经用户确认并批准本地文档提交，本轮未推送、升版本或发布 · [Commit记录](./commits/2026-11-19-extension-registry-ui-commit.md)
 
 - [建立 exts-ui 包并迁入完整 Toast 能力](./issues/2026-11-18-exts-ui-toast-package-issue.md) · 已完成 · [Commit记录](./commits/2026-11-18-exts-ui-toast-package-commit.md)；用户验收通过并批准代码与文档两笔本地提交，首版包、声音及Radix协作、真实tgz与本地prepare已交付；未推送或上传npm，限制据实保留。
