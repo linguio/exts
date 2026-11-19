@@ -84,7 +84,7 @@ docs/
 
 ## Issue 队列
 
-无。
+- [将已完成工作项归档到 GitHub 并在官网展示](./issues/2026-11-20-repo-github-issue-archive-issue.md) · 已排队，待确认实施范围 · [Commit 记录](./commits/2026-11-20-repo-github-issue-archive-commit.md)
 
 ## 待办
 
