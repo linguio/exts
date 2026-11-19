@@ -23,23 +23,36 @@ export function startApi({
   const marker = join(venv, '.exts-dependencies.sha256');
   try {
     const version = readFileSync(join(api, '.python-version'), 'utf8').trim();
-    const launcher = windows ? 'py' : `python${version.split('.').slice(0, 2).join('.')}`;
-    const launcherArgs = windows ? [`-${version.split('.').slice(0, 2).join('.')}`] : [];
-    function checkVersion(command, args, existing) {
+    const minor = version.split('.').slice(0, 2).join('.');
+    const candidates = windows
+      ? [['py', [`-${minor}`]], [`python${minor}`, []], ['python', []]]
+      : [[`python${minor}`, []]];
+    function inspectPython(command, args) {
       const result = run(command, [...args, '--version'], {
         cwd: api, encoding: 'utf8', timeout: 10_000,
       });
-      if (result.error || result.status !== 0 || result.stdout?.trim() !== `Python ${version}`) {
-        report(existing
-          ? `API 虚拟环境需要 Python ${version}。请确认该版本已安装后，手动移除并重建 dist/.cache/api/venv；现有环境未删除。`
-          : `未找到可用的 Python ${version}。请先安装该精确版本，并确认 ${[command, ...args, '--version'].join(' ')} 输出一致，再重新启动。`);
-        return false;
-      }
-      return true;
+      const label = [command, ...args].join(' ');
+      if (result.error?.code === 'ENOENT') return `${label}：未找到命令`;
+      if (result.error) return `${label}：执行失败（${result.error.code ?? result.error.message}）`;
+      if (result.status !== 0) return `${label}：执行失败（退出码 ${exitStatus(result)}）`;
+      if (result.stdout?.trim() !== `Python ${version}`) return `${label}：版本不符（${result.stdout?.trim() || '未返回版本'}），需要 Python ${version}`;
+      return null;
     }
 
     if (!existsSync(python)) {
-      if (!checkVersion(launcher, launcherArgs, false)) return 1;
+      let selected;
+      const failures = [];
+      // 只探测已有解释器，选中精确版本后沿用同一环境创建流程。
+      for (const candidate of candidates) {
+        const failure = inspectPython(...candidate);
+        if (!failure) { selected = candidate; break; }
+        failures.push(failure);
+      }
+      if (!selected) {
+        report(`未找到符合要求的 Python ${version}。请自行安装该精确版本，并确认下列任一命令可返回该版本；不会自动安装 Python。\n${failures.join('\n')}`);
+        return 1;
+      }
+      const [launcher, launcherArgs] = selected;
       report('正在创建 API 虚拟环境…');
       mkdirSync(join(root, 'dist', '.cache', 'api'), { recursive: true });
       const result = run(launcher, [...launcherArgs, '-m', 'venv', venv], { cwd: api, stdio: 'inherit' });
@@ -48,7 +61,11 @@ export function startApi({
         return exitStatus(result) || 1;
       }
     }
-    if (!checkVersion(python, [], true)) return 1;
+    const existingFailure = inspectPython(python, []);
+    if (existingFailure) {
+      report(`API 虚拟环境需要 Python ${version}。${existingFailure}。请确认该版本已安装后，手动移除并重建 dist/.cache/api/venv；现有环境未删除。`);
+      return 1;
+    }
 
     const digest = createHash('sha256')
       .update(version).update('\0')

@@ -52,6 +52,46 @@ for (const platform of ['darwin', 'linux', 'win32']) {
   });
 }
 
+test('Windows Launcher缺失、执行失败或版本不符时使用PATH精确版本创建环境', t => {
+  for (const result of [
+    { error: Object.assign(new Error('spawn py ENOENT'), { code: 'ENOENT' }) },
+    { status: 103, stderr: 'No suitable Python runtime found' },
+    { status: 0, stdout: 'Python 3.12.12\n' },
+  ]) {
+    const f = fixture(t, 'win32');
+    const run = f.options.run;
+    f.options.run = (command, args, options) => command === 'py' ? result : run(command, args, options);
+    assert.equal(startApi(f.options), 0);
+    assert.equal(f.calls.find(call => call.step === 'create').command, 'python3.12');
+    assert.equal(f.calls.filter(call => call.step === 'create').length, 1);
+    assert.equal(f.calls.at(-1).step, 'serve');
+  }
+});
+
+test('Windows版本化命令不可用时可用PATH通用Python，全部失败则分类提示且不创建', t => {
+  const f = fixture(t, 'win32');
+  const run = f.options.run;
+  f.options.run = (command, args, options) => ['py', 'python3.12'].includes(command)
+    ? { error: Object.assign(new Error('not found'), { code: 'ENOENT' }) } : run(command, args, options);
+  assert.equal(startApi(f.options), 0);
+  assert.equal(f.calls.find(call => call.step === 'create').command, 'python');
+
+  const failed = fixture(t, 'win32');
+  const commands = [];
+  failed.options.run = command => {
+    commands.push(command);
+    return command === 'py' ? { error: Object.assign(new Error('not found'), { code: 'ENOENT' }) }
+      : command === 'python3.12' ? { status: 0, stdout: 'Python 3.12.12\n' }
+        : { error: Object.assign(new Error('permission denied'), { code: 'EACCES' }) };
+  };
+  assert.equal(startApi(failed.options), 1);
+  assert.deepEqual(commands, ['py', 'python3.12', 'python']);
+  assert.equal(existsSync(failed.venv), false);
+  assert.match(failed.messages.join('\n'), /未找到命令/);
+  assert.match(failed.messages.join('\n'), /版本不符.*3\.12\.12/);
+  assert.match(failed.messages.join('\n'), /执行失败.*EACCES/);
+});
+
 test('已有环境首次同步；清单未变跳过安装，两份清单变化分别同步', t => {
   const f = fixture(t);
   f.existing();
