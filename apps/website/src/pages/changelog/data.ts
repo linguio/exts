@@ -13,6 +13,25 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'daily-quick-edit-notifications-v250',
+    date: '2026-11-19',
+    title: '新增 Daily 快捷编辑，完善通知体验',
+    groups: [{
+      platform: 'Extension',
+      changes: [
+        '首页 Actions 新增 Edit Daily，可直接编辑最新一条 Daily 记录，无需进入 Studio。',
+        '快捷编辑先打开抽屉并显示加载状态，减少首次查询时等待无反馈的问题。',
+        '统一通知展示，支持复制完整提示内容。',
+      ],
+    }, {
+      platform: 'Packages',
+      changes: [
+        '新增 @linguio/exts-ui 公共组件包，统一基础组件与通知增强能力。',
+        '公开 npm 包支持按版本变化自动验证并上传暂存区，由维护者手动批准正式发布。',
+      ],
+    }],
+  },
+  {
     id: 'notification-sound-settings-v240',
     date: '2026-11-16',
     title: '新增通知错误音，完善设置与 Studio 体验',
