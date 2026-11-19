@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [统一 API 开发环境的跨平台自动准备](./issues/2026-11-19-api-python-bootstrap-issue.md) · 已完成 · 用户验收通过并批准代码/文档提交及push；11项测试与隔离真实环境创建/复用通过，macOS实机限制保留 · [Commit记录](./commits/2026-11-19-api-python-bootstrap-commit.md)
+
 - [整理官网更新日志并准备产品版本](./issues/2026-11-19-repo-release-next-issue.md) · 已完成 · 用户验收通过并批准代码与文档两笔本地提交；2.5.0及五条日志已交付，macOS与隔离库验证缺口保留，未推送或发布 · [Commit记录](./commits/2026-11-19-repo-release-next-commit.md)
 
 - [恢复本地 UI 联调并验证双包自动暂存](./issues/2026-11-19-extension-registry-ui-issue.md) · 已完成 · 双包自动暂存已成功；README交付修正经用户确认并批准本地文档提交，本轮未推送、升版本或发布 · [Commit记录](./commits/2026-11-19-extension-registry-ui-commit.md)

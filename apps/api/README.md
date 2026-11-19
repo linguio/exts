@@ -27,7 +27,9 @@ Python 固定为 `.python-version` 中的 3.12.13；应用产品版本仍以根 
 
 启动器自动检查精确 Python 版本，在缺少环境时创建根 `dist/.cache/api/venv`，并使用该环境安装 `requirements-dev.txt`（包含生产依赖）。无需手动创建或激活虚拟环境。首次接入本流程的已有环境也会同步依赖，补齐此前未安装的包。
 
-macOS / Linux 使用 `python3.12` 创建环境，可执行 `python3.12 --version` 确认版本。Windows 使用 Python Launcher 的 `py -3.12`，执行 `py -3.12 --version` 应输出 `Python 3.12.13`。注意：[该版本官方发布说明](https://www.python.org/downloads/release/python-31213/)不提供二进制安装包；新机器需自行准备该精确解释器及可用的 Launcher，WindowsApps 下的执行别名不能代替实际安装。启动器不会安装系统 Python 或改用其他版本。
+macOS / Linux 使用 `python3.12` 创建环境，可执行 `python3.12 --version` 确认版本。Windows 依次检查 `py -3.12`、`python3.12` 和 `python`，选择首个精确返回 `Python 3.12.13` 的解释器；不要求必须安装 Python Launcher。uv 安装的解释器可通过其 PATH 中的 `python3.12` 使用，`py -3.12` 查找失败时不会中止后续探测。任一候选版本不符也会继续查找，全部失败时分别报告命令缺失、执行失败或版本不符。
+
+两端均为自行安装指定版本 Python 后执行 `pnpm api:dev`，无需手动创建或激活虚拟环境。注意：[该版本官方发布说明](https://www.python.org/downloads/release/python-31213/)不提供二进制安装包；新机器仍需自行准备该精确解释器，WindowsApps 下的执行别名不能代替实际安装。启动器不会下载/安装系统 Python、修改注册表或改用其他版本。
 
 依赖安装成功后，启动器将 Python 版本及两份依赖清单的 SHA-256 摘要保存在虚拟环境内的 `.exts-dependencies.sha256`。后续启动清单不变则跳过安装；任一清单变化会重新同步。首次安装及清单变化时需要网络访问 Python 包源；安装失败停止启动，不保存新的成功摘要，下次启动会重试。
 

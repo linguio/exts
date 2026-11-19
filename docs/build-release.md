@@ -39,7 +39,7 @@ node scripts/version.mjs
 
 统一 dev 使用已有 Turbo 注册的四个根任务并行执行既有开发命令，不缓存开发任务；使用 --continue=always 保持单项失败不自动停止其他任务，所有任务结束后仍报告失败。命令行日志按任务名显示在同一个终端；环境变量沿用各端单独启动时的进程环境，不启用 Turbo 严格过滤。需要四个独立命名终端时，使用编辑器的任务入口执行 Dev。各端仍可单独启动，不自动随编辑器打开启动开发服务。
 
-非 macOS 的根 build/release 和 desktop dev/build 在启动构建前明确报错并退出，不静默跳过桌面；统一 dev 也会尝试 Desktop，由其报告平台限制，其余任务继续。API 启动器按系统选择 dist/.cache/api/venv 下的 Windows Scripts/python.exe 或 macOS/Linux bin/python；须先按 apps/api/README.md 安装 Python 并创建本机虚拟环境，缺少环境时明确报错并提示准备命令，不自动安装。根 release 不自动提交、打 Git 标签、推送、部署或上传发布。
+非 macOS 的根 build/release 和 desktop dev/build 在启动构建前明确报错并退出，不静默跳过桌面；统一 dev 也会尝试 Desktop，由其报告平台限制，其余任务继续。API 按 apps/api/.python-version 精确校验解释器：自行安装指定版本 Python 后执行 pnpm api:dev，缺少项目环境时自动创建 dist/.cache/api/venv、安装依赖并检查配置，再启动服务。Windows 依次探测 py -3.12、python3.12、python，macOS/Linux 使用 python3.12；已有环境直接校验并复用 Windows Scripts/python.exe 或 macOS/Linux bin/python，依赖清单不变时跳过同步。启动器不安装系统 Python，不自动删除版本不符的已有环境；具体说明见 apps/api/README.md。根 release 不自动提交、打 Git 标签、推送、部署或上传发布。
 
 根 scripts/ 只维护 version.mjs、build.mjs、release.mjs；根入口负责公共规则和调度，应用内部脚本负责各端实现，不为小型辅助函数继续拆文件。
 
