@@ -1,7 +1,10 @@
 name: NPM Publish
-run-name: NPM Publish · ${{ inputs.package }}
+run-name: NPM Publish · ${{ inputs.package || 'Version check → Stage' }}
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       package:
@@ -17,75 +20,98 @@ permissions:
   contents: read
 
 concurrency:
-  group: npm-publish-${{ inputs.package }}
+  group: npm-stage-main
   cancel-in-progress: false
 
 jobs:
-  prepare:
-    name: Package · Verify & Pack
+  stage:
+    name: Stage · ${{ matrix.package }}
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        include:
+          - package: '@linguio/wxt-stable-output'
+            directory: packages/wxt-stable-output
+            artifact: wxt-stable-output
+          - package: '@linguio/exts-ui'
+            directory: packages/exts-ui
+            artifact: exts-ui
     steps:
-      - name: Checkout selected commit
+      - name: Checkout pushed commit
+        if: github.event_name == 'push' || inputs.package == matrix.package
         uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        if: github.event_name == 'push' || inputs.package == matrix.package
+        uses: actions/setup-node@v5.0.0
+        with:
+          node-version: 24.16.0
+          package-manager-cache: false
+      - name: Compare package versions
+        id: check
+        if: github.event_name == 'push' || inputs.package == matrix.package
+        env:
+          PACKAGE_NAME: ${{ matrix.package }}
+          PACKAGE_DIRECTORY: ${{ matrix.directory }}
+          BEFORE_SHA: ${{ github.event.before }}
+          EVENT_NAME: ${{ github.event_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          previous=''
+          if [[ "$EVENT_NAME" == 'push' && "$BEFORE_SHA" != '0000000000000000000000000000000000000000' ]]; then
+            if git cat-file -e "$BEFORE_SHA:$PACKAGE_DIRECTORY/package.json"; then
+              previous="$(git show "$BEFORE_SHA:$PACKAGE_DIRECTORY/package.json" | node --input-type=module -e "let text=''; for await (const chunk of process.stdin) text+=chunk; console.log(JSON.parse(text).version);")"
+            fi
+          fi
+          node packages/npm-release-tools/publish.mjs check "$PACKAGE_NAME" "$previous"
       - name: Setup pnpm
+        if: steps.check.outputs.selected == 'true'
         uses: pnpm/action-setup@v6.1.0
         with:
           version: 12.21.0
-      - name: Setup Node.js
-        uses: actions/setup-node@v5.0.0
-        with:
-          node-version: 24.16.0
       - name: Pin NPM CLI
+        if: steps.check.outputs.selected == 'true'
         run: npm install --global npm@11.15.0 --ignore-scripts
       - name: Install locked dependencies
+        if: steps.check.outputs.selected == 'true'
         run: pnpm install --frozen-lockfile
       - name: Test common release rules
+        if: steps.check.outputs.selected == 'true'
         run: node --test --test-isolation=none packages/npm-release-tools/tests/publish.test.mjs
       - name: Verify and pack selected package
+        if: steps.check.outputs.selected == 'true'
         id: pack
         env:
-          PACKAGE_NAME: ${{ inputs.package }}
+          PACKAGE_NAME: ${{ matrix.package }}
         run: node packages/npm-release-tools/publish.mjs prepare "$PACKAGE_NAME"
       - name: Upload verified tarball and receipt
+        if: steps.check.outputs.selected == 'true'
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: npm-release-${{ github.run_id }}
+          name: npm-release-${{ matrix.artifact }}-${{ github.run_id }}
           path: ${{ steps.pack.outputs.artifact }}
           if-no-files-found: error
           retention-days: 7
-
-  stage:
-    name: Package · Stage Upload
-    needs: prepare
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout same commit
-        uses: actions/checkout@v5.0.0
-      - name: Setup Node.js
-        uses: actions/setup-node@v5.0.0
-        with:
-          node-version: 24.16.0
-          registry-url: https://registry.npmjs.org/
-          package-manager-cache: false
-      - name: Pin NPM CLI
-        run: npm install --global npm@11.15.0 --ignore-scripts
-      - name: Download verified package
-        uses: actions/download-artifact@v4.3.0
-        with:
-          name: npm-release-${{ github.run_id }}
-          path: dist/.cache/npm-publish
       - name: Upload to NPM staging for manual approval
+        if: steps.check.outputs.selected == 'true'
         env:
-          PACKAGE_NAME: ${{ inputs.package }}
+          PACKAGE_NAME: ${{ matrix.package }}
+          ARTIFACT_DIRECTORY: ${{ steps.pack.outputs.artifact }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_USERCONFIG: ${{ runner.temp }}/npm-stage.npmrc
+        shell: bash
         run: |
+          set -euo pipefail
           if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "请先配置 stage-only NPM_TOKEN 仓库 Secret"
+            echo '请先配置 stage-only NPM_TOKEN 仓库 Secret'
             exit 1
           fi
-          node packages/npm-release-tools/publish.mjs stage "$PACKAGE_NAME" dist/.cache/npm-publish
+          trap 'rm -f "$NPM_CONFIG_USERCONFIG"' EXIT
+          printf '%s\n' '//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}' > "$NPM_CONFIG_USERCONFIG"
+          node packages/npm-release-tools/publish.mjs stage "$PACKAGE_NAME" "$ARTIFACT_DIRECTORY"

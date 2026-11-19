@@ -13,7 +13,7 @@ const metadata = JSON.parse(await readFile(join(source, 'package.json'), 'utf8')
 const [pack] = JSON.parse(await runNpm(['pack', '--json', '--ignore-scripts', '--pack-destination', fixture], { cwd: compiled, quiet: true }));
 validatePack(pack, metadata);
 const names = new Set(pack.files.map(file => file.path));
-for (const name of ['styles.css', 'styles.css.d.ts', 'plus/toast/index.js', 'plus/toast/index.d.ts', 'ui/toast.js', 'ui/button.js', 'ui/tooltip.js', 'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md']) {
+for (const name of ['styles.css', 'styles.css.d.ts', 'plus/toast/index.js', 'plus/toast/index.d.ts', 'ui/toast.js', 'ui/button.js', 'ui/tooltip.js', 'README.md', 'README.en.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md']) {
   if (!names.has(name)) throw new Error(`发布包缺少 ${name}`);
 }
 if ([...names].some(name => /^(src|scripts|tests)\//.test(name))) throw new Error('发布包包含维护源码或测试');

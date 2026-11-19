@@ -52,6 +52,17 @@ test('仅 registry 404 表示未发布，已有版本和网络错误中止', asy
   await assert.rejects(assertUnpublished('@linguio/one', '1.0.0', async () => { throw new Error('offline'); }), /offline/);
 });
 
+test('自动暂存只选择版本变化且未发布的包，手动运行允许重试，查询失败中止', async () => {
+  const name = '@linguio/one';
+  const unpublished = async () => ({ status: 404 });
+  assert.equal(await release.needsStaging(name, '1.0.2', '1.0.1', unpublished), true);
+  assert.equal(await release.needsStaging(name, '1.0.2', undefined, unpublished), true);
+  assert.equal(await release.needsStaging(name, '1.0.2', '1.0.2', async () => { throw new Error('不应查询'); }), false);
+  assert.equal(await release.needsStaging(name, '1.0.2', '1.0.1', async () => ({ status: 200 })), false);
+  await assert.rejects(release.needsStaging(name, '1.0.2', '1.0.1', async () => ({ status: 503 })), /查询失败/);
+  await assert.rejects(release.needsStaging(name, '1.0.2', undefined, async () => { throw new Error('offline'); }), /offline/);
+});
+
 test('编译包只从根dist打包并核对身份，已有源码包仍从原目录打包', async () => {
   const root = await realpath(await mkdtemp(join(tmpdir(), 'npm-compiled-')));
   try {

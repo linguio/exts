@@ -1,6 +1,6 @@
 # @linguio/wxt-stable-output
 
-[English](./README.md)
+[English](./README.en.md)
 
 [源码目录](https://github.com/linguio/exts/tree/main/packages/wxt-stable-output) · [npm 包](https://www.npmjs.com/package/@linguio/wxt-stable-output)
 
@@ -19,7 +19,7 @@
 ## 快速开始
 
 ```sh
-npm install --save-dev --save-exact @linguio/wxt-stable-output@1.0.1 wxt@0.21.4
+npm install --save-dev --save-exact @linguio/wxt-stable-output@1.0.2 wxt@0.21.4
 ```
 
 在 `wxt.config.ts` 中接入：

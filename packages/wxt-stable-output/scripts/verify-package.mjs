@@ -17,7 +17,8 @@ await mkdir(consumer);
 const metadata = JSON.parse(await readFile(join(packageRoot, 'package.json'), 'utf8'));
 const [pack] = JSON.parse(await runNpm(['pack', '--ignore-scripts', '--json', '--pack-destination', root], { cwd: packageRoot, quiet: true }));
 validatePack(pack, metadata);
-assert(pack.files.every(file => /^(src\/|README(?:\.zh-CN)?\.md$|LICENSE$|CHANGELOG\.md$|package\.json$)/.test(file.path)), '发布包夹带了测试或验证工具');
+for (const name of ['README.md', 'README.en.md', 'LICENSE', 'CHANGELOG.md']) assert(pack.files.some(file => file.path === name), `发布包缺少 ${name}`);
+assert(pack.files.every(file => /^(src\/|README(?:\.(?:zh-CN|en))?\.md$|LICENSE$|CHANGELOG\.md$|package\.json$)/.test(file.path)), '发布包夹带了测试或验证工具');
 await writeFile(join(consumer, 'package.json'), JSON.stringify({ name: 'independent-consumer', private: true, type: 'module' }));
 await runNpm(['install', join(root, pack.filename), '--offline', '--ignore-scripts', '--legacy-peer-deps', '--no-audit', '--no-fund', '--package-lock=false'], { cwd: consumer, quiet: true });
 

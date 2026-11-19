@@ -43,6 +43,14 @@ export async function assertUnpublished(name, version, request = fetch) {
   throw new Error(`npm 版本查询失败：HTTP ${response.status}，停止发布`);
 }
 
+export async function needsStaging(name, version, previousVersion, request = fetch) {
+  if (previousVersion === version) return false;
+  const response = await request(`${registry}/${encodeURIComponent(name)}/${encodeURIComponent(version)}`, { signal: AbortSignal.timeout(20000) });
+  if (response.status === 404) return true;
+  if (response.status === 200) return false;
+  throw new Error(`npm 版本查询失败：HTTP ${response.status}，停止暂存`);
+}
+
 export function validatePack(pack, metadata) {
   if (pack.name !== metadata.name || pack.version !== metadata.version) throw new Error('tarball 包名或版本与批准元信息不一致');
   if (!Array.isArray(pack.files) || !pack.files.some(file => file.path === 'package.json')) throw new Error('tarball 缺少 package.json');
@@ -177,9 +185,15 @@ export async function stagePackage(name, artifactPath, {
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
   const [mode, name, artifact] = process.argv.slice(2);
   try {
-    if (mode === 'prepare') await prepare(name);
+    if (mode === 'check') {
+      const { metadata } = await selectPackage(repositoryRoot, name);
+      const selected = await needsStaging(name, metadata.version, artifact || undefined);
+      console.log(`${name}@${metadata.version}：${selected ? '需要验证与暂存' : '版本未变化或已正式发布，跳过'}`);
+      if (process.env.GITHUB_OUTPUT) await appendFile(process.env.GITHUB_OUTPUT, `selected=${selected}\n`);
+    }
+    else if (mode === 'prepare') await prepare(name);
     else if (mode === 'stage' && artifact) await stagePackage(name, artifact);
-    else throw new Error('用法：node publish.mjs prepare <包名> 或 stage <包名> <产物目录>');
+    else throw new Error('用法：node publish.mjs check <包名> [上次版本]、prepare <包名> 或 stage <包名> <产物目录>');
   } catch (error) {
     console.error(error.message);
     process.exitCode = 1;

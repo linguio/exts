@@ -38,8 +38,8 @@ metadata.exports = Object.fromEntries(Object.entries(metadata.exports).map(([nam
 delete metadata.devDependencies;
 delete metadata.scripts;
 delete metadata.npmRelease;
-metadata.files = ['ui', 'plus', 'lib', 'styles.css', 'styles.css.d.ts', 'README.md', 'CHANGELOG.md', 'LICENSE', 'SOURCES.md', 'THIRD_PARTY_NOTICES.md'];
+metadata.files = ['ui', 'plus', 'lib', 'styles.css', 'styles.css.d.ts', 'README.md', 'README.en.md', 'CHANGELOG.md', 'LICENSE', 'SOURCES.md', 'THIRD_PARTY_NOTICES.md'];
 await writeFile(join(output, 'styles.css.d.ts'), 'export {};\n');
 await writeFile(join(output, 'package.json'), `${JSON.stringify(metadata, null, 2)}\n`);
-for (const name of ['README.md', 'CHANGELOG.md', 'LICENSE', 'SOURCES.md', 'THIRD_PARTY_NOTICES.md']) await copyFile(join(directory, name), join(output, name));
+for (const name of ['README.md', 'README.en.md', 'CHANGELOG.md', 'LICENSE', 'SOURCES.md', 'THIRD_PARTY_NOTICES.md']) await copyFile(join(directory, name), join(output, name));
 console.log(`组件包已构建：${output}`);
