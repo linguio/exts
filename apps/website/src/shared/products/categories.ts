@@ -43,6 +43,14 @@ export const productCategories: readonly ProductCategory[] = [
         { label: 'npm 包', href: 'https://www.npmjs.com/package/@linguio/wxt-stable-output' },
         { label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/packages/wxt-stable-output' },
       ],
+    }, {
+      name: 'Exts UI 公共组件库',
+      description: '基于 shadcn/ui 的 React 公共组件库，提供风格一致的基础组件与可复用的增强能力。',
+      installCommand: 'pnpm add @linguio/exts-ui',
+      links: [
+        { label: 'npm 包', href: 'https://www.npmjs.com/package/@linguio/exts-ui' },
+        { label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/packages/exts-ui' },
+      ],
     }],
   },
   {
