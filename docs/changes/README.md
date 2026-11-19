@@ -92,6 +92,8 @@ docs/
 
 ## 已完成
 
+- [在官网产品介绍补充 exts-ui](./issues/2026-11-19-website-exts-ui-package-issue.md) · 已完成 · 用户验收通过并批准本地提交及push，官网内容与记录已交付；main另有既有版本提交待确认是否一并推送，当前未部署 · [Commit记录](./commits/2026-11-19-website-exts-ui-package-commit.md)
+
 - [统一 API 开发环境的跨平台自动准备](./issues/2026-11-19-api-python-bootstrap-issue.md) · 已完成 · 用户验收通过并批准代码/文档提交及push；11项测试与隔离真实环境创建/复用通过，macOS实机限制保留 · [Commit记录](./commits/2026-11-19-api-python-bootstrap-commit.md)
 
 - [整理官网更新日志并准备产品版本](./issues/2026-11-19-repo-release-next-issue.md) · 已完成 · 用户验收通过并批准代码与文档两笔本地提交；2.5.0及五条日志已交付，macOS与隔离库验证缺口保留，未推送或发布 · [Commit记录](./commits/2026-11-19-repo-release-next-commit.md)
