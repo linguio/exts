@@ -20,7 +20,7 @@
 ## Web UI 选型与风格
 
 - 新建或迁入的共享Web组件采用 `packages/exts-ui` 边界：`@linguio/exts-ui/ui/*` 仅保留固定来源的shadcn基础源码和明确登记的导入路径/框架必要适配；项目增强样式、交互、复制及声音在 `plus/*` 组合，React增强组件统一Exts前缀，业务仍留应用。基础层不得反向依赖plus或应用。已有应用ui定制不因此自动批量改造，逐项迁移前明确差异归属；本边界优先于下文允许在官方基础中保留项目定制的一般描述。
-- exts-ui的版本独立于产品根版本，包内package.json为版本源，CHANGELOG为包更新唯一来源；本地精确Workspace引用，公开npm发布复用现有暂存流程，包命名使用@linguio scope，不自动发布或新建额外Git tag/Release。
+- exts-ui的版本独立于产品根版本，包内package.json为版本源，CHANGELOG为包更新唯一来源；本地精确Workspace引用，包命名使用@linguio scope。公开npm包复用暂存流程，main推送包含包版本变化时自动验证并上传暂存区，由用户手动批准正式发布；不接入OIDC、不自动正式发布或新建额外Git tag/Release。
 - 适用于官网与浏览器扩展的全部 Web 功能，不局限于 Newtab；原生桌面界面遵循平台组件规范。
 - 跨应用 Web 风格统一覆盖官网与整个 Extension，不局限于 Newtab；扩展后续新增的弹窗、设置页、侧边栏及其他 Web 界面均复用已有主题与通用组件，不因新增页面另建一套风格。统一组件选型、样式语义与同类状态反馈，已确认的主题、业务布局及不同用途的材质参数可以保留差异；具体实现范围仍以当前 Issue 为准。
 - Desktop 尽可能采用 SwiftUI 系统控件和平台原生样式；SwiftUI 无法满足时先考虑 AppKit 等平台能力，确无合适原生方案再进行必要定制并记录原因。共享品牌资源与基础设计原则，不要求复刻 shadcn 外观或复用 Web 的 CSS、字体尺寸、圆角及模糊数值。

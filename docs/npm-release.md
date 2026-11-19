@@ -2,11 +2,11 @@
 
 ## 包与版本
 
-新增组件包 `@linguio/exts-ui`，首版0.1.0、dist-tag为latest，尚未上传或正式发布。本地使用精确Workspace源码引用；编译产物统一在根 `dist/build/npm/exts-ui`，包内CHANGELOG独立维护，不创建额外Git tag/Release。该包与下述WXT工具包保持各自版本及消费方式。
+组件包 `@linguio/exts-ui` 首版0.1.0已由用户发布且线上消费验收通过，扩展恢复精确Workspace源码引用0.2.0以继续开发；0.2.0是本次准备版本，尚未上传或正式发布。默认中文README与英文README.en.md共同打包，CHANGELOG仅维护中文。编译产物统一在根 `dist/build/npm/exts-ui`，包内CHANGELOG独立维护，不创建额外Git tag/Release。
 
 公开包：`@linguio/wxt-stable-output`，首版 `1.0.0`。`linguio` 是用户的 npm 账号，对应个人 scope，公开发布免费，不需要组织或独立仓库。
 
-当前正式版本为 `1.0.1`，已通过官方 registry 查询确认，扩展同步使用该版本。本次仅修订文档和展示元数据，功能、API 与依赖要求不变。
+当前正式版本为 `1.0.1`，扩展继续使用该版本。本次本地准备 `1.0.2`，README默认中文、保留英文入口，接入按版本变化自动暂存；尚未上传或正式发布，功能、API与依赖要求不变。
 
 源码仍在 `packages/wxt-stable-output`，用于维护与发布。扩展与外部项目均安装 npm 正式包，扩展当前锁定精确 `1.0.1`，不通过 workspace 引用本地源码。工具版本独立于根产品版本；升级时同步包 `package.json`、消费方引用和 `pnpm-lock.yaml`，写变更说明，再验证。已发布的同版本不能覆盖。
 
@@ -73,14 +73,20 @@ pnpm --filter @linguio/wxt-stable-output exec wxt --root "<fixture绝对路径>"
 3. GitHub 仓库 → Settings → Secrets and variables → Actions → New repository secret，名称 `NPM_TOKEN`，值填写生成的 Token。不要把 Token 写入仓库或聊天。
 4. 用户验收并批准提交、推送后，确认 main 上包含本次 workflow 和源码。
 
-Token 仅提供给 stage job 的上传步骤。prepare job 不接收 Token；stage job 不具备 OIDC 发布权限。缺少 Token 时明确失败，不降级为直接发布。
+Token 仅提供给串行包任务的最后上传步骤；版本检测、安装、验证与打包均不接收Token。任务不具备OIDC发布权限，缺少Token明确失败，不降级为正式发布。认证配置只在该上传步骤创建并清理，不向日志输出Token。
+
+### 自动触发
+
+推送到main时按两个包各自package.json比较本次推送前后的版本。版本未变化时跳过，普通代码或文档提交不会重复上传待审核草稿；版本变化且registry返回该版本404时才继续验证和暂存，已正式发布则跳过，网络或其他HTTP错误中止。首次创建分支或新增包无旧版本时按registry判断。
+
+两个包串行运行，沿用固定Node、pnpm和npm CLI。每包验证通过后生成tarball及同提交SHA-512凭据，保留独立Actions artifact，再暂存同一份文件。失败可通过下述手动入口重试；未修改版本的后续push不会自动重试。
 
 ### 手动运行
 
 1. GitHub 仓库 → Actions → **NPM Publish** → **Run workflow**。
-2. 分支选 `main`，在包名下拉框选择 `@linguio/wxt-stable-output` 或 `@linguio/exts-ui`；只验证、打包及暂存所选包，私有发布工具不列入选项。本次仅修改本地workflow配置，远端运行须另获批准。
-3. prepare job 检查包和版本，串行验证，打包并上传 tarball/receipt。
-4. stage job 核对同一源码提交、文件清单与 SHA-512，执行 `npm stage publish` 上传同一 tarball。
+2. 分支选 `main`，在包名下拉框选择 `@linguio/wxt-stable-output` 或 `@linguio/exts-ui`；只验证、打包及暂存所选包，私有发布工具不列入选项。手动运行忽略push版本对比，但已正式发布的版本仍跳过。
+3. 包任务串行检查版本、验证、打包并上传独立tarball/receipt artifact。
+4. 上传步骤核对同一源码提交、文件清单与 SHA-512，执行 `npm stage publish` 上传同一 tarball。
 5. 摘要显示包名、版本、源码提交和暂存编号，并明确“尚未正式发布”。不自动执行 `npm publish` 或 `npm stage approve`。
 
 非法输入、私有包、已发布版本、验证或校验失败均不上传。相同版本已在暂存区时 npm 会拒绝再次上传；先检查已有暂存项，不盲目重跑。上传命令成功但结果解析失败时也先检查 Staged Packages，不重传同版本。
@@ -105,7 +111,7 @@ Token 仅提供给 stage job 的上传步骤。prepare job 不接收 Token；sta
 node packages/npm-release-tools/publish.mjs prepare @linguio/wxt-stable-output
 ```
 
-该产物不替代 Action 中基于所选源码提交准备的 tarball。发布工具仅提供 `prepare` 与 `stage`，不提供直接正式发布或自动批准命令。
+该产物不替代Action中基于所选源码提交准备的tarball。发布工具提供check（版本是否需要暂存）、prepare与stage，不提供直接正式发布或自动批准命令。
 
 ## 未来增加包
 
@@ -120,7 +126,7 @@ node packages/npm-release-tools/publish.mjs prepare @linguio/wxt-stable-output
 }
 ```
 
-复用同一 workflow，新增公开包时同步加入 `workflow_dispatch.inputs.package.options`；下拉选择后只暂存所选包。应用和私有工具不列入选项，也不能发布；批量发布、Changesets 与自动版本 PR 不属于本流程。
+复用同一workflow，新增公开包时同步加入workflow_dispatch包选项与串行matrix；手动选择后只暂存所选包，push按各包版本变化选择。应用和私有工具不列入选项，也不能发布；Changesets与自动版本PR不属于本流程。
 
 以后改为 OIDC 暂存上传时需另行配置每个包的 Trusted Publisher，并修改当前 Token 认证配置；正式发布仍由用户在 npm 网页批准。不在本轮自动配置。
 
@@ -130,8 +136,8 @@ node packages/npm-release-tools/publish.mjs prepare @linguio/wxt-stable-output
 pnpm --filter @linguio/exts-ui verify:npm
 ```
 
-串行执行包类型、迁移的纯逻辑测试、ESM/声明/CSS构建及真实tarball独立消费验证。tarball与fixture在根 `dist/.cache/exts-ui-verify`，独立消费者不链接仓库源码，检查CSS类型入口、实际ESM导入与Vite构建。不会上传npm。应用dev/build会先构建包；包样式或工具类变化后再次build，首版不新增长期watch。
+串行执行包类型、迁移的纯逻辑测试、ESM/声明/CSS构建及真实tarball独立消费验证。tarball与fixture在根 `dist/.cache/exts-ui-verify`，独立消费者不链接仓库源码，检查CSS类型入口、实际ESM导入与Vite构建。不会上传npm。扩展当前消费Workspace版本，dev/build先构建本地UI包；包自身样式或工具类变化后重新build，不新增长期watch。
 
-获准正式准备时沿用 `node packages/npm-release-tools/publish.mjs prepare @linguio/exts-ui`；它查询版本占用、重新验证并生成带校验凭据的产物。真实上传仍只允许已批准的Actions stage步骤，latest是npm渠道而不是额外版本号。首版本地prepare已通过并确认产物与独立消费者验证tarball一致；远端Actions、stage及正式发布仍未执行，不把本地准备成功写成远端发布成功。
+获准正式准备时沿用 `node packages/npm-release-tools/publish.mjs prepare @linguio/exts-ui`；它查询版本占用、重新验证并生成带校验凭据的产物。真实上传仍只允许已批准的Actions stage步骤，latest是npm渠道而不是额外版本号。首版本地prepare已通过并确认产物与独立消费者验证tarball一致；用户已完成0.1.0发布，registry查询确认该版本存在，不据此推断远端Actions或stage的具体执行情况。
 
 依据：[npm 暂存发布](https://docs.npmjs.com/staged-publishing/)、[npm stage 命令](https://docs.npmjs.com/cli/v11/commands/npm-stage/)、[Token 配置](https://docs.npmjs.com/creating-and-viewing-access-tokens/)。

@@ -17,6 +17,7 @@
 ## 通用 UI 与组合
 
 - Toast已迁入 `@linguio/exts-ui/plus/toast`，应用不保留ui/toast、复制及通知播放器的重复实现；业务直接使用包导出的toast.add。设置仅在notification-toaster.tsx读取偏好并传soundEnabled，设置试听通过useExtsToastSound连接当前宿主，Telegram传既有Shadow容器与开关。其他基础/增强组件尚未迁移，不因此扩大范围。
+- 扩展恢复使用 `@linguio/exts-ui` 精确Workspace版本，dev/build先构建本地UI包再执行WXT；npm 0.1.0线上消费已由用户验收。继续开发使用本地源码，后续正式包消费切换另获批准。
 - 表格及列表查询接口遵循与 UI/API 并列的仓库级[表格规范](../../docs/table-conventions.md)；扩展组件接入说明不能代替该规范，后续共性规则同步维护仓库级文档。
 
 - 官网与扩展全部 Web UI 的选型、来源和风格维护原则遵循根 [AGENTS.md](../../AGENTS.md#web-ui-选型与风格)，不维护组件白名单。
