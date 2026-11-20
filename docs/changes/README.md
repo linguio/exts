@@ -80,7 +80,7 @@ docs/
 
 ## 当前 Issue
 
-无。
+- [准备公共包新版本并统一消费来源](./issues/2026-11-20-extension-stable-output-103-issue.md) · 发布前准备已验收 · 用户批准本阶段提交及push；UI本地0.4.0，WXT暂用线上1.0.3，待npm正式发布1.1.0后切换 · [Commit记录](./commits/2026-11-20-extension-stable-output-103-commit.md)
 
 ## Issue 队列
 

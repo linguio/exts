@@ -2,13 +2,15 @@
 
 ## 包与版本
 
-组件包 `@linguio/exts-ui` 首版0.1.0已由用户发布且线上消费验收通过，扩展恢复精确Workspace源码引用0.2.0以继续开发；0.2.0是本次准备版本，尚未上传或正式发布。默认中文README与英文README.en.md共同打包，CHANGELOG仅维护中文。编译产物统一在根 `dist/build/npm/exts-ui`，包内CHANGELOG独立维护，不创建额外Git tag/Release。
+组件包 `@linguio/exts-ui` 首版0.1.0已由用户发布且线上消费验收通过，扩展当前使用精确Workspace源码引用0.4.0继续开发，不消费线上UI包；0.4.0为本地准备版本，尚未正式发布。默认中文README与英文README.en.md共同打包，CHANGELOG仅维护中文。编译产物统一在根 `dist/build/npm/exts-ui`，包内CHANGELOG独立维护，不创建额外Git tag/Release。
 
 公开包：`@linguio/wxt-stable-output`，首版 `1.0.0`。`linguio` 是用户的 npm 账号，对应个人 scope，公开发布免费，不需要组织或独立仓库。
 
-当前正式版本为 `1.0.1`，扩展继续使用该版本。本次本地准备 `1.0.2`，README默认中文、保留英文入口，接入按版本变化自动暂存；尚未上传或正式发布，功能、API与依赖要求不变。
+当前已核实npm正式版本为 `1.0.3`，扩展固定消费该版本。README默认中文、保留英文入口，发布沿用按版本变化自动暂存及用户手动批准流程。
 
-源码仍在 `packages/wxt-stable-output`，用于维护与发布。扩展与外部项目均安装 npm 正式包，扩展当前锁定精确 `1.0.1`，不通过 workspace 引用本地源码。工具版本独立于根产品版本；升级时同步包 `package.json`、消费方引用和 `pnpm-lock.yaml`，写变更说明，再验证。已发布的同版本不能覆盖。
+本地WXT工具已准备1.1.0（包主页及关键词修正），当前尚未正式发布；扩展不提前引用不可安装版本。用户批准npm正式发布且registry确认可用后，再同步扩展精确1.1.0及锁文件，保留UI本地Workspace。
+
+源码仍在 `packages/wxt-stable-output`，用于维护与发布。扩展与外部项目均安装 npm 正式包，扩展当前锁定精确 `1.0.3`，不通过 workspace 引用本地源码。工具版本独立于根产品版本；升级时同步包 `package.json`、消费方引用和 `pnpm-lock.yaml`，写变更说明，再验证。已发布的同版本不能覆盖。
 
 本地及 CI 固定 Node.js `24.16.0`、pnpm `12.21.0`，发布 npm CLI `11.15.0`。首版 WXT peer 为 `0.21.4`，不默认兼容未验证版本。
 
