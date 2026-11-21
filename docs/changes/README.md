@@ -80,7 +80,7 @@ docs/
 
 ## 当前 Issue
 
-- [准备公共包新版本并统一消费来源](./issues/2026-11-20-extension-stable-output-103-issue.md) · 发布前准备已验收 · 用户批准本阶段提交及push；UI本地0.4.0，WXT暂用线上1.0.3，待npm正式发布1.1.0后切换 · [Commit记录](./commits/2026-11-20-extension-stable-output-103-commit.md)
+无。
 
 ## Issue 队列
 
@@ -91,6 +91,8 @@ docs/
 无。
 
 ## 已完成
+
+- [准备公共包新版本并统一消费来源](./issues/2026-11-20-extension-stable-output-103-issue.md) · 已完成 · 用户验收通过并批准本地提交；扩展使用线上 WXT 1.1.0 和本地 exts-ui 0.4.0，安装、类型检查与构建通过 · [Commit 记录](./commits/2026-11-20-extension-stable-output-103-commit.md)
 
 - [在官网产品介绍补充 exts-ui](./issues/2026-11-19-website-exts-ui-package-issue.md) · 已完成 · 用户验收通过并批准本地提交及push，官网内容与记录已交付；main另有既有版本提交待确认是否一并推送，当前未部署 · [Commit记录](./commits/2026-11-19-website-exts-ui-package-commit.md)
 
