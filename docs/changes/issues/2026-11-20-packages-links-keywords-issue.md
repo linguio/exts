@@ -3,8 +3,8 @@
 ## 元信息
 
 - 工作项：2026-11-20-packages-links-keywords
-- 状态：已并入当前工作项
-- 当前阶段：用户指定双包新版本后并入版本与来源准备，不再独立实施；以[当前Issue](2026-11-20-extension-stable-output-103-issue.md)为唯一实施事实来源
+- 状态：已验收通过（已并入当前工作项）
+- 当前阶段：用户确认实际实现验收通过；后续提交与发布状态以[当前Issue](2026-11-20-extension-stable-output-103-issue.md)为准
 - 批准依据：用户要求包主页直达各自源码目录，确认exts-ui关键词shadcn-ui/ui/components、WXT关键词wxt/chrome/extension。
 - 规模：小型npm展示元数据修正，不修改组件、构建或业务。
 

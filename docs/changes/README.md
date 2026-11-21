@@ -198,7 +198,7 @@ docs/
 
 - [修正账户状态并补充 Newtab 快捷登录](./issues/2026-11-04-extension-account-state-feedback-issue.md) · [Commit 记录](./commits/2026-11-04-extension-account-state-feedback-commit.md)；用户于 2026-11-05 确认验收通过并要求本地提交，代码与文档分开提交；扩展 102 项测试、类型检查、生产构建与 diff 检查通过，浏览器交互由用户验收，代理未独立实测，未推送。
 
-- [统一 Exts 登录、授权与退出窗口](./issues/2026-11-04-extension-auth-window-unification-issue.md) · [Commit 记录](./commits/2026-11-04-extension-auth-window-unification-commit.md)；按用户指令提交当前页面阶段成果。浏览器外框固定与退出失败定位尚未完成；官网类型检查通过，构建受本机环境错误阻塞，未做浏览器验收或部署。
+- [统一 Exts 登录、授权与退出窗口](./issues/2026-11-04-extension-auth-window-unification-issue.md) · [Commit 记录](./commits/2026-11-04-extension-auth-window-unification-commit.md)；已提交页面阶段成果，用户确认已交付范围验收通过。浏览器外框固定与退出失败定位尚未完成；官网类型检查通过，构建受本机环境错误阻塞，未提供浏览器验收细节，未部署。
 
 - [退出后重新选择登录账号](./issues/2026-11-04-extension-full-logout-issue.md) · [Commit 记录](./commits/2026-11-04-extension-full-logout-commit.md)；用户于 2026-11-04 要求本地 commit 完结。插件 100 项、官网 17 项逻辑测试及两端类型检查/构建此前通过，本次提交未重跑。用户实际操作得到“退出未完成，请重试”，线上注销页部署和具体失败环节未确认，需后续排查；未推送或部署。
 
