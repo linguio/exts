@@ -84,6 +84,8 @@ docs/
 
 ## Issue 队列
 
+- [整合开发交付 Skill](./issues/2026-11-21-repo-workflow-delivery-issue.md) · 已排队，待当前 Issue 完结 · [Commit 记录](./commits/2026-11-21-repo-workflow-delivery-commit.md)
+
 ## 待办
 
 无。
