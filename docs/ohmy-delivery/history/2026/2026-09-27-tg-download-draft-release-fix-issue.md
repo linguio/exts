@@ -1,6 +1,6 @@
 ---
 date: "2026-09-27"
-scope: tg-download
+scope: build
 status: completed
 type: bug
 ---

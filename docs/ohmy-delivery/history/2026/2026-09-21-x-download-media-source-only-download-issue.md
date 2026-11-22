@@ -1,6 +1,6 @@
 ---
 date: "2026-09-21"
-scope: x-download
+scope: extension
 status: completed
 type: task
 ---

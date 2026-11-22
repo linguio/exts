@@ -4,7 +4,7 @@ FastAPI 后端。`GET /` 通过 307 临时重定向跳转到 `/docs`，文档无
 
 ## 接口文档
 
-`/docs` 使用官方 `scalar-fastapi==1.9.1`，读取当前服务的 `/openapi.json`。默认 Swagger 与 ReDoc 页面关闭，只保留这一份文档入口。列表展示 Activity 与 Settings 业务接口及 Bearer 认证，根路由、文档与内部定时任务不加入业务接口列表。
+`/docs` 使用官方 `scalar-fastapi==1.9.1`，读取当前服务的 `/openapi.json`。默认 Swagger 与 ReDoc 页面关闭，只保留这一份文档入口。列表展示 Activity、Settings 和 Dictionaries 业务接口及 Bearer 认证，根路由、文档与内部定时任务不加入业务接口列表。
 
 Scalar 浏览器资源固定为 `https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.76.4/dist/browser/standalone.js`，需要浏览器可访问 jsDelivr；不使用浮动 CDN 版本。沿用官方默认样式，关闭 Agent 与遥测，不设置请求代理、不预填令牌、不默认持久保存令牌。在线调试请求直接发往当前 API 服务。
 
@@ -121,6 +121,13 @@ Windows 从仓库根执行只读预览：
 ```
 
 macOS/Linux 使用对应的 dist/.cache/api/venv/bin/python。迁移使用管理连接、事务锁与 public._exts_migrations 版本登记；失败回滚。首份迁移创建 public.activity_daily_records、UUID 外键、联合主键、非负约束、更新时间触发器，并设置当前数据库新连接默认时区 Asia/Shanghai。依赖已存在的 Neon 管理用户表，不复制或重建认证表，不导入用户历史数据。
+
+## 共享字典查询
+
+登录后可查询全局只读字典。两条查询共用现有 Bearer 身份校验，不按用户过滤字典。迁移 0006 建立 `dictionary_groups` 与 `dictionary_items`，初始化 Status、Scope、Type 三组共 21 项。迁移 0007 为两表记录创建时间，分组按创建时间排序。迁移 0008 将 Scope 对齐到八类，保留已有有效值的 ID 和显示名。当前三组共 17 项。
+
+- POST `/api/dictionaries/groups` 接收 `pageIndex` 和 `pageSize`，返回 `groups`、`total`、`pageIndex` 和 `pageSize`。按 `createdAt`、`key` 升序。
+- POST `/api/dictionaries/items` 接收 `groupId`，返回含 `createdAt` 的 `items`，在指定组内按 `sortOrder`、`value` 升序。已有空组返回空数组，找不到分组返回 404，超出 500 项返回 422。
 
 ## 每日任务与部署前配置
 

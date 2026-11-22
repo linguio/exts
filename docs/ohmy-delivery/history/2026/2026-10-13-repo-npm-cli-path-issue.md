@@ -1,6 +1,6 @@
 ---
 date: "2026-10-13"
-scope: repo
+scope: packages
 status: completed
 type: bug
 ---

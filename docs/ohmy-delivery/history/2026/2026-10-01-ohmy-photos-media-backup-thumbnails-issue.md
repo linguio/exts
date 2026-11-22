@@ -1,6 +1,6 @@
 ---
 date: "2026-10-01"
-scope: ohmy-photos
+scope: desktop
 status: completed
 type: bug
 ---

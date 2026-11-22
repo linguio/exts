@@ -1,6 +1,6 @@
 ---
 date: "2026-11-09"
-scope: activity
+scope: api
 status: completed
 type: feature
 ---

@@ -1,6 +1,6 @@
 ---
 date: "2026-09-24"
-scope: repo
+scope: skills
 status: completed
 type: task
 ---

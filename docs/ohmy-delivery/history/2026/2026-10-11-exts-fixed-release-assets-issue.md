@@ -1,6 +1,6 @@
 ---
 date: "2026-10-11"
-scope: repo
+scope: build
 status: completed
 type: feature
 ---

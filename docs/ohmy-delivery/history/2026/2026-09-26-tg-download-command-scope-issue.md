@@ -1,6 +1,6 @@
 ---
 date: "2026-09-26"
-scope: tg-download
+scope: build
 status: completed
 type: task
 ---

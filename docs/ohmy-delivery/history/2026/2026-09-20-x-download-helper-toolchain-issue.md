@@ -1,6 +1,6 @@
 ---
 date: "2026-09-20"
-scope: x-download-helper
+scope: desktop
 status: completed
 type: task
 ---

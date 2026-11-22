@@ -1,6 +1,6 @@
 ---
 date: "2026-10-12"
-scope: wxt-stable-output
+scope: packages
 status: completed
 type: task
 ---
