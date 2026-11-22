@@ -4,7 +4,7 @@
 
 **目标：** 归档旧应用，建立清晰的活动目录和可用仓库入口，不迁移业务功能。
 
-**依据：** [本 Issue](../../changes/issues/2026-10-08-repo-archive-legacy-apps-issue.md) 和 [已验收盘点](../../changes/issues/2026-10-08-repo-app-integration-inventory-issue.md)。
+**依据：** [本 Issue](../../ohmy-delivery/issues/2026-10-08-repo-archive-legacy-apps-issue.md) 和 [已验收盘点](../../ohmy-delivery/issues/2026-10-08-repo-app-integration-inventory-issue.md)。
 
 **技术：** 保留现有 pnpm Workspace、Turborepo、VitePress 和原生项目文件；Node 24.16.0、pnpm 12.4.2、Turbo 2.10.12，不升级版本。
 

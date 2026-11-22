@@ -97,8 +97,8 @@
 ## Task 6: 完整验证与阶段验收
 
 **Files:**
-- Modify: `docs/changes/issues/2026-09-20-x-download-public-video-download-issue.md`
-- Modify: `docs/changes/commits/2026-09-20-x-download-public-video-download-commit.md`
+- Modify: `docs/ohmy-delivery/issues/2026-09-20-x-download-public-video-download-issue.md`
+- Modify: `docs/ohmy-delivery/commits/2026-09-20-x-download-public-video-download-commit.md`
 
 - [x] 串行运行新增 XCTest、现有 Helper XCTest、`xcodebuild build`、`git diff --check`；Xcode 验证被既有 ObservationMacros 插件错误阻断。
 - [x] 检查参数中没有 Cookie、系统工具路径、Shell 拼接或并行进程；检查生成产物未进入 Git。

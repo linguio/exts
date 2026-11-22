@@ -1,7 +1,7 @@
 # 每日活动分页与排序实施计划
 
 ## 目标与约束
-以 [Issue](../../changes/issues/2026-11-08-activity-days-pagination-issue.md) 为唯一范围依据。
+以 [Issue](../../ohmy-delivery/issues/2026-11-08-activity-days-pagination-issue.md) 为唯一范围依据。
 串行实施，不创建子代理，不升级依赖，不进行浏览器视觉或交互验收，不提交 Git。
 既有模型选择提醒已展示，用户自行决定切换。
 

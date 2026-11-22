@@ -5,7 +5,7 @@
 本 Spec 描述的帖子 URL 解析执行链路属于历史实现；后续 `2026-09-21-x-download-media-source-only-download` Issue 已明确移除该路径，当前下载只接受扩展提供的完整媒体来源。
 
 - 工作项：`2026-09-20-x-download-public-video-download`
-- 对应 Issue：[`建立 X Download Helper 视频下载执行链路`](../../changes/issues/2026-09-20-x-download-public-video-download-issue.md)
+- 对应 Issue：[`建立 X Download Helper 视频下载执行链路`](../../ohmy-delivery/issues/2026-09-20-x-download-public-video-download-issue.md)
 - 状态：已批准
 - 日期：2026-09-20
 - 目标平台：当前 Apple Silicon Mac、macOS 14 及以上

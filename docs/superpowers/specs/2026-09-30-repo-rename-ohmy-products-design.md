@@ -6,8 +6,8 @@
 - 状态：已批准
 - 创建日期：2026-09-30
 - 最近更新：2026-09-30
-- 对应 Issue：[Oh My 产品命名迁移](../../changes/issues/2026-09-30-repo-rename-ohmy-products-issue.md)
-- 参考 Issue：[统一 OmyExts 仓库与产品命名](../../changes/issues/2026-09-30-repo-unify-omy-product-naming-issue.md)
+- 对应 Issue：[Oh My 产品命名迁移](../../ohmy-delivery/issues/2026-09-30-repo-rename-ohmy-products-issue.md)
+- 参考 Issue：[统一 OmyExts 仓库与产品命名](../../ohmy-delivery/issues/2026-09-30-repo-unify-omy-product-naming-issue.md)
 
 ## 1. 设计目的
 

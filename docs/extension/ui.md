@@ -1,6 +1,6 @@
 # 扩展界面样式规范
 
-适用于 `apps/extension`。覆盖全部扩展 Web UI，现有场景包括新标签页书签、Dock 工具、Settings Sheet 与 EDU 遮罩；Dock 基础规则见[对应 Issue](../changes/issues/2026-10-15-extension-newtab-dock-issue.md)，历史清理设置区域的交付与验收状态见[历史清理 Issue](../changes/issues/2026-10-16-extension-history-cleaner-issue.md)。
+适用于 `apps/extension`。覆盖全部扩展 Web UI，现有场景包括新标签页书签、Dock 工具、Settings Sheet 与 EDU 遮罩；Dock 基础规则见[对应 Issue](../ohmy-delivery/issues/2026-10-15-extension-newtab-dock-issue.md)，历史清理设置区域的交付与验收状态见[历史清理 Issue](../ohmy-delivery/issues/2026-10-16-extension-history-cleaner-issue.md)。
 
 ## 维护位置与职责
 
@@ -126,7 +126,7 @@
 | `entry-glyph--lift` | 无图块入口的图形上移变体；用于 EDU 锁图标，让透明遮罩保持不动 |
 
 书签和工具按钮使用 `entry-trigger` → `entry-surface` → `entry-glyph`。文件夹遮罩按钮使用 `blur-overlay entry-trigger`，图标使用 `entry-glyph entry-glyph--lift`，不额外添加卡片阴影或改变遮罩背景。
-UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU 属于固定四位码 `0000` 的界面锁，使用 Lock；点击后直接在文件夹内只显示官方 Input OTP 的四个 64px 密文密码块，与内部书签图块同尺寸，横纵间距和四周留白均为 16px，上下两行各两个分离输入位，不弹出对话框或额外提示。输满四位自动校验，错误即清空，正确后切换为 LockOpen；未成功解锁时点文件夹外部或按 Escape 退出输入并恢复锁。两者统一按图标交叉淡变 200ms、停留 200ms、整个遮罩淡出 200ms 的三阶段过渡解锁；悬停不切换图标，减少动态效果偏好下直接显示，刷新 Newtab 后恢复遮挡。成功解锁后焦点停在文件夹容器，不默认聚焦第一个书签；下一次 Tab 可进入书签。EDU 锁定期间书签不可键盘聚焦或打开；此码仅是界面门槛，书签内容并未加密，不能作为安全防护声明。交付边界见[当前 Issue](../changes/issues/2026-10-26-extension-folder-access-issue.md)。
+UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU 属于固定四位码 `0000` 的界面锁，使用 Lock；点击后直接在文件夹内只显示官方 Input OTP 的四个 64px 密文密码块，与内部书签图块同尺寸，横纵间距和四周留白均为 16px，上下两行各两个分离输入位，不弹出对话框或额外提示。输满四位自动校验，错误即清空，正确后切换为 LockOpen；未成功解锁时点文件夹外部或按 Escape 退出输入并恢复锁。两者统一按图标交叉淡变 200ms、停留 200ms、整个遮罩淡出 200ms 的三阶段过渡解锁；悬停不切换图标，减少动态效果偏好下直接显示，刷新 Newtab 后恢复遮挡。成功解锁后焦点停在文件夹容器，不默认聚焦第一个书签；下一次 Tab 可进入书签。EDU 锁定期间书签不可键盘聚焦或打开；此码仅是界面门槛，书签内容并未加密，不能作为安全防护声明。交付边界见[当前 Issue](../ohmy-delivery/issues/2026-10-26-extension-folder-access-issue.md)。
 
 入口 Hover 与键盘 Focus 共用规则。保持当前即时缩放与上移效果：过渡属性只包含 `filter`、`transform`，图块另外包含边框和阴影；CSS 独立 `scale` / `translate` 不单独补充平滑过渡。若后续调整动效，修改这里的共用规则，不在某个组件单独添加 `transition-transform`。
 
@@ -148,7 +148,7 @@ UI 文件夹属于轻度遮挡，使用 EyeOff；点击后切换为 Eye。EDU �
 - Tooltip 提供名称或简短帮助说明，使用单一全局 Provider；入口通过 `asChild` 组合为唯一交互元素。Dock 四个弹层入口打开时隐藏入口 Tooltip，useDockOverlay 仅维护打开状态与提示互斥；关闭后沿用官方焦点恢复及提示行为，不维护 data-restored-focus 或恢复焦点抑制。Settings、Download、About 与表格编辑不再主动聚焦标题。
 - 品牌图标由 `components/custom/brand-icon.tsx` 负责；Newtab 书签、Dock 收藏及其复用入口随主题切换黑白，不再按站点配置 original、adaptive 或 neutral。普通书签透明背景、单色主体，浅色显示黑色、深色显示白色。通用图标由 `UiIcon` 显式静态导入。
 - UI 文件夹图标沿用原始几何、viewBox、线宽与留白，移除灰阶和渐变；白色覆盖形成的必要孔洞通过黑白遮罩转成真正透明区域，再统一主题转换，避免整体滤镜压平镂空。不套用 V3 重绘或统一坐标要求，不维护深浅两套源稿。
-- Grok 书签移除固定底板、保留主体路径。Exts 按用户最新确认保留正式完整外形及底板，浅色黑底白图、深色白底黑图；沿用现有内嵌正式 PNG 的 SVG，不重绘外形、不替换为仅含内部主体的源稿，也不对其应用压平对比的 brightness 滤镜。此主题反转仅用于书签，品牌唯一源稿及三端应用图标保持原样。此次交付见[书签单色 Issue](../changes/issues/2026-10-26-extension-bookmark-monochrome-issue.md)。
+- Grok 书签移除固定底板、保留主体路径。Exts 按用户最新确认保留正式完整外形及底板，浅色黑底白图、深色白底黑图；沿用现有内嵌正式 PNG 的 SVG，不重绘外形、不替换为仅含内部主体的源稿，也不对其应用压平对比的 brightness 滤镜。此主题反转仅用于书签，品牌唯一源稿及三端应用图标保持原样。此次交付见[书签单色 Issue](../ohmy-delivery/issues/2026-10-26-extension-bookmark-monochrome-issue.md)。
 - Dock 左侧保持 favorites，右侧 tools 顺序为 Studio、Actions、Download、Account、Settings。Studio 使用现有 Button entry/entry 与 Tooltip，固定 PanelsTopLeft，提示 Open Studio，点击只进入 Studio；不维护 pressed 或选中背景，悬停反馈复用共用入口样式。Dock 仅在首页显示，Studio 通过独立 Home 按钮返回，页面位置记忆保持不变。
 - Newtab 与 Studio 的已登录 Account 共用菜单内容，条目为 Account、Notifications、Settings、Log out；Account 与 Notifications 保持占位，移除 Billing。Settings 关闭菜单并打开现有 SettingsSheet，复用设置内容与读写逻辑，关闭后恢复到各自账户入口；保留菜单原有弹出方向及 Dock 独立 Settings 入口，未登录流程不变。
 - Studio 采用官方 dashboard-01 的 inset/offcanvas 侧栏、SidebarInset 与顶部导航；Home／Studio 继续由 React Activity 保留状态和 DOM。Dock 只随 Home 显示，Studio 独占视口，没有有效本机偏好时默认 Home，同一扩展会话内新标签页恢复 ui-session.view 保存的 Home/Studio 位置。登录后左侧展示 Overview 和 Activity → Daily，按账号恢复会话路由，缺失或未知路由回到 Overview；未登录显示独立 LoginRequired，受保护内容仍沿用上述共用账号边界。Home 原 ActivityCard 的数据、外观和行为保留。

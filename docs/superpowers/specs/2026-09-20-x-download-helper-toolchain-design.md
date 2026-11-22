@@ -3,7 +3,7 @@
 ## 元信息
 
 - 工作项：`2026-09-20-x-download-helper-toolchain`
-- 对应 Issue：[`2026-09-20-x-download-helper-toolchain`](../../changes/issues/2026-09-20-x-download-helper-toolchain-issue.md)
+- 对应 Issue：[`2026-09-20-x-download-helper-toolchain`](../../ohmy-delivery/issues/2026-09-20-x-download-helper-toolchain-issue.md)
 - 状态：已批准
 - 日期：2026-09-20
 - 目标平台：当前 Apple Silicon Mac、macOS 14 及以上

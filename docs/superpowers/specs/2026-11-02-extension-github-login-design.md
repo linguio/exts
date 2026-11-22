@@ -2,7 +2,7 @@
 
 ## 当前批准
 
-[Issue](../../changes/issues/2026-11-02-extension-github-login-issue.md)。用户要求通用登录方案，已批准标准 OIDC 授权码 + PKCE，并确认官网只承载中转/授权页，GitHub 密码与 GitHub 授权仍在 GitHub 官方页面完成。不增加业务功能或业务表。
+[Issue](../../ohmy-delivery/issues/2026-11-02-extension-github-login-issue.md)。用户要求通用登录方案，已批准标准 OIDC 授权码 + PKCE，并确认官网只承载中转/授权页，GitHub 密码与 GitHub 授权仍在 GitHub 官方页面完成。不增加业务功能或业务表。
 
 ## 方案与边界
 

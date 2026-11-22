@@ -10,7 +10,7 @@
 
 **设计：**[已批准设计](../specs/2026-10-11-website-product-homepage-design.md)
 
-**工作项：**[Issue](../../changes/issues/2026-10-11-website-product-homepage-issue.md) · [Commit 记录](../../changes/commits/2026-10-11-website-product-homepage-commit.md)
+**工作项：**[Issue](../../ohmy-delivery/issues/2026-10-11-website-product-homepage-issue.md) · [Commit 记录](../../ohmy-delivery/commits/2026-10-11-website-product-homepage-commit.md)
 
 **状态：**用户于 2026-10-11 批准并要求串行实施，现已实施与自动化验证完成，用户已确认验收通过，已批准两次本地提交。
 

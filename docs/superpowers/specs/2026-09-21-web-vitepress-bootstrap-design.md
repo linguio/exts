@@ -3,7 +3,7 @@
 ## 元信息
 
 - 工作项：`2026-09-21-web-vitepress-bootstrap`
-- 对应 Issue：[建立 VitePress 官网脚手架](../../changes/issues/2026-09-21-web-vitepress-bootstrap-issue.md)
+- 对应 Issue：[建立 VitePress 官网脚手架](../../ohmy-delivery/issues/2026-09-21-web-vitepress-bootstrap-issue.md)
 - 状态：已批准
 - 创建日期：2026-09-21
 - 最近更新：2026-09-21

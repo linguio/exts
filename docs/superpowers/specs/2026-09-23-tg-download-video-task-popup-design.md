@@ -6,7 +6,7 @@
 - 状态：已批准
 - 创建日期：2026-09-23
 - 最近更新：2026-09-23
-- 对应 Issue：[建立 TG Download 视频下载任务 Popup](../../changes/issues/2026-09-23-tg-download-video-task-popup-issue.md)
+- 对应 Issue：[建立 TG Download 视频下载任务 Popup](../../ohmy-delivery/issues/2026-09-23-tg-download-video-task-popup-issue.md)
 
 ## 1. 设计目的
 

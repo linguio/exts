@@ -111,8 +111,8 @@
 
 **Files:**
 
-- Modify: `docs/changes/issues/2026-09-19-x-download-helper-menu-bar-issue.md`
-- Modify: `docs/changes/commits/2026-09-19-x-download-helper-menu-bar-commit.md`
+- Modify: `docs/ohmy-delivery/issues/2026-09-19-x-download-helper-menu-bar-issue.md`
+- Modify: `docs/ohmy-delivery/commits/2026-09-19-x-download-helper-menu-bar-commit.md`
 
 **Interfaces:**
 

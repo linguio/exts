@@ -2,7 +2,7 @@
 
 ## 依据与状态
 
-- [Issue](../../changes/issues/2026-10-08-repo-app-foundations-root-commands-issue.md)。
+- [Issue](../../ohmy-delivery/issues/2026-10-08-repo-app-foundations-root-commands-issue.md)。
 - 用户已确认统一名称 exts、macOS 标识 `dev.linguio.exts`，并确认可爱插头优化稿后要求继续整理源稿。
 - 本记录只确定已有批准内容；两端目录方案保留在 Issue；用户于 2026-10-09 明确要求开始，批准串行实施。
 

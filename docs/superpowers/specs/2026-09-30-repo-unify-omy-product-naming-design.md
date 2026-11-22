@@ -6,7 +6,7 @@
 - 状态：待用户审核
 - 创建日期：2026-09-30
 - 最近更新：2026-09-30
-- 对应 Issue：[统一 OmyExts 仓库与产品命名](../../changes/issues/2026-09-30-repo-unify-omy-product-naming-issue.md)
+- 对应 Issue：[统一 OmyExts 仓库与产品命名](../../ohmy-delivery/issues/2026-09-30-repo-unify-omy-product-naming-issue.md)
 
 ## 1. 设计目的
 
@@ -133,7 +133,7 @@ tg-download-<version>-chromium.zip
 
 以下内容属于当前有效文档，需要更新：根 README、各当前项目 README、官网页面、`docs/monorepo.md`、`docs/wxt.md`、迁移指南、共享开发工具 README、当前 `AGENTS.md` 规则示例和发布工作流说明。
 
-`docs/changes/` 中已完成 Issue/Commit、`docs/superpowers/` 中已完成 Spec/Plan、复盘文章和历史技术文章保留原名称。最终扫描分为“现行引用”和“历史事实”两类，不用全仓库无差别搜索旧字符串来判断迁移是否完成。
+`docs/ohmy-delivery/` 中已完成 Issue/Commit、`docs/superpowers/` 中已完成 Spec/Plan、复盘文章和历史技术文章保留原名称。最终扫描分为“现行引用”和“历史事实”两类，不用全仓库无差别搜索旧字符串来判断迁移是否完成。
 
 ## 6. 用户可观察影响
 

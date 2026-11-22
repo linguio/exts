@@ -2,7 +2,7 @@
 
 ## 设计状态
 
-- 对应 Issue：[`2026-09-19-x-download-post-url`](../../changes/issues/2026-09-19-x-download-post-url-issue.md)
+- 对应 Issue：[`2026-09-19-x-download-post-url`](../../ohmy-delivery/issues/2026-09-19-x-download-post-url-issue.md)
 - 状态：已批准
 - 日期：2026-09-19
 

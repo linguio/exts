@@ -92,8 +92,8 @@
 ### Task 4: 完整验证与阶段验收
 
 **Files:**
-- Modify: `docs/changes/issues/2026-09-20-x-download-helper-toolchain-issue.md`
-- Modify: `docs/changes/commits/2026-09-20-x-download-helper-toolchain-commit.md`
+- Modify: `docs/ohmy-delivery/issues/2026-09-20-x-download-helper-toolchain-issue.md`
+- Modify: `docs/ohmy-delivery/commits/2026-09-20-x-download-helper-toolchain-commit.md`
 
 - [x] **Step 1:** 串行运行准备脚本行为测试、Swift XCTest、`scripts/build.sh`、Bundle 验证和 `git diff --check`；同一失败只允许一次定位和一次修复重试。
 - [x] **Step 2:** 检查 `git status --short` 与完整 diff，确认没有第三方源码、生成工具、真实视频下载代码或后续 Issue 内容进入交付。

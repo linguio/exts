@@ -1,6 +1,6 @@
 # exts-ui首版实施计划
 
-对应[Issue](../../changes/issues/2026-11-18-exts-ui-toast-package-issue.md)与[设计](../specs/2026-11-18-exts-ui-toast-package-design.md)。用户批准实施；串行、当前checkout、不自动提交。
+对应[Issue](../../ohmy-delivery/issues/2026-11-18-exts-ui-toast-package-issue.md)与[设计](../specs/2026-11-18-exts-ui-toast-package-design.md)。用户批准实施；串行、当前checkout、不自动提交。
 
 1. 建立packages/exts-ui元数据、固定官方基础源码、JS/声明/CSS构建与公开exports；所有可配置产物指向根dist。
 2. 在plus/toast组合原语并迁入复制与错误声音，提供Portal和层级Token。迁移既有纯逻辑测试，验证error节流、停止及不重播边界，不新增UI假DOM。

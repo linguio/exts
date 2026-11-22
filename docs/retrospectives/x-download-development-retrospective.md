@@ -2,7 +2,7 @@
 
 ## 文档定位
 
-本文是 X Download 的内部开发复盘，用于还原项目从最小浏览器扩展到 macOS 下载 Helper 的完整演进过程。它记录实际发生过的方案、失败路径、技术决策、验证证据和遗留问题；动态状态仍以 `docs/changes/` 下的 Issue 与 Commit 记录为准。
+本文是 X Download 的内部开发复盘，用于还原项目从最小浏览器扩展到 macOS 下载 Helper 的完整演进过程。它记录实际发生过的方案、失败路径、技术决策、验证证据和遗留问题；动态状态仍以 `docs/ohmy-delivery/` 下的 Issue 与 Commit 记录为准。
 
 复盘范围覆盖 2026-09-19 至 2026-09-21 的主要交付，不讨论尚未实现的失败恢复、对外分发和跨平台版本。
 
@@ -345,10 +345,10 @@ X Download 最终不是一个“给 `yt-dlp` 套壳”的项目。它真正解�
 
 ## 主要事实来源
 
-- [建立 X 单帖链接识别插件](../changes/issues/2026-09-19-x-download-post-url-issue.md)
-- [建立 X Download macOS 菜单栏 Helper](../changes/issues/2026-09-19-x-download-helper-menu-bar-issue.md)
-- [打通扩展与 macOS Helper 通信](../changes/issues/2026-09-20-x-download-native-messaging-issue.md)
-- [打包固定视频工具链](../changes/issues/2026-09-20-x-download-helper-toolchain-issue.md)
-- [建立视频下载执行链路](../changes/issues/2026-09-20-x-download-public-video-download-issue.md)
-- [使用页面媒体源下载视频](../changes/issues/2026-09-21-x-download-page-media-source-issue.md)
-- [改为仅使用页面媒体来源下载](../changes/issues/2026-09-21-x-download-media-source-only-download-issue.md)
+- [建立 X 单帖链接识别插件](../ohmy-delivery/issues/2026-09-19-x-download-post-url-issue.md)
+- [建立 X Download macOS 菜单栏 Helper](../ohmy-delivery/issues/2026-09-19-x-download-helper-menu-bar-issue.md)
+- [打通扩展与 macOS Helper 通信](../ohmy-delivery/issues/2026-09-20-x-download-native-messaging-issue.md)
+- [打包固定视频工具链](../ohmy-delivery/issues/2026-09-20-x-download-helper-toolchain-issue.md)
+- [建立视频下载执行链路](../ohmy-delivery/issues/2026-09-20-x-download-public-video-download-issue.md)
+- [使用页面媒体源下载视频](../ohmy-delivery/issues/2026-09-21-x-download-page-media-source-issue.md)
+- [改为仅使用页面媒体来源下载](../ohmy-delivery/issues/2026-09-21-x-download-media-source-only-download-issue.md)

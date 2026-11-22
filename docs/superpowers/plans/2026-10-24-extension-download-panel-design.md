@@ -1,6 +1,6 @@
 # Download 首轮实施顺序
 
-以 [Issue](../../changes/issues/2026-10-24-extension-download-panel-design-issue.md) 为范围事实来源；用户已批准实施。使用 executing-plans 串行执行，不启用子代理。
+以 [Issue](../../ohmy-delivery/issues/2026-10-24-extension-download-panel-design-issue.md) 为范围事实来源；用户已批准实施。使用 executing-plans 串行执行，不启用子代理。
 
 ## 目标与边界
 

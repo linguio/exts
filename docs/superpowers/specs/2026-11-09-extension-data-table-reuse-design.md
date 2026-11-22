@@ -2,7 +2,7 @@
 
 状态：已实现并通过自动化检查，用户于 2026-11-09 验收通过并批准本地提交完结；实际结果见 Issue/Commit 记录，未推送。
 
-范围以[Issue](../../changes/issues/2026-11-09-extension-data-table-reuse-issue.md)为准：围绕现有 DataTable 补齐查询复用，不实施新增/编辑/删除、多选或批量操作，不新增依赖、后端接口或数据库结构。已有能力不删除，后续按真实需求逐项扩展。
+范围以[Issue](../../ohmy-delivery/issues/2026-11-09-extension-data-table-reuse-issue.md)为准：围绕现有 DataTable 补齐查询复用，不实施新增/编辑/删除、多选或批量操作，不新增依赖、后端接口或数据库结构。已有能力不删除，后续按真实需求逐项扩展。
 
 ## 最终交付
 

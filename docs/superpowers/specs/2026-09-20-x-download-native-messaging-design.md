@@ -3,7 +3,7 @@
 ## 元信息
 
 - 工作项：`2026-09-20-x-download-native-messaging`
-- 对应 Issue：[`2026-09-20-x-download-native-messaging`](../../changes/issues/2026-09-20-x-download-native-messaging-issue.md)
+- 对应 Issue：[`2026-09-20-x-download-native-messaging`](../../ohmy-delivery/issues/2026-09-20-x-download-native-messaging-issue.md)
 - 状态：已批准
 - 日期：2026-09-20
 - 目标平台：Chrome、Edge、macOS 14 及以上

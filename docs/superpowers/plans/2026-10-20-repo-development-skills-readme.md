@@ -5,7 +5,7 @@
 目标：交付两份职责清晰的开发 Skill 和准确的根 README，停在用户验收。
 
 设计：[设计文档](../specs/2026-10-20-repo-development-skills-readme-design.md)。
-Issue：[当前工作项](../../changes/issues/2026-10-20-repo-development-skills-readme-issue.md)。
+Issue：[当前工作项](../../ohmy-delivery/issues/2026-10-20-repo-development-skills-readme-issue.md)。
 
 ## 已确认约束
 

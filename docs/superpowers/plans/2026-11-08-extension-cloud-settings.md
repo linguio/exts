@@ -2,7 +2,7 @@
 
 **目标：** Theme、Media Download 与 Clear History 由独立业务接口持久化；扩展仅保存绑定当前账号的副本供即时读取。
 
-**依据：** [当前 Issue](../../changes/issues/2026-11-08-extension-cloud-settings-issue.md)；本计划不增加功能或验收范围。
+**依据：** [当前 Issue](../../ohmy-delivery/issues/2026-11-08-extension-cloud-settings-issue.md)；本计划不增加功能或验收范围。
 
 **约束：** 串行实施；不开子代理；不在开发阶段进行浏览器视觉或交互验收；未获本地提交或部署批准前不执行这些操作。
 

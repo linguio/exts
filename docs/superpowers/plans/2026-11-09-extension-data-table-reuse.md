@@ -1,6 +1,6 @@
 # 业务查询表格复用实施计划
 
-依据：[设计](../specs/2026-11-09-extension-data-table-reuse-design.md)与[Issue](../../changes/issues/2026-11-09-extension-data-table-reuse-issue.md)。用户已于 2026-11-09 批准开始实施，仅查询复用。
+依据：[设计](../specs/2026-11-09-extension-data-table-reuse-design.md)与[Issue](../../ohmy-delivery/issues/2026-11-09-extension-data-table-reuse-issue.md)。用户已于 2026-11-09 批准开始实施，仅查询复用。
 
 ## 约束
 - 复用现有 DataTable 和官方控件；不新增依赖、后端接口或 CRUD。

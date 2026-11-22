@@ -1,7 +1,7 @@
 # Exts 产品官网设计
 
-- 对应 [Issue](../../changes/issues/2026-10-11-website-product-homepage-issue.md)
-- 对应 [Commit 记录](../../changes/commits/2026-10-11-website-product-homepage-commit.md)
+- 对应 [Issue](../../ohmy-delivery/issues/2026-10-11-website-product-homepage-issue.md)
+- 对应 [Commit 记录](../../ohmy-delivery/commits/2026-10-11-website-product-homepage-commit.md)
 - 日期：2026-10-11
 - 状态：用户于 2026-10-11 批准设计与 Plan；已实施并完成自动化验证，用户已于 2026-10-11 确认验收通过
 - [实施 Plan](../plans/2026-10-11-website-product-homepage.md)：已批准

@@ -5,7 +5,7 @@
 **目标：** 交付左右官方 Empty 缺省的 Studio、不可点击 Logo 右侧独立 House 返回和只提示未接入的账户登录框。
 **架构：** App 继续用 React Activity 切换 Home/Studio；Home 持有原 Dock 布局，Studio 独立占满视口。Studio 内部组合官方 Sidebar、Empty、Dialog 与 Button，不显示 Overview/Activity，不新增服务层；Home 原卡片保留。
 **技术：** 沿用现有 React、Radix、Lucide、Tailwind 及 Sonner 精确版本，不安装或升级依赖。
-**事实来源：** [Issue](../../changes/issues/2026-11-02-extension-studio-static-shell-issue.md)，设计已由用户通过本次纯前端范围确认。
+**事实来源：** [Issue](../../ohmy-delivery/issues/2026-11-02-extension-studio-static-shell-issue.md)，设计已由用户通过本次纯前端范围确认。
 
 ## 约束
 

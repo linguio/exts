@@ -67,10 +67,10 @@ Exts Publish 推送 main 时比较根产品版本与最新远端产品 Tag，高
 
 GitHub Pages 使用 workflow 的 GITHUB_TOKEN 与 OIDC，不需要额外 PAT 或部署密钥。仓库或组织的 Actions 策略及 github-pages 环境规则需要允许所用 Actions 与 main 部署；已有审批规则仍需由用户处理。
 
-- [部署 Issue](../../docs/changes/issues/2026-10-11-website-manual-pages-deploy-issue.md)
+- [部署 Issue](../../docs/ohmy-delivery/issues/2026-10-11-website-manual-pages-deploy-issue.md)
 - [GitHub 官方自定义 workflow 说明](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
 
-- [项目工作台](../../docs/changes/README.md)
+- [项目工作台](../../docs/ohmy-delivery/README.md)
 - [设计](../../docs/superpowers/specs/2026-10-11-website-product-homepage-design.md)
 - [Plan](../../docs/superpowers/plans/2026-10-11-website-product-homepage.md)
 - [构建规范](../../docs/build-release.md)

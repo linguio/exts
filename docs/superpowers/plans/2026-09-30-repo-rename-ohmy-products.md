@@ -98,8 +98,8 @@
 
 - Modify: root `package.json`, `pnpm-lock.yaml`, `README.md`, `docs/monorepo.md`, `docs/wxt.md`, `docs/migrations/extension-to-wxt.md`
 - Modify: current project README and current `AGENTS.md` examples when they reference active paths
-- Modify: `docs/changes/README.md`, current Issue/Commit/Spec/Plan records
-- Do not modify: `docs/changes/` historical records, completed historical Specs/Plans, `apps/extensions/x-download/**`, `apps/helpers/x-download-helper/**`
+- Modify: `docs/ohmy-delivery/README.md`, current Issue/Commit/Spec/Plan records
+- Do not modify: `docs/ohmy-delivery/` historical records, completed historical Specs/Plans, `apps/extensions/x-download/**`, `apps/helpers/x-download-helper/**`
 
 **Interfaces:**
 
@@ -116,9 +116,9 @@
 **Files:**
 
 - Test: existing Oh My Tabs, Oh My DL, stable-extension-dev and Oh My Photos checks
-- Modify: `docs/changes/issues/2026-09-30-repo-rename-ohmy-products-issue.md`
-- Modify: `docs/changes/commits/2026-09-30-repo-rename-ohmy-products-commit.md`
-- Modify: `docs/changes/README.md`
+- Modify: `docs/ohmy-delivery/issues/2026-09-30-repo-rename-ohmy-products-issue.md`
+- Modify: `docs/ohmy-delivery/commits/2026-09-30-repo-rename-ohmy-products-commit.md`
+- Modify: `docs/ohmy-delivery/README.md`
 
 **Interfaces:**
 

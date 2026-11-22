@@ -1,7 +1,7 @@
 # 活动翻页倒计时实施计划
 
 **目标：** 实现已批准的日历上方倒计时卡片。
-**依据：** [Issue](../../changes/issues/2026-11-13-extension-activity-timer-issue.md)；聊天中布局与行为已确认。
+**依据：** [Issue](../../ohmy-delivery/issues/2026-11-13-extension-activity-timer-issue.md)；聊天中布局与行为已确认。
 **实施：** 串行执行，不启动子代理；完成后停在用户验收，不提交。
 
 ## 步骤

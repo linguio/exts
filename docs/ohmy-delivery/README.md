@@ -1,0 +1,583 @@
+# 项目改造工作台
+
+本目录是仓库项目管理的统一入口。这里保存想法、当前唯一活动 Issue、后续队列、待办和已完成索引；具体目标与状态以对应 Issue 为准。
+
+## 目录结构
+
+```text
+docs/
+├─ ohmy-delivery/
+│  ├─ README.md
+│  ├─ issues/
+│  │  └─ YYYY-MM-DD-<project>-<topic>-issue.md
+│  └─ commits/
+│     └─ YYYY-MM-DD-<project>-<topic>-commit.md
+└─ superpowers/
+   ├─ specs/
+   │  └─ YYYY-MM-DD-<project>-<topic>-design.md
+   └─ plans/
+      └─ YYYY-MM-DD-<project>-<topic>.md
+```
+
+同一工作项的 Issue、Commit 记录、Spec 和 Plan 使用相同的 `YYYY-MM-DD-<project>-<topic>` 前缀关联，不维护递增编号或 Commit SHA。
+
+## 文档职责
+
+- Issue：唯一任务事实来源，记录目标、范围、排除项、Todo 或 Sub-issues、预期验收标准、状态和下一步。
+- Commit 记录：与 Issue 同时创建并一一对应，记录实际交付、验证、用户验收和最终 Commit message。
+- Spec：只在存在真实设计分歧、架构边界或兼容性决策时创建。
+- Plan：只在包含多个实施步骤、依赖关系或较高风险时创建。
+- 工作台：只负责想法、当前 Issue、队列和完成索引，不复制 Issue 内容。
+
+个人 Skill 可以维护“如何操作这套流程”，但不得复制仓库里的动态状态。
+
+## 工作规则
+
+- 同一时间最多只有一个活动 Issue。
+- 除纯问答和只读调查外，任何准备修改仓库的独立工作都先建立 Issue 和 Commit 记录。
+- 创建 Issue 时必须同步创建同名前缀的 Commit 记录；只要有 Issue，就必须有 Commit 记录。
+- 一个 Issue 对应一个可整体验收、独立回滚的结果；代码与计划类文档分别提交，不因拆分提交而增加 Issue。
+- 同时包含代码和文档时，最终交付默认先提交代码、测试、配置和资源，再以独立的 `docs` 提交保存 Issue、Spec、Plan、Commit 记录、工作台及相关流程文档；两类文件不混合。纯文档任务或用户明确免建档且没有文档变更的代码任务只提交实际变更，不为凑足两笔创建文件。
+- Sub-issue 只在 Issue 内部定义实施阶段，不创建独立文件，也不单独提交。
+- 简单任务直接在 Issue 中维护 3–6 个 Todo，不强制创建 Spec 或 Plan。
+- 当前 Issue 的代码与文档提交全部成功前，不开启下一个 Issue；临时想法先写入收件箱。
+- 用户明确要求“提交到本地”即表示当前 Issue 可以完结并批准提交，不核实用户是否实际验证，不追加验证或重复请求验收；随本地提交同步全部完成状态，未执行事项如实记录。
+- Issue、Commit 记录和工作台的完成状态统一归入文档提交；只有全部提交成功后才完结工作项。提交失败时保留成功部分，剩余部分恢复待提交、待批准状态。
+
+## 状态
+
+```text
+想法 → 已排队 → 规划中 → 待批准 → 实施中 → 待验收 → 待提交 → 已完成
+```
+
+还可以使用 `已暂停` 或 `已取消`。暂停、取消或提交失败时，必须先安全处理当前未提交改动，不能直接开启下一个 Issue。
+
+## 日常用法
+
+### 临时小调整
+
+1. 从想法或用户需求创建一份 Issue 和一份待填写 Commit 记录。
+2. 在 Issue 中写清范围、排除项、3–6 个 Todo 和验收标准。
+3. 用户批准后实施并完成必要验证。
+4. 用户单独确认验收时，完善 Commit 记录并进入待提交。
+5. 分别展示代码与文档的文件边界、diff 和完整 Commit message；用户明确要求本地提交时，该请求同时完成验收和两笔 Git Commit 批准。
+6. 最终审批请求同时列出将两份文档和工作台切换为完成状态的机械性更新；批准后先提交代码，再更新终态并提交文档。提交失败保留成功部分，剩余部分恢复原状态。
+
+### 复杂改造
+
+1. 创建 Issue 和 Commit 记录。
+2. 需要设计决策时编写 Spec；需要多步骤执行时编写 Plan。
+3. 用户批准设计与 Plan；批准文档内容不等于批准 Git 提交。
+4. 串行实施、验证并停在用户验收。
+5. 验收通过后完成 Commit 记录，分别展示代码与文档两笔提交方案；用户也可通过明确要求本地提交，同时表示验收通过和提交批准，按先代码、后文档的顺序执行。
+
+## 想法收件箱
+
+想法只表示可能开展的方向，不代表已经批准创建 Issue 或开始实施。
+
+- API 连接池空闲回收：用户批准将 `max_idle` 从 60 秒试调到 300 秒，保持 `min_size=0`、不加定时保活；待当前登录重置 Issue 完结后独立建档，比较不同空闲间隔的首次请求耗时与连接池状态。
+- 后续 X Download／Helper 接入：Extension 提交任务，Helper 独立下载与整合，成功后只通知一次；允许丢失，不确认、不重试、不补发、不恢复。关闭总开关屏蔽网页入口并停止通信，不终止任务。未来使用 x-download 目录；不纳入本次下载整合或设置两个 Issue。
+
+- Issue 元数据定时同步：从公开仓库指定分支定时读取本地 Issue 文档的已推送版本，同步状态等元数据供只读列表和统计使用，正文链接到源文件。
+
+## 当前 Issue
+
+无。
+
+## Issue 队列
+
+无。
+
+## 待办
+
+无。
+
+## 已取消
+
+- [将已完结的本地工作项归档到 GitHub Issues](./issues/2026-11-20-repo-github-issue-archive-issue.md) · 已取消 · [Commit 记录](./commits/2026-11-20-repo-github-issue-archive-commit.md)
+
+## 已完成
+
+- [统一自维护 Skill 命名与交付文档目录](./issues/2026-11-22-repo-ohmy-delivery-naming-issue.md) · 已完成，用户批准本地提交 · [Commit 记录](./commits/2026-11-22-repo-ohmy-delivery-naming-commit.md)
+
+- [整合开发交付 Skill](./issues/2026-11-21-repo-workflow-delivery-issue.md) · 已完成，用户验收通过并批准本地提交 · [Commit 记录](./commits/2026-11-21-repo-workflow-delivery-commit.md)
+
+- [准备公共包新版本并统一消费来源](./issues/2026-11-20-extension-stable-output-103-issue.md) · 已完成 · 用户验收通过并批准本地提交；扩展使用线上 WXT 1.1.0 和本地 exts-ui 0.4.0，安装、类型检查与构建通过 · [Commit 记录](./commits/2026-11-20-extension-stable-output-103-commit.md)
+
+- [在官网产品介绍补充 exts-ui](./issues/2026-11-19-website-exts-ui-package-issue.md) · 已完成 · 用户验收通过并批准本地提交及push，官网内容与记录已交付；main另有既有版本提交待确认是否一并推送，当前未部署 · [Commit记录](./commits/2026-11-19-website-exts-ui-package-commit.md)
+
+- [统一 API 开发环境的跨平台自动准备](./issues/2026-11-19-api-python-bootstrap-issue.md) · 已完成 · 用户验收通过并批准代码/文档提交及push；11项测试与隔离真实环境创建/复用通过，macOS实机限制保留 · [Commit记录](./commits/2026-11-19-api-python-bootstrap-commit.md)
+
+- [整理官网更新日志并准备产品版本](./issues/2026-11-19-repo-release-next-issue.md) · 已完成 · 用户验收通过并批准代码与文档两笔本地提交；2.5.0及五条日志已交付，macOS与隔离库验证缺口保留，未推送或发布 · [Commit记录](./commits/2026-11-19-repo-release-next-commit.md)
+
+- [恢复本地 UI 联调并验证双包自动暂存](./issues/2026-11-19-extension-registry-ui-issue.md) · 已完成 · 双包自动暂存已成功；README交付修正经用户确认并批准本地文档提交，本轮未推送、升版本或发布 · [Commit记录](./commits/2026-11-19-extension-registry-ui-commit.md)
+
+- [建立 exts-ui 包并迁入完整 Toast 能力](./issues/2026-11-18-exts-ui-toast-package-issue.md) · 已完成 · [Commit记录](./commits/2026-11-18-exts-ui-toast-package-commit.md)；用户验收通过并批准代码与文档两笔本地提交，首版包、声音及Radix协作、真实tgz与本地prepare已交付；未推送或上传npm，限制据实保留。
+
+- [完善快捷编辑加载态并升级 pnpm](./issues/2026-11-18-extension-edit-sheet-loading-issue.md) · 已完成 · [Commit 记录](./commits/2026-11-18-extension-edit-sheet-loading-commit.md)；用户验收通过并批准加载态代码、pnpm配置和文档三笔本地提交；验证限制据实保留，未推送，Toast层级调整不在本次交付范围。
+
+- [统一 Toast 展示、复制与声音说明](./issues/2026-11-17-extension-toast-standard-issue.md) · 已完成 · [Commit 记录](./commits/2026-11-17-extension-toast-standard-commit.md)；官方 Toast、完整复制与声音说明已交付，187 项测试、类型检查及构建通过；2026-11-18 用户验收通过并批准本地提交及推送。
+- [在 Home Actions 快捷编辑最新 Daily 记录](./issues/2026-11-17-extension-daily-quick-edit-issue.md) · 已完成 · [Commit 记录](./commits/2026-11-17-extension-daily-quick-edit-commit.md)；快捷编辑及登录前会话核验修复已交付，187 项测试、类型检查和构建通过；用户验收通过并批准代码、文档提交及推送。
+
+- [更新 2.4.0 版本与发布日志](./issues/2026-11-16-repo-release-v240-issue.md) · 已完成 · [Commit 记录](./commits/2026-11-16-repo-release-v240-commit.md)；用户验收通过并批准代码与文档两笔本地提交；已记录 macOS 与隔离数据库验证缺口，未推送或发布。
+
+- [整理账户菜单、设置与通知声音](./issues/2026-11-13-extension-toast-sound-issue.md) · 已完成 · [Commit 记录](./commits/2026-11-13-extension-toast-sound-commit.md)；用户验收通过并批准代码与文档两笔本地提交。默认关闭的错误提示音、设置整理和数据库加列已交付，未推送或发布。
+
+- [统一取消扩展焦点描边并清理补偿逻辑](./issues/2026-11-15-extension-focus-feedback-issue.md) · 已完成 · [Commit 记录](./commits/2026-11-15-extension-focus-feedback-commit.md)；用户验收通过并批准代码与文档两笔本地提交，全局描边覆盖、Tooltip 触发及 Sheet 初始聚焦统一维护；类型检查与构建通过，未推送或发布。
+
+- [完善 Studio 品牌头部与 About](./issues/2026-11-14-extension-studio-brand-header-issue.md) · 已完成 · [Commit记录](./commits/2026-11-14-extension-studio-brand-header-commit.md)；用户验证通过并批准代码与文档两笔本地提交，未推送或发布。
+
+- [调整计时卡片与表格操作](./issues/2026-11-14-extension-timer-digit-scale-issue.md) · [Commit记录](./commits/2026-11-14-extension-timer-digit-scale-commit.md)；用户验收通过并批准计时、表格代码及文档分别本地提交完结。数字比例2.5、精简音色默认Metronome/Harp、Actions固定、带图标Edit更多菜单与10条分页已交付；相关48项测试、类型检查及构建通过，原构建警告与已记录限制保留，未推送或发布。
+
+- [调整时间卡片高度与数字比例](./issues/2026-11-13-extension-timer-height-issue.md) · 已完成；用户验收通过并批准两笔本地提交 · [Commit记录](./commits/2026-11-13-extension-timer-height-commit.md)
+
+- [排查发布风险并修复媒体分页](./issues/2026-11-13-repo-release-preflight-issue.md) · 已完成；用户验收通过并批准两笔本地提交 · [Commit记录](./commits/2026-11-13-repo-release-preflight-commit.md)
+
+- [完善版本整理与全量验证流程](./issues/2026-11-13-repo-release-workflow-issue.md) · 已完成；用户验收通过并批准两笔本地提交 · [Commit记录](./commits/2026-11-13-repo-release-workflow-commit.md)
+
+- [更新翻页时钟日志与产品版本](./issues/2026-11-13-website-timer-changelog-issue.md) · 已完成；用户验收通过并批准两笔本地提交 · [Commit记录](./commits/2026-11-13-website-timer-changelog-commit.md)
+
+- [优化时间卡片、声音选择与主题保存反馈](./issues/2026-11-13-extension-timer-settings-polish-issue.md) · 已完成；用户验收通过并批准两笔本地提交 · [Commit记录](./commits/2026-11-13-extension-timer-settings-polish-commit.md)
+
+- [在活动日历上方增加翻页倒计时](./issues/2026-11-13-extension-activity-timer-issue.md) · [Commit 记录](./commits/2026-11-13-extension-activity-timer-commit.md)；用户验收通过并批准代码、文档两笔本地提交完结。默认本地时钟、自动倒计时、英文右键音色与本地偏好已交付；14项相关测试、类型检查和构建通过，4项旧导航断言失败、构建警告及白噪声试听衔接短暂断音保留记录；Toast提示音仅排队，未推送或发布。
+
+- [统一 Studio 账号目录与 Dock 入口命名](./issues/2026-11-13-extension-studio-login-directory-issue.md) · [Commit 记录](./commits/2026-11-13-extension-studio-login-directory-commit.md)；用户验收通过并批准代码、文档两笔本地提交完结。账号 UI 与状态统一归入 studio/login，Dock 四个入口统一命名并复用账号组件；4 项状态测试、类型检查及构建通过，原构建警告保留；未推送或发布。
+
+- [整理 Studio 页面目录](./issues/2026-11-12-extension-studio-page-directories-issue.md) · [Commit 记录](./commits/2026-11-12-extension-studio-page-directories-commit.md)；用户验收通过并批准代码、文档两笔本地提交完结。Overview/Daily 归入 Studio，布局归入 layout，menu 改名 routes；类型检查、构建与 4 项访问逻辑测试通过，构建警告保留；未推送或发布。
+
+- [修复 Daily 表格滚动并补齐接口说明](./issues/2026-11-10-extension-daily-table-body-scroll-issue.md) · [Commit 记录](./commits/2026-11-10-extension-daily-table-body-scroll-commit.md)；2026-11-10 用户验收通过并批准本地提交。Daily 固定表头与 Actions、空态/加载居中、Studio 登录页/Overview/session 路由恢复、原生右键菜单拦截及 Settings OpenAPI 说明已交付；Extension 类型检查通过，浏览器交互由用户验收，未推送或发布。
+
+- [更新官网 Activity 编辑日志与产品版本](./issues/2026-11-10-website-activity-editing-changelog-issue.md) · [Commit 记录](./commits/2026-11-10-website-activity-editing-changelog-commit.md)；2026-11-10 用户验收通过并批准代码、文档两笔本地提交完结。官网 Changelog 新增 Extension、API、Skills 三标签 Activity 编辑记录，产品版本更新为 2.2.0；官网类型检查受本机依赖 DNS 失败阻断，未推送或部署。
+
+- [统一提示反馈并修复 Daily 保存校验](./issues/2026-11-09-extension-toast-daily-validation-issue.md) · [Commit 记录](./commits/2026-11-09-extension-toast-daily-validation-commit.md)；2026-11-10 用户验收通过并批准代码、文档两笔本地提交完结。右下角 Toast 统一英文、复制及点击隔离；Daily 以 0.5 小时步进保存，API、图表及数据库 `*_hours` 列已对齐，修复读取响应校验 500；未推送或部署。
+
+- [为业务记录补齐 ID 并接入 Daily 真实更新](./issues/2026-11-09-activity-days-update-issue.md) · [Commit 记录](./commits/2026-11-09-activity-days-update-commit.md)；用户批准代码与文档两笔本地提交完结。目标库两表 UUID ID 主键已迁移，Daily 真保存、数字输入和查询失败空表格与中文 Toast 已实现；相关检查通过。新 API 未部署，隔离库测试与 Chrome/Edge 验收未执行；未推送。
+
+- [通过 Daily 验证配置驱动的表格编辑](./issues/2026-11-09-extension-daily-sheet-edit-issue.md) · [Commit 记录](./commits/2026-11-09-extension-daily-sheet-edit-commit.md)；2026-11-09 用户验收通过并批准代码、文档两笔本地提交完结。真实接口记录临时编辑，默认每页 20 条；Daily 表格滚动分页、Query＋Reset 按钮组、独立 Columns、Edit Sheet 标题与 min 单位已交付，初始焦点落在标题。Cursor composer-2.5 同一会话实施、Codex 审查，相关逻辑测试、类型与构建通过；未推送或发布。
+
+
+- [整理 Dock 与账户菜单入口](./issues/2026-11-09-extension-dock-account-entries-issue.md) · [Commit 记录](./commits/2026-11-09-extension-dock-account-entries-commit.md)；2026-11-09 用户验收通过并批准代码、文档两笔本地提交完结。Studio 普通入口与两处 Account Settings 已交付，相关 10 项测试、类型检查及生产构建通过，既有构建警告保留，未推送或发布。
+
+- [修复 DMG 窗口关闭与清理失败](./issues/2026-11-09-repo-dmg-window-cleanup-issue.md) · [Commit 记录](./commits/2026-11-09-repo-dmg-window-cleanup-commit.md)；用户明确要求提交并推送，代码与文档分开完结。发布相关 29 项测试及 JS 语法检查通过；AppleScript 编译受本机 Finder 服务异常阻挡，真实 Release 和安装行为待验证。
+
+- [更新官网近期功能日志与产品版本](./issues/2026-11-09-website-changelog-recent-updates-issue.md) · [Commit 记录](./commits/2026-11-09-website-changelog-recent-updates-commit.md)；2026-11-09 用户验收通过并批准代码、文档两笔本地提交完结；8 日/9 日两条各三点，均带 Extension/API 标签，根版本 2.1.0；数据及 Release 提取检查通过，官网类型/构建因依赖不完整未完成，限制保留，未推送或发布。
+
+- [优化配置驱动的业务查询表格](./issues/2026-11-09-extension-data-table-reuse-issue.md) · [Commit 记录](./commits/2026-11-09-extension-data-table-reuse-commit.md)；2026-11-09 用户验收通过并批准代码、文档两笔本地提交完结；QueryDataTable 与 Daily 迁移已交付，扩展 140 项、类型检查及本地 API 构建通过，保留未验证限制，未推送或部署。
+
+- [接入每日活动分页与排序查询](./issues/2026-11-08-activity-days-pagination-issue.md) · [Commit 记录](./commits/2026-11-08-activity-days-pagination-commit.md)；2026-11-09 用户验收通过并批准 API、扩展、文档三笔本地提交完结；已建立仓库级表格规范，API 51 项通过、5 项隔离数据库测试跳过；扩展曾完整 133 项通过，最新排序改动后相关 9 项、类型检查及本地 API 构建通过，既有未验证限制保留，未推送或部署。
+
+- [完善 Studio 登录提示与活动入口](./issues/2026-11-08-extension-studio-activity-menu-issue.md) · [Commit 记录](./commits/2026-11-08-extension-studio-activity-menu-commit.md)；用户批准代码与文档分开本地提交完结，Studio 共用账号提示、Activity / Daily 缺省页、Activity 目录整理、Table 规范及官网基础层一次性对齐已交付；129 项测试、类型检查和构建通过，新增 ui.view 本机恢复与账号清理保留规则，不接 Daily 接口，未推送。
+
+- [实现可复用的通用数据表格](./issues/2026-11-08-extension-data-table-issue.md) · [Commit 记录](./commits/2026-11-08-extension-data-table-commit.md)；用户已验收并批准代码与文档分开本地提交完结，通用 DataTable 已按要求统一官方组件，开发示例已实现，122 项测试、类型检查与构建通过；未接入 Activity，未推送。
+
+- [集中维护扩展 API](./issues/2026-11-08-extension-api-directory-issue.md) · [Commit 记录](./commits/2026-11-08-extension-api-directory-commit.md)；用户已验收并批准代码与文档分开本地提交完结；客户端与 Activity/Settings HTTP 调用已集中到 src/api，116 项测试、类型检查与构建通过，未推送。
+
+- [将扩展设置统一保存到账号](./issues/2026-11-08-extension-cloud-settings-issue.md) · [Commit 记录](./commits/2026-11-08-extension-cloud-settings-commit.md)；用户已验收并批准本地提交，代码与文档分开完结。未登录使用本机设置，登录后以云端记录或默认值为准，退出清空扩展本地状态；当前 API 数据库迁移已应用，未推送或部署。
+
+- [统一登录初始化与退出重置](./issues/2026-11-06-extension-session-reset-issue.md) · [Commit 记录](./commits/2026-11-06-extension-session-reset-commit.md)；用户于 2026-11-07 再次明确批准本地提交，代码与文档分开完结。122 项扩展测试、类型检查与构建通过；最终代码的真实浏览器复验未单独记录，未推送。
+
+- [为图表增加共用区域加载状态](./issues/2026-11-07-extension-chart-loading-issue.md) · [Commit 记录](./commits/2026-11-07-extension-chart-loading-commit.md)；用户于 2026-11-07 明确要求代码与文档分开本地提交完结。Activity 四区复用首次 Skeleton、后续 Spinner；20 项 Activity 测试、类型检查与构建通过，浏览器实际验收未单独确认，未推送。
+
+- [减少 Activity 请求的数据库往返](./issues/2026-11-06-api-activity-latency-issue.md) · [Commit 记录](./commits/2026-11-06-api-activity-latency-commit.md)；用户于 2026-11-07 批准代码与文档分开本地提交完结。公共连接复用、启动资源准备及只读事务合批已交付，用户反馈热请求约 200ms，42 项通过/3 项跳过；冷启动与全链路限制见 [API 性能说明](../api-performance.md)，未推送。
+
+- [自动准备 API 开发环境](./issues/2026-11-06-api-dev-environment-issue.md) · [Commit 记录](./commits/2026-11-06-api-dev-environment-commit.md)；用户于 2026-11-06 验收通过并批准代码与文档分开本地提交。启动器自动创建环境、按摘要同步固定依赖及预检配置；11 项测试、语法与 diff 检查、本机配置预检通过。未推送或部署。
+
+- [忽略 Python 运行缓存](./issues/2026-11-06-repo-python-cache-ignore-issue.md) · [Commit 记录](./commits/2026-11-06-repo-python-cache-ignore-commit.md)；根 .gitignore 已排除 __pycache__/ 与 *.pyc，忽略范围核对通过，按用户要求分开本地提交代码和文档，未推送。
+
+- [封装前端请求并接通 Activity 数据](./issues/2026-11-06-extension-activity-api-client-issue.md) · [Commit 记录](./commits/2026-11-06-extension-activity-api-client-commit.md)；用户于 2026-11-06 批准按已展示方案分开提交代码与文档，Axios 1.21.0 与 POST 契约已接入，用户已看到真实数据。沿用扩展 115 项、类型与构建通过和后端 25 项通过/3 项跳过结果；数据库只读路径约 7.3–7.8 秒的性能限制尚未优化，未推送、部署或启动重置。
+
+- [建立 Activity 数据库与只读接口](./issues/2026-11-06-api-activity-read-issue.md) · [Commit 记录](./commits/2026-11-06-api-activity-read-commit.md)；用户于 2026-11-06 批准先本地提交后端完结，代码与文档分开提交；Neon 迁移和上海时区已应用并只读核对，沿用 Python 25 项及启动器 7 项通过结果、隔离实库 3 项跳过。真实联调留至前端接入；未推送、部署或运行定时器。
+
+- [调整 Newtab 标题并修复 Dock 关闭动效](./issues/2026-11-06-extension-newtab-title-issue.md) · [Commit 记录](./commits/2026-11-06-extension-newtab-title-commit.md)；用户于 2026-11-06 批准本地提交完结，代码与文档分开提交；扩展构建和 diff 检查通过，保留既有构建警告，浏览器交互未独立确认、稳定开发目录未更新，未推送。
+
+- [统一 Dock 弹出层入口交互](./issues/2026-11-05-extension-dock-overlay-hook-issue.md) · [Commit 记录](./commits/2026-11-05-extension-dock-overlay-hook-commit.md)；用户已验收通过并于 2026-11-06 批准本地提交，代码与文档分开提交；沿用类型检查、生产构建和 diff 检查通过结果，保留既有构建警告，未追加验证或推送。
+
+- [默认关闭媒体下载与历史清理](./issues/2026-11-05-extension-features-default-off-issue.md) · [Commit 记录](./commits/2026-11-05-extension-features-default-off-commit.md)；用户批准本地提交完结。设置测试 11 项与类型检查通过，未构建、未独立浏览器验收，保留已有开关选择，未推送。
+
+- [准备 2.0.0 版本并更新官网日志](./issues/2026-11-05-repo-v200-changelog-issue.md) · [Commit 记录](./commits/2026-11-05-repo-v200-changelog-commit.md)；用户批准剩余内容全部本地提交，代码与文档分开提交；根版本 2.0.0、11 月 5 日三点、原账户条目 11 月 4 日、Release 最新 changelog 无序正文及 workflow-tests 改名已同步；3 项正文测试和官网类型检查通过，未构建、全局安装、推送或部署。
+
+- [按 React 功能模块整理扩展目录](./issues/2026-11-05-extension-feature-structure-issue.md) · [Commit 记录](./commits/2026-11-05-extension-feature-structure-commit.md)；用户确认验收通过并要求本地提交，代码与文档分开提交；102 项测试、类型检查、生产构建和未用变量检查结果保留，后续 Dock 顺序未重跑构建、旧稳定开发目录未更新；未推送。
+
+- [替换扩展轻量圆角矢量 Logo](./issues/2026-11-05-extension-lightweight-logo-issue.md) · [Commit 记录](./commits/2026-11-05-extension-lightweight-logo-commit.md)；用户要求本地提交，资源与文档分开提交；展示 SVG 为 1274 字节，沿用 102 项测试、类型检查与生产构建通过结果，产物 1.71 MB、测量 ZIP 563 KB；浏览器未独立实测，未更新稳定开发产物，其他端及应用图标保留，未推送。
+
+- [按变更影响范围执行验证](./issues/2026-11-05-repo-scoped-verification-issue.md) · [Commit 记录](./commits/2026-11-05-repo-scoped-verification-commit.md)；用户批准本地提交，tests Skill、分级规范、根规范及工作流入口和官网 Skills 已同步，代码与文档分开提交；官网类型检查与 diff 检查通过，自动 YAML 校验因缺依赖未完成，未全局安装、修改 CI、推送或部署。
+
+- [版本变化后自动生成 Release 草稿](./issues/2026-11-05-repo-auto-release-on-version-issue.md) · [Commit 记录](./commits/2026-11-05-repo-auto-release-on-version-commit.md)；用户要求改完本地提交，配置与文档分开提交；版本变化、版本不变及手动目标的本地脚本检查通过，构建发布逻辑测试 19 项通过；未推送，线上 Actions、ZIP／DMG、Tag 与草稿 Release 待远端验证。
+
+- [准备 1.9.0 版本并更新登录日志](./issues/2026-11-05-repo-v190-auth-changelog-issue.md) · [Commit 记录](./commits/2026-11-05-repo-v190-auth-changelog-commit.md)；用户于 2026-11-05 确认验收通过并要求本地提交，版本和官网改动与文档分开提交；版本读取和 diff 检查通过，官网类型检查与构建因本机依赖缺失及 DNS 失败未完成，未推送或部署。
+
+- [修正账户状态并补充 Newtab 快捷登录](./issues/2026-11-04-extension-account-state-feedback-issue.md) · [Commit 记录](./commits/2026-11-04-extension-account-state-feedback-commit.md)；用户于 2026-11-05 确认验收通过并要求本地提交，代码与文档分开提交；扩展 102 项测试、类型检查、生产构建与 diff 检查通过，浏览器交互由用户验收，代理未独立实测，未推送。
+
+- [统一 Exts 登录、授权与退出窗口](./issues/2026-11-04-extension-auth-window-unification-issue.md) · [Commit 记录](./commits/2026-11-04-extension-auth-window-unification-commit.md)；已提交页面阶段成果，用户确认已交付范围验收通过。浏览器外框固定与退出失败定位尚未完成；官网类型检查通过，构建受本机环境错误阻塞，未提供浏览器验收细节，未部署。
+
+- [退出后重新选择登录账号](./issues/2026-11-04-extension-full-logout-issue.md) · [Commit 记录](./commits/2026-11-04-extension-full-logout-commit.md)；用户于 2026-11-04 要求本地 commit 完结。插件 100 项、官网 17 项逻辑测试及两端类型检查/构建此前通过，本次提交未重跑。用户实际操作得到“退出未完成，请重试”，线上注销页部署和具体失败环节未确认，需后续排查；未推送或部署。
+
+- [接入 Studio Google 登录](./issues/2026-11-04-extension-google-login-issue.md) · [Commit 记录](./commits/2026-11-04-extension-google-login-commit.md)；用户于 2026-11-04 明确要求本地 commit，按代码与文档两笔提交完结。插件与官网已接通双提供方，沿用插件 99 项、官网 16 项逻辑测试及两端类型检查/生产构建通过结果；未追加验证。需配套部署新版官网后实际登录验收，未推送或部署。
+
+- [退出插件时结束 Exts 登录会话](./issues/2026-11-04-extension-session-logout-issue.md) · [Commit 记录](./commits/2026-11-04-extension-session-logout-commit.md)；用户于 2026-11-04 表示已验证可以并要求本地提交完结。退出时撤销刷新令牌并清除指定 Neon 会话 Cookie，不弹窗口；再次登录要求 Exts 授权确认，官网向 GitHub 请求账号选择。代理未部署或推送，Google 登录留待后续独立工作项。
+
+- [修复插件退出时的令牌撤销](./issues/2026-11-04-extension-logout-revoke-issue.md) · [Commit 记录](./commits/2026-11-04-extension-logout-revoke-commit.md)；用户于 2026-11-04 要求本地提交完结。退出撤销省略网页 Cookie，登录后补读用户信息并提示，已登录账户改为展开菜单。92 项测试在菜单改动前通过，其后类型检查与生产构建通过；浏览器登录、资料和退出未复验，未推送。
+
+- [接入 Studio GitHub 真实登录](./issues/2026-11-02-extension-github-login-issue.md) · [Commit 记录](./commits/2026-11-02-extension-github-login-commit.md)；用户于 2026-11-04 要求拆成四笔本地提交完结。插件改为 OIDC 授权码与 PKCE，官网增加登录和授权确认页。Cookie 直连因退出 403 INVALID_ORIGIN 且 Neon 拒绝 chrome-extension 来源而停用。线上两个认证页仍为 404，用户登录得到认证请求失败；Client ID 只在本地 .env.local，未写入仓库。本次提交未重跑测试、类型检查或构建，未推送或部署。
+
+- [固定扩展本地加载标识](./issues/2026-11-04-extension-fixed-id-issue.md) · [Commit 记录](./commits/2026-11-04-extension-fixed-id-commit.md)；用户于 2026-11-04 确认 ID 正常并要求本地提交完结，代码与文档分开提交；固定 ID 为 gclkjdfiiibgahheiejgbmkglebbbgeh，沿用 80 项测试、类型检查、正式构建及公钥/ID 校验通过结果；旧开发产物缺少 key 的排查及更新步骤已说明，跨机器、各浏览器分别加载和登录兼容性未独立验证，未推送。
+
+- [更新两日活动记录与创作周目标](./issues/2026-11-03-extension-activity-records-issue.md) · [Commit 记录](./commits/2026-11-03-extension-activity-records-commit.md)；用户于2026-11-03明确要求本地提交完结，仅保留两日记录，周目标3/5/20/3h，视图入口Check-ins/Trends/Summary及英文数据提示已同步。代码与文档分开提交，沿用80项测试、类型检查与构建结果，既有警告和浏览器验收限制如实保留，不追加验证、不推送。
+
+- [删除周计划雷达图并检查 Tooltip 宽度](./issues/2026-11-03-extension-remove-radar-issue.md) · [Commit 记录](./commits/2026-11-03-extension-remove-radar-commit.md)；用户于2026-11-03明确要求本地提交完结，雷达已移除、周图左右等宽；数据提示最小宽120px、p-4内边距、不自动换行，英文分类与周号标题、MM-DD日期。代码与文档分开提交，沿用80项测试、类型检查及构建通过结果，保留既有警告与浏览器验收限制，不追加验证、不推送。
+
+- [展示成长打卡与睡眠趋势](./issues/2026-11-03-extension-growth-sleep-charts-issue.md) · [Commit 记录](./commits/2026-11-03-extension-growth-sleep-charts-commit.md)；用户明确批准本地提交完结，最终保留雷达图；代码与文档分开提交，沿用已有79项逻辑测试与最终类型检查/构建结果，视觉交互未由代理验收，不追加验证，不推送。
+
+- [准备 1.8.0 版本并更新官网日志](./issues/2026-11-02-repo-v180-update-issue.md) · [Commit 记录](./commits/2026-11-02-repo-v180-update-commit.md)；用户明确要求本地提交完结，代码与文档分开提交；根版本 1.8.0、官网三项更新说明及本聊天扩展小调整已交付。沿用版本与差异检查结果，官网类型检查和构建受本地依赖缺失阻塞，视觉交互未验收；未推送或部署。
+
+- [搭建 Studio 侧栏与静态账户登录框](./issues/2026-11-02-extension-studio-static-shell-issue.md) · [Commit 记录](./commits/2026-11-02-extension-studio-static-shell-commit.md)；用户于 2026-11-02 明确要求本地提交完结，代码与文档分开提交；官方结构恢复、左右 Empty、独立 House 返回及静态登录入口已交付，根规范明确限制代理额外定制；沿用 77 项逻辑测试、类型检查和构建通过结果，单包略超 500 kB 警告及未执行的浏览器验收如实保留，不追加验证，未推送。真实登录仍排队，图标管理仍暂停。
+
+- [修复 Windows 下 API 本地启动](./issues/2026-11-02-api-windows-dev-issue.md) · [Commit 记录](./commits/2026-11-02-api-windows-dev-commit.md)；用户于 2026-11-02 明确要求本地提交完结，代码与文档分开提交；启动器按系统选择解释器，沿用 7 项逻辑测试与缺失环境提示验证通过的结果，Windows 本地启动获用户确认；Mac/Linux 实机、浏览器与 Ctrl+C 未单独确认，不追加验证，未推送。
+
+- [配置 Cursor 独立开发终端](./issues/2026-11-01-repo-cursor-dev-tasks-issue.md) · [Commit 记录](./commits/2026-11-01-repo-cursor-dev-tasks-commit.md)；用户于 2026-11-01 明确要求本地提交完结，配置与文档分开提交；新增四端 pnpm dev、scripts 排序及 Cursor 独立标签终端，沿用配置检查、Git 忽略边界、dry-run 与 diff 检查通过的结果；真实四端启动、失败隔离及编辑器和 Windows 验收未完整执行，未推送。
+
+- [将 API 根地址跳转到文档](./issues/2026-11-01-api-root-docs-redirect-issue.md) · [Commit 记录](./commits/2026-11-01-api-root-docs-redirect-commit.md)；用户于 2026-11-01 明确要求本地提交完结，代码与文档分开提交；根地址 307 跳转 /docs 并移除 /hello，沿用 4 项 API 逻辑测试及 diff 检查通过的结果；数据库配置保留，数据库查询、浏览器及线上验收未执行，未推送或部署。
+
+- [启用官网 main 自动部署](./issues/2026-10-31-website-auto-deploy-issue.md) · [Commit 记录](./commits/2026-10-31-website-auto-deploy-commit.md)；用户于 2026-10-31 明确要求本地提交完结；main 推送自动部署官网，保留手动入口，Release 仅手动触发；YAML、6 组触发条件和并发组检查及 19 项测试此前通过，未验证远端部署，未推送。
+
+- [接入 Scalar 文档并添加官网入口](./issues/2026-10-31-api-scalar-docs-issue.md) · [Commit 记录](./commits/2026-10-31-api-scalar-docs-commit.md)；用户于 2026-10-31 明确要求本地提交完结，代码与文档分开提交；固定版本 Scalar、中文接口说明和 Header Cable 入口已交付，沿用 API 6 项、官网 10 项测试、官网类型及构建通过的结果；图标替换后导出检查通过，未重跑全量构建，浏览器验收限制保留，未推送或部署。
+
+- [绑定 API 自定义域名](./issues/2026-10-31-api-custom-domain-issue.md) · [Commit 记录](./commits/2026-10-31-api-custom-domain-commit.md)；用户于 2026-10-31 反馈新域名测试通过并批准本地文档提交完结；Vercel Production 域名与 Namecheap CNAME 已配置、公开 DNS 查询正确，代理此前 HTTPS 检查限制保留；未推送。
+
+- [修正 Vercel Python 安装命令](./issues/2026-10-31-api-vercel-install-command-issue.md) · [Commit 记录](./commits/2026-10-31-api-vercel-install-command-commit.md)；用户于 2026-10-31 确认线上验证通过并明确批准本地提交完结；Vercel Python 安装命令已覆盖、无缓存部署 Ready、17 项 Python 依赖安装成功，文档与无令牌 401 检查通过；Turbo 空跑限制保留，本轮仅文档提交，未推送。
+
+- [展开依赖清单以修复部署解析错误](./issues/2026-10-31-api-vercel-requirements-issue.md) · [Commit 记录](./commits/2026-10-31-api-vercel-requirements-commit.md)；用户于 2026-10-31 明确要求本地提交完结，代码与文档分开提交；生产依赖直接展开、旧约束文件移除，沿用 20 项版本一致、安装解析和 4 项接口测试通过的结果；Vercel 重新部署尚未验证，未推送。
+
+- [初始化 Neon 并连接后端](./issues/2026-10-31-api-neon-setup-issue.md) · [Commit 记录](./commits/2026-10-31-api-neon-setup-commit.md)；用户于 2026-10-31 反馈本地可用并明确要求本地提交完结；FastAPI 令牌鉴权、Neon 配置与 API 目录归位已交付，代码和文档分开提交；4 项逻辑测试及路径检查通过，代理未独立完成真实 HTTP 验证，Vercel 与 DNS 留待后续；未推送。
+
+- [调整书签归属与顺序并接入 Neon](./issues/2026-10-30-extension-bookmark-order-issue.md) · [Commit 记录](./commits/2026-10-30-extension-bookmark-order-commit.md)；用户于 2026-10-30 明确要求本地提交完结，代码与文档分开提交；书签归属与顺序、Neon 接入完成，77 项测试、类型检查、生产构建和 diff 检查通过；浏览器未实测，原有 theme-init.js 警告保留，未推送。
+
+- [明确 Python API 上线前置与手动配置](./issues/2026-10-30-repo-python-api-connectivity-issue.md) · [Commit 记录](./commits/2026-10-30-repo-python-api-connectivity-commit.md)；用户要求先完成前置建档并本地提交，实际 FastAPI、Neon、Vercel、DNS 与两端连接留待后续独立 Issue；本轮仅文档核对，未运行测试、构建、推送或部署。
+
+- [整理官网入口页面与共享目录](./issues/2026-10-29-website-directory-structure-issue.md) · [Commit 记录](./commits/2026-10-29-website-directory-structure-commit.md)；用户于 2026-10-29 明确要求本地提交完结；官网目录与 Extension 别名分别提交，文档单独提交，补充完成状态；沿用此前官网 10 项测试、根测试 19 项、类型与构建及等价核对结果，别名配置检查通过；浏览器未实测，未推送。
+
+- [统一官网品牌资源目录](./issues/2026-10-29-website-brand-assets-issue.md) · [Commit 记录](./commits/2026-10-29-website-brand-assets-commit.md)；用户于 2026-10-29 确认验收通过并批准代码、文档两笔本地提交；11 份 SVG 归位、重复与无引用资源清理及 README 修正已交付；沿用此前 10 项测试、类型检查与构建结果，提交不追加验证，不推送或部署。
+
+- [按职责整理扩展模块与共用能力](./issues/2026-10-28-extension-media-download-structure-issue.md) · [Commit 记录](./commits/2026-10-28-extension-media-download-structure-commit.md)；用户于 2026-10-29 明确要求代码与文档两笔本地提交完结；六个模块、共用书签与品牌资源已按职责归位；沿用此前 77 项测试、类型检查与构建结果，提交不追加验证，浏览器实测限制保留，不推送。
+
+- [恢复原 Sheet 样式并统一左侧圆角](./issues/2026-10-28-extension-download-drawer-issue.md) · [Commit 记录](./commits/2026-10-28-extension-download-drawer-commit.md)；用户验收通过，代码与本轮文档均批准本地提交；原 420px／模糊／Header／关闭入口／动画保留，左侧圆角复用全局 Token，关闭反馈修正保留；77 项测试、类型与构建通过，提交不追加验证，不推送。
+
+- [将活动日历迁入 Studio](./issues/2026-10-27-extension-activity-cards-issue.md) · [Commit 记录](./commits/2026-10-27-extension-activity-cards-commit.md)；用户确认验证通过，代码与文档本地提交完结；日历完整保留，记录清空，图表留空，按 Studio 职责目录组织；77 项测试、类型与构建通过，不追加验证，不推送。
+
+- [拆分 Dock 与 Settings 并归位 Home](./issues/2026-10-28-extension-module-boundaries-issue.md) · [Commit 记录](./commits/2026-10-28-extension-module-boundaries-commit.md)；用户验收通过，代码已先提交，本轮文档提交完结；新增 Dock／Settings 模块，Home 归位 Newtab；沿用此前 76 项测试、类型与构建结果，不追加验证，不推送。
+
+
+- [补充文件夹、下载与设置更新日志](./issues/2026-10-28-website-extension-changelog-issue.md) · [Commit 记录](./commits/2026-10-28-website-extension-changelog-commit.md)；用户批准更新至 1.7.0 并本地提交完结；根版本与新日志标签／链接同步，历史记录保留；官网类型检查、构建与 diff 检查此前通过，提交时未追加验证或重建产物，未推送或部署。
+
+- [统一设置列表与全局状态反馈](./issues/2026-10-28-extension-settings-ui-issue.md) · [Commit 记录](./commits/2026-10-28-extension-settings-ui-commit.md)；按用户批准独立提交设置代码和文档；官方分组列表／折叠、集中 Toast 文案、共用 StatusIcon 已交付；用户验收通过，沿用此前 76 项测试、类型与构建结果，不重复验证，不推送。
+
+- [整合媒体下载模块与记录抽屉](./issues/2026-10-27-extension-media-dl-issue.md) · [Commit 记录](./commits/2026-10-27-extension-media-dl-commit.md)；按用户批准独立提交下载代码和文档；统一 media-download、模块自有记录 Sheet 与配置迁移，保留 TG／数据；沿用已验收整体验证结果，不重复测试中间快照，不推送。
+
+- [区分文件夹遮挡并为 EDU 添加四位界面锁](./issues/2026-10-26-extension-folder-access-issue.md) · [Commit 记录](./commits/2026-10-26-extension-folder-access-commit.md)；用户于 2026-10-27 明确批准代码与文档两笔本地提交并完结；UI 一键显示与 EDU 四位界面锁已交付；74 项测试、类型检查、生产构建与 diff 检查此前通过，浏览器视觉与交互未由代理验收，提交时未追加验证，不推送或发布。
+
+- [统一 Newtab 书签单色规范](./issues/2026-10-26-extension-bookmark-monochrome-issue.md) · [Commit 记录](./commits/2026-10-26-extension-bookmark-monochrome-commit.md)；用户于 2026-10-26 明确批准代码与文档两笔本地提交并完结；27 个书签与 Dock 收藏随主题切换黑白，Exts 保留完整正式外形并整体反色；73 项测试、类型检查及生产构建此前通过，浏览器视觉与交互未由代理验收，提交时未追加验证，不推送或发布。
+
+- [补充 Newtab 更新日志](./issues/2026-10-26-website-newtab-changelog-issue.md) · [Commit 记录](./commits/2026-10-26-website-newtab-changelog-commit.md)；用户于 2026-10-26 明确批准版本与官网数据、工作项文档两笔本地提交并完结；根版本与三点日志关联同步为 1.6.0，历史日志保持；版本检查、直接运行现有工具的官网类型检查与构建及 diff 检查此前通过，浏览器与远端附件未实测，提交时不追加验证，不推送或部署。
+
+- [新增 Studio 切换与 Actions 入口](./issues/2026-10-26-extension-workspace-entry-issue.md) · [Commit 记录](./commits/2026-10-26-extension-workspace-entry-commit.md)；用户于 2026-10-26 明确批准代码、文档两笔本地提交并完结；Studio 同页切换、Actions 占位菜单与右下角信息提示已交付；最新 Extension 73 项测试、类型检查、构建与 diff 检查此前通过，浏览器视觉与交互未由代理验收，提交时不追加验证，不推送。
+
+- [统一 UI 资源图标并新增书签文件夹](./issues/2026-10-26-extension-ui-bookmarks-issue.md) · [Commit 记录](./commits/2026-10-26-extension-ui-bookmarks-commit.md)；用户于 2026-10-26 明确批准本地提交并完结；七个图标、UI 文件夹、上下箭头及贴边渐变磨砂已交付；最新 Extension 74 项测试、类型检查、构建与 diff 检查通过，浏览器视觉与交互未由代理验收，提交时不追加验证，不推送。
+
+- [为官网介绍文字添加二进制解码动效](./issues/2026-10-25-website-binary-text-issue.md) · [Commit 记录](./commits/2026-10-25-website-binary-text-commit.md)；用户于 2026-10-25 明确批准本地提交并完结；介绍文字首次挂载解码一次，Exts 标题保持静态；官网 10 项逻辑测试、类型检查、构建与 diff 检查此前通过，浏览器视觉与辅助技术未由代理验收，提交时不追加验证，不推送或部署。
+
+- [补充书签与界面规范日志](./issues/2026-10-25-website-bookmarks-ui-changelog-issue.md) · [Commit 记录](./commits/2026-10-25-website-bookmarks-ui-changelog-commit.md)；用户于 2026-10-25 明确批准本地提交并完结；今天新增滚动组件与下载框架规范两点日志，TG 日志日期改为昨天；初版官网类型检查、构建和 diff 检查通过，最终文字精简未重新构建，提交时不追加验证，不推送或部署。
+
+- [接入官方滚动区域组件](./issues/2026-10-25-web-scroll-area-issue.md) · [Commit 记录](./commits/2026-10-25-web-scroll-area-commit.md)；用户于 2026-10-25 明确批准本地提交并完结；五处扩展容器与官网命令区接入官方 Scroll Area，并补充官方优先规范；扩展74项、官网10项测试及两端类型检查和构建此前通过，浏览器滚动与布局未验证，提交时不追加验证，不推送或部署。
+
+- [整理近期扩展更新并更新官网日志](./issues/2026-10-24-website-recent-changelog-issue.md) · [Commit 记录](./commits/2026-10-24-website-recent-changelog-commit.md)；用户于 2026-10-25 明确批准本地提交并完结；根版本 1.5.0 与三点 Extension 日志及对应下载链接已更新；官网 10 项测试、类型检查和最终构建此前通过，浏览器与远端附件未验证，提交时不追加验证，不推送、部署或发布。
+
+- [用按钮组整理 TG 下载入口](./issues/2026-10-24-extension-telegram-browser-save-issue.md) · [Commit 记录](./commits/2026-10-24-extension-telegram-browser-save-commit.md)；用户于 2026-10-25 验收通过并批准本地提交完结；官方按钮组、文件另存为与目录选择、预览关闭清理已交付；74 项测试与类型检查此前通过，最终构建通过，提交时不追加验证，不推送。
+
+- [添加 shadcn 网站书签](./issues/2026-10-24-extension-shadcn-bookmarks-issue.md) · [Commit 记录](./commits/2026-10-24-extension-shadcn-bookmarks-commit.md)；用户明确批准本地提交并完结；DevOps 首位添加 shadcn/ui、Components 第二位添加 shadcn.io，接入用户提供的 SVG；74 项测试、类型检查与生产构建此前通过，浏览器效果未验证，提交时不追加验证，不推送。
+
+- [统一提示组件与抽屉宽度](./issues/2026-10-24-extension-shared-feedback-sheet-issue.md) · [Commit 记录](./commits/2026-10-24-extension-shared-feedback-sheet-commit.md)；用户明确批准本地提交并完结；共用 Sonner 入口与四级图标规范、TG 简化提示及共用 Sheet 420px 宽度已交付；74 项测试、类型检查此前通过，最终宽度生产构建通过，浏览器视觉与交互未由代理验收，提交时不追加验证，不推送。
+
+- [展示 Download 下载记录](./issues/2026-10-24-extension-download-panel-design-issue.md) · [Commit 记录](./commits/2026-10-24-extension-download-panel-design-commit.md)；用户明确批准按提示位置、Download 功能两笔本地提交完结；TG 成功记录、紧凑列表、图标筛选与清空确认已实现，提示统一右下角、空状态居中；文件夹仅提示未接入，Desktop/X 下载未接入；74 项测试、类型检查和生产构建此前通过，代理未执行浏览器与真实文件验收，提交时不追加验证，不推送。
+
+- [简化打卡卡片顶部布局](./issues/2026-10-24-extension-check-in-header-issue.md) · [Commit 记录](./commits/2026-10-24-extension-check-in-header-commit.md)；用户明确批准本地提交并完结；移除标题、切换靠左且右侧留空；68 项测试、类型检查和生产构建此前通过，浏览器视觉与交互未由代理验收，提交时不追加验证，不推送。
+
+- [统一 Settings 本地配置与公共读写](./issues/2026-10-24-extension-settings-storage-issue.md) · [Commit 记录](./commits/2026-10-24-extension-settings-storage-commit.md)；用户于 2026-10-24 明确批准本地提交并完结；68 项测试、类型检查与构建此前通过，浏览器验收未由代理执行，不推送。
+
+- [为 TG 下载增加快速保存和文件夹选择](./issues/2026-10-23-extension-telegram-directory-save-issue.md) · [Commit 记录](./commits/2026-10-23-extension-telegram-directory-save-commit.md)；用户明确要求本地 commit 并完结；快速保存、任意文件夹选择、句柄持久化和同名避重已交付；此前 61 项测试、类型检查和生产构建通过，真实授权与文件验收限制保留，提交时不追加验证，不推送。
+
+- [动态居中 Newtab 上半区并统一文件夹行距](./issues/2026-10-23-extension-newtab-content-centering-issue.md) · [Commit 记录](./commits/2026-10-23-extension-newtab-content-centering-commit.md)；用户明确批准本地 commit 并完结；动态宽度与整体居中、名称上下各 8px 和单行行高 16px（预览框间总共 32px）、48px Dock 分割线及说明已实现；48 项测试与类型检查此前通过，最终样式已重新构建通过，代理未独立执行浏览器验收，提交时不追加验证，不推送。
+
+- [增加 Workout 打卡切换](./issues/2026-10-22-extension-workout-check-in-issue.md) · [Commit 记录](./commits/2026-10-22-extension-workout-check-in-commit.md)；用户明确批准本地提交并完结；双类型切换与独立模拟数据已实现，Workout 分钟数按最新批准打散，48 项测试、类型检查和生产构建通过，代理未执行浏览器视觉与交互验收，提交时不追加验证，不推送。
+
+- [更新官网 Extension 内容并设置 1.4.0 版本](./issues/2026-10-22-website-extension-1-4-0-issue.md) · [Commit 记录](./commits/2026-10-22-website-extension-1-4-0-commit.md)；用户批准本地提交；官网内容、首页卡片 Dock、历史日期、日志链接规则与根版本已更新，官网逻辑测试、类型检查及构建此前通过；1.4.0 扩展附件需后续 Release 发布，不推送或部署。
+
+- [替换 Dock 下载入口与 EDU 锁图标](./issues/2026-10-22-extension-dock-download-edu-lock-issue.md) · [Commit 记录](./commits/2026-10-22-extension-dock-download-edu-lock-commit.md)；用户已验收通过并批准按 EDU 锁图标、Dock Download 抽屉两笔本地提交；扩展 48 项测试、类型检查与生产构建通过，代理未自行执行浏览器验证，不推送。
+
+- [展示本地 JLPT 学习日历](./issues/2026-10-22-extension-jlpt-check-in-issue.md) · [Commit 记录](./commits/2026-10-22-extension-jlpt-check-in-commit.md)；用户批准按历史清理文案、JLPT 日历两笔本地提交；独立模拟 JSON、24 周本地日历、固定 JLPT 项、主题灰阶及共用 Tooltip 已交付；49 项完整测试、类型和最新生产构建此前通过，代理未独立执行浏览器验收，提交时不追加验证、不推送。
+
+- [划分 Newtab 三区布局并添加右侧卡片](./issues/2026-10-22-extension-newtab-regions-issue.md) · [Commit 记录](./commits/2026-10-22-extension-newtab-regions-commit.md)；用户确认验证通过并批准本地提交；三区布局、独立滚动、Dock 溢出处理及卡片独立目录已交付，45 项测试、类型与生产构建此前通过，提交时不追加验证，不推送。
+
+- [补充 TG 产品介绍与开发工作流日志](./issues/2026-10-22-website-tg-skills-changelog-issue.md) · [Commit 记录](./commits/2026-10-22-website-tg-skills-changelog-commit.md)；产品版本 1.3.0、TG 一句话介绍与两条日志已本地提交；遗漏的 1.3.0 扩展下载入口随后补齐并获本地提交批准；官网 10 项测试、类型、构建和内容核对此前通过，链接补充与提交时未追加验证，浏览器及远端附件未独立核对，不推送或部署。
+
+- [整理 TG 下载入口与完成提示](./issues/2026-10-21-extension-telegram-menu-lifecycle-issue.md) · [Commit 记录](./commits/2026-10-21-extension-telegram-menu-lifecycle-commit.md)；用户于 2026-10-22 确认无问题并批准代码、规范记录两笔本地提交；tg-download 职责分目录、Popup/记录层移除、官方完成 Toast、内容宽度按钮及桌面建议位置已交付；45 项逻辑测试、类型检查和构建此前通过，提交时未重复验证；浏览器实测以用户反馈为准，代理未独立执行，不推送。
+
+- [明确建档展示与提交收尾规则](./issues/2026-10-21-repo-workflow-issue-preview-issue.md) · [Commit 记录](./commits/2026-10-21-repo-workflow-issue-preview-commit.md)；建档展示、复用已有验证、避免重复确认及拆分提交的远端同步边界已写入 workflow-change；用户要求直接完结，本轮未执行验证或模拟场景，仅本地提交，不推送。
+
+- [删除扩展体积统计与门禁](./issues/2026-10-21-extension-bundle-report-issue.md) · [Commit 记录](./commits/2026-10-21-extension-bundle-report-commit.md)；体积工具、专用测试、开发与 CI 调用及活动规范已删除；既有类型检查、生产构建和配置检查通过，用户要求直接完结、不重复验证；浏览器和远程 Actions 未实测，仅本地提交，不推送。
+
+- [迁入 Telegram Web 下载与统一记录](./issues/2026-10-21-extension-telegram-download-issue.md) · [Commit 记录](./commits/2026-10-21-extension-telegram-download-commit.md)；用户明确要求先保存并本地提交；71 项测试、类型检查和生产构建通过，旧体积门禁失败及浏览器未实测限制保留；后续体积规则与 Skill 独立排队，不推送。
+
+- [添加 Skills 日志并去重首页分类标题](./issues/2026-10-21-website-skills-changelog-issue.md) · [Commit 记录](./commits/2026-10-21-website-skills-changelog-commit.md)；用户查看最终交付后批准本地提交；Skills 日志归 2026-10-20、快速开始归 2026-10-21 并补充 Skills 产品说明描述，首页分类标题去重、Newtab 展示 Dock 增加 Settings、Observer 四处简介统一；10 项逻辑测试及最终内容核对、类型检查、生产构建、diff 检查通过；代理未独立执行浏览器或线上验收，不推送或部署。
+
+- [接入项目本地开发 Skills](./issues/2026-10-21-repo-local-skills-issue.md) · [Commit 记录](./commits/2026-10-21-repo-local-skills-commit.md)；用户批准本地提交；两个相对链接与 8 个配套文件核对通过，workflow-change 已被会话发现并读取使用，Observer 经配套入口读取成功；Observer 用户侧发现、调用与长期行为限制保留，不推送。
+
+- [整理开发工作流与观察 Skill 并更新项目介绍](./issues/2026-10-20-repo-development-skills-readme-issue.md) · [Commit 记录](./commits/2026-10-20-repo-development-skills-readme-commit.md) · [设计](../superpowers/specs/2026-10-20-repo-development-skills-readme-design.md)；用户批准五笔本地提交，两份 Skill、Superpowers 衔接、项目日志、根 README 与官网介绍已交付；静态检查、场景走查和官网测试、类型及构建通过，本机链接接入且 workflow-change 已被会话发现；跨月及浏览器实测限制保留，不推送或部署。
+
+- [添加快速开始与英文产品分类](./issues/2026-10-20-website-quick-start-issue.md) · [Commit 记录](./commits/2026-10-20-website-quick-start-commit.md)；用户查看交付材料后批准快速开始、更新日志、规范记录三笔本地提交；Quick Start、双端安装指引、英文分类及 Website、Build、双端更新日志已交付，10 项逻辑测试、最终内容核对、类型检查及生产构建通过；代理未独立执行浏览器、下载和安装验收，不推送或部署。
+
+- [配置 DMG 拖拽安装窗口](./issues/2026-10-20-desktop-dmg-installer-issue.md) · [Commit 记录](./commits/2026-10-20-desktop-dmg-installer-commit.md)；用户确认本地窗口效果并于 2026-10-20 批准实现、说明与记录两笔本地提交；29 项逻辑测试、真实打包、镜像结构和应用签名校验通过；版本 1.2.0 和固定附件名不变，远程 Actions、下载与安装启动待用户验证，不推送或发布。
+
+- [修复下载版桌面应用签名](./issues/2026-10-19-desktop-dmg-signature-issue.md) · [Commit 记录](./commits/2026-10-19-desktop-dmg-signature-commit.md)；用户于 2026-10-20 批准本地提交，完整应用签名和打包校验已修复，28 项测试、真实构建、DMG 及包内签名校验通过；保持 1.2.0，线上仍为草稿，重跑前需处理旧草稿和标签；GitHub 下载与安装待用户验收，不推送或发布。
+
+- [整理 AI 入口与设置分区](./issues/2026-10-19-extension-newtab-ai-settings-issue.md) · [Commit 记录](./commits/2026-10-19-extension-newtab-ai-settings-commit.md)；用户确认书签与 Dock、Settings 样式、文档记录三笔本地提交；AI 第一且仅保留 ChatGPT/Grok/Cursor，Telegram 入 Social Media，Dock 顺序为 X/GitHub/Exts/Gmail；设置标题层级和 24px 间距已调整；34 项测试、类型、构建、体积及资源核对通过，未独立验收浏览器；Gemini SVG 保留未使用，不推送。
+
+- [统一更新日志标题与版本归属](./issues/2026-10-19-website-changelog-titles-issue.md) · [Commit 记录](./commits/2026-10-19-website-changelog-titles-commit.md)；用户确认最终文案并批准本地提交；合并 1.1.0、统一标题与 Desktop 标签、加入 Photos 两点说明和桌面下载直链；最终类型及内容核对通过，生产构建此前通过；下载暂时 404 可接受，未独立验收页面，不推送或部署。
+
+- [从 1.2.0 开始统一双端发布](./issues/2026-10-19-repo-unified-release-1-2-issue.md) · [Commit 记录](./commits/2026-10-19-repo-unified-release-1-2-commit.md)；用户验收并批准本地提交；根版本更新为 1.2.0，统一双端发布起点与说明；3 项版本测试通过，真实打包和远程发布未验证，不推送。
+
+- [打通桌面首版与双包 Release](./issues/2026-10-19-repo-desktop-first-release-issue.md) · [Commit 记录](./commits/2026-10-19-repo-desktop-first-release-commit.md)；用户在查看交付和限制后确认验收并批准 Photos 修正、双包发布两笔本地提交；开发／正式构建与打包通过，发布阶段 71 项、浏览原生 8 项及下载原生 7 项逻辑测试通过；完整原生测试因历史 SQLite 问题中止，代理未独立验收界面、Finder、真机、安装或远程运行，不推送、不部署。
+
+- [修复设置抽屉打开时自动显示主题提示](./issues/2026-10-17-extension-settings-initial-focus-issue.md) · [Commit 记录](./commits/2026-10-17-extension-settings-initial-focus-commit.md)；用户确认验收并批准本地提交，打开时初始焦点移至标题；34 项测试、类型检查、构建、包体积和 diff 检查通过，代理未独立实测浏览器，不推送、不部署。
+
+- [统一官网扩展功能命名与介绍](./issues/2026-10-17-website-extension-product-names-issue.md) · [Commit 记录](./commits/2026-10-17-website-extension-product-names-commit.md)；用户确认交付并批准本地提交，Newtab 展示名与 History Cleaner 中文介绍已更新；9 项纯逻辑测试通过，类型检查与构建受本地 TypeScript、Vite 依赖缺失阻塞；保留现有布局与卡片行为，不推送、不部署；代理未执行浏览器验收。
+
+- [更新官网发布日志](./issues/2026-10-17-website-changelog-update-issue.md) · [Commit 记录](./commits/2026-10-17-website-changelog-update-commit.md)；用户确认交付并批准三笔本地提交：根产品版本 1.1.0、扩展日志与版本链接、Extension 单数分类及标签；官网此前类型检查与构建通过，构建发布逻辑 17 项通过；扩展本次打包因依赖与网络不可用未完成，发布前须重新生成核实 1.1.0 ZIP，不推送、不部署。
+
+- [整理设置分区并添加主题切换与帮助提示](./issues/2026-10-17-extension-settings-theme-help-issue.md) · [Commit 记录](./commits/2026-10-17-extension-settings-theme-help-commit.md)；用户验收通过并批准代码、规范、工作记录三笔本地提交；设置分区、主题选择与同步、历史清理帮助已交付，保留官方选中效果与4px提示间距；34项测试及类型检查、构建、体积等验证通过，不推送、不部署。
+
+- [统一官网与扩展通用 UI 基础](./issues/2026-10-16-web-ui-consistency-issue.md) · [Commit 记录](./commits/2026-10-16-web-ui-consistency-commit.md)；用户验收通过并批准代码、规范与记录三笔本地提交；官方组件基础、Switch、现有视觉优先及跨应用规范已交付，扩展 30 项、官网 9 项测试及类型检查、构建等验证通过；代理未独立实测浏览器，不推送、不部署。
+
+- [添加启动与关闭时清理访问历史](./issues/2026-10-16-extension-history-cleaner-issue.md) · [Commit 记录](./commits/2026-10-16-extension-history-cleaner-commit.md) · [Spec](../superpowers/specs/2026-10-16-extension-history-cleaner-design.md) · [Plan](../superpowers/plans/2026-10-16-extension-history-cleaner.md)；用户确认验收并批准代码、文档两笔本地提交；独立后台与 Settings 单开关已交付，30 项测试、类型检查、构建、体积和 Manifest 核对通过；权限可静默授予，代理未独立实测浏览器，不推送。
+
+- [按应用整理三端功能文档](./issues/2026-10-16-repo-app-documentation-issue.md) · [Commit 记录](./commits/2026-10-16-repo-app-documentation-commit.md)；用户确认验收并批准一笔本地提交；三端索引、功能说明与 UI 规范迁移完成，260 项本地链接及规范正文核对通过，仅文档变更；历史清理尚未实现，不推送。
+
+- [修正新标签页 Exts 书签图标](./issues/2026-10-16-extension-newtab-exts-icon-issue.md) · [Commit 记录](./commits/2026-10-16-extension-newtab-exts-icon-commit.md)；用户确认验收并批准本地提交；原样复用正式圆角 SVG，保留完整背景与主体，不新增反色；15 项测试、类型检查及最新构建、资源一致性与 diff 检查通过，代理未独立实测浏览器，不推送或发布。
+
+- [调整新标签页 Dock 书签与工具入口](./issues/2026-10-15-extension-newtab-dock-issue.md) · [Commit 记录](./commits/2026-10-15-extension-newtab-dock-commit.md)；用户确认验收并批准代码、文档两笔本地提交，书签换位与 Exts、560px Settings Sheet、EDU 反馈和共用语义样式已交付；扩展界面规范与 AGENTS 同步，15 项测试、类型检查、构建、包体积及 diff 检查通过；代理未独立实测浏览器，不推送或发布。
+
+- [拉宽官网整体内容区域](./issues/2026-10-15-website-container-width-issue.md) · [Commit 记录](./commits/2026-10-15-website-container-width-commit.md)；用户确认验收并批准本地提交，最大宽度改为 1280px，移除首页标语独立限宽；内边距及正文阅读宽度保持原样，9 项逻辑测试通过，追加修改后类型检查、构建与 diff 检查通过；代理未实测浏览器，不推送或部署。
+
+- [完善官网首页展示与分类介绍](./issues/2026-10-15-website-category-arrow-issue.md) · [Commit 记录](./commits/2026-10-15-website-category-arrow-commit.md)；用户确认验收并批准代码、文档两笔本地提交，包含追加的 Chrome 与 NPM 发布日志标题；首页布局、卡片反馈、分类与页面说明已交付，9 项逻辑测试、类型检查、构建及最终文案与 diff 核对通过；代理未实测浏览器效果，不推送或部署。
+
+
+- [简化首页工具包介绍](./issues/2026-10-15-website-intro-packages-issue.md) · [Commit 记录](./commits/2026-10-15-website-intro-packages-commit.md)；用户确认验收并批准本地提交，仅将首页介绍中的“npm 工具包”改为“工具包”；配置加载与 diff 核对通过，纯文案变更未重复全量测试或构建，不推送。
+
+- [优化官网首页、产品说明与更新日志](./issues/2026-10-15-extension-newtab-changes-issue.md) · [Commit 记录](./commits/2026-10-15-extension-newtab-changes-commit.md)；用户确认验收并批准代码、文档两笔本地提交；首页排版、共享页脚、工具包说明、日志标签及版本入口已交付，9 项逻辑测试、类型检查、构建与 diff 核对通过；代理未实测浏览器效果，不推送或部署。
+
+- [完善官网工具介绍、更新日志与许可证页脚](./issues/2026-10-12-website-home-tool-categories-issue.md) · [Commit 记录](./commits/2026-10-12-website-home-tool-categories-commit.md)；用户验收通过并批准页面、日志、文档三笔本地提交；首页四类入口、产品说明、首次工具包日志与两行页脚已交付，9 项逻辑测试、类型检查、构建与资源核对通过；浏览器视觉交互未实测，不推送或部署。
+
+- [升级扩展的正式稳定产物工具到 1.0.1](./issues/2026-10-15-extension-stable-output-101-issue.md) · [Commit 记录](./commits/2026-10-15-extension-stable-output-101-commit.md)；用户验收通过并批准本地结项提交，已确认安装加载官方 1.0.1，15 项测试、类型检查、构建、体积与 diff 检查通过；浏览器和开发生命周期尚未验证，不推送或发布。
+
+- [完善稳定产物工具的说明与包元数据](./issues/2026-10-14-wxt-stable-output-package-docs-issue.md) · [Commit 记录](./commits/2026-10-14-wxt-stable-output-package-docs-commit.md)；2026-10-15 用户验收通过并批准本地提交，1.0.1 文档修订、三项关键词与中文更新记录已准备，元数据、打包 dry-run 与 diff 核对通过；不推送或上传发布，扩展仍消费 1.0.0。
+
+- [切换扩展到 npm 正式稳定产物工具](./issues/2026-10-14-extension-registry-stable-output-issue.md) · [Commit 记录](./commits/2026-10-14-extension-registry-stable-output-commit.md)；用户验收通过并批准本地结项提交，已确认加载官方 1.0.0 包，15 项扩展测试、类型检查、构建、体积与稳定发布逻辑验证通过；浏览器与 dev server 生命周期未验证，不推送或发布。
+
+- [统一发布入口与任务展示名称](./issues/2026-10-14-repo-publish-display-names-issue.md) · [Commit 记录](./commits/2026-10-14-repo-publish-display-names-commit.md)；用户验收通过并批准本地结项提交，Exts Publish、动态运行标题与六个任务名称已交付，配置对比与 diff 检查通过；远程未验证，不推送或运行发布。
+
+- [补充发布失败与重复发布提示](./issues/2026-10-13-repo-npm-stage-error-guidance-issue.md) · [Commit 记录](./commits/2026-10-13-repo-npm-stage-error-guidance-commit.md)；2026-10-14 用户验收通过并批准本地提交，NPM 9 项测试、Exts 5 个隔离场景、语法与 diff 检查通过；远程尚未验证，不推送、发布或改名。
+
+- [修复 NPM 发布器的跨平台 CLI 路径](./issues/2026-10-13-repo-npm-cli-path-issue.md) · [Commit 记录](./commits/2026-10-13-repo-npm-cli-path-commit.md)；路径修复已存在本地提交，本轮关闭 stage 自动缓存并按用户批准本地结项；原 9 项测试及 CLI 调用通过，本轮配置核对通过，远程仍待验证，不推送或发布。
+
+- [统一 Actions 名称与部署入口](./issues/2026-10-13-repo-unify-actions-entrypoints-issue.md) · [Commit 记录](./commits/2026-10-13-repo-unify-actions-entrypoints-commit.md)；用户验收通过并批准两笔本地提交，Exts Deploy / NPM Publish 与目标选择已交付；Desktop 仅提示尚未接入，远程 Actions 未运行，未推送或发布。
+
+- [公开发布 WXT 稳定产物工具并建立手动发布流程](./issues/2026-10-12-wxt-stable-output-npm-release-issue.md) · [Commit 记录](./commits/2026-10-12-wxt-stable-output-npm-release-commit.md)；用户确认工作项可以收尾并批准本地结项提交，NPM 暂存上传、包选择和展示文案已交付；远程及浏览器结果以用户确认作为依据，代理未独立复核，不推送或发布。
+
+- [调整官网上线日志的日期与内容](./issues/2026-10-12-website-launch-changelog-issue.md) · [Commit 记录](./commits/2026-10-12-website-launch-changelog-commit.md)；用户验收通过并批准本地提交，官网上线日期与三条功能说明已调整，构建及 diff 检查通过；未推送或部署。
+
+- [添加简洁的官网功能介绍页](./issues/2026-10-12-website-feature-overview-issue.md) · [Commit 记录](./commits/2026-10-12-website-feature-overview-commit.md)；用户验收通过并批准官网实现、文档收尾两笔本地提交，产品介绍、共享布局与中文导航提示已交付；未推送或部署。
+
+- [用模块叠放示意卡片替换首页 Logo](./issues/2026-10-11-website-module-showcase-issue.md) · [Commit 记录](./commits/2026-10-11-website-module-showcase-commit.md)；用户验收通过并批准两笔本地提交，Tabs／Photos 示意卡片、循环补位和展示规范已交付；未推送或部署。
+
+- [建立官网视觉规范并统一布局](./issues/2026-10-11-website-layout-system-issue.md) · [Commit 记录](./commits/2026-10-11-website-layout-system-commit.md)；用户验收通过并批准三笔本地提交，规范引用、固定共享布局和平台分组日志已交付；未推送或部署。
+
+- [添加独立更新时间线页面](./issues/2026-10-11-website-changelog-timeline-issue.md) · [Commit 记录](./commits/2026-10-11-website-changelog-timeline-commit.md)；用户确认本地阶段验收并批准提交，独立页面、年份分组与锚点、三条日志已交付；线上部署由用户操作。
+
+- [配置官网手动部署并统一 Actions 名称](./issues/2026-10-11-website-manual-pages-deploy-issue.md) · [Commit 记录](./commits/2026-10-11-website-manual-pages-deploy-commit.md)；用户确认最终验收通过并批准结项提交，线上 HTTPS、产物一致性和 Latest 链接已只读核验。
+
+- [固定发布包名并接入官网最新下载](./issues/2026-10-11-exts-fixed-release-assets-issue.md) · [Commit 记录](./commits/2026-10-11-exts-fixed-release-assets-commit.md)；用户明确确认前述事项全部验证完成并批准本地结项提交，远程验收以用户确认作为依据，本轮代理未独立复核。
+
+- [重建 Exts 产品官网](./issues/2026-10-11-website-product-homepage-issue.md) · [Commit 记录](./commits/2026-10-11-website-product-homepage-commit.md)；用户已验收并明确批准两次本地提交，React/shadcn 官网与根版本 macOS/Chrome 直链已交付，域名部署留在后续队列。
+
+- [添加 npm 与 Simple Icons 书签](./issues/2026-10-10-extension-npm-simpleicons-bookmarks-issue.md) · [Commit 记录](./commits/2026-10-10-extension-npm-simpleicons-bookmarks-commit.md)；用户已验收通过并批准本地提交。
+
+- [建立扩展发布并验证首版打包](./issues/2026-10-10-exts-first-release-issue.md) · [Commit 记录](./commits/2026-10-10-exts-first-release-commit.md)；本地实现已提交，用户于 2026-10-10 明确确认已完结，本轮未重新核验远程发布结果。
+
+- [整理 V3 图标与插头 Logo 独立规范](./issues/2026-10-10-repo-ohmy-icon-system-docs-issue.md) · [Commit 记录](./commits/2026-10-10-repo-ohmy-icon-system-docs-commit.md)
+
+- [记录统一构建与本地分发规范](./issues/2026-10-10-repo-build-release-docs-issue.md) · [Commit 记录](./commits/2026-10-10-repo-build-release-docs-commit.md)
+
+- [统一构建产物、版本来源与分发入口](./issues/2026-10-10-repo-unify-build-release-issue.md) · [Commit 记录](./commits/2026-10-10-repo-unify-build-release-commit.md)
+
+- [删除本地与远程旧发布标签](./issues/2026-10-10-repo-remove-release-tag-issue.md) · [Commit 记录](./commits/2026-10-10-repo-remove-release-tag-commit.md)
+
+- [统一跨平台图标主体与规范制作方式](./issues/2026-10-09-repo-unify-platform-icons-issue.md) · [Commit 记录](./commits/2026-10-09-repo-unify-platform-icons-commit.md)
+
+- [整理 main 直线历史并压缩 Git 存储](./issues/2026-10-09-repo-linear-git-history-issue.md)
+  - [Commit 记录](./commits/2026-10-09-repo-linear-git-history-commit.md)
+  - main 已整理并同步，文件一致性与 Git 完整性验证通过；用户批准本地记录提交，发布标签迁移未批准
+
+- [建立 exts 应用结构并迁入首批功能](./issues/2026-10-08-repo-app-foundations-root-commands-issue.md)
+  - [Commit 记录](./commits/2026-10-08-repo-app-foundations-root-commands-commit.md)
+  - [Plan](../superpowers/plans/2026-10-08-repo-app-foundations-root-commands.md)
+  - 用户于 2026-10-09 明确批准四份本地提交：安装、桌面、扩展、官网／仓库；原生 XCTest 25／27，SQLite 已有缺陷和真实设备未验证限制保留
+
+- [修复 pnpm 安装缺少原生依赖](./issues/2026-10-08-repo-pnpm-native-install-issue.md)
+  - [Commit 记录](./commits/2026-10-08-repo-pnpm-native-install-commit.md)
+  - 独立 fix，正常／冻结安装与 WXT prepare 通过，原依赖引用保留
+
+
+- [归档旧应用并调整仓库入口](./issues/2026-10-08-repo-archive-legacy-apps-issue.md)
+  - [Commit 记录](./commits/2026-10-08-repo-archive-legacy-apps-commit.md)
+  - [Plan](../superpowers/plans/2026-10-08-repo-archive-legacy-apps.md)
+  - 用户已批准拆分本地提交；归档内容、脚本模式、官网构建和公共工具测试已验证
+
+- [梳理现有功能与统一应用结构](./issues/2026-10-08-repo-app-integration-inventory-issue.md)
+  - [Commit 记录](./commits/2026-10-08-repo-app-integration-inventory-commit.md)
+
+- [统一 OhMy 命名格式](./issues/2026-10-04-repo-unify-ohmy-naming-issue.md)
+  - [Commit 记录](./commits/2026-10-04-repo-unify-ohmy-naming-commit.md)
+  - [Spec](../superpowers/specs/2026-10-04-repo-unify-ohmy-naming-design.md)
+  - [Plan](../superpowers/plans/2026-10-04-repo-unify-ohmy-naming.md)
+  - 用户已批准拆分为三个本地 Commit；OhMy DL Vitest 与真实视觉验收限制已记录
+
+- [更新 OhMy 系列产品图标](./issues/2026-10-03-repo-ohmy-product-icons-issue.md)
+  - [Commit 记录](./commits/2026-10-03-repo-ohmy-product-icons-commit.md)
+  - 用户确认现有图标交付已经完成，不再创建单独的收口 Commit
+
+- [补充本地 Commit 正文换行规范](./issues/2026-10-01-repo-commit-message-format-issue.md)
+  - [Commit 记录](./commits/2026-10-01-repo-commit-message-format-commit.md)
+  - 已补充真实 LF 换行规则，未修改历史 Commit
+
+- [收敛图库窗口与月份批量操作](./issues/2026-10-01-ohmy-photos-library-month-actions-issue.md)
+  - [Commit 记录](./commits/2026-10-01-ohmy-photos-library-month-actions-commit.md)
+  - 用户已完成实际 App 验收并批准本地提交；完整 XCTest 仍受当前沙箱 `testmanagerd` 限制
+
+- [修复媒体备份与缩略图刷新](./issues/2026-10-01-ohmy-photos-media-backup-thumbnails-issue.md)
+  - [Commit 记录](./commits/2026-10-01-ohmy-photos-media-backup-thumbnails-commit.md)
+  - 用户已明确要求本地提交；真实 iPhone 验收和 XCTest 运行仍受环境限制
+
+- [统一 OhMy Photos 显示名称与本地目录](./issues/2026-10-01-ohmy-photos-product-naming-storage-issue.md)
+  - [Commit 记录](./commits/2026-10-01-ohmy-photos-product-naming-storage-commit.md)
+  - 用户验收通过；旧目录未自动迁移或删除
+
+- [补充 Omy Photos 根目录开发命令](./issues/2026-10-01-repo-ohmy-photos-dev-command-issue.md)
+  - [Commit 记录](./commits/2026-10-01-repo-ohmy-photos-dev-command-commit.md)
+  - 用户已实际启动应用并进入图库界面；代理环境构建无输出限制已保留记录
+
+- [Oh My 产品命名迁移](./issues/2026-09-30-repo-rename-ohmy-products-issue.md)
+  - [Commit 记录](./commits/2026-09-30-repo-rename-ohmy-products-commit.md)
+  - 自动化验收完成；真实 Chrome/Edge、macOS App 与 iPhone 流程仍需用户实际加载或连接验证
+
+- [收口 Omy Photos 最小 MVP 稳定性](./issues/2026-09-30-omy-photos-mvp-hardening-issue.md)
+  - [Commit 记录](./commits/2026-09-30-omy-photos-mvp-hardening-commit.md)
+  - 自动化验收完成；真实 Mac+iPhone 最终验收待用户补做
+
+- [建立 Omy Photos 选择与安全下载](./issues/2026-09-30-omy-photos-safe-download-issue.md)
+  - [Commit 记录](./commits/2026-09-30-omy-photos-safe-download-commit.md)
+
+- [建立 Omy Photos 缩略图缓存与月份网格](./issues/2026-09-30-omy-photos-thumbnail-grid-issue.md)
+  - [Commit 记录](./commits/2026-09-30-omy-photos-thumbnail-grid-commit.md)
+
+- [建立 Omy Photos 本地媒体索引与增量同步](./issues/2026-09-30-omy-photos-library-index-sync-issue.md)
+  - [Commit 记录](./commits/2026-09-30-omy-photos-library-index-sync-commit.md)
+
+- [建立 Omy Photos 应用壳与设备会话](./issues/2026-09-30-omy-photos-app-shell-device-session-issue.md)
+  - [Commit 记录](./commits/2026-09-30-omy-photos-app-shell-device-session-commit.md)
+
+- [验证 Omy Photos 的 ImageCaptureCore 真机能力](./issues/2026-09-30-omy-photos-image-capture-validation-issue.md)
+  - [Commit 记录](./commits/2026-09-30-omy-photos-image-capture-validation-commit.md)
+
+- [收敛历史 Issue 与 Commit 终态](./issues/2026-09-30-repo-close-historical-issue-states-issue.md)
+  - [Commit 记录](./commits/2026-09-30-repo-close-historical-issue-states-commit.md)
+
+- [统一 OmyExts 仓库与产品命名](./issues/2026-09-30-repo-unify-omy-product-naming-issue.md)
+  - [Commit 记录](./commits/2026-09-30-repo-unify-omy-product-naming-commit.md)
+
+- [删除根目录聚合开发与构建命令](./issues/2026-09-28-repo-remove-aggregate-commands-issue.md)
+  - [Commit 记录](./commits/2026-09-28-repo-remove-aggregate-commands-commit.md)
+
+- [整理仓库 README 项目入口](./issues/2026-09-27-repo-readme-project-navigation-issue.md)
+  - [Commit 记录](./commits/2026-09-27-repo-readme-project-navigation-commit.md)
+
+- [修复 TG Download 草稿发布工作流运行失败](./issues/2026-09-27-tg-download-draft-release-fix-issue.md)
+  - [Commit 记录](./commits/2026-09-27-tg-download-draft-release-fix-commit.md)
+
+- [建立 TG Download GitHub 草稿发布流程](./issues/2026-09-26-tg-download-github-draft-release-issue.md)
+  - [Commit 记录](./commits/2026-09-26-tg-download-github-draft-release-commit.md)
+
+- [保留 TG Download 下载历史列表](./issues/2026-09-25-tg-download-persistent-history-issue.md)
+  - [Commit 记录](./commits/2026-09-25-tg-download-persistent-history-commit.md)
+
+- [收敛 TG Download 与根目录命令职责](./issues/2026-09-26-tg-download-command-scope-issue.md)
+  - [Commit 记录](./commits/2026-09-26-tg-download-command-scope-commit.md)
+
+- [统一 TG Download 下载提示与操作样式](./issues/2026-09-25-tg-download-toast-button-style-issue.md)
+  - [Commit 记录](./commits/2026-09-25-tg-download-toast-button-style-commit.md)
+
+- [为 X 与 TG Download 统一下载提示与 Popup 操作](./issues/2026-09-24-x-download-popup-header-actions-issue.md)
+  - [Commit 记录](./commits/2026-09-24-x-download-popup-header-actions-commit.md)
+
+- [统一 WXT HTML 入口扫描保护](./issues/2026-09-24-repo-wxt-entry-scan-safety-issue.md)
+  - [Commit 记录](./commits/2026-09-24-repo-wxt-entry-scan-safety-commit.md)
+
+- [修复 TG Download Vite 依赖扫描竞态](./issues/2026-09-24-tg-download-vite-dependency-scan-issue.md)
+  - [Commit 记录](./commits/2026-09-24-tg-download-vite-dependency-scan-commit.md)
+
+- [制作本地 Issue 与 Commit 工作流 Skill](./issues/2026-09-24-repo-superpowers-internal-skill-issue.md)
+  - [Commit 记录](./commits/2026-09-24-repo-superpowers-internal-skill-commit.md)
+
+- [建立 TG Download 视频下载任务 Popup](./issues/2026-09-23-tg-download-video-task-popup-issue.md)
+  - [Commit 记录](./commits/2026-09-23-tg-download-video-task-popup-commit.md)
+  - [Spec](../superpowers/specs/2026-09-23-tg-download-video-task-popup-design.md)
+  - [Plan](../superpowers/plans/2026-09-23-tg-download-video-task-popup.md)
+
+- [将 TG Download 默认保存目录改为下载文件夹](./issues/2026-09-23-tg-download-default-save-directory-issue.md)
+  - [Commit 记录](./commits/2026-09-23-tg-download-default-save-directory-commit.md)
+
+- [完善 My Extensions 品牌定位与内容入口](./issues/2026-09-22-web-content-architecture-issue.md)
+  - [Commit 记录](./commits/2026-09-22-web-content-architecture-commit.md)
+
+- [完善 X Download 视频下载失败恢复（已归档，未实施内容见待办）](./issues/2026-09-20-x-download-download-recovery-issue.md)
+  - [Commit 记录](./commits/2026-09-20-x-download-download-recovery-commit.md)
+
+- [撰写 X Download 开发复盘与技术文章](./issues/2026-09-21-x-download-development-retrospective-issue.md)
+  - [Commit 记录](./commits/2026-09-21-x-download-development-retrospective-commit.md)
+
+- [改为仅使用页面媒体来源下载 X 视频](./issues/2026-09-21-x-download-media-source-only-download-issue.md)
+  - [Commit 记录](./commits/2026-09-21-x-download-media-source-only-download-commit.md)
+
+- [建立 VitePress 官网脚手架](./issues/2026-09-21-web-vitepress-bootstrap-issue.md)
+  - [Commit 记录](./commits/2026-09-21-web-vitepress-bootstrap-commit.md)
+  - [Spec](../superpowers/specs/2026-09-21-web-vitepress-bootstrap-design.md)
+  - [Plan](../superpowers/plans/2026-09-21-web-vitepress-bootstrap.md)
+
+- [让 X Download 使用页面媒体源下载视频](./issues/2026-09-21-x-download-page-media-source-issue.md)
+  - [Commit 记录](./commits/2026-09-21-x-download-page-media-source-commit.md)
+  - [Spec](../superpowers/specs/2026-09-21-x-download-page-media-source-design.md)
+  - [Plan](../superpowers/plans/2026-09-21-x-download-page-media-source.md)
+- [建立 X Download Helper 视频下载执行链路](./issues/2026-09-20-x-download-public-video-download-issue.md)
+  - [Commit 记录](./commits/2026-09-20-x-download-public-video-download-commit.md)
+  - [Spec](../superpowers/specs/2026-09-20-x-download-public-video-download-design.md)
+  - [Plan](../superpowers/plans/2026-09-20-x-download-public-video-download.md)
+- [打包 X Download Helper 固定视频工具链](./issues/2026-09-20-x-download-helper-toolchain-issue.md)
+  - [Commit 记录](./commits/2026-09-20-x-download-helper-toolchain-commit.md)
+- [打通 X Download 扩展与 macOS Helper 通信](./issues/2026-09-20-x-download-native-messaging-issue.md)
+  - [Commit 记录](./commits/2026-09-20-x-download-native-messaging-commit.md)
+- [完善 X Download Helper 任务列表与 Popover 收起](./issues/2026-09-20-x-download-helper-task-list-feedback-issue.md)
+  - [Commit 记录](./commits/2026-09-20-x-download-helper-task-list-feedback-commit.md)
+- [建立 X Download macOS 菜单栏 Helper](./issues/2026-09-19-x-download-helper-menu-bar-issue.md)
+  - [Commit 记录](./commits/2026-09-19-x-download-helper-menu-bar-commit.md)
+- [建立本地项目管理体系](./issues/2026-09-19-repo-local-project-management-issue.md)
+  - [Commit 记录](./commits/2026-09-19-repo-local-project-management-commit.md)
+- [建立 X 单帖链接识别插件](./issues/2026-09-19-x-download-post-url-issue.md)
+  - [Commit 记录](./commits/2026-09-19-x-download-post-url-commit.md)

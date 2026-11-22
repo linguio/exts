@@ -1,8 +1,8 @@
 # 统一构建产物、版本来源与分发入口设计
 
 - 状态：已批准；用户于 2026-10-10 确认设计及 Windows 平台退出规则
-- [Issue](../../changes/issues/2026-10-10-repo-unify-build-release-issue.md)
-- [Commit 记录](../../changes/commits/2026-10-10-repo-unify-build-release-commit.md)
+- [Issue](../../ohmy-delivery/issues/2026-10-10-repo-unify-build-release-issue.md)
+- [Commit 记录](../../ohmy-delivery/commits/2026-10-10-repo-unify-build-release-commit.md)
 
 ## 唯一版本源
 
