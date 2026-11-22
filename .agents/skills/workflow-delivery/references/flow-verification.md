@@ -1,9 +1,5 @@
----
-name: workflow-tests
-description: Use when choosing checks for an approved change, deciding whether validation can be reused, or preparing a product version or release that requires full validation. Do not activate for a request that only asks to commit locally.
----
+# 验证
 
-# 按影响范围验证
 
 日常开发选择最少但充分的检查，产品版本或发布准备执行全量验证。Skill 不授予修改代码、安装依赖、调整 CI 或超出用户目标修改的权限。
 
@@ -11,7 +7,7 @@ description: Use when choosing checks for an approved change, deciding whether v
 
 - 日常开发：按实际影响选择最小充分验证，复用仍有效的结果。
 - 仅本地 commit：不启动验证，不因文件中出现版本号就自动当成一次新发布准备。
-- 用户要求更新产品版本、升版本或准备发版本：进入发布准备与全量验证分支；同时按 [workflow-change](../workflow-change/SKILL.md#产品版本与发布准备) 整理上一正式版本以来的更新，先展示版本和 Changelog 草稿供用户审定，确认后才写入。测试职责不构成直接修改版本或日志的授权，也不能只看版本和日志两处 diff，套用局部检查。
+- 用户要求更新产品版本、升版本或准备发版本：进入发布准备与全量验证分支；同时按 [workflow-change](flow-release.md) 整理上一正式版本以来的更新，先展示版本和 Changelog 草稿供用户审定，确认后才写入。测试职责不构成直接修改版本或日志的授权，也不能只看版本和日志两处 diff，套用局部检查。
 - 只问版本建议、只要求总结日志或修改验证 Skill：不据此修改版本或启动应用全量测试。
 
 ## 发布准备的全量验证
@@ -26,7 +22,7 @@ description: Use when choosing checks for an approved change, deciding whether v
 
 ## 选择与执行
 
-- 先读取目标仓库适用规则、当前工作项的验收要求和已有验证结果；本仓库的具体策略以 [验证规范](../../../docs/verification.md) 为准。其他仓库不套用本项目路径、命令或门禁。
+- 先读取目标仓库适用规则、当前工作项的验收要求和已有验证结果；具体策略、命令和门禁由目标仓库维护。
 - 日常开发根据本次实际 diff 判断属于文档、静态资源、界面、业务逻辑、目录迁移还是公共能力变更。沿直接引用和真实依赖确认受影响功能与应用，不扫描无关项目，不以文件多或仓库变大为由升级为全仓库检查；发布准备使用上述全量分支。
 - 执行前用一句话说明检查范围与原因。只为当前风险选择检查；已有稳定行为覆盖时不补重复低层测试，不新增实现细节断言或无关守卫。
 - 优先复用已有结果：核对其范围、结果及验证后影响输入是否变化；只有相关输入变化或已有失败未解决才重跑受影响检查。时间流逝、补充交付记录和准备提交本身不使结果失效。不为复用检查另建缓存数据库或运行全量命令。
@@ -36,6 +32,6 @@ description: Use when choosing checks for an approved change, deciding whether v
 
 ## 停止与提交边界
 
-- 用户只要求本地提交时不启动本 Skill，不追加测试、类型检查、构建、格式/链接扫描或场景审阅；交由提交流程复用结果并如实记录限制。
+- 用户只要求本地提交时不进入验证流程，不追加测试、类型检查、构建、格式/链接扫描或场景审阅；交由提交流程复用结果并如实记录限制。
 - 用户明确要求不再验证时遵从，不用 Skill 补跑检查；发现明确阻塞只报告事实，不自动扩大任务。
 - Skill 自身修改只进行元数据、引用及必要场景审阅，不因此运行应用测试或构建。结构校验通过不等于行为评估或用户验收通过。
