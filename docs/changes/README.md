@@ -78,19 +78,27 @@ docs/
 - API 连接池空闲回收：用户批准将 `max_idle` 从 60 秒试调到 300 秒，保持 `min_size=0`、不加定时保活；待当前登录重置 Issue 完结后独立建档，比较不同空闲间隔的首次请求耗时与连接池状态。
 - 后续 X Download／Helper 接入：Extension 提交任务，Helper 独立下载与整合，成功后只通知一次；允许丢失，不确认、不重试、不补发、不恢复。关闭总开关屏蔽网页入口并停止通信，不终止任务。未来使用 x-download 目录；不纳入本次下载整合或设置两个 Issue。
 
+- Issue 元数据定时同步：从公开仓库指定分支定时读取本地 Issue 文档的已推送版本，同步状态等元数据供只读列表和统计使用，正文链接到源文件。
+
 ## 当前 Issue
 
-- [将已完结的本地工作项归档到 GitHub Issues](./issues/2026-11-20-repo-github-issue-archive-issue.md) · 实施中，待确认首条正式归档摘要 · [Commit 记录](./commits/2026-11-20-repo-github-issue-archive-commit.md)
+无。
 
 ## Issue 队列
 
-- [整合开发交付 Skill](./issues/2026-11-21-repo-workflow-delivery-issue.md) · 已排队，待当前 Issue 完结 · [Commit 记录](./commits/2026-11-21-repo-workflow-delivery-commit.md)
+无。
 
 ## 待办
 
 无。
 
+## 已取消
+
+- [将已完结的本地工作项归档到 GitHub Issues](./issues/2026-11-20-repo-github-issue-archive-issue.md) · 已取消 · [Commit 记录](./commits/2026-11-20-repo-github-issue-archive-commit.md)
+
 ## 已完成
+
+- [整合开发交付 Skill](./issues/2026-11-21-repo-workflow-delivery-issue.md) · 已完成，用户验收通过并批准本地提交 · [Commit 记录](./commits/2026-11-21-repo-workflow-delivery-commit.md)
 
 - [准备公共包新版本并统一消费来源](./issues/2026-11-20-extension-stable-output-103-issue.md) · 已完成 · 用户验收通过并批准本地提交；扩展使用线上 WXT 1.1.0 和本地 exts-ui 0.4.0，安装、类型检查与构建通过 · [Commit 记录](./commits/2026-11-20-extension-stable-output-103-commit.md)
 
