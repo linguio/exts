@@ -15,7 +15,7 @@ Exts 是按个人习惯打造的工具集合，包含浏览器扩展、macOS 桌
 | Website | 对外展示 Exts 的产品官网，提供产品信息与相关资源入口。 | [模块文档](docs/website/README.md) · [开发入口](apps/website/README.md) |
 | API | 基于 FastAPI 的后端服务，使用 Scalar 展示接口文档，当前尚未开放业务接口。 | [接口文档](https://api.exts.linguio.dev/docs) · [开发入口](apps/api/README.md) |
 | Packages | 面向开发场景的可复用工具包，以及服务仓库的内部工具。 | [工具包文档](packages/wxt-stable-output/README.zh-CN.md) |
-| Skills | 可复用的 AI 开发流程与协作方法，配合代理和项目规范使用。 | [开发交付](.agents/skills/workflow-delivery/SKILL.md) |
+| Skills | 可复用的 AI 开发流程与协作方法，配合代理和项目规范使用。 | [开发交付](.agents/skills/ohmy-delivery/SKILL.md) |
 
 桌面当前为 Apple Silicon（arm64），需要 macOS 27.0 或更新版本，未提供 Intel 或旧版 macOS 安装包。各模块的具体功能和使用方式见对应文档。
 
@@ -39,7 +39,7 @@ Exts 是按个人习惯打造的工具集合，包含浏览器扩展、macOS 桌
 
 ### 开发 Skill
 
-Skill 的唯一源码和仓库级发现入口统一位于 `.agents/skills/`，直接维护真实文件，不再使用根 `skills/` 或额外链接。支持项目级 Skill 的代理可通过 `$workflow-delivery` 调用；适用范围与调用规则见各 Skill 文档。
+Skill 的唯一源码和仓库级发现入口统一位于 `.agents/skills/`，直接维护真实文件，不再使用根 `skills/` 或额外链接。支持项目级 Skill 的代理可通过 `$ohmy-delivery` 调用；适用范围与调用规则见各 Skill 文档。
 
 ## 本地开发
 

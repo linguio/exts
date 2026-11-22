@@ -1,7 +1,7 @@
 interface:
   display_name: "开发交付"
   short_description: "Manage development work items, validation, and delivery"
-  default_prompt: "Use $workflow-delivery to continue this approved development change under the repository's local work-item and delivery rules."
+  default_prompt: "Use $ohmy-delivery to continue this approved development change under the repository's local work-item and delivery rules."
 
 policy:
   allow_implicit_invocation: true

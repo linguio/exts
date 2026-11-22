@@ -1,6 +1,6 @@
 # 按变更影响范围验证
 
-本文件维护仓库验证策略。根 AGENTS 保留强制入口；[workflow-delivery 验证流程](../.agents/skills/workflow-delivery/references/flow-verification.md) 提供检查选择方法，不复制项目命令或建立第二套规则。用户最新明确要求及特定风险的现行要求优先。
+本文件维护仓库验证策略。根 AGENTS 保留强制入口；[ohmy-delivery 验证流程](../.agents/skills/ohmy-delivery/references/flow-verification.md) 提供检查选择方法，不复制项目命令或建立第二套规则。用户最新明确要求及特定风险的现行要求优先。
 
 ## 按改动选择检查
 

@@ -8,7 +8,7 @@
 
 ## 建档与持续推进
 
-- 目标仓库的工作项规则决定目录、字段、阶段及提交格式。没有专门约定时，采用一份 Issue 与一份交付记录，互相链接；默认目录为 docs/changes/issues 与 docs/changes/commits，前缀为 YYYY-MM-DD-project-topic。
+- 目标仓库的工作项规则决定目录、字段、阶段及提交格式。没有专门约定时，采用一份 Issue 与一份交付记录，互相链接；默认目录为 docs/ohmy-delivery/issues 与 docs/ohmy-delivery/commits，前缀为 YYYY-MM-DD-project-topic。
 - 除用户明确要求免建档的改动外，新工作获批后先建档再实施；模板见 [Issue](../assets/template-issue.md) 和 [交付记录](../assets/template-commit.md)。小型任务使用足够说明实施与验收的少量 Todo，不因文件多而强制增加 Spec、Plan 或子任务。
 - 当前目标的补充或验收修正，按用户明确批准更新范围后继续；独立新目标遵守仓库队列规则。已有批准持续适用于已确认范围，只有缺失信息或范围实质不明时才询问，不因技能切换重复批准。
 - 建档完成后、修改代码或配置前，先展示 Issue 链接、已批准范围和唯一下一步。仅建档不等于已展示；已有实施批准时展示后继续，不重复请求确认。
