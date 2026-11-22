@@ -1,0 +1,29 @@
+{
+  "scope": [
+    "repo",
+    "extension",
+    "website",
+    "desktop",
+    "api",
+    "x-download",
+    "x-download-helper",
+    "tg-download",
+    "ohmy-photos",
+    "wxt-stable-output",
+    "activity",
+    "packages"
+  ],
+  "status": [
+    "queued",
+    "in_progress",
+    "awaiting_acceptance",
+    "awaiting_commit",
+    "completed",
+    "cancelled"
+  ],
+  "type": [
+    "bug",
+    "feature",
+    "task"
+  ]
+}

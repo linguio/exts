@@ -58,19 +58,9 @@ export const productCategories: readonly ProductCategory[] = [
     description: '按自己的开发与 AI 使用习惯，编写和改造适合自己的 Skills。',
     modules: [
       {
-        name: 'workflow-change',
-        description: '管理开发任务的范围、交付记录、验收与本地提交，可与 Superpowers 配合使用。',
-        links: [{ label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/.agents/skills/workflow-change' }],
-      },
-      {
-        name: 'workflow-observer',
-        description: '观察并记录开发习惯，通过复盘总结改进方向，优化自己的工作流。',
-        links: [{ label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/.agents/skills/workflow-observer' }],
-      },
-      {
-        name: 'workflow-tests',
-        description: '按变更影响范围选择必要检查，复用仍有效的验证结果，本地提交不重复运行测试或构建。',
-        links: [{ label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/.agents/skills/workflow-tests' }],
+        name: 'ohmy-delivery',
+        description: '统一开发交付流程，管理 Issue、验证、验收和本地提交，可与 Superpowers 配合。',
+        links: [{ label: '查看源码', href: 'https://github.com/linguio/exts/tree/main/.agents/skills/ohmy-delivery' }],
       },
     ],
   },
