@@ -1,6 +1,6 @@
 # 建立 exts 应用结构并迁入首批功能实施 Plan
 
-依据：[Issue](../../ohmy-delivery/issues/2026-10-08-repo-app-foundations-root-commands-issue.md)与[设计记录](../specs/2026-10-08-repo-app-foundations-root-commands-design.md)。用户于 2026-10-09 要求开始，批准串行实施；禁止子代理，提交批准以用户最终明确要求为准，不推送。
+依据：[Issue](../../ohmy-delivery/history/2026/2026-10-08-repo-app-foundations-root-commands-issue.md)与[设计记录](../specs/2026-10-08-repo-app-foundations-root-commands-design.md)。用户于 2026-10-09 要求开始，批准串行实施；禁止子代理，提交批准以用户最终明确要求为准，不推送。
 
 ## 边界
 

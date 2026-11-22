@@ -7,7 +7,7 @@
 公开包 `@linguio/wxt-stable-output` 完成稳定产物同步、独立打包消费和共用手动发布准备，交付用户验收。
 
 - [Spec](../specs/2026-10-12-wxt-stable-output-npm-release-design.md)
-- [Issue](../../ohmy-delivery/issues/2026-10-12-wxt-stable-output-npm-release-issue.md)
+- [Issue](../../ohmy-delivery/history/2026/2026-10-12-wxt-stable-output-npm-release-issue.md)
 - 架构：完整构建 hook 加开发服务器重载通知，复用校验与目录恢复；手动 workflow 只发布一个明确包的已验证 tarball。
 - 技术：Node.js 24.16.0、pnpm 12.4.2、发布流程 npm 11.15.0（2026-10-13 暂存命令所需升级）、WXT 0.21.4、Vitest 5.0.0、TypeScript 7.0.2。
 - 全局约束：全部精确版本、中文代码注释、根 dist 产物、内部 workspace 引用、无 UI 自动化、无远程状态变更。

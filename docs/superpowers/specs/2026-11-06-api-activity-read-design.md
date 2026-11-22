@@ -3,7 +3,7 @@
 ## 状态与依据
 
 - 状态：用户于 2026-11-06 确认本地设计，后续单独批准 Neon 0001 迁移，已成功应用并只读核对；Vercel 部署与每日任务未执行。
-- [Issue](../../ohmy-delivery/issues/2026-11-06-api-activity-read-issue.md) · [交付记录](../../ohmy-delivery/commits/2026-11-06-api-activity-read-commit.md)
+- [Issue](../../ohmy-delivery/history/2026/2026-11-06-api-activity-read-issue.md) · [交付记录](../../ohmy-delivery/history/2026/2026-11-06-api-activity-read-issue.md#交付记录)
 - 用户已确定：Neon 数据库及认证、Vercel FastAPI、Asia/Shanghai、本地维护结构、多用户、只读 API、无 Activity 缓存；旧业务数据由用户手动维护。
 - 此项只交付后端与数据库；前端请求、初始化重置按后续 Issue 顺序执行。
 

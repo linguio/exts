@@ -6,7 +6,7 @@
 - 状态：待用户审核
 - 创建日期：2026-09-30
 - 最近更新：2026-09-30
-- 对应 Issue：[统一 OmyExts 仓库与产品命名](../../ohmy-delivery/issues/2026-09-30-repo-unify-omy-product-naming-issue.md)
+- 对应 Issue：[统一 OmyExts 仓库与产品命名](../../ohmy-delivery/history/2026/2026-09-30-repo-unify-omy-product-naming-issue.md)
 
 ## 1. 设计目的
 

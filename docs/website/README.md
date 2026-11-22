@@ -50,7 +50,7 @@ Packages 首次公开发布记录为 2026-10-14，依据 npm 官方 registry 的
 
 页头产品介绍入口链接到 /features/，API 文档入口打开独立服务的 /docs。产品介绍左侧包含 Quick Start、Extension、Desktop、Packages、Skills 和 API；默认 Quick Start，空或无效 hash 也回到 Quick Start，分类切换保留原生 hash 行为，不新增路由依赖。
 
-产品数据包含 Newtab、History Cleaner、Telegram Web Download、Photos、wxt-stable-output，以及 workflow-change、workflow-observer、workflow-tests 三个 Skill；Skill 源码统一位于 .agents/skills。模块文案与源码入口维护在 src/shared/products/categories.ts，Quick Start 和 API 说明由 products 页面内的专用内容提供，不请求外部产品数据。
+产品数据包含 Newtab、History Cleaner、Telegram Web Download、Photos、wxt-stable-output，以及 ohmy-delivery Skill；Skill 源码统一位于 .agents/skills。模块文案与源码入口维护在 src/shared/products/categories.ts，Quick Start 和 API 说明由 products 页面内的专用内容提供，不请求外部产品数据。
 
 ## 下载行为
 

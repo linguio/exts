@@ -2,7 +2,7 @@
 
 ## 批准与边界
 
-- [Issue](../../ohmy-delivery/issues/2026-11-06-extension-activity-api-client-issue.md)：用户已明确批准在后端提交后开始前端接入，以本地 API 自动携带令牌测试；沿用前期已确定的分层、无缓存和请求时机。
+- [Issue](../../ohmy-delivery/history/2026/2026-11-06-extension-activity-api-client-issue.md)：用户已明确批准在后端提交后开始前端接入，以本地 API 自动携带令牌测试；沿用前期已确定的分层、无缓存和请求时机。
 - 本地 API http://127.0.0.1:8000，后端数据和 Neon 表不改；不执行 Vercel 部署或 Git 提交。完整退出存储重置仍属下一项。
 - 不新增依赖、状态框架、缓存库、DOM 模拟或视觉交互测试；不重设计图表。
 

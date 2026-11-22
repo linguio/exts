@@ -2,9 +2,9 @@
 
 ## 关联文档
 
-- Issue：[建立本地项目管理体系](../../ohmy-delivery/issues/2026-09-19-repo-local-project-management-issue.md)
+- Issue：[建立本地项目管理体系](../../ohmy-delivery/history/2026/2026-09-19-repo-local-project-management-issue.md)
 - Spec：[本地项目管理体系设计](../specs/2026-09-19-repo-local-project-management-design.md)
-- Commit 记录：[交付记录](../../ohmy-delivery/commits/2026-09-19-repo-local-project-management-commit.md)
+- Commit 记录：[交付记录](../../ohmy-delivery/history/2026/2026-09-19-repo-local-project-management-issue.md#交付记录)
 - 状态：已完成
 
 ## 目标
@@ -16,7 +16,7 @@
 ### 1. 固化项目管理规则
 
 - 更新根 `AGENTS.md`，移除外部项目管理依赖并写入单活动 Issue、Issue/Commit 一一对应、验收与最终提交双重批准规则。
-- 完善 `docs/ohmy-delivery/README.md` 的工作台、状态和日常用法。
+- 完善 `docs/ohmy-delivery/readme.md` 的工作台、状态和日常用法。
 - 同步当前 Issue、Spec 和 Commit 记录。
 - 从 `.gitignore` 中移除 `/docs/superpowers/`。
 

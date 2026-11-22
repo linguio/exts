@@ -3,7 +3,7 @@
 > 按 executing-plans 在当前 checkout 串行实施；不使用子代理，不提交。
 
 **目标：** 首次选好目录后立即下载，后续快速保存，并可单独更换文件夹。
-**设计依据：** [Issue](../../ohmy-delivery/issues/2026-10-23-extension-telegram-directory-save-issue.md) 的最终设计，以 2026-10-24 用户最新要求为准。
+**设计依据：** [Issue](../../ohmy-delivery/history/2026/2026-10-23-extension-telegram-directory-save-issue.md) 的最终设计，以 2026-10-24 用户最新要求为准。
 **技术：** 现有 React / shadcn DropdownMenu、File System Access、IndexedDB、Web Locks，无新依赖。
 
 ## 边界

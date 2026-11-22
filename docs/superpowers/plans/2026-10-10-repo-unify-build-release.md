@@ -6,7 +6,7 @@
 **架构：** 根 version 模块只读版本；build 调度应用内部工具；release 复用 build 后打包。应用配置负责身份，现有存储入口消费构建身份；公共稳定工具负责扩展发布。
 **技术：** 现有 Node.js、pnpm、WXT、VitePress、Swift、XcodeGen/Xcode；ZIP/DMG 使用 macOS 系统工具，不新增依赖。
 **Spec：** [已批准设计](../specs/2026-10-10-repo-unify-build-release-design.md)
-**Issue：** [工作项](../../ohmy-delivery/issues/2026-10-10-repo-unify-build-release-issue.md)
+**Issue：** [工作项](../../ohmy-delivery/history/2026/2026-10-10-repo-unify-build-release-issue.md)
 **状态：** 已批准并完成源实现与 Windows 检查；用户补充批准根缓存迁移、旧产物删除及规范链接，macOS 实测暂缓并记录限制。
 
 ## 全局约束

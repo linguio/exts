@@ -1,6 +1,6 @@
 # Studio 标准登录实施计划
 
-**依据：** [Issue](../../ohmy-delivery/issues/2026-11-02-extension-github-login-issue.md)、[Spec](../specs/2026-11-02-extension-github-login-design.md)。采用当前工作区，串行实施，不使用子代理、不自动提交。
+**依据：** [Issue](../../ohmy-delivery/history/2026/2026-11-02-extension-github-login-issue.md)、[Spec](../specs/2026-11-02-extension-github-login-design.md)。采用当前工作区，串行实施，不使用子代理、不自动提交。
 
 ## 本地交付
 

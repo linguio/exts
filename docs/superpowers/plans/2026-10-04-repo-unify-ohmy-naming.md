@@ -96,9 +96,9 @@
 - Modify: `docs/monorepo.md`
 - Modify: `docs/wxt.md`
 - Modify: `packages/stable-extension-dev/README.md`
-- Modify: `docs/ohmy-delivery/issues/2026-10-04-repo-unify-ohmy-naming-issue.md`
-- Modify: `docs/ohmy-delivery/commits/2026-10-04-repo-unify-ohmy-naming-commit.md`
-- Modify: `docs/ohmy-delivery/README.md`
+- Modify: `docs/ohmy-delivery/history/2026/2026-10-04-repo-unify-ohmy-naming-issue.md`
+- Modify: `docs/ohmy-delivery/history/2026/2026-10-04-repo-unify-ohmy-naming-issue.md`
+- Modify: `docs/ohmy-delivery/readme.md`
 
 **Interfaces:**
 - Consumes: Tasks 1–2 完成的 package graph、展示名称和平台身份。

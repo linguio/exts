@@ -345,10 +345,10 @@ X Download 最终不是一个“给 `yt-dlp` 套壳”的项目。它真正解�
 
 ## 主要事实来源
 
-- [建立 X 单帖链接识别插件](../ohmy-delivery/issues/2026-09-19-x-download-post-url-issue.md)
-- [建立 X Download macOS 菜单栏 Helper](../ohmy-delivery/issues/2026-09-19-x-download-helper-menu-bar-issue.md)
-- [打通扩展与 macOS Helper 通信](../ohmy-delivery/issues/2026-09-20-x-download-native-messaging-issue.md)
-- [打包固定视频工具链](../ohmy-delivery/issues/2026-09-20-x-download-helper-toolchain-issue.md)
-- [建立视频下载执行链路](../ohmy-delivery/issues/2026-09-20-x-download-public-video-download-issue.md)
-- [使用页面媒体源下载视频](../ohmy-delivery/issues/2026-09-21-x-download-page-media-source-issue.md)
-- [改为仅使用页面媒体来源下载](../ohmy-delivery/issues/2026-09-21-x-download-media-source-only-download-issue.md)
+- [建立 X 单帖链接识别插件](../ohmy-delivery/history/2026/2026-09-19-x-download-post-url-issue.md)
+- [建立 X Download macOS 菜单栏 Helper](../ohmy-delivery/history/2026/2026-09-19-x-download-helper-menu-bar-issue.md)
+- [打通扩展与 macOS Helper 通信](../ohmy-delivery/history/2026/2026-09-20-x-download-native-messaging-issue.md)
+- [打包固定视频工具链](../ohmy-delivery/history/2026/2026-09-20-x-download-helper-toolchain-issue.md)
+- [建立视频下载执行链路](../ohmy-delivery/history/2026/2026-09-20-x-download-public-video-download-issue.md)
+- [使用页面媒体源下载视频](../ohmy-delivery/history/2026/2026-09-21-x-download-page-media-source-issue.md)
+- [改为仅使用页面媒体来源下载](../ohmy-delivery/history/2026/2026-09-21-x-download-media-source-only-download-issue.md)

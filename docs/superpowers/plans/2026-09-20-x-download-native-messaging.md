@@ -163,8 +163,8 @@
 
 **Files:**
 
-- Modify: `docs/ohmy-delivery/issues/2026-09-20-x-download-native-messaging-issue.md`
-- Modify: `docs/ohmy-delivery/commits/2026-09-20-x-download-native-messaging-commit.md`
+- Modify: `docs/ohmy-delivery/history/2026/2026-09-20-x-download-native-messaging-issue.md`
+- Modify: `docs/ohmy-delivery/history/2026/2026-09-20-x-download-native-messaging-issue.md`
 
 **Interfaces:**
 

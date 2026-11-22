@@ -212,8 +212,8 @@
 ### Task 5: 完整验证并停在用户验收
 
 **Files:**
-- Modify: `docs/ohmy-delivery/issues/2026-09-23-tg-download-video-task-popup-issue.md`
-- Modify: `docs/ohmy-delivery/commits/2026-09-23-tg-download-video-task-popup-commit.md`
+- Modify: `docs/ohmy-delivery/history/2026/2026-09-23-tg-download-video-task-popup-issue.md`
+- Modify: `docs/ohmy-delivery/history/2026/2026-09-23-tg-download-video-task-popup-issue.md`
 
 **Interfaces:**
 - Consumes: Task 1–4 的完整实现。

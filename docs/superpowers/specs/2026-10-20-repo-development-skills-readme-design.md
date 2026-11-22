@@ -2,7 +2,7 @@
 
 状态：用户已批准实施及本机符号链接接入；不创建后台提醒，不修改其他安装或 Codex 配置。
 
-关联：[Issue](../../ohmy-delivery/issues/2026-10-20-repo-development-skills-readme-issue.md) · [Commit 记录](../../ohmy-delivery/commits/2026-10-20-repo-development-skills-readme-commit.md)。
+关联：[Issue](../../ohmy-delivery/history/2026/2026-10-20-repo-development-skills-readme-issue.md) · [Commit 记录](../../ohmy-delivery/history/2026/2026-10-20-repo-development-skills-readme-issue.md#交付记录)。
 
 ## 目标与职责
 

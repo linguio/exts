@@ -5,7 +5,7 @@
 **目标：** 在现有 ActivityCard 中展示已批准的日历、成长/睡眠趋势和周投入/计划。
 **架构：** Studio 持有固定 JSON、类型、纯日期/聚合工具与业务图表；shared/ui 持有固定官方 Chart 源码。按用户最新批准，全局 --chart-1 至 4 持有中性灰，日历只作别名映射；Token 参数与背景/相邻对比核算统一记入应用 UI 规范。
 **技术：** React、TypeScript、shadcn/ui、精确版本 Recharts；沿用现有 Vitest 纯逻辑环境。
-**依据：** [Issue](../../ohmy-delivery/issues/2026-11-03-extension-growth-sleep-charts-issue.md)，用户已明确批准的讨论与开始指令。
+**依据：** [Issue](../../ohmy-delivery/history/2026/2026-11-03-extension-growth-sleep-charts-issue.md)，用户已明确批准的讨论与开始指令。
 
 ## 实施步骤
 - [x] 更新 activity 类型及逻辑测试：日历 0–4 项、30 分钟边界、14 天缺失、睡眠四档与缺失、周日边界及超额目标。

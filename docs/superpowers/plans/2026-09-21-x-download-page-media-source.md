@@ -402,8 +402,8 @@ Expected: PASS；若宏插件仍阻断，则运行与现有交付相同的 Swift
 ## Task 6: 完整验证、文档收口与用户验收
 
 **Files:**
-- Modify: `docs/ohmy-delivery/issues/2026-09-21-x-download-page-media-source-issue.md`
-- Modify: `docs/ohmy-delivery/commits/2026-09-21-x-download-page-media-source-commit.md`
+- Modify: `docs/ohmy-delivery/history/2026/2026-09-21-x-download-page-media-source-issue.md`
+- Modify: `docs/ohmy-delivery/history/2026/2026-09-21-x-download-page-media-source-issue.md`
 - Modify: `docs/superpowers/plans/2026-09-21-x-download-page-media-source.md`
 
 **Interfaces:**

@@ -19,4 +19,4 @@
 
 唯一 SVG 提供主体输入，macOS 使用实际 Icon Composer 工程生成正式 PNG；[生成脚本](./scripts/generate-icons.mjs) 校验源稿与正式导出的哈希，再从正式 PNG 生成各尺寸图标和网站展示 SVG。网站展示 SVG 是位图封装，扩展界面已单独采用批准的轻量圆角矢量版；不以图层素材冒充工程，不覆盖该已批准差异。具体生成边界以 [Logo 规范](../../docs/exts-logo.md) 为准。
 
-已完成配置与构建验证；用户于 2026-10-10 批准本地提交并要求结项。实际交付记录在 [已完成 Issue](../../docs/ohmy-delivery/issues/2026-10-09-repo-unify-platform-icons-issue.md)。
+已完成配置与构建验证；用户于 2026-10-10 批准本地提交并要求结项。实际交付记录在 [已完成 Issue](../../docs/ohmy-delivery/history/2026/2026-10-09-repo-unify-platform-icons-issue.md)。

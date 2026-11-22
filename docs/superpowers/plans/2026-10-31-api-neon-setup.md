@@ -2,7 +2,7 @@
 
 **目标：** 使用已绑定的 Neon production 分支，交付可本地验证的 FastAPI `/hello`。
 
-**依据：** [Issue](../../ohmy-delivery/issues/2026-10-31-api-neon-setup-issue.md) 与用户指定的 CLI 初始化、部署及验证步骤。
+**依据：** [Issue](../../ohmy-delivery/history/2026/2026-10-31-api-neon-setup-issue.md) 与用户指定的 CLI 初始化、部署及验证步骤。
 
 **架构：** apps/api/neon.ts 管理 Postgres 服务，同目录私有环境文件提供 DATABASE_URL，专用 Node 依赖归入 apps/api/package.json。apps/api/app.py 导出 FastAPI app，验证个人令牌后通过 psycopg 连接池化地址执行只读 SELECT 1；不创建业务表，不接入前端，不部署 Vercel。
 

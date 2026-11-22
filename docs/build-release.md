@@ -1,6 +1,6 @@
 # 构建、版本与本地分发规范
 
-三端产品共用根版本，开发命令保持独立；最终产物及可配置的构建缓存统一生成在仓库根 dist。本文是命令、产物路径和版本消费规则的维护入口，本次双包发布接入状态见 [Issue](changes/issues/2026-10-19-repo-desktop-first-release-issue.md)。
+三端产品共用根版本，开发命令保持独立；最终产物及可配置的构建缓存统一生成在仓库根 dist。本文是命令、产物路径和版本消费规则的维护入口，本次双包发布接入状态见 [Issue](ohmy-delivery/history/2026/2026-10-19-repo-desktop-first-release-issue.md)。
 
 `@linguio/exts-ui` 是独立版本的公共UI包，不消费根产品版本。包构建位于 `dist/build/npm/exts-ui`，CSS构建缓存位于 `dist/.cache/exts-ui-css`，真实tgz及独立消费者位于 `dist/.cache/exts-ui-verify`；源码包内不生成dist。线上0.1.0消费已验收，扩展恢复精确Workspace源码引用，dev/build先构建本地UI包再执行WXT。源码出口与正式包编译出口保持相同公开路径，发布复用[npm流程](npm-release.md)。
 
@@ -137,4 +137,4 @@ pnpm release 先检查版本、平台与工具，再调用统一 build；本地�
 - Photos 验收修正后的开发构建和双包打包已重新通过；分组／队列针对性原生 XCTest 8 项通过。随后一次完整原生测试在既有 SQLite 压力用例复现 `FROM mediaORDER BY` 错误后停滞，已中止、不重试，不宣称全量通过。实际界面、设备、预览清晰度、双应用并存与数据隔离、DMG 挂载安装和远程 Actions 仍待用户验收；既有 SQLite 问题和 Swift 警告保留。
 - 下载结果提示与统一目录追加后，相关原生纯逻辑测试 7 项通过，开发 app 和正式双包重新构建、打包及校验通过；原生提示和 Finder 跳转待用户实测，不重跑已知中止的原生全量测试。
 
-相关入口：[根 README](../README.md)、[desktop](../apps/desktop/README.md)、[extension](../apps/extension/README.md)、[website](../apps/website/README.md)、[Issue](changes/issues/2026-10-10-repo-unify-build-release-issue.md)、[Commit 记录](changes/commits/2026-10-10-repo-unify-build-release-commit.md)。
+相关入口：[根 README](../README.md)、[desktop](../apps/desktop/README.md)、[extension](../apps/extension/README.md)、[website](../apps/website/README.md)、[Issue](ohmy-delivery/history/2026/2026-10-10-repo-unify-build-release-issue.md)、[Commit 记录](ohmy-delivery/history/2026/2026-10-10-repo-unify-build-release-issue.md#交付记录)。

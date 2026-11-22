@@ -187,4 +187,4 @@
 - 修订依据：用户要求语义命名与单一手绘 SVG；以 Simple Icons 原图为参考统一大小、颜色和绘制细节，逐图决定是否带框；正式规格统一 1024 坐标，显示大小由使用方负责。
 - 几何基准来源：[V2 原规范](https://app.notion.com/p/3eefb7fd0360812d8651c3a4fcaa1de5)；该链接用于追溯，不作为本地 V3 的当前规则。
 - 维护方式：独立图标规范，可供 Tabs 与 Kinari UI 引用。
-- 工作记录：[Issue](./changes/issues/2026-10-10-repo-ohmy-icon-system-docs-issue.md) · [Commit 记录](./changes/commits/2026-10-10-repo-ohmy-icon-system-docs-commit.md)。
+- 工作记录：[Issue](ohmy-delivery/history/2026/2026-10-10-repo-ohmy-icon-system-docs-issue.md) · [Commit 记录](ohmy-delivery/history/2026/2026-10-10-repo-ohmy-icon-system-docs-issue.md#交付记录)。

@@ -2,7 +2,7 @@
 
 - 工作项：2026-10-16-extension-history-cleaner
 - 状态：已批准；用户于 2026-10-16 确认继续
-- 对应 [Issue](../../ohmy-delivery/issues/2026-10-16-extension-history-cleaner-issue.md) 与 [Commit 记录](../../ohmy-delivery/commits/2026-10-16-extension-history-cleaner-commit.md)
+- 对应 [Issue](../../ohmy-delivery/history/2026/2026-10-16-extension-history-cleaner-issue.md) 与 [Commit 记录](../../ohmy-delivery/history/2026/2026-10-16-extension-history-cleaner-issue.md#交付记录)
 
 ## 第一版交付
 

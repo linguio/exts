@@ -28,7 +28,7 @@ DevTools 不计入浏览器窗口，无痕模式不在支持范围。后台普�
 
 不处理崩溃、强制结束或断电，不保存清理成功记录，不自动重试；后台 API 失败只记录诊断错误，不能把此功能理解为保证退出前完成的隐私保护机制。
 
-实际加载路径和验证步骤见[当前 Issue](../ohmy-delivery/issues/2026-10-16-extension-history-cleaner-issue.md)。建议用专用测试浏览器配置文件验收，避免删除日常历史；不要打开扩展 worker 调试器，以免影响生命周期。
+实际加载路径和验证步骤见[当前 Issue](../ohmy-delivery/history/2026/2026-10-16-extension-history-cleaner-issue.md)。建议用专用测试浏览器配置文件验收，避免删除日常历史；不要打开扩展 worker 调试器，以免影响生命周期。
 
 技术依据：[窗口关闭事件](https://developer.chrome.com/docs/extensions/reference/api/windows#event-onRemoved)、[配置文件启动事件](https://developer.chrome.com/docs/extensions/reference/api/runtime#event-onStartup)、[访问历史清理](https://developer.chrome.com/docs/extensions/reference/api/browsingData#method-removeHistory)、[可选权限](https://developer.chrome.com/docs/extensions/reference/api/permissions)、[后台生命周期](https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle)。
 

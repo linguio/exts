@@ -2,7 +2,7 @@
 
 **目标：** 整理六个模块与实际共用能力，保持行为、样式与数据不变。
 **执行：** 本会话按 executing-plans 串行实施，遵循仓库规则，不启动子代理、不自动提交。
-**依据：** [Issue](../../ohmy-delivery/issues/2026-10-28-extension-media-download-structure-issue.md) 中已批准的范围与设计约束。
+**依据：** [Issue](../../ohmy-delivery/history/2026/2026-10-28-extension-media-download-structure-issue.md) 中已批准的范围与设计约束。
 
 ## 迁移映射
 

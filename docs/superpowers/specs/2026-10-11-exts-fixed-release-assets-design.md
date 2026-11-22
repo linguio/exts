@@ -1,8 +1,8 @@
 # 固定发布包名与官网最新下载设计
 
 - 日期：2026-10-11
-- [Issue](../../ohmy-delivery/issues/2026-10-11-exts-fixed-release-assets-issue.md)
-- [Commit 记录](../../ohmy-delivery/commits/2026-10-11-exts-fixed-release-assets-commit.md)
+- [Issue](../../ohmy-delivery/history/2026/2026-10-11-exts-fixed-release-assets-issue.md)
+- [Commit 记录](../../ohmy-delivery/history/2026/2026-10-11-exts-fixed-release-assets-issue.md#交付记录)
 - 状态：用户于 2026-10-11 在设计交付后要求继续，书面设计已批准；本地实现与验证完成，用户已确认本地阶段并批准三笔提交；远程重发未执行
 - [Plan](../plans/2026-10-11-exts-fixed-release-assets.md)：已批准
 

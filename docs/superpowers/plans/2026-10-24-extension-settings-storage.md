@@ -1,6 +1,6 @@
 # Settings 存储改造计划
 
-对应 [Issue](../../ohmy-delivery/issues/2026-10-24-extension-settings-storage-issue.md)。用户已批准结构和实施，不新增独立 Spec。
+对应 [Issue](../../ohmy-delivery/history/2026/2026-10-24-extension-settings-storage-issue.md)。用户已批准结构和实施，不新增独立 Spec。
 
 ## 设计与边界
 

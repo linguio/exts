@@ -2,7 +2,7 @@
 
 ## 设计状态
 
-- 对应 Issue：[`2026-09-19-repo-local-project-management`](../../ohmy-delivery/issues/2026-09-19-repo-local-project-management-issue.md)
+- 对应 Issue：[`2026-09-19-repo-local-project-management`](../../ohmy-delivery/history/2026/2026-09-19-repo-local-project-management-issue.md)
 - 状态：已批准
 - 日期：2026-09-19
 

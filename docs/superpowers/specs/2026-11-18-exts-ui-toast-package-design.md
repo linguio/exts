@@ -1,6 +1,6 @@
 # exts-ui首版Toast设计
 
-- 对应[Issue](../../ohmy-delivery/issues/2026-11-18-exts-ui-toast-package-issue.md)，方案已由用户确认并批准实施。
+- 对应[Issue](../../ohmy-delivery/history/2026/2026-11-18-exts-ui-toast-package-issue.md)，方案已由用户确认并批准实施。
 - ui层只保留固定来源shadcn源码及导入/客户端框架适配；plus层组合基础原语，Exts前缀只用于公共增强React组件，业务仍在应用。首版只迁入Toast所需基础组件，不升级基线。
 - 正式入口为 `@linguio/exts-ui/ui/toast`、`ui/button` 等必要基础入口，以及 `@linguio/exts-ui/plus/toast`、`styles.css`。公开类型与ESM一同构建，React保持peer防止多实例；依赖使用现有精确版本。
 - plus导出统一toast管理器与ExtsToaster，声音按每个展示宿主持有播放器，应用传soundEnabled；应用设置页通过公开试听/状态能力接入同一宿主，不让设置或Chrome API进入包。

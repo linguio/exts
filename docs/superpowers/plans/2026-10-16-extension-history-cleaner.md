@@ -10,7 +10,7 @@
 
 **Spec：** [已批准设计](../specs/2026-10-16-extension-history-cleaner-design.md)
 
-**Issue：** [工作项](../../ohmy-delivery/issues/2026-10-16-extension-history-cleaner-issue.md)
+**Issue：** [工作项](../../ohmy-delivery/history/2026/2026-10-16-extension-history-cleaner-issue.md)
 
 **状态：** 用户于 2026-10-16 批准；已串行实施、完成自动化并获用户验收，正在准备代码与文档两笔本地提交范围，尚未提交。
 

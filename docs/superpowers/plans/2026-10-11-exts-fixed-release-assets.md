@@ -10,7 +10,7 @@
 
 **设计：**[已批准 Spec](../specs/2026-10-11-exts-fixed-release-assets-design.md)
 
-**工作项：**[Issue](../../ohmy-delivery/issues/2026-10-11-exts-fixed-release-assets-issue.md) · [Commit 记录](../../ohmy-delivery/commits/2026-10-11-exts-fixed-release-assets-commit.md)
+**工作项：**[Issue](../../ohmy-delivery/history/2026/2026-10-11-exts-fixed-release-assets-issue.md) · [Commit 记录](../../ohmy-delivery/history/2026/2026-10-11-exts-fixed-release-assets-issue.md#交付记录)
 
 **状态：**用户于 2026-10-11 批准并要求同步网站，Plan 已批准，本地阶段实现与验证完成；用户已验收本地阶段并批准三笔提交，远程步骤待代码提交。
 

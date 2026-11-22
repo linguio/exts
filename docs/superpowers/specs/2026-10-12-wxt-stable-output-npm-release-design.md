@@ -3,8 +3,8 @@
 ## 状态与关联
 
 - 状态：已批准；用户在查看设计状态后明确要求继续，按本设计串行实施。
-- [Issue](../../ohmy-delivery/issues/2026-10-12-wxt-stable-output-npm-release-issue.md)
-- [Commit 记录](../../ohmy-delivery/commits/2026-10-12-wxt-stable-output-npm-release-commit.md)
+- [Issue](../../ohmy-delivery/history/2026/2026-10-12-wxt-stable-output-npm-release-issue.md)
+- [Commit 记录](../../ohmy-delivery/history/2026/2026-10-12-wxt-stable-output-npm-release-issue.md#交付记录)
 
 ## 交付目标
 
