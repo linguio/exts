@@ -37,7 +37,8 @@ class DocumentationTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         schema = response.json()
         self.assertEqual(set(schema['paths']), {'/api/activity/days', '/api/activity/days/update',
-                                               '/api/settings/preferences', '/api/settings/preferences/update'})
+                                               '/api/settings/preferences', '/api/settings/preferences/update',
+                                               '/api/dictionaries/groups', '/api/dictionaries/items'})
         operation = schema['paths']['/api/activity/days']['post']
         self.assertNotIn('parameters', operation)
         self.assertTrue(operation['requestBody'].get('required', False))

@@ -70,3 +70,14 @@ it('未知异常不泄漏原始文案', async () => {
   await Promise.resolve();
   expect(failure).toHaveBeenCalledWith(expect.objectContaining({ message: 'Query failed. Please try again.' }));
 });
+
+it('完整列表可以超过默认页大小，同时拒绝少于声明总数的结果', async () => {
+  const rows = Array.from({ length: 21 }, (_, index) => ({ id: String(index) }));
+  const success = vi.fn();
+  const failure = vi.fn();
+  runTableQuery(async () => ({ rows, total: 21 }), request, success, failure, 'unpaged');
+  runTableQuery(async () => ({ rows, total: 22 }), request, success, failure, 'unpaged');
+  await Promise.resolve();
+  expect(success).toHaveBeenCalledExactlyOnceWith({ rows, total: 21 });
+  expect(failure).toHaveBeenCalledExactlyOnceWith(expect.any(DataTableQueryError));
+});

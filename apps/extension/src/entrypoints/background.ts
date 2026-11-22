@@ -5,6 +5,7 @@ import { registerSettings } from '../features/settings/background';
 import { registerDownloads } from '../features/media-download/records/background';
 import { registerAccount } from '../features/account/background';
 import { AccountSessionExpiredError } from '../features/account/account-controller';
+import { registerDictionaries } from '../features/dictionaries/background';
 import { registerActivity } from '../features/activity/background';
 import { createSessionReset } from '../features/account/session-reset';
 
@@ -14,6 +15,7 @@ export default defineBackground(() => {
   const getSession = () => account ? account.getSession() : Promise.reject(new AccountSessionExpiredError());
   const settings = registerSettings(getSession, () => account ? account.getStoredUserId() : Promise.resolve(null), chrome, session);
   registerActivity(getSession, chrome, session);
+  registerDictionaries(getSession, chrome, session);
   registerDownloads(chrome, session);
   registerHistoryCleaner(chrome, settings);
 });

@@ -1,17 +1,13 @@
 {
   "scope": [
-    "repo",
-    "extension",
     "website",
+    "extension",
     "desktop",
     "api",
-    "x-download",
-    "x-download-helper",
-    "tg-download",
-    "ohmy-photos",
-    "wxt-stable-output",
-    "activity",
-    "packages"
+    "packages",
+    "build",
+    "skills",
+    "repo"
   ],
   "status": [
     "queued",

@@ -9,14 +9,20 @@ export function preserveQueryTotal<T>(previous: DataTableQueryResult<T> | undefi
 
 /** 每个实例独立管理当前请求；取消标记也阻止忽略 signal 的接口写回迟到结果。 */
 export function runTableQuery<T>(queryFn: DataTableQueryFn<T>, request: DataTableQueryRequest,
-  onSuccess: (result: DataTableQueryResult<T>) => void, onError: (error: DataTableQueryError) => void): () => void {
+  onSuccess: (result: DataTableQueryResult<T>) => void, onError: (error: DataTableQueryError) => void,
+  mode: 'paged' | 'unpaged' = 'paged'): () => void {
   const controller = new AbortController();
   void (async () => {
     try {
       const result = await queryFn(request, controller.signal);
       if (controller.signal.aborted) return;
-      if (!result || !Array.isArray(result.rows) || !Number.isSafeInteger(result.total) || result.total < 0
-        || result.rows.length !== Math.min(request.pageSize, Math.max(0, result.total - request.pageIndex * request.pageSize))) {
+      if (!result || !Array.isArray(result.rows) || !Number.isSafeInteger(result.total) || result.total < 0) {
+        throw new DataTableQueryError('Invalid table response');
+      }
+      const expectedRows = mode === 'unpaged'
+        ? result.total
+        : Math.min(request.pageSize, Math.max(0, result.total - request.pageIndex * request.pageSize));
+      if (result.rows.length !== expectedRows) {
         throw new DataTableQueryError('Invalid table response');
       }
       onSuccess(result);

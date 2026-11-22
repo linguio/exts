@@ -13,7 +13,8 @@ interface QueryResult<T> {
 }
 
 /** 只管理查询生命周期，不获取账号、令牌或业务接口地址。 */
-export function useDataTableQuery<T>(filters: DataTableFilter[], queryFn: DataTableQueryFn<T>, enabled: boolean) {
+export function useDataTableQuery<T>(filters: DataTableFilter[], queryFn: DataTableQueryFn<T>, enabled: boolean,
+  mode: 'paged' | 'unpaged' = 'paged') {
   const [state, dispatch] = useReducer(queryTableReducer, filters, createQueryTableState);
   const [result, setResult] = useState<QueryResult<T>>();
   const resultRef = useRef(result);
@@ -21,7 +22,7 @@ export function useDataTableQuery<T>(filters: DataTableFilter[], queryFn: DataTa
   const latestQuery = useRef(queryFn);
   useEffect(() => { latestQuery.current = queryFn; }, [queryFn]);
   const request = useMemo(() => toQueryTableRequest(state.query), [state.query]);
-  const key = JSON.stringify([request, state.revision]);
+  const key = JSON.stringify([request, state.revision, mode]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -42,8 +43,8 @@ export function useDataTableQuery<T>(filters: DataTableFilter[], queryFn: DataTa
           data: { rows: [], total: preserveQueryTotal(previous?.data) },
         }));
         toast.add({ type: "error", title: QUERY_FAILED_TOAST });
-      });
-  }, [enabled, key, request]);
+      }, mode);
+  }, [enabled, key, mode, request]);
 
   const onQueryChange = useCallback((update: Updater<DataTableQuery>) => dispatch({ type: 'table', update }), []);
   const onFilterChange = useCallback((id: string, value: DataTableFilterValue) => dispatch({ type: 'draft', id, value }), []);
@@ -62,6 +63,7 @@ export function useDataTableQuery<T>(filters: DataTableFilter[], queryFn: DataTa
   }, [key, loading]);
   return { query: state.query, draft: state.draft, data: result?.data,
     loading, hasPreviousResult,
+    failed: enabled && result?.key === key && result.status === 'error',
     idle: !enabled && result?.data === undefined,
     onQueryChange, onFilterChange, onQuery, onReset, refresh, applyRowPreview };
 }

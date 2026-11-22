@@ -11,6 +11,7 @@ from core.database import close_pool, warm_pool
 from core.responses import install_responses
 from jobs.activity_days import router as jobs_router
 from modules.activity.router import router as activity_router
+from modules.dictionaries.router import router as dictionaries_router
 from modules.settings.router import router as settings_router
 
 load_environment()
@@ -35,13 +36,14 @@ app = FastAPI(
     title="Exts API",
     docs_url=None,
     redoc_url=None,
-    description="Exts 后端接口文档。业务接口使用 Bearer 认证，数据仅属于当前用户。",
+    description="Exts 后端接口文档。业务接口使用 Bearer 认证。活动和设置属于当前用户，字典为共享只读数据。",
     lifespan=lifespan,
 )
 
 install_responses(app)
 app.include_router(activity_router)
 app.include_router(settings_router)
+app.include_router(dictionaries_router)
 app.include_router(jobs_router)
 
 

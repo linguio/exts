@@ -1,0 +1,42 @@
+from uuid import UUID
+
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
+
+
+class GroupQuery(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    page_index: int = Field(alias='pageIndex', ge=0, strict=True)
+    page_size: int = Field(alias='pageSize', ge=1, le=100, strict=True)
+
+
+class ItemQuery(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    group_id: UUID = Field(alias='groupId')
+
+
+class DictionaryEntry(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+    id: UUID
+    label: str
+    created_at: AwareDatetime = Field(alias='createdAt')
+
+
+class DictionaryGroup(DictionaryEntry):
+    key: str
+
+
+class DictionaryItem(DictionaryEntry):
+    value: str
+    sort_order: int = Field(alias='sortOrder', ge=0)
+
+
+class DictionaryGroups(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+    groups: list[DictionaryGroup]
+    total: int
+    page_index: int = Field(alias='pageIndex')
+    page_size: int = Field(alias='pageSize')
+
+
+class DictionaryItems(BaseModel):
+    items: list[DictionaryItem]
