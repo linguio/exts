@@ -31,7 +31,7 @@ def get_pool() -> ConnectionPool:
             pool = ConnectionPool(
                 required_setting('DATABASE_URL'),
                 kwargs={'connect_timeout': 5, 'row_factory': dict_row, 'autocommit': True},
-                min_size=0, max_size=4, timeout=5, max_idle=60,
+                min_size=0, max_size=4, timeout=5, max_idle=300,
                 open=False, name='api',
             )
             pool.open()
