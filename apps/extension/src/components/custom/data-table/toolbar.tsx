@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import type { Table } from '@tanstack/react-table';
 import { CheckIcon, Columns3, RotateCcw } from 'lucide-react';
 import { Button } from '../../ui/button';
@@ -7,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover';
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from '../../ui/command';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuCheckboxItem } from '../../ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/tooltip';
+import { ScrollArea } from '../../ui/scroll-area';
 import { DataTableDateFilter } from './date-filter';
 import type { DateFilterRange } from './state';
 import type { DataTableFilter, DataTableFilterValue, DataTableQueryControls } from './types';
@@ -28,29 +30,62 @@ function DataTableQueryActions<T>({ table, disabled, queryControls, showVisibili
   </div>;
 }
 
-export function DataTableToolbar<T>({ table, filters = [], search, visibility, disabled, queryControls, singleRow = false }: { table: Table<T>; filters?: DataTableFilter[]; search: boolean; visibility: boolean; disabled: boolean; queryControls?: DataTableQueryControls; singleRow?: boolean }) {
-  return <div className={singleRow ? 'flex w-max min-w-full flex-nowrap items-center gap-2' : 'flex flex-wrap items-center gap-2'}>
-    {search && <Input className="w-64" aria-label="Search all columns" placeholder="Search…" value={String(table.getState().globalFilter ?? '')} onChange={e => table.setGlobalFilter(e.target.value)} disabled={disabled} />}
-    {filters.map(filter => {
-      const column = queryControls ? undefined : table.getColumn(filter.columnId);
-      if (!column && !queryControls) return null;
-      const value = queryControls ? queryControls.draft[filter.columnId] : column?.getFilterValue();
-      const setValue = (next: DataTableFilterValue) => queryControls ? queryControls.onFilterChange(filter.columnId, next) : column?.setFilterValue(next);
-      if (filter.type === 'text') return <Input key={filter.columnId} className="w-48" aria-label={filter.label} placeholder={filter.label} value={String(value ?? '')} onChange={e => setValue(e.target.value)} disabled={disabled} />;
-      if (filter.type === 'date') return <DataTableDateFilter key={filter.columnId} label={filter.label} value={(value ?? {}) as DateFilterRange} onChange={setValue} disabled={disabled} />;
-      const selected = (value ?? []) as string[];
-      return <Popover key={filter.columnId}><PopoverTrigger asChild><Button type="button" variant="outline" disabled={disabled}>{filter.label}{selected.length ? ` (${selected.length})` : ''}</Button></PopoverTrigger><PopoverContent className="w-64 p-0" align="start">
-        <Command><CommandInput placeholder={`Search ${filter.label}…`} aria-label={`Search ${filter.label} options`} /><CommandList><CommandEmpty>No options found.</CommandEmpty><CommandGroup>
-          {filter.options.map(option => <CommandItem key={option.value} value={option.value} keywords={[option.label]} onSelect={() => setValue(selected.includes(option.value) ? selected.filter(value => value !== option.value) : [...selected, option.value])}>
+function DataTableFilterControl({ id, label, filter, value, onChange, disabled }: {
+  id: string; label: string; filter: DataTableFilter; value: unknown; onChange: (next: DataTableFilterValue) => void; disabled: boolean;
+}) {
+  if (filter.type === 'text') return <Input id={id} className="w-48" placeholder="Enter text…" value={String(value ?? '')}
+    onChange={e => onChange(e.target.value)} disabled={disabled} />;
+  if (filter.type === 'date') return <DataTableDateFilter id={id} value={(value ?? {}) as DateFilterRange} onChange={onChange} disabled={disabled} />;
+  const selected = (value ?? []) as string[];
+  return <Popover><PopoverTrigger asChild><Button id={id} type="button" variant="outline" disabled={disabled}>
+    {selected.length ? `${selected.length} selected` : 'All'}
+  </Button></PopoverTrigger><PopoverContent className="w-64 p-0" align="start">
+        <Command><CommandInput placeholder={`Search ${label}…`} aria-label={`Search ${label} options`} /><CommandList><CommandEmpty>No options found.</CommandEmpty><CommandGroup>
+          {filter.options.map(option => <CommandItem key={option.value} value={option.value} keywords={[option.label]} onSelect={() => onChange(selected.includes(option.value) ? selected.filter(value => value !== option.value) : [...selected, option.value])}>
             {selected.includes(option.value) && <><CheckIcon aria-hidden="true" className="size-4" /><span className="sr-only">Selected: </span></>}{option.label}
           </CommandItem>)}
         </CommandGroup></CommandList></Command>
       </PopoverContent></Popover>;
+}
+
+const filtersPerRow = 4;
+
+export function DataTableToolbar<T>({ table, filters = [], search, visibility, disabled, queryControls }: { table: Table<T>; filters?: DataTableFilter[]; search: boolean; visibility: boolean; disabled: boolean; queryControls?: DataTableQueryControls }) {
+  const prefix = useId();
+  const columns = new Map(table.getAllLeafColumns().map(column => [column.id, column]));
+  const activeFilters = queryControls ? filters : filters.filter(filter => columns.has(filter.columnId));
+  const filterCount = activeFilters.length + Number(search);
+  const fields = <>
+    {search && <div className="flex items-center gap-2 whitespace-nowrap">
+      <label htmlFor={prefix} className="text-sm font-medium">Search</label>
+      <Input id={prefix} className="w-64" placeholder="Search all columns…" value={String(table.getState().globalFilter ?? '')} onChange={e => table.setGlobalFilter(e.target.value)} disabled={disabled} />
+    </div>}
+    {activeFilters.map((filter, index) => {
+      const id = `${prefix}-${index}`;
+      const column = columns.get(filter.columnId);
+      const header = column?.columnDef.header;
+      const label = typeof header === 'string' ? header : filter.label;
+      const value = queryControls ? queryControls.draft[filter.columnId] : column?.getFilterValue();
+      const setValue = (next: DataTableFilterValue) => queryControls ? queryControls.onFilterChange(filter.columnId, next) : column?.setFilterValue(next);
+      return <div key={filter.columnId} className="flex items-center gap-2 whitespace-nowrap">
+        <label htmlFor={id} className="text-sm font-medium">{label}</label>
+        <DataTableFilterControl id={id} label={label} filter={filter} value={value} onChange={setValue} disabled={disabled} />
+      </div>;
     })}
+  </>;
+  if (queryControls) return <div className="flex min-w-0 items-end gap-2">
+    <ScrollArea className="min-w-0 flex-1" horizontal>
+      <div className="grid w-max min-w-full grid-cols-[repeat(4,minmax(max-content,1fr))] items-center gap-x-4 gap-y-2">
+        {fields}
+        {filterCount % filtersPerRow === 0 && <div aria-hidden="true" className="col-span-full h-9" />}
+      </div>
+    </ScrollArea>
+    <DataTableQueryActions table={table} disabled={disabled} queryControls={queryControls} showVisibility={visibility} />
+  </div>;
+  return <div className="flex flex-wrap items-center gap-2">
+    {fields}
     {!queryControls && (table.getState().columnFilters.length > 0 || table.getState().globalFilter) && <Button type="button" variant="ghost" disabled={disabled} onClick={() => { table.setColumnFilters([]); table.setGlobalFilter(''); }}>Reset filters</Button>}
-    {queryControls
-      ? <DataTableQueryActions table={table} disabled={disabled} queryControls={queryControls} showVisibility={visibility} />
-      : visibility && <DataTableColumnVisibility table={table} disabled={disabled} trigger="text" />}
+    {visibility && <DataTableColumnVisibility table={table} disabled={disabled} trigger="text" />}
   </div>;
 }
 

@@ -58,7 +58,7 @@ function QueryDataTableContent<T>({ columns, filters: filterOverride, queryFn, u
       loading={queryState.loading} failed={queryState.failed} hasPreviousResult={queryState.hasPreviousResult}
       emptyContent={queryState.idle ? <span className="sr-only">Query is not enabled</span> : emptyContent}
       remote={{ query: queryState.query, onQueryChange: queryState.onQueryChange, rowCount: queryState.data?.total ?? 0 }}
-      toolbar={table => <DataTableToolbar table={table} filters={filters} search={false} visibility disabled={!enabled} singleRow={fillRecords}
+      toolbar={table => <DataTableToolbar table={table} filters={filters} search={false} visibility disabled={!enabled}
         queryControls={{ draft: queryState.draft, onFilterChange: queryState.onFilterChange, onQuery: queryState.onQuery, onReset: queryState.onReset }} />} />
   </>;
   return fillRecords ? <div className="flex min-h-0 flex-1 flex-col">{content}</div> : content;

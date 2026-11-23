@@ -86,10 +86,8 @@ function columnId<T>(column: ColumnDef<T, any>): string | undefined {
 }
 
 function columnLabel<T>(column: ColumnDef<T, any>, id: string): string {
-  const filterLabel = column.meta?.dataTable?.filter?.label;
-  if (filterLabel) return filterLabel;
   if (typeof column.header === 'string') return column.header;
-  return id;
+  return column.meta?.dataTable?.filter?.label ?? id;
 }
 
 function visitColumns<T>(columns: ColumnDef<T, any>[], visit: (column: ColumnDef<T, any>, id: string) => void) {

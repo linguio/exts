@@ -24,7 +24,7 @@ const durationEdit = {
 export const dailyColumns: ColumnDef<DailyActivityRow>[] = [
   { accessorKey: 'date', header: 'Date', enableHiding: false, sortDescFirst: true,
     meta: { dataTable: {
-      filter: { type: 'date', label: 'Date range' },
+      filter: { type: 'date' },
       edit: { type: 'text', readOnly: true },
     } } },
   { accessorKey: 'exerciseHours', header: 'Exercise', sortDescFirst: true, cell: durationCell,

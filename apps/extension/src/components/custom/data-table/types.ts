@@ -82,7 +82,6 @@ export interface QueryDataTableProps<T> {
   columnAlign?: DataTableProps<T>['columnAlign'];
   editDescription?: string;
   headerNote?: ReactNode;
-  /** 与 fillRecords 搭配：筛选工具栏单行，窄屏横向滚动。 */
   fillRecords?: boolean;
   pageSizes?: number[];
 }

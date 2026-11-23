@@ -6,7 +6,7 @@ import { filtersFromColumns, parseEditFieldValue, validateEditDraft, editFieldsF
 type Row = { date: string; exerciseHours: number | null };
 
 it('从 Daily 列推导日期筛选配置', () => {
-  expect(filtersFromColumns(dailyColumns)).toEqual([{ columnId: 'date', label: 'Date range', type: 'date' }]);
+  expect(filtersFromColumns(dailyColumns)).toEqual([{ columnId: 'date', label: 'Date', type: 'date' }]);
 });
 
 it('Daily 小时字段必填、0.5 步进且 0 合法', () => {

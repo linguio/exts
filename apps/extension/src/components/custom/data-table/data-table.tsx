@@ -121,7 +121,7 @@ export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCa
   const defaultToolbar = <DataTableToolbar table={table} filters={filters} search={search} visibility={columnVisibility} disabled={busy} />;
   const toolbarNode = toolbar ? toolbar(table, busy) : defaultToolbar;
   const toolbarBlock = fillRecords
-    ? <div className="shrink-0 overflow-x-auto">{toolbarNode}</div>
+    ? <div className="min-w-0 shrink-0">{toolbarNode}</div>
     : toolbarNode;
   return <section className={cn(fillRecords ? 'flex min-h-0 flex-1 flex-col gap-4' : 'space-y-4')} aria-label={caption} aria-busy={loading}>
     {toolbarBlock}
