@@ -26,11 +26,13 @@ export interface DataTableProps<T> {
   pageSizes?: number[];
   showPagination?: boolean;
   emptyContent?: ReactNode;
+  columnAlign?: 'left' | 'center';
   selection?: boolean;
   selectionKey?: string;
   onSelectionChange?: (ids: string[]) => void;
   bulkActions?: (ids: string[], clear: () => void) => ReactNode;
   loading?: boolean;
+  failed?: boolean;
   hasPreviousResult?: boolean;
   remote?: { query: DataTableQuery; onQueryChange: OnChangeFn<DataTableQuery>; rowCount: number };
   /** Daily 等页面：在父级 flex 高度链内占满剩余空间，记录区 ScrollArea 纵向滚动，分页保持可见。 */
@@ -77,6 +79,7 @@ export interface QueryDataTableProps<T> {
   enabled?: boolean;
   showCaption?: boolean;
   emptyContent?: ReactNode;
+  columnAlign?: DataTableProps<T>['columnAlign'];
   editDescription?: string;
   headerNote?: ReactNode;
   /** 与 fillRecords 搭配：筛选工具栏单行，窄屏横向滚动。 */

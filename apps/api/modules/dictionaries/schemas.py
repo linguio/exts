@@ -7,6 +7,7 @@ class GroupQuery(BaseModel):
     model_config = ConfigDict(extra='forbid')
     page_index: int = Field(alias='pageIndex', ge=0, strict=True)
     page_size: int = Field(alias='pageSize', ge=1, le=100, strict=True)
+    search: str = Field(default='', max_length=128)
 
 
 class ItemQuery(BaseModel):
@@ -23,6 +24,7 @@ class DictionaryEntry(BaseModel):
 
 class DictionaryGroup(DictionaryEntry):
     key: str
+    description: str | None = None
 
 
 class DictionaryItem(DictionaryEntry):

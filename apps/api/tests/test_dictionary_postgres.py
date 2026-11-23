@@ -30,7 +30,7 @@ class DictionaryPostgresTests(unittest.TestCase):
                 if any(existing.values()):
                     self.skipTest('测试仅接受隔离空数据库')
                 dictionary_migrations = [item for item in load_migrations()
-                                         if item.name.startswith(('0006_', '0007_', '0008_'))]
+                                         if item.name.startswith(('0006_', '0007_', '0008_', '0009_'))]
                 self.assertEqual(len(migrate(database, dictionary_migrations[:2], apply=True)), 2)
                 lookup = """
                     SELECT items.id FROM public.dictionary_items AS items
@@ -39,7 +39,7 @@ class DictionaryPostgresTests(unittest.TestCase):
                 """
                 old_extension = database.execute(lookup).fetchone()['id']
                 self.assertEqual(migrate(database, dictionary_migrations, apply=True),
-                                 ['0008_dictionary_scopes.sql'])
+                                 ['0008_dictionary_scopes.sql', '0009_dictionary_group_descriptions.sql'])
                 self.assertEqual(database.execute(lookup).fetchone()['id'], old_extension)
                 first, total = repository.read_groups(database, 2, 0)
                 second, second_total = repository.read_groups(database, 2, 2)
@@ -48,6 +48,12 @@ class DictionaryPostgresTests(unittest.TestCase):
                 applied_at = database.execute("SELECT applied_at FROM public._exts_migrations WHERE name = '0006_dictionaries.sql'").fetchone()['applied_at']
                 self.assertTrue(all(group['created_at'] == applied_at for group in first + second))
                 self.assertEqual(repository.read_groups(database, 2, 4), ([], 3))
+                matches, match_total = repository.read_groups(database, 2, 0, 'TAT')
+                self.assertEqual([group['key'] for group in matches], ['status'])
+                self.assertEqual(match_total, 1)
+                self.assertEqual(matches[0]['description'], 'Tracks where an issue is in the delivery workflow.')
+                self.assertEqual(repository.read_groups(database, 2, 2, 'TAT'), ([], 1))
+                self.assertEqual(repository.read_groups(database, 2, 0, '%'), ([], 0))
                 dictionary = json.loads((API_ROOT.parents[1] /
                     '.agents/skills/ohmy-delivery/assets/issue-dictionaries.json').read_text(encoding='utf-8'))
                 for group in first + second:

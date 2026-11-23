@@ -4,10 +4,11 @@ import { getDictionaryGroups, getDictionaryItems, type DictionaryQuery } from '.
 import type { SessionReset } from '../account/session-reset';
 
 function readQuery(message: Record<string, unknown>): DictionaryQuery | undefined {
-  const { action, pageIndex, pageSize, groupId } = message;
+  const { action, pageIndex, pageSize, groupId, search } = message;
   if (action === 'groups' && typeof pageIndex === 'number' && Number.isSafeInteger(pageIndex) && pageIndex >= 0
-    && typeof pageSize === 'number' && Number.isSafeInteger(pageSize) && pageSize >= 1 && pageSize <= 100) {
-    return { action, pageIndex, pageSize };
+    && typeof pageSize === 'number' && Number.isSafeInteger(pageSize) && pageSize >= 1 && pageSize <= 100
+    && (search === undefined || (typeof search === 'string' && search.length <= 128))) {
+    return { action, pageIndex, pageSize, search };
   }
   if (action === 'items' && typeof groupId === 'string'
     && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(groupId)) {
@@ -52,7 +53,7 @@ export function registerDictionaries(getSession: () => Promise<ApiSession>, api:
     const controller = new AbortController();
     pending.set(key, controller);
     const request = query.action === 'groups'
-      ? getDictionaryGroups(client, query.pageIndex, query.pageSize, message.userId, controller.signal)
+      ? getDictionaryGroups(client, query.pageIndex, query.pageSize, query.search, message.userId, controller.signal)
       : getDictionaryItems(client, query.groupId, message.userId, controller.signal);
 
     void request.then(data => {

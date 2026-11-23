@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnDef, type Updater } from '@tanstack/react-table';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, TableCaption } from '../../ui/table';
 import { Checkbox } from '../../ui/checkbox';
-import { Empty, EmptyHeader, EmptyTitle, EmptyDescription } from '../../ui/empty';
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from '../../ui/empty';
+import { UiIcon } from '../ui-icon';
 import { Spinner } from '../../ui/spinner';
 import { ScrollArea } from '../../ui/scroll-area';
 import { cn } from '../../../lib/utils';
@@ -14,7 +15,8 @@ import type { DataTableProps, DataTableQuery, RowSelectionState } from './types'
 
 export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCaption = true, filters = [], search = true, multiSort = true,
   columnVisibility = true, pageSizes = [10, 20, 50, 100], selection = false, selectionKey, onSelectionChange, bulkActions,
-  loading = false, hasPreviousResult = false, remote, showPagination = true, emptyContent, fillRecords = false }: DataTableProps<T>) {
+  loading = false, failed = false, hasPreviousResult = false, remote, showPagination = true, emptyContent, fillRecords = false,
+  columnAlign = 'center' }: DataTableProps<T>) {
   const [localQuery, setLocalQuery] = useState(initialQuery);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const query = remote?.query ?? localQuery;
@@ -64,17 +66,25 @@ export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCa
   const columnCount = Math.max(1, table.getVisibleLeafColumns().length);
   const stickyEndClass = 'sticky right-0 z-10 bg-background';
   function headClass(columnId: string) {
-    return cn('text-center', fillRecords && 'sticky top-0 z-20 bg-background', columnId === '__actions' && 'sticky right-0 z-30 bg-background');
+    return cn(columnAlign === 'left' ? 'text-left [&>[data-slot=button]]:pl-0' : 'text-center',
+      fillRecords && 'sticky top-0 z-20 bg-background', columnId === '__actions' && 'sticky right-0 z-30 bg-background');
   }
   function cellClass(columnId: string) {
-    return cn('text-center', columnId === '__actions' && stickyEndClass);
+    return cn(columnAlign === 'left' ? 'text-left' : 'text-center', columnId === '__actions' && stickyEndClass);
   }
   const headerClassName = fillRecords ? 'bg-background [&_th]:bg-background' : undefined;
   const rows = table.getRowModel().rows;
   const initialLoading = loading && (!hasPreviousResult || !rows.length);
   const fillPlaceholder = fillRecords && (initialLoading || !rows.length);
   const tableHeader = <TableHeader className={headerClassName}>{table.getHeaderGroups().map(group => <TableRow key={group.id}>{group.headers.map(header => <TableHead className={headClass(header.column.id)} key={header.id} colSpan={header.colSpan} aria-sort={header.column.getIsSorted() === 'asc' ? 'ascending' : header.column.getIsSorted() === 'desc' ? 'descending' : undefined}>{header.isPlaceholder ? null : typeof header.column.columnDef.header === 'string' ? <DataTableColumnHeader column={header.column} title={header.column.columnDef.header} disabled={busy} /> : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>)}</TableRow>)}</TableHeader>;
-  const emptyState = emptyContent ?? <Empty className="flex-none border-0 p-0"><EmptyHeader><EmptyTitle>{filtered ? '没有符合条件的记录' : '暂无记录'}</EmptyTitle><EmptyDescription>{filtered ? '请调整筛选条件后重试。' : '数据记录将在此显示。'}</EmptyDescription></EmptyHeader></Empty>;
+  const emptyState = (!failed && emptyContent) || <Empty className="flex-none border-0 p-0">
+    <EmptyHeader>
+      <EmptyMedia variant="icon"><UiIcon name="circle-dashed" className="size-6" /></EmptyMedia>
+      <EmptyTitle>{failed ? 'Records unavailable' : filtered ? '没有符合条件的记录' : '暂无记录'}</EmptyTitle>
+      <EmptyDescription>{failed ? 'The requested records could not be loaded.'
+        : filtered ? '请调整筛选条件后重试。' : '数据记录将在此显示。'}</EmptyDescription>
+    </EmptyHeader>
+  </Empty>;
   const tableContent = fillPlaceholder
     ? <div className="flex h-full min-h-0 flex-1 flex-col"><Table aria-label={caption} containerClassName="shrink-0 overflow-visible">{showCaption && <TableCaption>{caption}</TableCaption>}{tableHeader}</Table><div className="flex flex-1 items-center justify-center p-6" aria-busy={loading}>{initialLoading ? <Spinner aria-label="Loading records" /> : emptyState}</div></div>
     : <Table aria-label={caption} containerClassName={fillRecords ? 'overflow-visible' : undefined}>{showCaption && <TableCaption>{caption}</TableCaption>}

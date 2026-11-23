@@ -5,20 +5,25 @@ from psycopg import Connection, sql
 from core.database import read_rows
 
 
-def read_groups(database: Connection, limit: int, offset: int) -> tuple[list[dict], int]:
+def read_groups(database: Connection, limit: int, offset: int, search: str = '') -> tuple[list[dict], int]:
     # 同一条查询返回分页数据与总数，空页也保留总数。
     rows = read_rows(database, sql.SQL('''
-        WITH totals AS (SELECT count(*) AS total FROM public.dictionary_groups)
+        WITH matching AS (
+            SELECT id, key, label, description, created_at
+            FROM public.dictionary_groups
+            WHERE strpos(lower(label), lower(%s)) > 0 OR strpos(lower(key), lower(%s)) > 0
+        ),
+        totals AS (SELECT count(*) AS total FROM matching)
         SELECT page.*, totals.total
         FROM totals
         LEFT JOIN LATERAL (
-            SELECT id, key, label, created_at
-            FROM public.dictionary_groups
+            SELECT id, key, label, description, created_at
+            FROM matching
             ORDER BY created_at, key
             LIMIT %s OFFSET %s
         ) AS page ON true
         ORDER BY page.created_at, page.key
-    '''), (limit, min(offset, 2**63 - 1)))
+    '''), (search, search, limit, min(offset, 2**63 - 1)))
     return [row for row in rows if row['id'] is not None], rows[0]['total']
 
 

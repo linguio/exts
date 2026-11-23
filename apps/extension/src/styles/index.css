@@ -9,6 +9,11 @@
 /* 官方明暗变体适配扩展已有主题入口，Portal 同样继承根主题。 */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+/* 输入框与提交按钮共用一圈边框。 */
+.input-button-group > [data-slot="button"][data-variant="outline"] {
+  border-color: var(--input);
+}
+
 /* 仅维护项目扩展和已确认的圆角覆盖，标准映射统一来自官方主题基线。 */
 @theme inline {
   --color-destructive-foreground: var(--destructive-foreground);

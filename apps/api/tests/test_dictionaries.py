@@ -40,15 +40,17 @@ class DictionaryApiTests(unittest.TestCase):
     def test_groups_return_requested_page_with_total(self):
         self.authorize()
         created = datetime(2026, 11, 22, tzinfo=timezone.utc)
-        group = {'id': GROUP, 'key': 'type', 'label': 'Type', 'created_at': created}
+        group = {'id': GROUP, 'key': 'type', 'label': 'Type', 'created_at': created,
+                 'description': 'Classifies the kind of work an issue represents.'}
         with patch('modules.dictionaries.repository.read_groups', return_value=([group], 3)) as read:
-            response = self.client.post('/api/dictionaries/groups', json={'pageIndex': 1, 'pageSize': 2})
+            response = self.client.post('/api/dictionaries/groups', json={'pageIndex': 1, 'pageSize': 2, 'search': ' TYPE '})
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()['data'], {
-                'groups': [{'id': str(GROUP), 'key': 'type', 'label': 'Type', 'createdAt': '2026-11-22T00:00:00Z'}],
+                'groups': [{'id': str(GROUP), 'key': 'type', 'label': 'Type', 'createdAt': '2026-11-22T00:00:00Z',
+                            'description': group['description']}],
                 'total': 3, 'pageIndex': 1, 'pageSize': 2,
             })
-            read.assert_called_once_with(None, 2, 2)
+            read.assert_called_once_with(None, 2, 2, 'TYPE')
             for payload in ({}, {'pageIndex': 0}, {'pageIndex': 0, 'pageSize': 101},
                             {'pageIndex': 0, 'pageSize': '2'}):
                 self.assertEqual(self.client.post('/api/dictionaries/groups', json=payload).status_code, 422)

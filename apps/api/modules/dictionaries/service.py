@@ -8,7 +8,9 @@ UNPAGED_LIMIT = 500
 
 
 def list_groups(database: Connection, query: GroupQuery) -> DictionaryGroups:
-    groups, total = repository.read_groups(database, query.page_size, query.page_index * query.page_size)
+    groups, total = repository.read_groups(
+        database, query.page_size, query.page_index * query.page_size, query.search.strip(),
+    )
     return DictionaryGroups(groups=groups, total=total, page_index=query.page_index, page_size=query.page_size)
 
 

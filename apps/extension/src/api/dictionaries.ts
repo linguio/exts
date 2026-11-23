@@ -4,6 +4,7 @@ export interface DictionaryGroup {
   id: string;
   key: string;
   label: string;
+  description?: string | null;
   createdAt: string;
 }
 
@@ -23,13 +24,13 @@ export interface DictionaryGroups {
 }
 
 export type DictionaryQuery =
-  | { action: 'groups'; pageIndex: number; pageSize: number }
+  | { action: 'groups'; pageIndex: number; pageSize: number; search?: string }
   | { action: 'items'; groupId: string };
 
-export function getDictionaryGroups(client: ApiClient, pageIndex: number, pageSize: number,
+export function getDictionaryGroups(client: ApiClient, pageIndex: number, pageSize: number, search: string | undefined,
   expectedUserId: string, signal: AbortSignal) {
   return client.request<DictionaryGroups>('/api/dictionaries/groups', {
-    expectedUserId, signal, json: { pageIndex, pageSize },
+    expectedUserId, signal, json: { pageIndex, pageSize, search },
   });
 }
 

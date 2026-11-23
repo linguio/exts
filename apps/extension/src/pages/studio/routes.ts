@@ -14,7 +14,7 @@ export const studioMenu = [{
   items: [{ route: '/activity/daily', title: 'Daily', icon: 'notebook-text', component: DailyPage, fillHeight: true }],
 }, {
   id: 'management', title: 'Management',
-  items: [{ route: '/management/dictionaries', title: 'Dictionaries', icon: 'list', component: DictionariesPage, fillHeight: true }],
+  items: [{ route: '/management/dictionaries', title: 'Dictionaries', icon: 'list-tree', component: DictionariesPage, fillHeight: true }],
 }] as const satisfies readonly {
   id: string; title: string;
   items: readonly { route: string; title: string; icon: UiIconName; component: ComponentType; fillHeight: boolean }[];
