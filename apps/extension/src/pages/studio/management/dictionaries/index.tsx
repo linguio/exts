@@ -3,7 +3,6 @@ import type { DictionaryGroup } from '../../../../api/dictionaries';
 import { useDataTableQuery } from '../../../../components/custom/data-table/use-data-table-query';
 import { UiIcon } from '../../../../components/custom/ui-icon';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../../components/ui/empty';
-import { Spinner } from '../../../../components/ui/spinner';
 import { useAccount } from '../../../../features/account/auth-client';
 import { requestDictionaries } from '../../../../features/dictionaries/requests';
 import { DictionaryList } from './dictionary-list';
@@ -77,9 +76,7 @@ function DictionariesView({ userId }: { userId: string }) {
           }}
         />
         {selected ? <DictionaryTable key={selected.id} group={selected} userId={userId} />
-          : loading ? <div role="status" className="grid min-h-0 place-items-center">
-            <Spinner /><span className="sr-only">Loading dictionary groups</span>
-          </div> : <Empty className="min-h-0 p-0"><EmptyHeader>
+          : loading ? null : <Empty className="min-h-0 p-0"><EmptyHeader>
             <EmptyMedia variant="icon"><UiIcon name="circle-dashed" className="size-6" /></EmptyMedia>
             <EmptyTitle>No dictionary selected</EmptyTitle>
             <EmptyDescription>Items appear here when a group is selected.</EmptyDescription>

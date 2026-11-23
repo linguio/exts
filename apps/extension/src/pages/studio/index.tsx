@@ -43,7 +43,7 @@ export function Studio({ onHome }: StudioProps) {
   );
   return (
     <StudioLayout pageTitle={page?.title} groupTitle={group?.title} fillHeight={fillHeightPage}
-      scrollContent={access !== 'signed-out'} sidebar={
+      scrollContent={access !== 'signed-out' && access !== 'loading'} sidebar={
       <StudioSidebar onHome={onHome} access={access} sessionKey={sessionKey} activeRoute={activeRoute}
         onRouteChange={route => {
           if (!sessionKey || !account.user) return;

@@ -6,6 +6,7 @@ import type { Downloads, DownloadFilter } from './types';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../../../components/ui/alert-dialog';
 import { Button } from '../../../components/ui/button';
 import { ScrollArea } from '../../../components/ui/scroll-area';
+import { Spinner } from '../../../components/ui/spinner';
 import { ToggleGroup, ToggleGroupItem } from '../../../components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
 import { toast } from '@linguio/exts-ui/plus/toast';
@@ -108,14 +109,15 @@ export function DownloadsPanel() {
           </AlertDialog>
         </div>
       </div>
-      <ScrollArea className="min-h-0 flex-1" viewportClassName="[&>div]:h-full">
+      {!data && !problem ? <div className="grid min-h-0 flex-1 place-items-center" aria-busy="true">
+        <Spinner aria-label="正在读取下载记录" />
+      </div> : <ScrollArea className="min-h-0 flex-1" viewportClassName="[&>div]:h-full">
         <div className="flex min-h-full flex-col px-6 pb-6">
           {problem ? <p role="alert" className="py-4 text-sm text-destructive">{problem}</p>
-            : !data ? <p role="status" className="py-4 text-sm text-muted-foreground">正在读取下载记录…</p>
-              : records.length ? <ul className="shrink-0" aria-label={`${names[filter]}下载记录`}>{records.map(record => <DownloadRecordRow key={record.id} record={record} />)}</ul>
-                : <p className="flex flex-1 items-center justify-center text-sm text-muted-foreground">暂无下载记录</p>}
+            : records.length ? <ul className="shrink-0" aria-label={`${names[filter]}下载记录`}>{records.map(record => <DownloadRecordRow key={record.id} record={record} />)}</ul>
+              : <p className="flex flex-1 items-center justify-center text-sm text-muted-foreground">暂无下载记录</p>}
         </div>
-      </ScrollArea>
+      </ScrollArea>}
     </section>
   );
 }

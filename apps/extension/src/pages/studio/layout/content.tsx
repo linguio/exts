@@ -8,7 +8,9 @@ import { studioAccess, studioSessionKey } from '../account/state';
 /** Studio 共用身份边界；受保护子树随账号和会话重置版本重新创建。 */
 export function StudioContent({ children, account, resetVersion }: { children: ReactNode; account: ReturnType<typeof useAccount>; resetVersion: number }) {
   const access = studioAccess(account);
-  if (access === 'loading') return <div role="status" className="flex flex-1 items-center justify-center gap-2"><Spinner /><span className="sr-only">Loading account…</span></div>;
+  if (access === 'loading') return <div className="grid min-h-0 flex-1 place-items-center" aria-busy="true">
+    <Spinner aria-label="Loading account…" />
+  </div>;
   if (access === 'error') return <div className="p-4 md:p-6"><Alert><AlertTitle>Unable to load your account</AlertTitle><AlertDescription>
     <p>Please try again to continue.</p><Button type="button" variant="outline" onClick={() => { void account.refetch(); }}>Retry</Button>
   </AlertDescription></Alert></div>;

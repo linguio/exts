@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnDef, type Updater } from '@tanstack/react-table';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, TableCaption } from '../../ui/table';
 import { Checkbox } from '../../ui/checkbox';
@@ -76,7 +76,22 @@ export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCa
   const rows = table.getRowModel().rows;
   const initialLoading = loading && (!hasPreviousResult || !rows.length);
   const fillPlaceholder = fillRecords && (initialLoading || !rows.length);
-  const tableHeader = <TableHeader className={headerClassName}>{table.getHeaderGroups().map(group => <TableRow key={group.id}>{group.headers.map(header => <TableHead className={headClass(header.column.id)} key={header.id} colSpan={header.colSpan} aria-sort={header.column.getIsSorted() === 'asc' ? 'ascending' : header.column.getIsSorted() === 'desc' ? 'descending' : undefined}>{header.isPlaceholder ? null : typeof header.column.columnDef.header === 'string' ? <DataTableColumnHeader column={header.column} title={header.column.columnDef.header} disabled={busy} /> : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>)}</TableRow>)}</TableHeader>;
+  const showLoadingOverlay = loading && !fillPlaceholder;
+  const headerRef = useRef<HTMLTableSectionElement>(null);
+  const loadingOverlayRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const header = headerRef.current;
+    const overlay = loadingOverlayRef.current;
+    if (!showLoadingOverlay || !header || !overlay) return;
+
+    // 用真实表头高度划出可见数据区，加载层留在滚动容器之外。
+    const updateInset = () => { overlay.style.insetBlockStart = `${header.getBoundingClientRect().height}px`; };
+    updateInset();
+    const observer = new ResizeObserver(updateInset);
+    observer.observe(header);
+    return () => observer.disconnect();
+  }, [showLoadingOverlay]);
+  const tableHeader = <TableHeader ref={headerRef} className={headerClassName}>{table.getHeaderGroups().map(group => <TableRow key={group.id}>{group.headers.map(header => <TableHead className={headClass(header.column.id)} key={header.id} colSpan={header.colSpan} aria-sort={header.column.getIsSorted() === 'asc' ? 'ascending' : header.column.getIsSorted() === 'desc' ? 'descending' : undefined}>{header.isPlaceholder ? null : typeof header.column.columnDef.header === 'string' ? <DataTableColumnHeader column={header.column} title={header.column.columnDef.header} disabled={busy} /> : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>)}</TableRow>)}</TableHeader>;
   const emptyState = (!failed && emptyContent) || <Empty className="flex-none border-0 p-0">
     <EmptyHeader>
       <EmptyMedia variant="icon"><UiIcon name="circle-dashed" className="size-6" /></EmptyMedia>
@@ -89,20 +104,20 @@ export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCa
     ? <div className="flex h-full min-h-0 flex-1 flex-col"><Table aria-label={caption} containerClassName="shrink-0 overflow-visible">{showCaption && <TableCaption>{caption}</TableCaption>}{tableHeader}</Table><div className="flex flex-1 items-center justify-center p-6" aria-busy={loading}>{initialLoading ? <Spinner aria-label="Loading records" /> : emptyState}</div></div>
     : <Table aria-label={caption} containerClassName={fillRecords ? 'overflow-visible' : undefined}>{showCaption && <TableCaption>{caption}</TableCaption>}
     {tableHeader}
-    <TableBody className="relative" aria-busy={loading}>
+    <TableBody aria-busy={loading}>
       {initialLoading
         ? <TableRow aria-hidden="true"><TableCell colSpan={columnCount} className="h-48" /></TableRow>
         : rows.length ? rows.map(row => <TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>{row.getVisibleCells().map(cell => <TableCell className={cellClass(cell.column.id)} key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>)}</TableRow>) : <TableRow><TableCell colSpan={columnCount} className="h-24 text-center">{emptyState}</TableCell></TableRow>}
-      {loading && <TableRow className="pointer-events-none absolute inset-0 z-10 border-0 hover:bg-transparent"><TableCell colSpan={columnCount} className="flex h-full items-center justify-center p-0"><Spinner aria-label="Loading records" /></TableCell></TableRow>}
     </TableBody>
   </Table>;
-  const tableBlock = fillRecords
-    ? <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border">
-      {fillPlaceholder
-        ? tableContent
-        : <ScrollArea className="min-h-0 flex-1" horizontal viewportClassName="[&>div]:flex [&>div]:h-full [&>div]:min-h-0 [&>div]:flex-col">{tableContent}</ScrollArea>}
-    </div>
-    : <div className="overflow-hidden rounded-md border">{tableContent}</div>;
+  const tableBlock = <div className={cn('relative overflow-hidden rounded-md border', fillRecords && 'flex min-h-0 flex-1 flex-col')}>
+    {fillRecords && !fillPlaceholder
+      ? <ScrollArea className="min-h-0 flex-1" horizontal viewportClassName="[&>div]:flex [&>div]:h-full [&>div]:min-h-0 [&>div]:flex-col">{tableContent}</ScrollArea>
+      : tableContent}
+    {showLoadingOverlay && <div ref={loadingOverlayRef} className="pointer-events-none absolute inset-0 z-20 grid place-items-center">
+      <Spinner aria-label="Loading records" />
+    </div>}
+  </div>;
   const defaultToolbar = <DataTableToolbar table={table} filters={filters} search={search} visibility={columnVisibility} disabled={busy} />;
   const toolbarNode = toolbar ? toolbar(table, busy) : defaultToolbar;
   const toolbarBlock = fillRecords
