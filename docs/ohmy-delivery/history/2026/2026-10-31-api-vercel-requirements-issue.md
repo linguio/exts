@@ -1,6 +1,6 @@
 ---
 date: "2026-10-31"
-scope: api
+scope: [build, api]
 status: completed
 type: bug
 ---

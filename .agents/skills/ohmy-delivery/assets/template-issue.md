@@ -1,6 +1,6 @@
 ---
 date: "{{date}}"
-scope: {{scope}}
+scope: [{{scopes}}]
 status: queued
 type: {{type}}
 ---

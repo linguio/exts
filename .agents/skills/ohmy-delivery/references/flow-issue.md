@@ -1,8 +1,8 @@
 # 建档与推进
 
 - 先读仓库规则、[交付宪章](../../../../docs/ohmy-delivery/readme.md)及未关闭 Issue。讨论、只读调查和用户明确免建档的改动按对应边界执行。
-- 临时想法记入收件箱。成形且获准建档后，按 [唯一模板](../assets/template-issue.md) 在 `issues/` 新建一份 Issue，文件名为 `YYYY-MM-DD-<scope>-<topic>-issue.md`。标题取一级标题，元数据使用 [英文字典](../assets/issue-dictionaries.json)。建档日期与文件名前缀一致，文件名创建后保持稳定。
-- Scope 按主要验收结果从字典选一个。应用归对应应用；公开包和共享包归 `packages`；构建、发布、CI 和内部命令归 `build`；Skill 与配套流程归 `skills`；仓库级管理、规范和跨应用通用事项归 `repo`。历史工具按实际交付归类，已有文件名保持稳定。
+- 临时想法记入收件箱。成形且获准建档后，按 [唯一模板](../assets/template-issue.md) 在 `issues/` 新建一份 Issue，文件名为 `YYYY-MM-DD-<topic>-issue.md`。对应的新 Spec 和 Plan 共用 `YYYY-MM-DD-<topic>` 前缀。文件日期取建档日期。一级标题反映实际交付；经批准更正明显失准的标题时，只改文件名的主题部分，保留目录、日期及已有历史归属前缀，并同步引用。
+- `scope` 从 [英文字典](../assets/issue-dictionaries.json)选择一项或多项，写成非空且无重复的 YAML 数组，例如 `scope: [extension, api]`；单选写 `scope: [api]`。第一项按主要验收结果确定，是 Git Commit 使用的主归属；其他实质影响按重要性大致排列。筛选匹配任一项。应用归对应应用；公开包和共享包归 `packages`；构建、发布、CI 和内部命令归 `build`；Skill 与配套流程归 `skills`；仓库级管理、规范和跨应用通用事项归 `repo`。
 - 新事项先用现有归属。出现现有字典无法表达、将持续使用且需要独立查询的交付类别时，先征得批准，再在英文字典追加稳定值并以新数据库迁移同步显示项；不要临时造值，也不要用 `repo` 代替未判断的归属。历史值变更先核对引用再迁移。其他仓库沿用其自己的字典和更新流程。
 - 类型按主要验收结果填写：修复已有行为用 `bug`，新增可用能力用 `feature`，维护、文档或迁移用 `task`。无法明确归类的新工作默认 `task`。
 - 开始前核对是否已有活动 Issue。六种状态中，`in_progress`、`awaiting_acceptance`、`awaiting_commit` 都占活动名额。`queued` 不占活动名额，默认依建档日期、文件名排序。

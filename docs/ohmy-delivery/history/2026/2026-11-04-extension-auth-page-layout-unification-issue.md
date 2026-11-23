@@ -1,11 +1,11 @@
 ---
 date: "2026-11-04"
-scope: extension
+scope: [website]
 status: completed
 type: task
 ---
 
-# 统一 Exts 登录、授权与退出窗口
+# 统一官网登录、授权与退出页面布局
 
 ## 当前阶段
 
@@ -46,7 +46,7 @@ type: task
 
 #### 对应工作项
 
-- [Issue](2026-11-04-extension-auth-window-unification-issue.md)
+- [Issue](2026-11-04-extension-auth-page-layout-unification-issue.md)
 
 #### 预期交付边界
 

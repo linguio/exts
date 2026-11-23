@@ -1,6 +1,6 @@
 ---
 date: "2026-11-23"
-scope: api
+scope: [extension, api]
 status: completed
 type: task
 ---

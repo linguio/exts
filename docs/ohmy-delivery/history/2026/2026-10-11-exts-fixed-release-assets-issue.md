@@ -1,6 +1,6 @@
 ---
 date: "2026-10-11"
-scope: build
+scope: [build, website]
 status: completed
 type: feature
 ---

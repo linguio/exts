@@ -7,6 +7,8 @@ description: Use when starting or resuming an approved work item, selecting vali
 
 读取适用的仓库规则、交付宪章及当前 Issue。用户最新明确指令和仓库规则优先。按请求意图加载流程，分别确认修改、验证、提交及发布授权。只读讨论不改变工作项，已批准范围无需重复确认。
 
+在 exts 中，新 Issue 文件名使用 `YYYY-MM-DD-<topic>-issue.md`。归属写入正文的 `scope` 数组，第一项是主归属，也是 Git Commit 的 scope。建档和提交细则见下表。
+
 | 意图 | 流程 |
 | --- | --- |
 | 新建、继续、补充或取消工作项 | [建档与推进](references/flow-issue.md) |

@@ -63,10 +63,10 @@
 - 本仓库只使用 Git 管理的本地文档进行项目管理，不依赖外部项目管理系统。
 - [交付宪章](docs/ohmy-delivery/readme.md)维护目录和固定入口；临时想法进 `docs/ohmy-delivery/inbox.md`，已建档且未关闭的工作项进 `issues/`，已完成或已取消的工作项进 `history/<建档年份>/`。
 - 每个工作项唯一维护一份 Issue，包含范围、状态、验收标准、下一步和交付记录。除纯问答、只读调查或用户明确免建档外，获准的新工作先建档再实施。
-- 新 Issue 使用 [唯一模板](.agents/skills/ohmy-delivery/assets/template-issue.md)和[英文字典](.agents/skills/ohmy-delivery/assets/issue-dictionaries.json)。标题取一级标题；元数据统一为 `date`、`scope`、`status`、`type`。文件名建档后保持稳定。
+- 新 Issue 使用 [唯一模板](.agents/skills/ohmy-delivery/assets/template-issue.md)和[英文字典](.agents/skills/ohmy-delivery/assets/issue-dictionaries.json)。标题取一级标题；元数据统一为 `date`、`scope`、`status`、`type`。`scope` 是非空、无重复的 YAML 数组，单选也写数组。第一项为主归属，后续项按交付影响大致排序；筛选匹配任一项。
 - Spec 和 Plan 按需保存在 `docs/superpowers/specs/` 与 `docs/superpowers/plans/`，并纳入 Git 管理。Spec 解释设计选择和边界，Plan 说明实施顺序、影响范围、验证方式和停止点。
 - 简单任务可以只使用 Issue 中的 3–6 个 Todo，不强制创建 Spec 或 Plan。存在真实设计分歧、架构边界或多阶段依赖时才创建对应文档。
-- Issue、Spec 和 Plan 必须使用 `YYYY-MM-DD-<scope>-<topic>` 公共前缀互相关联，不使用 Commit SHA 作为文档索引。
+- 新建 Issue、Spec 和 Plan 使用 `YYYY-MM-DD-<topic>` 公共前缀互相关联，不使用 Commit SHA 作为文档索引。
 - 同一时间最多只有一个活动 Issue。当前 Issue 的代码与文档提交全部成功前，不得开始下一个 Issue；临时想法记入收件箱，已建档事项可排队。
 - Plan 不得增加 Issue 未批准的功能、依赖或验收范围。实施中需要改变范围时必须暂停，先取得用户批准，再同步 Issue 及相关 Spec、Plan。
 - 文档发生冲突时，以用户最后明确批准的内容为准，并立即同步到当前 Issue；不得让聊天记录或代理内部计划成为唯一正式依据。
@@ -154,7 +154,7 @@
 
 ## Issue 规范
 
-- Issue 文件命名为 `YYYY-MM-DD-<scope>-<topic>-issue.md`，标题使用简洁的中文动作与目标。
+- 新 Issue 文件命名为 `YYYY-MM-DD-<topic>-issue.md`，标题使用准确描述交付的中文动作与目标。文件名建档后保持稳定；经批准纠正明显失准的标题时，只修改文件名的主题部分，保留建档日期、目录和已有的历史归属前缀，并更新引用。
 - Issue 必须包含元信息、背景、目标、范围、排除项、Todo 或 Sub-issues、验收标准、关联文档和唯一下一步。
 - Issue 是一次可以整体验收、独立回滚的交付单元；代码与计划类文档分别提交，不因拆分提交而增加 Issue。
 - Sub-issue 只在主 Issue 文件内部定义有顺序的阶段，不创建独立文件，也不对应独立 Git Commit。
@@ -193,7 +193,7 @@
   - `chore`：依赖、工具、配置或仓库维护
   - `docs`：文档变更
   - `test`：测试变更
-- `scope` 使用 [Issue 英文字典](.agents/skills/ohmy-delivery/assets/issue-dictionaries.json)的稳定英文值，默认继承当前 Issue 的 `scope`。同一工作项的实现与结项文档提交沿用同一归属；免建档时按实际交付从同一字典选取。`type` 仍按每笔提交的实际变更决定。
+- Git Commit 的 `scope` 使用当前 Issue 的主归属，即 `scope` 数组的第一项。同一工作项的实现与结项文档提交沿用该单值；免建档时按实际交付从 [Issue 英文字典](.agents/skills/ohmy-delivery/assets/issue-dictionaries.json)选取。`type` 仍按每笔提交的实际变更决定。
 - 一个工作项只对应一个可独立验收和回滚的结果；该结果的代码与计划类文档按上述规则分开提交，不在同一 Commit 中混合。
 - 不同类型或不同用户结果必须拆分为多个 Commit。
 - 标题使用中文动作描述结果，不写文件名，不使用“更新若干文件”等模糊表述，末尾不加句号。

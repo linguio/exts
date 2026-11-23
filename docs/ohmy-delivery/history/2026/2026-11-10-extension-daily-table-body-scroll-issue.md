@@ -1,6 +1,6 @@
 ---
 date: "2026-11-10"
-scope: extension
+scope: [extension, api]
 status: completed
 type: bug
 ---

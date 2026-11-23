@@ -1,6 +1,6 @@
 ---
 date: "2026-09-20"
-scope: desktop
+scope: [desktop]
 status: completed
 type: feature
 ---

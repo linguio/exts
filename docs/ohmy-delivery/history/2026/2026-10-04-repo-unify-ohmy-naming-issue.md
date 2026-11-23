@@ -1,6 +1,6 @@
 ---
 date: "2026-10-04"
-scope: repo
+scope: [repo, extension, desktop, website]
 status: completed
 type: task
 ---

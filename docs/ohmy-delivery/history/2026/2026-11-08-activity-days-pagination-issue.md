@@ -1,6 +1,6 @@
 ---
 date: "2026-11-08"
-scope: api
+scope: [api, extension]
 status: completed
 type: feature
 ---

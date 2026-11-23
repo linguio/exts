@@ -1,6 +1,6 @@
 ---
 date: "2026-10-12"
-scope: packages
+scope: [packages, build]
 status: completed
 type: task
 ---

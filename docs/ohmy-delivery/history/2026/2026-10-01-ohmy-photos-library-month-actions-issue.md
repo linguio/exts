@@ -1,6 +1,6 @@
 ---
 date: "2026-10-01"
-scope: desktop
+scope: [desktop]
 status: completed
 type: task
 ---

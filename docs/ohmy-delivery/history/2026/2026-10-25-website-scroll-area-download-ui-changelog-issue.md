@@ -1,11 +1,11 @@
 ---
 date: "2026-10-25"
-scope: website
+scope: [website]
 status: completed
 type: task
 ---
 
-# 补充书签与界面规范日志
+# 补充滚动组件与下载功能规范日志
 
 ## 当前阶段
 
@@ -49,7 +49,7 @@ type: task
 ### 历史交付记录
 
 #### 对应工作项
-- [Issue](2026-10-25-website-bookmarks-ui-changelog-issue.md)
+- [Issue](2026-10-25-website-scroll-area-download-ui-changelog-issue.md)
 - 状态：已完成
 
 #### 预期交付边界

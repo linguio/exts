@@ -1,6 +1,6 @@
 ---
 date: "2026-09-27"
-scope: build
+scope: [build, extension]
 status: completed
 type: bug
 ---
