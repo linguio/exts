@@ -126,7 +126,7 @@ macOS/Linux 使用对应的 dist/.cache/api/venv/bin/python。迁移使用管理
 
 登录后可查询全局只读字典。两条查询共用现有 Bearer 身份校验，不按用户过滤字典。迁移 0006 建立 `dictionary_groups` 与 `dictionary_items`，初始化 Status、Scope、Type 三组共 21 项。迁移 0007 为两表记录创建时间，分组按创建时间排序。迁移 0008 将 Scope 对齐到八类，保留已有有效值的 ID 和显示名。当前三组共 17 项。
 
-- POST `/api/dictionaries/groups` 接收 `pageIndex` 和 `pageSize`，返回 `groups`、`total`、`pageIndex` 和 `pageSize`。按 `createdAt`、`key` 升序。
+- POST `/api/dictionaries/groups` 接收 `pageIndex`、`pageSize` 和可选的 `search`。搜索最多 128 字符，去除首尾空白后对 `label` 和 `key` 做不区分大小写的字面包含匹配。返回 `groups`、筛选后的 `total`、`pageIndex` 和 `pageSize`。按 `createdAt`、`key` 升序。每组包含可空的 `description`，迁移 0009 为现有三组填充英文说明。
 - POST `/api/dictionaries/items` 接收 `groupId`，返回含 `createdAt` 的 `items`，在指定组内按 `sortOrder`、`value` 升序。已有空组返回空数组，找不到分组返回 404，超出 500 项返回 422。
 
 ## 每日任务与部署前配置

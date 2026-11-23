@@ -51,7 +51,11 @@
 - Studio 统一处理账号状态：首次读取显示 Spinner；普通读取失败显示 Alert 和 Retry；未登录或会话过期显示 Empty、Sign in to Studio、Sign in to access your personal workspace. 和 Sign in 按钮，复用现有 LoginDialog。登录后才挂载当前业务页面，不按表格、图表或表单分别实现登录提示。
 - 受保护内容以账号 ID 和既有会话重置版本作为 React key，退出、换号及同账号重新登录均使旧页面局部状态失效；Home/Studio 的 React Activity 保留不跨越账号内容边界。异步取消与迟到结果防护、边界外 Provider/后台/持久化状态仍由既有模块负责，不另建重置总线或按菜单增加清理分支。
 - Daily 使用真实查询接口与 QueryDataTable；行末 Edit/Sheet 仅临时更新当前已加载记录，未写入账号。字段、筛选与编辑集中于 columns.meta；Daily 内容区弹性占满可用高度，筛选单行可横向滚动，表格与分页在视口内分层。Studio 的其他非占满式内容区使用官方 ScrollArea 整页滚动。Home 图表仍走原有 API。具体行为见 [DataTable](./data-table.md)。
-- Dictionaries 宽屏双栏，左栏查询后端分组并分页，右栏按选中分组完整查询英文 Value、Label、Order；两栏独立使用既有 ScrollArea，窄屏分组在表格上方。默认选中当前页首组，切换时隔离迟到结果。页面只查看，沿用 Studio 登录边界和后台认证请求。
+- Dictionaries 沿用 Studio 内容壳和 `p-4 md:p-6` 内边距。宽屏双栏只保留栏间分隔线，窄屏分组在表格上方；两栏限制在视口内，列表和表格记录分别用既有 ScrollArea 滚动。
+- 分组搜索固定在左栏顶部并撑满本栏可用宽度，采用 shadcn Field 和 ButtonGroup，内含默认 Input 与 outline 搜索图标按钮，两者均有无障碍名称。按名称和 key 服务端匹配，停输 300 ms 自动查询，也可点击搜索图标或按 Enter 提交。删空立即恢复全部结果，搜索变化回第一页。页脚按表格规范的窄栏差异显示。查询成功后保留当前页仍可见的选中组，否则选首组，无结果时右侧显示 Empty。
+- 分组分页和跳页沿用 shadcn Pagination、Popover、Input 和 Button。跳页使用默认文本 Input 与数字键盘提示，范围校验显示在 Popover 内。
+- 右栏固定分组名称及可选说明，表格固定表头；按 Label、Value、Order 展示选中组的完整响应，三列等宽、居中，长文字在列内换行。两栏 Loading 在数据区居中，空态沿用表格规范。页面只查看，继续沿用 Studio 登录边界和后台认证请求，并隔离切换时的迟到结果。
+- 本轮按用户要求预览 Dictionaries 和 Daily 的表头及内容全部左对齐。字典项三列保持等宽，Daily 通过共用 DataTable 的对齐选项启用，外观待确认。
 
 ## 主题与 Token
 
@@ -60,6 +64,7 @@
 - 标准 chart-5 槽已补齐，以 muted-foreground 保持中性灰契约；不增加实际业务分类或改变 chart-1 至 4。新 2xl/3xl/4xl 圆角沿用固定基线公式，原有 sm/md/lg/xl 的项目公式保留。
 
 - 官网组件迁入需一并核对源码、组合、基础 CSS、动画和 Token 依赖，不能只复制 JSX。全局 base 层采用官方 border-border/outline-ring 默认规则，dark 变体适配根 data-theme；tw-animate-css 提供实际使用的官方动画类。
+- `--input` 用于独立输入控件的默认描边，搜索和筛选输入同样沿用此语义；`--border` 用于普通边界和独立 outline 按钮。输入框与提交按钮共用外框时，在官方 ButtonGroup 上使用应用共用样式 `input-button-group`，统一外框和接缝为 `--input`。基础 ButtonGroup 源码保持只读。两种 Token 的值由主题维护，焦点和错误状态沿用各组件既有规则。
 - 核对并补齐实际依赖的 Token 契约，优先映射现有主题；不整套覆盖已确认的图表灰阶、材质或其他 Token 值。只有现有 Token 无法表达实际用途时才补必要个性化 Token，统一维护，避免业务调用方补颜色。
 
 明暗主题由 `src/lib/theme/preference.ts 与 src/features/settings/theme.ts` 解析：默认 System，通过系统 `prefers-color-scheme` 跟随变化；选择 Light/Dark 后固定为对应主题。根 `data-theme` 持有实际明暗，组件与 Portal 继承原有语义 Token，不独立硬编码配色。Geist 字体、基础界面明暗色值、遮罩透明度与模糊保留；图表中性灰色阶按下文全局规范维护。
