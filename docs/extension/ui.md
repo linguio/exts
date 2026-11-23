@@ -21,7 +21,7 @@
 模块级内容区域遵循首次 Skeleton、后续 Spinner；这是模块加载规则，不推广到表格等独立控件。DataTable 首次与后续均使用官方 Spinner，不使用首次骨架屏，具体位置见“通用数据表格”。
 
 - 共用 Spinner 与 Skeleton 使用固定官方源码，来源及差异见 [Web UI 来源](../web-ui-sources.md)。Spinner 沿用官方图标及旋转，Skeleton 沿用官方 bg-accent、rounded-md 和脉冲动画；两者遵循 prefers-reduced-motion，不硬编码明暗颜色。
-- 区域级 Spinner 水平、垂直居中于自己的可见区，保留读屏名称。Studio 账号初始化以右侧顶栏下方的可见正文为基准；左侧分组列表以搜索区和页脚之间为基准；右侧详情以标题和表头下方为基准；Sheet 以固定标题、工具栏和页脚之间为基准。初次无可滚动内容时直接由撑满剩余空间的内容区承载 Spinner；保留旧内容时，以可见视口定位，滚动内容高度和位置不影响指示位置。
+- 区域级 Spinner 水平、垂直居中于自己的可见区，保留读屏名称。左侧分组列表以搜索区和页脚之间为基准；右侧详情以标题和表头下方为基准；Sheet 以固定标题、工具栏和页脚之间为基准。初次无可滚动内容时直接由撑满剩余空间的内容区承载 Spinner；保留旧内容时，以可见视口定位，滚动内容高度和位置不影响指示位置。
 - 按钮、菜单项和设置行的短时操作反馈保留在原控件内，继续沿用该控件的布局与无障碍语义。
 - 模块级 LoadingRegion 只根据 `loading` 与 `hasPreviousResult` 选择展示：首次无上次成功结果时显示一整块官方基础 Skeleton，有结果时保留旧内容并居中显示官方 Spinner。组件只负责必要区域布局、aria-busy 与读屏提示，不发请求、不创建计时器、不持有业务状态或自定义视觉模式。
 - 当前 Activity 的日历、趋势和 Summary 左右两区均使用自动选择。共享请求时复用状态，不产生重复请求；每个区域独立占位，标题、筛选及原区域高度保留，不使用整页遮罩或全应用加载开关。
@@ -50,9 +50,10 @@
 
 
 - 菜单由 pages/studio/routes.ts 的静态页面注册表维护，包含一级 Overview、Activity → Daily 和 Management → Dictionaries；菜单仅在确认登录后可见，登录后恢复当前账号的会话路由，缺失或未知路由回到 Overview；Activity 为 SidebarGroupLabel 文字标题，Daily 为带图标的 SidebarMenuButton 平铺项，按用户截图采用 dashboard-01 Documents 结构，不包含折叠箭头或子菜单缩进。
-- Studio 统一处理账号状态：首次读取显示 Spinner；普通读取失败显示 Alert 和 Retry；未登录或会话过期显示 Empty、Sign in to Studio、Sign in to access your personal workspace. 和 Sign in 按钮，复用现有 LoginDialog。登录后才挂载当前业务页面，不按表格、图表或表单分别实现登录提示。
+- Studio 统一处理账号状态：首次读取期间保留侧栏和顶栏，正文留空；普通读取失败显示 Alert 和 Retry；未登录或会话过期显示 Empty、Sign in to Studio、Sign in to access your personal workspace. 和 Sign in 按钮，复用现有 LoginDialog。登录后才挂载当前业务页面。
 - 受保护内容以账号 ID 和既有会话重置版本作为 React key，退出、换号及同账号重新登录均使旧页面局部状态失效；Home/Studio 的 React Activity 保留不跨越账号内容边界。异步取消与迟到结果防护、边界外 Provider/后台/持久化状态仍由既有模块负责，不另建重置总线或按菜单增加清理分支。
-- Daily 使用真实查询接口与 QueryDataTable；行末 Edit/Sheet 仅临时更新当前已加载记录，未写入账号。字段、筛选与编辑集中于 columns.meta；Daily 内容区弹性占满可用高度，筛选单行可横向滚动，表格与分页在视口内分层。Studio 的其他非占满式内容区使用官方 ScrollArea 整页滚动。Home 图表仍走原有 API。具体行为见 [DataTable](./data-table.md)。
+- Daily 使用 QueryDataTable 和真实查询、保存接口。字段、筛选与编辑集中于 columns.meta；行末直接显示 Edit 图标，查询工具栏遵循表格规范，表格与分页在视口内分层。Studio 的其他非占满式内容区使用官方 ScrollArea 整页滚动。Home 图表仍走原有 API。具体行为见 [DataTable](./data-table.md)。
+- Dictionaries 菜单使用 Lucide BookA 图标。
 - Dictionaries 沿用 Studio 内容壳和 `p-4 md:p-6` 内边距。宽屏双栏只保留栏间分隔线，窄屏分组在表格上方；两栏限制在视口内，列表和表格记录分别用既有 ScrollArea 滚动。
 - 分组搜索固定在左栏顶部并撑满本栏可用宽度，采用 shadcn Field 和 ButtonGroup，内含默认 Input 与 outline 搜索图标按钮，两者均有无障碍名称。按名称和 key 服务端匹配，停输 300 ms 自动查询，也可点击搜索图标或按 Enter 提交。删空立即恢复全部结果，搜索变化回第一页。页脚按表格规范的窄栏差异显示。查询成功后保留当前页仍可见的选中组，否则选首组，无结果时右侧显示 Empty。
 - 分组分页和跳页沿用 shadcn Pagination、Popover、Input 和 Button。跳页使用默认文本 Input 与数字键盘提示，范围校验显示在 Popover 内。
