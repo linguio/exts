@@ -13,6 +13,27 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'studio-dictionaries-delivery-v260',
+    date: '2026-11-24',
+    title: '新增 Studio 字典查看，完善开发交付流程',
+    groups: [{
+      platform: 'Skills',
+      changes: [
+        '将工作项管理和验证 Skill 合并为 `ohmy-delivery`，移除独立的工作流观察 Skill，统一建档、验证、验收、提交和版本发布流程。',
+        '重新梳理 213 份历史 Issue 的归属，统一支持多选，并修正两份与实际交付不符的标题。',
+      ],
+    }, {
+      platform: 'Website',
+      changes: ['产品介绍新增 Exts UI 公共组件库入口。'],
+    }, {
+      platform: 'API',
+      changes: ['延长数据库连接的空闲保留时间，减少短暂空闲后重新建连的等待。'],
+    }, {
+      platform: 'Extension',
+      changes: ['Studio 新增 Dictionaries，可搜索字典分组，查看用途说明和各组选项。'],
+    }],
+  },
+  {
     id: 'daily-quick-edit-notifications-v250',
     date: '2026-11-19',
     title: '新增 Daily 快捷编辑，完善通知体验',
