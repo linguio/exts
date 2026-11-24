@@ -55,10 +55,10 @@
 - Daily 使用 QueryDataTable 和真实查询、保存接口。字段、筛选与编辑集中于 columns.meta；行末直接显示 Edit 图标，查询工具栏遵循表格规范，表格与分页在视口内分层。Studio 的其他非占满式内容区使用官方 ScrollArea 整页滚动。Home 图表仍走原有 API。具体行为见 [DataTable](./data-table.md)。
 - Dictionaries 菜单使用 Lucide BookA 图标。
 - Dictionaries 沿用 Studio 内容壳和 `p-4 md:p-6` 内边距。宽屏双栏只保留栏间分隔线，窄屏分组在表格上方；两栏限制在视口内，列表和表格记录分别用既有 ScrollArea 滚动。
-- 分组搜索固定在左栏顶部并撑满本栏可用宽度，采用 shadcn Field 和 ButtonGroup，内含默认 Input 与 outline 搜索图标按钮，两者均有无障碍名称。通过搜索图标按钮提交，输入框内按 Enter 不提交。按名称和 key 服务端匹配，提交时回第一页，清空后提交恢复全部分组。页脚按表格规范的窄栏差异显示。查询成功后保留当前页仍可见的选中组，否则选首组，无匹配时左栏显示 No matching groups，右栏显示 Empty。
+- 分组搜索固定在左栏顶部，采用 shadcn Field 和 ButtonGroup，内含默认 Input 与 outline 搜索图标按钮，旁边是 Add group 加号按钮。通过搜索图标按钮提交，输入框内按 Enter 不提交。服务端匹配归属或分组的名称和 key，提交时回第一页并选中首组，清空后提交恢复全部分组。列表复用 Studio Sidebar Menu 的分段和分组行，每行内右侧常显编辑铅笔。每页重复显示该页分组的归属标题，页脚按分组计数。无匹配时左栏显示 No matching groups，右栏显示 Empty。
 - 分组分页和跳页沿用 shadcn Pagination、Popover、Input 和 Button。跳页使用默认文本 Input 与数字键盘提示，范围校验显示在 Popover 内。
-- 右栏固定分组名称及可选说明，表格固定表头；按 Label、Value、Order 展示选中组的完整响应，三列等宽、居中，长文字在列内换行。两栏 Loading 在数据区居中，空态沿用表格规范。页面只查看，继续沿用 Studio 登录边界和后台认证请求，并隔离切换时的迟到结果。
-- 本轮按用户要求预览 Dictionaries 和 Daily 的表头及内容全部左对齐。字典项三列保持等宽，Daily 通过共用 DataTable 的对齐选项启用，外观待确认。
+- 右栏浅底卡片复用 Studio 顶部导航的 Breadcrumb 样式显示归属 › 分组名称和可选说明。字典项复用共用 DataTable，按组完整加载，隐藏分页，表头和内容左对齐，长文字在列内换行。通过 `appearance` 去掉表格外框，保留行分隔线，Label、Value、Order、Actions 四列依次占 30%、30%、30%、10%。Add item 位于表格工具栏右端，Actions 使用共用行编辑按钮。四个操作入口只显示信息 Toast Not integrated。页面继续沿用 Studio 登录和后台认证请求边界。
+- Daily 通过共用 DataTable 的对齐选项左对齐表头及内容。
 
 ## 主题与 Token
 

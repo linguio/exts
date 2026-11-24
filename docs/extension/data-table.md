@@ -102,6 +102,9 @@ const [query, setQuery] = useState(initialQuery);
 
 ## 可选展示内容
 
+- `DataTable` 和 `QueryDataTable` 的外观统一通过 `appearance` 配置。默认带外框、列宽自动分配。可用 `appearance.frame` 选择无外框，`appearance.columnAlign` 调整对齐，`appearance.spacing` 调整区块和单元格间距。
+- `appearance.columnWidths` 按列 ID 传入列宽，数字表示像素，字符串可使用 CSS 长度或百分比。只要一列配置宽度，未指定宽度的可见列就平分剩余空间，加载、空态和有记录时共用这组列宽。Daily 保留自动列宽，字典项四列依次占 30%、30%、30%、10%。
+
 - showCaption 默认为 true；false 不渲染可见 TableCaption，caption 继续作为表格与区域的无障碍名称。Daily 按用户要求隐藏可见说明，其他调用方默认不变。
 
 - emptyContent 可传入业务需要的官方 Empty 组合，替换默认空结果提示；不传时保留原有无记录/筛选无结果文案。通用组件不内置 Daily 等业务文案。
