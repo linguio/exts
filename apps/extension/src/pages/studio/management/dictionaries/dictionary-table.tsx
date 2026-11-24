@@ -1,5 +1,6 @@
 import type { DictionaryGroup, DictionaryItem } from '../../../../api/dictionaries';
 import { useDataTableQuery } from '../../../../components/custom/data-table/use-data-table-query';
+import { Separator } from '../../../../components/ui/separator';
 import { UiIcon } from '../../../../components/custom/ui-icon';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../../components/ui/empty';
 import { ScrollArea } from '../../../../components/ui/scroll-area';
@@ -36,10 +37,11 @@ export function DictionaryTable({ group, userId }: { group: DictionaryGroup; use
 
   return (
     <section aria-label={group.label} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-      <header className="shrink-0 pb-3 [overflow-wrap:anywhere]">
-        <h2 className="font-medium">{group.label}</h2>
+      <header className="flex shrink-0 flex-col gap-1 pb-3 [overflow-wrap:anywhere]">
+        <h2 className="text-lg font-semibold">{group.label}</h2>
         {group.description && <p className="text-sm text-muted-foreground">{group.description}</p>}
       </header>
+      <Separator className="mb-2" />
       {rows.length > 0 ? <ScrollArea className="min-h-0 flex-1">{table}</ScrollArea> : <>
         {table}
         {loading ? <div role="status" className="grid min-h-0 flex-1 place-items-center">

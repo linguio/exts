@@ -24,13 +24,12 @@ interface DictionaryListProps {
   searching: boolean;
   onSearch: (value: string) => void;
   onSubmitSearch: () => void;
-  onCompositionChange: (composing: boolean) => void;
   onSelect: (groupId: string) => void;
   onPage: (pageIndex: number) => void;
 }
 
 export function DictionaryList({ groups, selectedId, pageIndex, pages, total, loading, failed, search, searching,
-  onSearch, onSubmitSearch, onCompositionChange, onSelect, onPage }: DictionaryListProps) {
+  onSearch, onSubmitSearch, onSelect, onPage }: DictionaryListProps) {
   const [pageEntryInvalid, setPageEntryInvalid] = useState(false);
   const current = Math.min(pageIndex, pages - 1);
   const first = Math.max(0, current - 1);
@@ -49,25 +48,15 @@ export function DictionaryList({ groups, selectedId, pageIndex, pages, total, lo
 
   return (
     <section aria-label="Dictionary groups" className="flex min-h-0 min-w-0 flex-col gap-2 overflow-hidden md:border-r md:pr-4">
-      <form className="shrink-0" onSubmit={event => {
-        event.preventDefault();
-        onSubmitSearch();
-      }}>
-        <Field>
+        <Field className="shrink-0">
           <ButtonGroup className="input-button-group w-full">
             <Input aria-label="Search dictionary groups" placeholder="Search groups…" maxLength={128} value={search}
-              onChange={event => onSearch(event.currentTarget.value)}
-              onCompositionStart={() => onCompositionChange(true)}
-              onCompositionEnd={event => {
-                onSearch(event.currentTarget.value);
-                onCompositionChange(false);
-              }} />
-            <Button type="submit" variant="outline" size="icon" aria-label="Search dictionary groups">
+              onChange={event => onSearch(event.currentTarget.value)} />
+            <Button type="button" variant="outline" size="icon" aria-label="Search dictionary groups" onClick={onSubmitSearch}>
               <Search aria-hidden="true" />
             </Button>
           </ButtonGroup>
         </Field>
-      </form>
       {loading ? <div role="status" className="grid min-h-0 flex-1 place-items-center">
         <Spinner /><span className="sr-only">Loading dictionary groups</span>
       </div> : groups.length ? <ScrollArea className="min-h-0 flex-1">

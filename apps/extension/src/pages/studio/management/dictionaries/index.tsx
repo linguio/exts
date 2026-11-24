@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { DictionaryGroup } from '../../../../api/dictionaries';
 import { useDataTableQuery } from '../../../../components/custom/data-table/use-data-table-query';
 import { UiIcon } from '../../../../components/custom/ui-icon';
@@ -14,9 +14,8 @@ export function DictionariesPage() {
 }
 
 function DictionariesView({ userId }: { userId: string }) {
-  const [selectedId, setSelectedId] = useState<string>();
+  const [selectedGroup, setSelectedGroup] = useState<DictionaryGroup>();
   const [search, setSearch] = useState('');
-  const [composing, setComposing] = useState(false);
   const { data, query, loading, failed, onQueryChange } = useDataTableQuery<DictionaryGroup>([],
     async ({ pageIndex, pageSize, filters }, signal) => {
       const search = typeof filters.search === 'string' ? filters.search : undefined;
@@ -24,34 +23,24 @@ function DictionariesView({ userId }: { userId: string }) {
       return { rows: groups, total };
     }, true);
 
-  const applySearch = useCallback((value: string) => {
+  function submitSearch() {
+    const value = search.trim();
     onQueryChange(previous => {
-      if ((previous.columnFilters[0]?.value ?? '') === value) return previous;
+      if ((previous.columnFilters[0]?.value ?? '') === value && previous.pagination.pageIndex === 0) return previous;
       return { ...previous, columnFilters: value ? [{ id: 'search', value }] : [],
         pagination: { ...previous.pagination, pageIndex: 0 } };
     });
-  }, [onQueryChange]);
-
-  useEffect(() => {
-    if (composing) return;
-    const value = search.trim();
-    if (!value) {
-      applySearch(value);
-      return;
-    }
-    const timer = window.setTimeout(() => applySearch(value), 300);
-    return () => window.clearTimeout(timer);
-  }, [search, composing, applySearch]);
+  }
 
   const groups = failed ? [] : data?.rows ?? [];
-  const selected = groups.find(group => group.id === selectedId) ?? groups[0];
+  const selected = loading ? selectedGroup : groups.find(group => group.id === selectedGroup?.id) ?? groups[0];
   const { pageIndex, pageSize } = query.pagination;
   const total = data?.total;
   const pages = Math.ceil((total ?? 0) / pageSize);
 
   useEffect(() => {
-    if (!loading && !failed) setSelectedId(selected?.id);
-  }, [loading, failed, selected?.id]);
+    if (!loading && !failed) setSelectedGroup(selected);
+  }, [loading, failed, selected]);
 
   useEffect(() => {
     const lastPage = Math.max(0, pages - 1);
@@ -66,21 +55,24 @@ function DictionariesView({ userId }: { userId: string }) {
         <DictionaryList groups={groups} selectedId={selected?.id} pageIndex={pageIndex}
           pages={pages} total={total} loading={loading} failed={failed}
           search={search} searching={Boolean(query.columnFilters.length)}
-          onSearch={setSearch} onCompositionChange={setComposing} onSelect={setSelectedId}
-          onSubmitSearch={() => {
-            if (!composing) applySearch(search.trim());
-          }}
+          onSearch={setSearch} onSelect={id => setSelectedGroup(groups.find(group => group.id === id))}
+          onSubmitSearch={submitSearch}
           onPage={index => {
             if (index === pageIndex) return;
             onQueryChange(previous => ({ ...previous, pagination: { ...previous.pagination, pageIndex: index } }));
           }}
         />
-        {selected ? <DictionaryTable key={selected.id} group={selected} userId={userId} />
-          : loading ? null : <Empty className="min-h-0 p-0"><EmptyHeader>
+        <div className="flex min-h-0 min-w-0 flex-col">
+          {selected && <div className={loading ? 'hidden' : 'flex min-h-0 flex-1 flex-col'}>
+            <DictionaryTable key={selected.id} group={selected} userId={userId} />
+          </div>}
+          {(loading || !selected) && <Empty className="min-h-0 flex-1 p-0"><EmptyHeader>
             <EmptyMedia variant="icon"><UiIcon name="circle-dashed" className="size-6" /></EmptyMedia>
-            <EmptyTitle>No dictionary selected</EmptyTitle>
-            <EmptyDescription>Items appear here when a group is selected.</EmptyDescription>
+            <EmptyTitle>{loading ? 'Waiting for dictionary groups' : 'No dictionary selected'}</EmptyTitle>
+            <EmptyDescription>{loading ? 'Items appear here after the group query completes.'
+              : 'Items appear here when a group is selected.'}</EmptyDescription>
           </EmptyHeader></Empty>}
+        </div>
       </div>
     </div>
   );
