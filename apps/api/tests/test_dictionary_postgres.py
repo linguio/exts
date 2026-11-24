@@ -30,7 +30,7 @@ class DictionaryPostgresTests(unittest.TestCase):
                 if any(existing.values()):
                     self.skipTest('测试仅接受隔离空数据库')
                 dictionary_migrations = [item for item in load_migrations()
-                                         if item.name.startswith(('0006_', '0007_', '0008_', '0009_'))]
+                                         if item.name.startswith(('0006_', '0007_', '0008_', '0009_', '0010_'))]
                 self.assertEqual(len(migrate(database, dictionary_migrations[:2], apply=True)), 2)
                 lookup = """
                     SELECT items.id FROM public.dictionary_items AS items
@@ -38,13 +38,22 @@ class DictionaryPostgresTests(unittest.TestCase):
                     WHERE groups.key = 'scope' AND items.value = 'extension'
                 """
                 old_extension = database.execute(lookup).fetchone()['id']
-                self.assertEqual(migrate(database, dictionary_migrations, apply=True),
+                self.assertEqual(migrate(database, dictionary_migrations[:-1], apply=True),
                                  ['0008_dictionary_scopes.sql', '0009_dictionary_group_descriptions.sql'])
                 self.assertEqual(database.execute(lookup).fetchone()['id'], old_extension)
+                group_ids = database.execute('SELECT id FROM public.dictionary_groups ORDER BY id').fetchall()
+                items_before = database.execute('SELECT * FROM public.dictionary_items ORDER BY id').fetchall()
+                self.assertEqual(migrate(database, dictionary_migrations, apply=True), ['0010_dictionary_namespaces.sql'])
+                self.assertEqual(database.execute('SELECT id FROM public.dictionary_groups ORDER BY id').fetchall(), group_ids)
+                self.assertEqual(database.execute('SELECT * FROM public.dictionary_items ORDER BY id').fetchall(), items_before)
                 first, total = repository.read_groups(database, 2, 0)
                 second, second_total = repository.read_groups(database, 2, 2)
                 self.assertEqual([group['key'] for group in first + second], ['scope', 'status', 'type'])
                 self.assertEqual((total, second_total), (3, 3))
+                namespace = first[0]['namespace']
+                self.assertEqual((namespace['key'], namespace['label']), ('issue', 'Issue'))
+                self.assertTrue(all(group['namespace'] == namespace for group in first + second))
+                self.assertEqual(repository.read_groups(database, 2, 2, 'ISSUE'), (second, 3))
                 applied_at = database.execute("SELECT applied_at FROM public._exts_migrations WHERE name = '0006_dictionaries.sql'").fetchone()['applied_at']
                 self.assertTrue(all(group['created_at'] == applied_at for group in first + second))
                 self.assertEqual(repository.read_groups(database, 2, 4), ([], 3))
@@ -62,10 +71,25 @@ class DictionaryPostgresTests(unittest.TestCase):
                     self.assertTrue(all(item['created_at'] >= applied_at for item in items))
                 self.assertIsNone(repository.read_items(database, uuid4(), 501))
                 group_id = database.execute("""
-                    INSERT INTO public.dictionary_groups (key, label, created_at)
-                    VALUES ('empty', 'Empty', CURRENT_TIMESTAMP + INTERVAL '1 second') RETURNING id
-                """).fetchone()['id']
+                    INSERT INTO public.dictionary_groups (namespace_id, key, label, created_at)
+                    VALUES (%s, 'empty', 'Empty', CURRENT_TIMESTAMP + INTERVAL '1 second') RETURNING id
+                """, (namespace['id'],)).fetchone()['id']
                 self.assertEqual(repository.read_items(database, group_id, 501), [])
                 self.assertEqual(repository.read_groups(database, 1, 3)[0][0]['id'], group_id)
+                other_id = database.execute("""
+                    INSERT INTO public.dictionary_namespaces (key, label) VALUES ('download', 'Download') RETURNING id
+                """).fetchone()['id']
+                database.execute("""
+                    INSERT INTO public.dictionary_groups (namespace_id, key, label, created_at)
+                    VALUES (%s, 'scope', 'Scope', CURRENT_TIMESTAMP)
+                """, (other_id,))
+                scopes, scope_total = repository.read_groups(database, 20, 0, 'SCOPE')
+                self.assertEqual(scope_total, 2)
+                self.assertEqual([group['namespace']['key'] for group in scopes], ['download', 'issue'])
+                with self.assertRaises(psycopg.errors.UniqueViolation), database.transaction():
+                    database.execute("""
+                        INSERT INTO public.dictionary_groups (namespace_id, key, label, created_at)
+                        VALUES (%s, 'scope', 'Scope', CURRENT_TIMESTAMP)
+                    """, (other_id,))
             finally:
                 database.rollback()

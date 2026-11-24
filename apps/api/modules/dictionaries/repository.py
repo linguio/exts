@@ -9,21 +9,29 @@ def read_groups(database: Connection, limit: int, offset: int, search: str = '')
     # 同一条查询返回分页数据与总数，空页也保留总数。
     rows = read_rows(database, sql.SQL('''
         WITH matching AS (
-            SELECT id, key, label, description, created_at
-            FROM public.dictionary_groups
-            WHERE strpos(lower(label), lower(%s)) > 0 OR strpos(lower(key), lower(%s)) > 0
+            SELECT groups.id, groups.key, groups.label, groups.description, groups.created_at,
+                   namespaces.key AS namespace_key,
+                   jsonb_build_object('id', namespaces.id, 'key', namespaces.key,
+                                      'label', namespaces.label) AS namespace
+            FROM public.dictionary_groups AS groups
+            JOIN public.dictionary_namespaces AS namespaces ON namespaces.id = groups.namespace_id
+            CROSS JOIN (SELECT lower(%s::text) AS term) AS query
+            WHERE strpos(lower(groups.label), query.term) > 0
+               OR strpos(lower(groups.key), query.term) > 0
+               OR strpos(lower(namespaces.label), query.term) > 0
+               OR strpos(lower(namespaces.key), query.term) > 0
         ),
         totals AS (SELECT count(*) AS total FROM matching)
         SELECT page.*, totals.total
         FROM totals
         LEFT JOIN LATERAL (
-            SELECT id, key, label, description, created_at
+            SELECT id, key, label, description, created_at, namespace_key, namespace
             FROM matching
-            ORDER BY created_at, key
+            ORDER BY namespace_key, created_at, key
             LIMIT %s OFFSET %s
         ) AS page ON true
-        ORDER BY page.created_at, page.key
-    '''), (search, search, limit, min(offset, 2**63 - 1)))
+        ORDER BY page.namespace_key, page.created_at, page.key
+    '''), (search, limit, min(offset, 2**63 - 1)))
     return [row for row in rows if row['id'] is not None], rows[0]['total']
 
 

@@ -1,11 +1,18 @@
 import type { ApiClient } from './client';
 
+export interface DictionaryNamespace {
+  id: string;
+  key: string;
+  label: string;
+}
+
 export interface DictionaryGroup {
   id: string;
   key: string;
   label: string;
   description?: string | null;
   createdAt: string;
+  namespace: DictionaryNamespace;
 }
 
 export interface DictionaryItem {

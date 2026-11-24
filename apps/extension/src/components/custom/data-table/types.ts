@@ -12,6 +12,15 @@ export type DataTableFilter = {
   columnId: string;
   label: string;
 } & ({ type: 'text'; defaultValue?: string } | { type: 'options'; options: { label: string; value: string }[]; defaultValue?: string[] } | { type: 'date'; defaultValue?: DateFilterRange });
+export interface DataTableAppearance {
+  frame?: 'bordered' | 'borderless';
+  columnAlign?: 'left' | 'center';
+  /** 按列 ID 配置，数字表示像素，字符串可以使用 CSS 长度或百分比。 */
+  columnWidths?: Readonly<Record<string, string | number>>;
+  /** 调整区块间距、表头和普通数据单元格的内边距。 */
+  spacing?: { layout?: string; headerCell?: string; cell?: string };
+}
+
 export interface DataTableProps<T> {
   columns: ColumnDef<T, any>[];
   toolbar?: (table: Table<T>, disabled: boolean) => ReactNode;
@@ -26,7 +35,7 @@ export interface DataTableProps<T> {
   pageSizes?: number[];
   showPagination?: boolean;
   emptyContent?: ReactNode;
-  columnAlign?: 'left' | 'center';
+  appearance?: DataTableAppearance;
   selection?: boolean;
   selectionKey?: string;
   onSelectionChange?: (ids: string[]) => void;
@@ -79,7 +88,7 @@ export interface QueryDataTableProps<T> {
   enabled?: boolean;
   showCaption?: boolean;
   emptyContent?: ReactNode;
-  columnAlign?: DataTableProps<T>['columnAlign'];
+  appearance?: DataTableAppearance;
   editDescription?: string;
   headerNote?: ReactNode;
   fillRecords?: boolean;

@@ -41,13 +41,15 @@ class DictionaryApiTests(unittest.TestCase):
         self.authorize()
         created = datetime(2026, 11, 22, tzinfo=timezone.utc)
         group = {'id': GROUP, 'key': 'type', 'label': 'Type', 'created_at': created,
+                 'namespace': {'id': GROUP, 'key': 'issue', 'label': 'Issue'},
                  'description': 'Classifies the kind of work an issue represents.'}
         with patch('modules.dictionaries.repository.read_groups', return_value=([group], 3)) as read:
             response = self.client.post('/api/dictionaries/groups', json={'pageIndex': 1, 'pageSize': 2, 'search': ' TYPE '})
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()['data'], {
                 'groups': [{'id': str(GROUP), 'key': 'type', 'label': 'Type', 'createdAt': '2026-11-22T00:00:00Z',
-                            'description': group['description']}],
+                            'description': group['description'],
+                            'namespace': {'id': str(GROUP), 'key': 'issue', 'label': 'Issue'}}],
                 'total': 3, 'pageIndex': 1, 'pageSize': 2,
             })
             read.assert_called_once_with(None, 2, 2, 'TYPE')

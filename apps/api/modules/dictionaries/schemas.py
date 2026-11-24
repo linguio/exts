@@ -22,8 +22,15 @@ class DictionaryEntry(BaseModel):
     created_at: AwareDatetime = Field(alias='createdAt')
 
 
+class DictionaryNamespace(BaseModel):
+    id: UUID
+    key: str
+    label: str
+
+
 class DictionaryGroup(DictionaryEntry):
     key: str
+    namespace: DictionaryNamespace
     description: str | None = None
 
 

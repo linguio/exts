@@ -21,7 +21,8 @@ function resolveFilters<T>(columns: ColumnDef<T, any>[], filterOverride: DataTab
 }
 
 function QueryDataTableContent<T>({ columns, filters: filterOverride, queryFn, updateFn, partialUpdates = false, previewEdits = false, getRowId, caption,
-  enabled = true, showCaption = true, emptyContent, editDescription, headerNote, fillRecords = false, pageSizes, columnAlign }: QueryDataTableProps<T>) {
+  enabled = true, showCaption = true, emptyContent, editDescription, headerNote, fillRecords = false, pageSizes,
+  appearance }: QueryDataTableProps<T>) {
   const filters = useMemo(() => resolveFilters(columns, filterOverride), [columns, filterOverride]);
   const { applyRowPreview, refresh, ...queryState } = useDataTableQuery(filters, queryFn, enabled);
   const [editingRow, setEditingRow] = useState<T | null>(null);
@@ -54,7 +55,7 @@ function QueryDataTableContent<T>({ columns, filters: filterOverride, queryFn, u
       onSaved={handleSaved} />}
     <DataTable columns={tableColumns} data={queryState.data?.rows ?? noRows} getRowId={getRowId}
       caption={caption} showCaption={showCaption} search={false} fillRecords={fillRecords} pageSizes={pageSizes}
-      columnAlign={columnAlign}
+      appearance={appearance}
       loading={queryState.loading} failed={queryState.failed} hasPreviousResult={queryState.hasPreviousResult}
       emptyContent={queryState.idle ? <span className="sr-only">Query is not enabled</span> : emptyContent}
       remote={{ query: queryState.query, onQueryChange: queryState.onQueryChange, rowCount: queryState.data?.total ?? 0 }}

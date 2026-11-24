@@ -16,7 +16,8 @@ import type { DataTableProps, DataTableQuery, RowSelectionState } from './types'
 export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCaption = true, filters = [], search = true, multiSort = true,
   columnVisibility = true, pageSizes = [10, 20, 50, 100], selection = false, selectionKey, onSelectionChange, bulkActions,
   loading = false, failed = false, hasPreviousResult = false, remote, showPagination = true, emptyContent, fillRecords = false,
-  columnAlign = 'center' }: DataTableProps<T>) {
+  appearance }: DataTableProps<T>) {
+  const { columnAlign = 'center', frame = 'bordered', spacing, columnWidths } = appearance ?? {};
   const [localQuery, setLocalQuery] = useState(initialQuery);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const query = remote?.query ?? localQuery;
@@ -63,14 +64,21 @@ export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCa
   const selected = Object.keys(rowSelection).filter(id => rowSelection[id]);
   const filtered = !!query.globalFilter || query.columnFilters.length > 0;
   const busy = loading;
-  const columnCount = Math.max(1, table.getVisibleLeafColumns().length);
-  const stickyEndClass = 'sticky right-0 z-10 bg-background';
+  const visibleColumns = table.getVisibleLeafColumns();
+  const columnCount = Math.max(1, visibleColumns.length);
+  const hasColumnWidths = visibleColumns.some(column => columnWidths?.[column.id] !== undefined);
+  const tableColumns = hasColumnWidths ? <colgroup>
+    {visibleColumns.map(column => <col key={column.id} style={{ width: columnWidths?.[column.id] }} />)}
+  </colgroup> : null;
+  const stickyEndClass = 'sticky right-0 z-10 bg-background group-hover/data-row:bg-[color-mix(in_srgb,var(--muted)_50%,var(--background))] group-data-[state=selected]/data-row:bg-muted';
   function headClass(columnId: string) {
     return cn(columnAlign === 'left' ? 'text-left [&>[data-slot=button]]:pl-0' : 'text-center',
-      fillRecords && 'sticky top-0 z-20 bg-background', columnId === '__actions' && 'sticky right-0 z-30 bg-background');
+      fillRecords && 'sticky top-0 z-20 bg-background', columnId === '__actions' && 'sticky right-0 z-30 bg-background',
+      spacing?.headerCell);
   }
   function cellClass(columnId: string) {
-    return cn(columnAlign === 'left' ? 'text-left' : 'text-center', columnId === '__actions' && stickyEndClass);
+    return cn(columnAlign === 'left' ? 'text-left' : 'text-center', columnId === '__actions' && stickyEndClass,
+      spacing?.cell);
   }
   const headerClassName = fillRecords ? 'bg-background [&_th]:bg-background' : undefined;
   const rows = table.getRowModel().rows;
@@ -100,17 +108,20 @@ export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCa
         : filtered ? '请调整筛选条件后重试。' : '数据记录将在此显示。'}</EmptyDescription>
     </EmptyHeader>
   </Empty>;
+  const tableClass = hasColumnWidths ? 'table-fixed' : undefined;
+  const tableHeading = <>{showCaption && <TableCaption>{caption}</TableCaption>}{tableColumns}{tableHeader}</>;
   const tableContent = fillPlaceholder
-    ? <div className="flex h-full min-h-0 flex-1 flex-col"><Table aria-label={caption} containerClassName="shrink-0 overflow-visible">{showCaption && <TableCaption>{caption}</TableCaption>}{tableHeader}</Table><div className="flex flex-1 items-center justify-center p-6" aria-busy={loading}>{initialLoading ? <Spinner aria-label="Loading records" /> : emptyState}</div></div>
-    : <Table aria-label={caption} containerClassName={fillRecords ? 'overflow-visible' : undefined}>{showCaption && <TableCaption>{caption}</TableCaption>}
-    {tableHeader}
+    ? <div className="flex h-full min-h-0 flex-1 flex-col"><Table aria-label={caption} className={tableClass} containerClassName="shrink-0 overflow-visible">{tableHeading}</Table><div className="flex flex-1 items-center justify-center p-6" aria-busy={loading}>{initialLoading ? <Spinner aria-label="Loading records" /> : emptyState}</div></div>
+    : <Table aria-label={caption} className={tableClass} containerClassName={fillRecords ? 'overflow-visible' : undefined}>
+    {tableHeading}
     <TableBody aria-busy={loading}>
       {initialLoading
         ? <TableRow aria-hidden="true"><TableCell colSpan={columnCount} className="h-48" /></TableRow>
-        : rows.length ? rows.map(row => <TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>{row.getVisibleCells().map(cell => <TableCell className={cellClass(cell.column.id)} key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>)}</TableRow>) : <TableRow><TableCell colSpan={columnCount} className="h-24 text-center">{emptyState}</TableCell></TableRow>}
+        : rows.length ? rows.map(row => <TableRow key={row.id} className="group/data-row" data-state={row.getIsSelected() ? 'selected' : undefined}>{row.getVisibleCells().map(cell => <TableCell className={cellClass(cell.column.id)} key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>)}</TableRow>) : <TableRow><TableCell colSpan={columnCount} className="h-24 text-center">{emptyState}</TableCell></TableRow>}
     </TableBody>
   </Table>;
-  const tableBlock = <div className={cn('relative overflow-hidden rounded-md border', fillRecords && 'flex min-h-0 flex-1 flex-col')}>
+  const tableBlock = <div className={cn('relative overflow-hidden', frame === 'bordered' && 'rounded-md border',
+    fillRecords && 'flex min-h-0 flex-1 flex-col')}>
     {fillRecords && !fillPlaceholder
       ? <ScrollArea className="min-h-0 flex-1" horizontal viewportClassName="[&>div]:flex [&>div]:h-full [&>div]:min-h-0 [&>div]:flex-col">{tableContent}</ScrollArea>
       : tableContent}
@@ -123,7 +134,8 @@ export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCa
   const toolbarBlock = fillRecords
     ? <div className="min-w-0 shrink-0">{toolbarNode}</div>
     : toolbarNode;
-  return <section className={cn(fillRecords ? 'flex min-h-0 flex-1 flex-col gap-4' : 'space-y-4')} aria-label={caption} aria-busy={loading}>
+  return <section className={cn(fillRecords ? 'flex min-h-0 flex-1 flex-col gap-4' : 'space-y-4', spacing?.layout)}
+    aria-label={caption} aria-busy={loading}>
     {toolbarBlock}
     {selection && selected.length > 0 && <div className={cn('flex flex-wrap items-center gap-2', fillRecords && 'shrink-0')}><span>已选择 {selected.length} 条</span>{!busy && bulkActions?.(selected, () => setRowSelection({}))}</div>}
     {tableBlock}
