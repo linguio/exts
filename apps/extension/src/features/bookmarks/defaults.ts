@@ -41,9 +41,9 @@ export const BOOKMARK_GRID: BookmarkGridItem[] = [
     id: 'devops',
     name: 'DevOps',
     items: [
-      { id: 'namecheap', name: 'Namecheap', url: 'https://www.namecheap.com', icon: 'brand/namecheap.svg' },
+      { id: 'namecheap', name: 'Namecheap', url: 'https://ap.www.namecheap.com/domains/list/', icon: 'brand/namecheap.svg' },
       { id: 'vercel', name: 'Vercel', url: 'https://vercel.com', icon: 'brand/vercel.svg' },
-      { id: 'neon', name: 'Neon', url: 'https://neon.com/', icon: 'brand/neon.svg' },
+      { id: 'neon', name: 'Neon', url: 'https://console.neon.tech/app/org-wild-hat-06154944/projects', icon: 'brand/neon.svg' },
     ],
   },
   {
@@ -53,7 +53,7 @@ export const BOOKMARK_GRID: BookmarkGridItem[] = [
     items: [
       { id: 'linear', name: 'Linear', url: 'https://linear.app', icon: 'brand/linear.svg' },
       { id: 'notion', name: 'Notion', url: 'https://www.notion.so', icon: 'brand/notion.svg' },
-      { id: 'npm', name: 'npm', url: 'https://www.npmjs.com/', icon: 'brand/npm.svg' },
+      { id: 'npm', name: 'npm', url: 'https://www.npmjs.com/settings/linguio/packages', icon: 'brand/npm.svg' },
     ],
   },
   {
