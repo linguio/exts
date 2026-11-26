@@ -1,15 +1,12 @@
 import { BrandIcon } from '../../../components/custom/brand-icon';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../components/ui/empty';
 import type { studioAccess } from '../account/state';
-import { Button } from '../../../components/ui/button';
 import { studioMenu, studioOverview } from '../routes';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, useSidebar } from '../../../components/ui/sidebar';
 import { UiIcon } from '../../../components/custom/ui-icon';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
 import { AccountSidebar } from '../account';
 
 interface StudioSidebarProps {
-  onHome: () => void;
   access: ReturnType<typeof studioAccess>;
   sessionKey: string | null;
   activeRoute: string | null;
@@ -17,7 +14,7 @@ interface StudioSidebarProps {
 }
 
 /** 采用 dashboard-01 的 inset/offcanvas 侧栏；业务菜单仅在确认登录后挂载。 */
-export function StudioSidebar({ onHome, access, sessionKey, activeRoute, onRouteChange }: StudioSidebarProps) {
+export function StudioSidebar({ access, sessionKey, activeRoute, onRouteChange }: StudioSidebarProps) {
   const { isMobile, setOpenMobile } = useSidebar();
   function selectRoute(route: string) {
     onRouteChange(route);
@@ -26,18 +23,15 @@ export function StudioSidebar({ onHome, access, sessionKey, activeRoute, onRoute
   return (
     <Sidebar collapsible="offcanvas" variant="inset">
       <SidebarHeader>
-        <div className="flex items-center gap-2">
-          <SidebarMenu><SidebarMenuItem><SidebarMenuButton asChild size="lg">
-            <div>
-              <BrandIcon icon="brand/exts.svg" size="md" />
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">Exts</span>
-                <span className="truncate text-xs">Ideas into action</span>
-              </div>
+        <SidebarMenu><SidebarMenuItem><SidebarMenuButton asChild size="lg">
+          <div>
+            <BrandIcon icon="brand/exts.svg" size="md" />
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium">Exts</span>
+              <span className="truncate text-xs">Ideas into action</span>
             </div>
-          </SidebarMenuButton></SidebarMenuItem></SidebarMenu>
-          <Tooltip><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon-sm" onClick={onHome} aria-label="Back to Home"><UiIcon name="house" className="size-4" /></Button></TooltipTrigger><TooltipContent side="right">Back to Home</TooltipContent></Tooltip>
-        </div>
+          </div>
+        </SidebarMenuButton></SidebarMenuItem></SidebarMenu>
       </SidebarHeader>
       <SidebarContent key={sessionKey ?? 'signed-out'}>
         {access === 'signed-out' && <Empty><EmptyHeader>
