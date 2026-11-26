@@ -10,6 +10,7 @@ from core.config import load_environment
 from core.database import close_pool, warm_pool
 from core.responses import install_responses
 from jobs.activity_days import router as jobs_router
+from modules.accounts.router import router as accounts_router
 from modules.activity.router import router as activity_router
 from modules.dictionaries.router import router as dictionaries_router
 from modules.settings.router import router as settings_router
@@ -44,6 +45,7 @@ install_responses(app)
 app.include_router(activity_router)
 app.include_router(settings_router)
 app.include_router(dictionaries_router)
+app.include_router(accounts_router)
 app.include_router(jobs_router)
 
 

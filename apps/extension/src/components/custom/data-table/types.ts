@@ -11,7 +11,7 @@ export interface DataTableQuery {
 export type DataTableFilter = {
   columnId: string;
   label: string;
-} & ({ type: 'text'; defaultValue?: string } | { type: 'options'; options: { label: string; value: string }[]; defaultValue?: string[] } | { type: 'date'; defaultValue?: DateFilterRange });
+} & ({ type: 'text'; defaultValue?: string; placeholder?: string } | { type: 'options'; options: { label: string; value: string }[]; defaultValue?: string[] } | { type: 'date'; defaultValue?: DateFilterRange });
 export interface DataTableAppearance {
   frame?: 'bordered' | 'borderless';
   columnAlign?: 'left' | 'center';

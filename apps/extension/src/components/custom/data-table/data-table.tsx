@@ -103,7 +103,7 @@ export function DataTable<T>({ toolbar, columns, data, getRowId, caption, showCa
   const emptyState = (!failed && emptyContent) || <Empty className="flex-none border-0 p-0">
     <EmptyHeader>
       <EmptyMedia variant="icon"><UiIcon name="circle-dashed" className="size-6" /></EmptyMedia>
-      <EmptyTitle>{failed ? 'Records unavailable' : filtered ? '没有符合条件的记录' : '暂无记录'}</EmptyTitle>
+      <EmptyTitle>{failed ? 'Records unavailable' : filtered ? 'No matching records' : 'No records yet'}</EmptyTitle>
       <EmptyDescription>{failed ? 'The requested records could not be loaded.'
         : filtered ? '请调整筛选条件后重试。' : '数据记录将在此显示。'}</EmptyDescription>
     </EmptyHeader>

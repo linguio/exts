@@ -1,4 +1,5 @@
 export { DataTable } from './data-table';
+export { CopyableTextCell } from './copyable-text-cell';
 export { DataTableColumnHeader } from './column-header';
 export { initialQuery } from './state';
 export type { DataTableProps, DataTableQuery, DataTableFilter } from './types';

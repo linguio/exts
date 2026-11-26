@@ -2,6 +2,7 @@ import type { ComponentType } from 'react';
 import type { UiIconName } from '../../components/custom/types';
 import { OverviewPage } from './overview';
 import { DailyPage } from './activity/daily';
+import { AccountsPage } from './management/accounts';
 import { DictionariesPage } from './management/dictionaries';
 
 /** 一级入口与业务分组只登记实际实现的页面；菜单不携带账号、查询或业务字段。 */
@@ -14,7 +15,10 @@ export const studioMenu = [{
   items: [{ route: '/activity/daily', title: 'Daily', icon: 'notebook-text', component: DailyPage, fillHeight: true }],
 }, {
   id: 'management', title: 'Management',
-  items: [{ route: '/management/dictionaries', title: 'Dictionaries', icon: 'book-a', component: DictionariesPage, fillHeight: true }],
+  items: [
+    { route: '/management/accounts', title: 'Accounts', icon: 'user-round', component: AccountsPage, fillHeight: true },
+    { route: '/management/dictionaries', title: 'Dictionaries', icon: 'book-a', component: DictionariesPage, fillHeight: true },
+  ],
 }] as const satisfies readonly {
   id: string; title: string;
   items: readonly { route: string; title: string; icon: UiIconName; component: ComponentType; fillHeight: boolean }[];

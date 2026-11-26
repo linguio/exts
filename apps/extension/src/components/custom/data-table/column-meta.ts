@@ -3,7 +3,7 @@ import type { DateFilterRange } from './state';
 import type { DataTableFilter } from './types';
 
 export type DataTableColumnFilterMeta =
-  | { type: 'text'; label?: string; defaultValue?: string }
+  | { type: 'text'; label?: string; defaultValue?: string; placeholder?: string }
   | { type: 'options'; label?: string; options: { label: string; value: string }[]; defaultValue?: string[] }
   | { type: 'date'; label?: string; defaultValue?: DateFilterRange };
 
@@ -121,7 +121,7 @@ export function filtersFromColumns<T>(columns: ColumnDef<T, any>[]): DataTableFi
     const filter = column.meta?.dataTable?.filter;
     if (!filter) return;
     const label = columnLabel(column, id);
-    if (filter.type === 'text') filters.push({ columnId: id, label, type: 'text', defaultValue: filter.defaultValue });
+    if (filter.type === 'text') filters.push({ columnId: id, label, type: 'text', defaultValue: filter.defaultValue, placeholder: filter.placeholder });
     if (filter.type === 'options') filters.push({ columnId: id, label, type: 'options', options: filter.options, defaultValue: filter.defaultValue });
     if (filter.type === 'date') filters.push({ columnId: id, label, type: 'date', defaultValue: filter.defaultValue });
   });
