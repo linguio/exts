@@ -29,6 +29,7 @@
 - 图表传完整日期范围及 sort:[{field:"date",order:"asc"}]，不传分页；Daily 传分页和用户排序。排序独立于分页。
 - Activity 更新（`POST /api/activity/days/update`）请求体为单层 JSON，字段为 `id` 与可选五项小时字段：`{ id, exerciseHours?, readingHours?, learningHours?, creationHours?, sleepHours? }`。必须包含 `id`，且至少发送一项小时字段（可只更新部分列）；每项为非负数值且必须为 `0.5` 的倍数，`0` 合法，拒绝 null、负数、非半小时小数、布尔、字符串与未知字段。服务端将 `*Hours` 写入物理列 `exercise_hours` 等（NUMERIC，非负）。身份仅取自令牌，按 id 与 user_id 更新既有行，不创建、不修改日期。未命中本人记录返回 404 NOT_FOUND。同字段并发以后写为准，依赖数据库 UPDATE 行锁，无 version 或应用锁。
 - Settings 读取使用空 JSON 对象；更新仅接受 theme、mediaDownload.enabled、historyCleaner.enabled 或 notifications.soundEnabled 中的一项，不接收 userId。用户没有设置行时返回 theme 默认值且 id 为 null，首次成功更新时才建行；已有行返回稳定 id。通知声音默认关闭；旧本地设置缺 notifications 时补为 soundEnabled:false，不搬迁其他偏好。
+- Accounts 使用 `POST /api/accounts/list`，需要现有 Bearer 登录认证。`pageIndex` 从 0 开始，`pageSize` 限 1–100。可选 `name` 和 `email` 各限 254 字符，去除首尾空白后分别作不区分大小写的字面包含匹配。可选 `startDate` 和 `endDate` 使用 `YYYY-MM-DD`，按 Asia/Shanghai 的自然日筛选注册时间，包含首尾日期且支持单边范围。按 `createdAt`、`id` 依次倒序，返回 `{ "data": { "accounts": [...], "total": 0, "pageIndex": 0, "pageSize": 20 } }`。每条记录包含 `id`、`name`、`email` 和 `createdAt`，`total` 为全部匹配数。
 
 ```json
 {"startDate":"2026-11-01","endDate":"2026-11-06","pageIndex":0,"pageSize":20,"sort":[{"field":"date","order":"desc"}]}
