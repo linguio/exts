@@ -131,13 +131,13 @@ macOS/Linux 使用对应的 dist/.cache/api/venv/bin/python。迁移使用管理
 - POST `/api/dictionaries/groups` 接收 `pageIndex`、`pageSize` 和可选的 `search`。搜索最多 128 字符，去除首尾空白后对归属或分组的 `label` 和 `key` 做不区分大小写的字面包含匹配。返回 `groups`、筛选后的分组数 `total`、`pageIndex` 和 `pageSize`。按归属 key、分组 `createdAt`、分组 key 升序分页。每组包含可空的 `description` 和 `namespace: { id, key, label }`。迁移 0010 将现有三组归入 Issue，分组 key 在归属内唯一。
 - POST `/api/dictionaries/items` 接收 `groupId`，返回含 `createdAt` 的 `items`，在指定组内按 `sortOrder`、`value` 升序。已有空组返回空数组，找不到分组返回 404，超出 500 项返回 422。
 
-## 每日任务与部署前配置
+## Activity 定时调度与部署配置
 
-vercel.json 定义一个每日 UTC 16:00 的 Cron，对应北京时间次日 00:00。Vercel 调用 GET /internal/jobs/activity-days，并使用服务端 CRON_SECRET 认证。任务为所有 Neon 用户插入上海当天的 user_id/date；冲突跳过，不覆盖已有数据或触发更新时间修改。
+Vercel 项目配置的 `crons` 为空。部署该配置后，Vercel 不再自动调用 `GET /internal/jobs/activity-days`。保留任务路由，调用仍需服务端 `CRON_SECRET`。任务按上海日期为所有 Neon 用户创建当天的记录，跳过已有记录。
 
-上线前在 Vercel 配置 DATABASE_URL、NEON_AUTH_ISSUER、API_RESOURCE、独立随机 CRON_SECRET。迁移管理连接只需在管理环境使用，不要求放入 Vercel。不要把密钥放入 URL、前端环境或文档。部署会启用 Cron，因此必须和生产迁移顺序一起审批，先迁移再启用实际部署。
+API 部署使用 `DATABASE_URL`、`NEON_AUTH_ISSUER` 和 `API_RESOURCE`。保留任务路由的服务端认证配置。迁移管理连接仅在管理环境使用。不要把密钥放入 URL、前端环境或文档。
 
-Hobby 任务可能在设定时间后一小时内触发；仅建运行当天，漏跑历史日期不自动回填。新用户等下一次任务，无注册建行分支。数据库、连接及任务统一上海日期；TIMESTAMPTZ 仍保存绝对时刻，数据库默认时区仅对新连接生效。前端日期适配在后续工作项执行。
+任务只处理运行当天，注册和漏跑日期均无自动补建。数据库、连接及任务统一使用上海日期。TIMESTAMPTZ 保存绝对时刻，数据库默认时区仅对新连接生效。
 
 根 `npm run build` 继续构建官网、扩展与桌面，不替代 Python 接口验证。Python 源码无需编译为独立二进制。所有可配置缓存与虚拟环境位于根 dist，不在应用内部生成构建目录。
 
