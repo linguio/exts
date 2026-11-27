@@ -13,6 +13,25 @@ type ChangelogEntry = {
 // 日期取公开发布或用户明确批准的交付日期，统一为北京时间。
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    id: 'studio-accounts-dictionaries-v270',
+    date: '2026-11-27',
+    title: '新增 Studio 账户列表，优化字典浏览',
+    groups: [{
+      platform: 'Build',
+      changes: ['新增 IntelliJ IDEA 运行配置，可一键并行启动扩展和 API。'],
+    }, {
+      platform: 'API',
+      changes: ['移除每日自动生成 Activity 记录的定时配置。'],
+    }, {
+      platform: 'Extension',
+      changes: [
+        'Studio 顶栏突出返回首页入口，方便在工作台和首页之间切换。',
+        'Studio 新增 Accounts，可按姓名、邮箱和注册日期查询账户，列表展示账户角色。',
+        'Dictionaries 支持按归属和分组搜索，可查看分组用途和选项。',
+      ],
+    }],
+  },
+  {
     id: 'studio-dictionaries-delivery-v260',
     date: '2026-11-24',
     title: '新增 Studio 字典查看，完善开发交付流程',
