@@ -108,6 +108,8 @@ node --test --test-isolation=none apps/api/tests/dev.test.mjs
 
 结构唯一来源为 migrations 下的版本化 SQL。修改已有云端结构时新增迁移，不改已执行文件；校验和按 UTF-8 与 LF 规范化，避免 Windows 换行造成差异。查询和 API 启动均不自动建表。第二份迁移创建每用户一行的 `public.user_settings`，第三份迁移补充 `created_at`，第四份迁移为 `activity_daily_records` 与 `user_settings` 增加 UUID 主键并保留 `(user_id, date)` / `user_id` 唯一约束；旧记录回填 id。不需要注册初始化或定时器。
 
+Accounts 的 `POST /api/accounts/list` 对当前页联查 `public.user_role_assignments`，返回 `role: "admin"` 或 `role: null`。发布时先应用 `0011_user_role_assignments.sql`，再部署 API。迁移创建空表，由项目维护者按账户 UUID 手动分配；角色字段仅用于展示。
+
 Windows 从仓库根执行只读预览：
 
 ```powershell
