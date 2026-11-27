@@ -5,6 +5,7 @@ export interface AccountRow {
   name: string | null;
   email: string;
   createdAt: string;
+  role?: 'admin' | null;
 }
 
 export interface AccountsQuery {

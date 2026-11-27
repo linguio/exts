@@ -19,7 +19,7 @@ def read_accounts(database: Connection, limit: int, offset: int, email: str, nam
               AND (dates.end_date IS NULL OR "createdAt" < (dates.end_date + 1)::timestamptz)
         ),
         totals AS (SELECT count(*) AS total FROM matching)
-        SELECT page.*, totals.total
+        SELECT page.*, assignments.role, totals.total
         FROM totals
         LEFT JOIN LATERAL (
             SELECT id, name, email, created_at
@@ -27,6 +27,7 @@ def read_accounts(database: Connection, limit: int, offset: int, email: str, nam
             ORDER BY created_at DESC, id DESC
             LIMIT %s OFFSET %s
         ) AS page ON true
+        LEFT JOIN public.user_role_assignments AS assignments ON assignments.user_id = page.id
         ORDER BY page.created_at DESC, page.id DESC
     '''), (start_date, end_date, email, name, limit, min(offset, 2**63 - 1)))
     return [row for row in rows if row['id'] is not None], rows[0]['total']

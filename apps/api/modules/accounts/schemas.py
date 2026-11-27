@@ -1,5 +1,6 @@
 import re
 from datetime import date
+from typing import Literal
 from uuid import UUID
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -36,6 +37,7 @@ class Account(BaseModel):
     name: str | None
     email: str
     created_at: AwareDatetime = Field(alias='createdAt')
+    role: Literal['admin'] | None
 
 
 class Accounts(BaseModel):

@@ -17,12 +17,12 @@ function formatRegisteredDate(timestamp: string) {
 }
 
 const columns: ColumnDef<AccountRow>[] = [
-  { accessorKey: 'id', header: 'Account ID', enableSorting: false,
-    cell: ({ row }) => <CopyableTextCell value={row.original.id} className="font-mono" /> },
   { accessorKey: 'name', header: 'Name', enableSorting: false, meta: { dataTable: { filter: { type: 'text' } } },
     cell: ({ row }) => row.original.name || '—' },
   { accessorKey: 'email', header: 'Email', enableSorting: false, meta: { dataTable: { filter: { type: 'text' } } },
     cell: ({ row }) => <CopyableTextCell value={row.original.email} /> },
+  { accessorKey: 'role', header: 'Role', enableSorting: false,
+    cell: ({ row }) => row.original.role === 'admin' ? 'Admin' : '-' },
   { accessorKey: 'createdAt', header: 'Registered', enableSorting: false, meta: { dataTable: { filter: { type: 'date' } } },
     cell: ({ row }) => formatRegisteredDate(row.original.createdAt) },
 ];

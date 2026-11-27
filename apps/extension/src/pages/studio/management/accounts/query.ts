@@ -29,7 +29,8 @@ export async function queryAccounts(request: DataTableQueryRequest, userId: stri
     if (!data || data.pageIndex !== pageIndex || data.pageSize !== pageSize || !Array.isArray(data.accounts)
       || !Number.isSafeInteger(data.total) || data.total < 0 || data.accounts.length > pageSize
       || data.accounts.some(row => !row || typeof row.id !== 'string' || (row.name !== null && typeof row.name !== 'string')
-        || typeof row.email !== 'string' || typeof row.createdAt !== 'string' || !Number.isFinite(Date.parse(row.createdAt)))) {
+        || typeof row.email !== 'string' || typeof row.createdAt !== 'string' || !Number.isFinite(Date.parse(row.createdAt))
+        || (row.role !== undefined && row.role !== null && row.role !== 'admin'))) {
       throw new DataTableQueryError('Unable to load accounts.');
     }
     return { rows: data.accounts, total: data.total };
