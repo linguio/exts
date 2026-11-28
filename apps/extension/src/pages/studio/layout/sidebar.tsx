@@ -7,6 +7,7 @@ import { UiIcon } from '../../../components/custom/ui-icon';
 import { AccountSidebar } from '../account';
 
 interface StudioSidebarProps {
+  onHome: () => void;
   access: ReturnType<typeof studioAccess>;
   sessionKey: string | null;
   activeRoute: string | null;
@@ -14,7 +15,7 @@ interface StudioSidebarProps {
 }
 
 /** 采用 dashboard-01 的 inset/offcanvas 侧栏；业务菜单仅在确认登录后挂载。 */
-export function StudioSidebar({ access, sessionKey, activeRoute, onRouteChange }: StudioSidebarProps) {
+export function StudioSidebar({ onHome, access, sessionKey, activeRoute, onRouteChange }: StudioSidebarProps) {
   const { isMobile, setOpenMobile } = useSidebar();
   function selectRoute(route: string) {
     onRouteChange(route);
@@ -23,15 +24,16 @@ export function StudioSidebar({ access, sessionKey, activeRoute, onRouteChange }
   return (
     <Sidebar collapsible="offcanvas" variant="inset">
       <SidebarHeader>
-        <SidebarMenu><SidebarMenuItem><SidebarMenuButton asChild size="lg">
-          <div>
+        <SidebarMenu><SidebarMenuItem>
+          <SidebarMenuButton type="button" size="lg" onClick={onHome} aria-label="Exit Studio and return to New Tab">
             <BrandIcon icon="brand/exts.svg" size="md" />
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">Exts</span>
               <span className="truncate text-xs">Ideas into action</span>
             </div>
-          </div>
-        </SidebarMenuButton></SidebarMenuItem></SidebarMenu>
+            <UiIcon name="chevrons-up-down" className="size-4" />
+          </SidebarMenuButton>
+        </SidebarMenuItem></SidebarMenu>
       </SidebarHeader>
       <SidebarContent key={sessionKey ?? 'signed-out'}>
         {access === 'signed-out' && <Empty><EmptyHeader>

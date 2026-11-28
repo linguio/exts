@@ -1,17 +1,13 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { UiIcon } from '../../../components/custom/ui-icon';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '../../../components/ui/breadcrumb';
-import { Button } from '../../../components/ui/button';
 import { ScrollArea } from '../../../components/ui/scroll-area';
 import { Separator } from '../../../components/ui/separator';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '../../../components/ui/sidebar';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
 import { cn } from '../../../lib/utils';
 
 interface StudioLayoutProps {
   children: ReactNode;
   sidebar: ReactNode;
-  onHome: () => void;
   pageTitle?: string;
   groupTitle?: string;
   fillHeight: boolean;
@@ -19,7 +15,7 @@ interface StudioLayoutProps {
 }
 
 /** Studio 外壳只组合侧栏、顶栏与内容布局，不读取账号或保存导航。 */
-export function StudioLayout({ children, sidebar, onHome, pageTitle, groupTitle, fillHeight, scrollContent }: StudioLayoutProps) {
+export function StudioLayout({ children, sidebar, pageTitle, groupTitle, fillHeight, scrollContent }: StudioLayoutProps) {
   return (
     <SidebarProvider className="h-dvh min-h-0 overflow-hidden" style={{ '--sidebar-width': 'calc(var(--spacing) * 72)', '--header-height': 'calc(var(--spacing) * 12)' } as CSSProperties} onContextMenuCapture={event => event.preventDefault()}>
       {sidebar}
@@ -33,15 +29,6 @@ export function StudioLayout({ children, sidebar, onHome, pageTitle, groupTitle,
               {groupTitle && pageTitle && <><BreadcrumbSeparator /><BreadcrumbItem>{groupTitle}</BreadcrumbItem></>}
               {pageTitle && <><BreadcrumbSeparator /><BreadcrumbItem><BreadcrumbPage>{pageTitle}</BreadcrumbPage></BreadcrumbItem></>}
             </BreadcrumbList></Breadcrumb>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button type="button" size="sm" className="ml-auto" onClick={onHome}>
-                  <UiIcon name="house" className="size-4" />
-                  Exit Studio
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Back to Home</TooltipContent>
-            </Tooltip>
           </div>
         </header>
         <div className={cn('flex min-h-0 flex-1 flex-col', fillHeight && 'overflow-hidden')}>
