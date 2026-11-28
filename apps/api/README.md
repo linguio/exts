@@ -135,14 +135,26 @@ macOS/Linux 使用对应的 dist/.cache/api/venv/bin/python。迁移使用管理
 
 Vercel 项目配置的 `crons` 为空。部署该配置后，Vercel 不再自动调用 `GET /internal/jobs/activity-days`。保留任务路由，调用仍需服务端 `CRON_SECRET`。任务按上海日期为所有 Neon 用户创建当天的记录，跳过已有记录。
 
-API 部署使用 `DATABASE_URL`、`NEON_AUTH_ISSUER` 和 `API_RESOURCE`。保留任务路由的服务端认证配置。迁移管理连接仅在管理环境使用。不要把密钥放入 URL、前端环境或文档。
-
 任务只处理运行当天，注册和漏跑日期均无自动补建。数据库、连接及任务统一使用上海日期。TIMESTAMPTZ 保存绝对时刻，数据库默认时区仅对新连接生效。
 
 根 `npm run build` 继续构建官网、扩展与桌面，不替代 Python 接口验证。Python 源码无需编译为独立二进制。所有可配置缓存与虚拟环境位于根 dist，不在应用内部生成构建目录。
 
-## 后续 Vercel 配置
+## Vercel 生产部署配置
 
-已有 Vercel API 项目根目录为 `apps/api`，使用 FastAPI 入口 `app.py` 与 `requirements.txt`，安装命令已显式设为 `uv pip install -r requirements.txt`，避免根 Turbo 的 Node 安装默认值遗漏 Python 依赖。Scalar 已列入该清单，后续获批推送并部署时一并安装，无需 Scalar 账号。私有 `DATABASE_URL` 与 `API_ACCESS_TOKEN` 继续使用 Vercel 环境变量，Neon 本地 env 拉取不会自动设置它们。本轮不推送、部署或修改云端设置。
+Vercel 的 `exts-api` 项目根目录为 `apps/api`，使用 FastAPI 入口 `app.py`。安装命令为 `uv pip install -r requirements.txt`，从 API 的依赖清单安装 Python 依赖及 Scalar。
+
+1. 打开 [exts-api 的 Environment Variables](https://vercel.com/kevins-projects-b99aa85b/exts-api/settings/environment-variables)，点 **Add New**。按下表填写 **Key** 和 **Value**，每项都选 **Production** 后保存。
+
+   | Key | Value |
+   | --- | --- |
+   | `DATABASE_URL` | 从 Neon 生产分支复制 **Pooled connection string**，使用当前有效的数据库密码。连接串仅保存在服务端环境变量中。 |
+   | `NEON_AUTH_ISSUER` | `https://ep-patient-grass-ak8aymgi.neonauth.c-3.us-west-2.aws.neon.tech/neondb/auth`。它必须与访问令牌的 `iss` 一致，末尾不加斜杠。 |
+   | `API_RESOURCE` | `https://api.exts.linguio.dev`。它必须与访问令牌的 `aud` 一致。 |
+
+2. 到 **Deployments**，对最新的 **Production** 部署点 **⋯ → Redeploy**。等待新部署显示 **Ready**，再刷新扩展的 Daily 页面验证。环境变量变更只应用于新部署，扩展无需重新打包或发布。 [Vercel 环境变量说明](https://vercel.com/docs/environment-variables/managing-environment-variables)
+
+数据库密码轮换时，更新 Vercel Production 的 `DATABASE_URL` 并重新部署 API。若只更换数据库密码，认证发行方与受众继续沿用现有值。Neon 本地环境文件的修改独立于 Vercel。内部任务入口使用 `CRON_SECRET`，Daily 使用 Neon 用户访问令牌。迁移管理连接 `DATABASE_URL_UNPOOLED` 仅在管理环境使用。
+
+遇到 Daily 503 时，`SERVICE_UNAVAILABLE` 加「服务配置暂不可用」表示必填变量缺失或为空，先查当前 Production 部署的 `NEON_AUTH_ISSUER` 和 `API_RESOURCE`，再查 `DATABASE_URL`。`DATABASE_UNAVAILABLE` 表示数据库操作失败，优先核对池化连接串、当前密码和数据库连通性。可用响应中的 `requestId` 在 API 日志定位对应请求。
 
 驱动选型依据：[Neon Python 指南](https://neon.com/docs/guides/python)；部署入口依据：[Vercel FastAPI 文档](https://vercel.com/docs/frameworks/backend/fastapi)。
